@@ -1,0 +1,71 @@
+/*@import url(https://fonts.googleapis.com/css?family=Merriweather:400,700);*/
+
+.merriweather {
+    /*font-family: 'Merriweather'; */
+    font-family: 'Arial';
+}
+
+/*
+#controls {
+    font-family: 'Merriweather';
+    font-size: 10px;
+}*/
+a {
+    color: hotpink;
+}
+
+#tracker-container {
+    /*background-color: ghostwhite;*/
+    width: 100%;
+    /*padding: 10px;*/
+    /*background-color: #F4A360;*/
+    /*background-color: gainsboro;*/
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#tracker-controls {
+    margin-left: 0px;
+    padding: 0px;
+    /*background-color: #bc8f8f;*/
+}
+
+
+#tracker-parent {
+    padding: 0px;
+    flex-basis: auto;
+    /*background-color: gainsboro;*/
+    /*overflow-x: visible;*/
+}
+
+
+.tracker-cell, .tracker-first-cell, .tracker-cell-header {
+    height: 20px;
+    min-width: 21px;
+    border: black;
+    border-color: black;
+    background: #fff;
+    border-style: solid;
+    border-width: 1px;
+    font-size: 75%;
+    padding: 2px;
+    /*background-color: pink;*/
+}
+
+.tracker-enabled {
+    background: orange;
+}
+
+.tracker-current {
+    background: blueviolet;
+}
+
+#app-message {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: peru;
+    margin: 10px;
+    padding: 10px;
+    display: none;
+}

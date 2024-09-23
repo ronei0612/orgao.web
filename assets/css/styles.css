@@ -1,0 +1,147 @@
+/* _content/LiturgiaMVC/Views/Bateria/_Layout.cshtml.rz.scp.css */
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand[b-ptunxokdto] {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+a[b-ptunxokdto] {
+  color: #0077cc;
+}
+
+.btn-primary[b-ptunxokdto] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active[b-ptunxokdto], .nav-pills .show > .nav-link[b-ptunxokdto] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.border-top[b-ptunxokdto] {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom[b-ptunxokdto] {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow[b-ptunxokdto] {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy[b-ptunxokdto] {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+.footer[b-ptunxokdto] {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+/* _content/LiturgiaMVC/Views/Orgao/_Layout.cshtml.rz.scp.css */
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand[b-c3rtqodnk9] {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+a[b-c3rtqodnk9] {
+  color: #0077cc;
+}
+
+.btn-primary[b-c3rtqodnk9] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active[b-c3rtqodnk9], .nav-pills .show > .nav-link[b-c3rtqodnk9] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.border-top[b-c3rtqodnk9] {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom[b-c3rtqodnk9] {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow[b-c3rtqodnk9] {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy[b-c3rtqodnk9] {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+.footer[b-c3rtqodnk9] {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+/* _content/LiturgiaMVC/Views/Shared/_Layout.cshtml.rz.scp.css */
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand[b-avukdbwr2c] {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+a[b-avukdbwr2c] {
+  color: #0077cc;
+}
+
+.btn-primary[b-avukdbwr2c] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active[b-avukdbwr2c], .nav-pills .show > .nav-link[b-avukdbwr2c] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.border-top[b-avukdbwr2c] {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom[b-avukdbwr2c] {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow[b-avukdbwr2c] {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy[b-avukdbwr2c] {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+.footer[b-avukdbwr2c] {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
