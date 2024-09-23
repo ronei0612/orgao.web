@@ -849,11 +849,6 @@
 <script src="./assets/js/google.min.js"></script>
 <script src="./assets/js/Pizzicato.min.js"></script>
 <script>
-    $(window).click(function (e) {
-        if (e.target.className === 'w3-modal')
-            ocultarModal();
-    });
-
     //Impedir atualização errônea da página
     // window.onbeforeunload = function () {
     //     return "Deseja recarregar página?";
@@ -990,51 +985,57 @@
 	// 	// 'strings_b_grave': new Pizzicato.Sound({ source: 'file', options: { path: './assets/audio/Strings/strings_b_grave.ogg', loop: true, release: 0.5, attack: 0.1 } })
 	// };
 
-	// var pratoSound = new Pizzicato.Sound({ source: 'file', options: { path: './assets/audio/Percussao/prato.ogg' } });
-	// var chimesSound = new Pizzicato.Sound({ source: 'file', options: { path: './assets/audio/Percussao/chimes.ogg' } });
+	var pratoSound = new Pizzicato.Sound({ source: 'file', options: { path: './assets/audio/Percussao/prato.ogg' } });
+	var chimesSound = new Pizzicato.Sound({ source: 'file', options: { path: './assets/audio/Percussao/chimes.ogg' } });
 
-	// function mostrarCompartilhado() {
-	// 	if ('@Model.CompartilhadoNome' !== '') {
-	// 		if ('@Model.CompartilhadoNome' === 'Erro')
-	// 			alert('Ocorreu um erro ao mostrar compartilhamento! Tente novamente.');
-	// 		else {
-	// 			if (confirm('Carregar o compartilhamento?')) {
-	// 				//localStorage.setItem('compartilhados', JSON.stringify(@Html.Raw(@Model.CompartilhadoConteudo)));				
-	// 				mostrarModal('salvar');
-	// 			}
-	// 		}
-	// 	}
+	function mostrarCompartilhado() {
+		if ('@Model.CompartilhadoNome' !== '') {
+			if ('@Model.CompartilhadoNome' === 'Erro')
+				alert('Ocorreu um erro ao mostrar compartilhamento! Tente novamente.');
+			else {
+				if (confirm('Carregar o compartilhamento?')) {
+					//localStorage.setItem('compartilhados', JSON.stringify(@Html.Raw(@Model.CompartilhadoConteudo)));				
+					mostrarModal('salvar');
+				}
+			}
+		}
 
-	// 	if (window.location.href.includes('compartilhado'))
-	// 		limparUrl();
-	// }
+		if (window.location.href.includes('compartilhado'))
+			limparUrl();
+	}
 
-	// function baixar() {
-	// 	const url = 'https://drive.google.com/uc?id=' + '@Model.CompartilhadoNome' + '&export=download';
-	// 	getTextFromGoogleDrive(url)
-	// 		.then(text => {
-	// 			if (text !== null) {
-	// 				console.log(text);
-	// 				console.log(JSON.stringify(text));
+	function baixar() {
+		const url = 'https://drive.google.com/uc?id=' + '@Model.CompartilhadoNome' + '&export=download';
+		getTextFromGoogleDrive(url)
+			.then(text => {
+				if (text !== null) {
+					console.log(text);
+					console.log(JSON.stringify(text));
 
-	// 				console.log('Texto do arquivo:', text);
-	// 				// Faça algo com o texto aqui
-	// 			} else {
-	// 				console.log('Falha ao obter o texto do arquivo.');
-	// 			}
-	// 		});
-	// }
+					console.log('Texto do arquivo:', text);
+					// Faça algo com o texto aqui
+				} else {
+					console.log('Falha ao obter o texto do arquivo.');
+				}
+			});
+	}
 
-	// async function getTextFromGoogleDrive(url) {
-	// 	try {
-	// 		const response = await fetch(url);
-	// 		const text = await response.text();
-	// 		return text;
-	// 	} catch (error) {
-	// 		console.error('Erro ao buscar o texto do arquivo:', error);
-	// 		return null;
-	// 	}
-	// }
+	async function getTextFromGoogleDrive(url) {
+		try {
+			const response = await fetch(url);
+			const text = await response.text();
+			return text;
+		} catch (error) {
+			console.error('Erro ao buscar o texto do arquivo:', error);
+			return null;
+		}
+	}
 </script>
 
 <script src="./assets/js/orgao.min.js"></script>
+<script>
+    $(window).click(function (e) {
+        if (e.target.className === 'w3-modal')
+            ocultarModal();
+    });
+</script>
