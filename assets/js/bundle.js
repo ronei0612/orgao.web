@@ -1102,7 +1102,7 @@ module.exports = {
   ],
   settings: {
     sampleSet:
-      "./Sons/studio/samples.json",
+      "../assets/audio/studio/samples.json",
     measureLength: 16,
     bpm: 90,
     detune: 0,
