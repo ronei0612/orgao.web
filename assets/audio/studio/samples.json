@@ -1,10 +1,10 @@
 {
   "name": "Bateria Studio",
   "description": "Bateria Studio Pack",
-  "url": "./Sons/studio/Drums/",
+  "url": "https://roneicostasoares.com.br/Orgao/assets/audio/studio/Drums/",
   "license": "Ronei (Open)",
   "type": "Acoustic Drum",
-  "samples": "./Sons/studio/Drums/",
+  "samples": "https://roneicostasoares.com.br/Orgao/assets/audio/studio/Drums/",
   "files": [
     "violao_.ogg",
     "violao_C.ogg",
