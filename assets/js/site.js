@@ -100,7 +100,7 @@ function removerComercial() {
 	}, 500);
 }
 
-document.addEventListener('click', removerComercial);
-document.addEventListener('touchstart', removerComercial);
+// document.addEventListener('click', removerComercial);
+// document.addEventListener('touchstart', removerComercial);
 
 //verificarCertificadoVencendo(); Comentado para funcionar por enquanto

@@ -10,7 +10,6 @@ function tracker(ctx, scheduleAudioBeat) {
   this.running = false;
 
   this.drawTracker = function (numRows, numCols, data) {
-    debugger;
     let htmlTable = new trackerTable();
     htmlTable.setRows(numRows, numCols, data);
     let str = htmlTable.getTable();
@@ -46,7 +45,26 @@ function tracker(ctx, scheduleAudioBeat) {
   };
 
   function playSolo(colId) {
-    // ... (Implementation for solo playback)
+    if (colId !== _colId && _notasSolo) {
+      if (_notasSolo[_notasSoloIndex] !== '') {
+        if (_somSolo)
+          _somSolo.stop();
+
+        _somSolo = acordes['epiano_' + _notasSolo[_notasSoloIndex].replace('0', '_baixo').replace('-1', '_grave')];
+        _somSolo.play();
+      }
+      if (_notasSoloIndex === _notasSolo.length - 1) {
+        if (_somSolo)
+          _somSolo.stop();
+
+        _somSolo = null;
+        _notasSolo = null;
+        _notasSoloIndex = 0;
+      }
+      else
+        _notasSoloIndex++;
+    }
+    _colId = colId;
   }
 
   this.schedule = function () {
@@ -164,6 +182,24 @@ function tracker(ctx, scheduleAudioBeat) {
         e.target.classList.toggle('tracker-enabled');
       });
     });
+  };
+}
+
+// getSetControls.js
+function getSetControls() {
+  const trackerControls = JSON.parse(
+    '{ "": 90, "adsrInterval": 0.1, "attackTime": 0, "bpm": 90, "decayAmp": 0.7, "decayTime": 0, "delay": 0.01, "filter": 1000, "releaseAmp": 1, "releaseTime": 2, "sustainAmp": 0.4, "sustainTime": 2 }'
+  );
+
+  this.getTrackerControls = function () {
+    return trackerControls;
+  };
+
+  this.setTrackerControls = function (values) {
+    if (!values) {
+      values = this.getTrackerControls();
+    }
+    this.options = values;
   };
 }
 
