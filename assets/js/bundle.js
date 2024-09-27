@@ -96,7 +96,7 @@ function scheduleAudioBeat(rowId, triggerTime) { //tocar os beats
   }
 
   function routeGain(source) {
-    let gain = new adsrGainNode(ctx);
+    let gain = new AdsrGainNode(ctx);
     gain.mode = 'linearRampToValueAtTime';
     let options = getSetAudioOptions.getTrackerControls();
 
@@ -220,16 +220,6 @@ function stopBateria(trocandoInstrumento) {
   _ritmoSelecionado = null;
 }
 
-function routeGain(source) {
-  let gain = new adsrGainNode(ctx);
-  gain.mode = 'linearRampToValueAtTime';
-  let options = getSetAudioOptions.getTrackerControls();
-  let gainNode;
-  gain.setOptions(options);
-  gainNode = gain.getGainNode(0);
-  source.connect(gainNode);
-  return gainNode;
-}
 function tocarBateria(botao = null, tocar) {
   if (botao) {
     if (!schedule.running)

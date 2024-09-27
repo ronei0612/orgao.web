@@ -45,7 +45,26 @@ function tracker(ctx, scheduleAudioBeat) {
   };
 
   function playSolo(colId) {
-    // ... (Implementation for solo playback)
+    if (colId !== _colId && _notasSolo) {
+      if (_notasSolo[_notasSoloIndex] !== '') {
+        if (_somSolo)
+          _somSolo.stop();
+
+        _somSolo = acordes['epiano_' + _notasSolo[_notasSoloIndex].replace('0', '_baixo').replace('-1', '_grave')];
+        _somSolo.play();
+      }
+      if (_notasSoloIndex === _notasSolo.length - 1) {
+        if (_somSolo)
+          _somSolo.stop();
+
+        _somSolo = null;
+        _notasSolo = null;
+        _notasSoloIndex = 0;
+      }
+      else
+        _notasSoloIndex++;
+    }
+    _colId = colId;
   }
 
   this.schedule = function () {
