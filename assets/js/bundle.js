@@ -5,9 +5,42 @@ var _brushSelecionado = false;
 var _tocandoBateria = false;
 var _colId;
 
-var instrumentData = {};
-const ctx = new AudioContext();
+let instrumentData = {};
+let ctx;// = new AudioContext();
 let schedule;
+
+const defaultTrack = {
+    beat: [
+      { rowId: '0', colId: '0', enabled: false },
+    ],
+    settings: {
+      // sampleSet: '../assets/audio/studio/samples.json',
+      sampleSet: 'https://roneicostasoares.com.br/Orgao/assets/audio/studio/samples.json',
+      measureLength: 16,
+      bpm: 90,
+      detune: 0,
+      gainEnabled: 'gain',
+      attackAmp: 0,
+      sustainAmp: 0.4,
+      decayAmp: 0.7,
+      releaseAmp: 1,
+      attackTime: 0,
+      decayTime: 0,
+      sustainTime: 2,
+      releaseTime: 2,
+      adsrInterval: 0.1,
+      delay: 0.01,
+      filter: 1000,
+    },
+  };
+
+  // hasClass.js
+function hasClass(el, str) {
+    if (el.classList) {
+      return el.classList.contains(str);
+    }
+    return new RegExp('(^| )' + str + '( |$)', 'gi').test(el.className);
+  }
 
 function initializeSampleSet(ctx, dataUrl, track) {
   var sampleSetPromise = loadSampleSet(ctx, dataUrl);
@@ -31,7 +64,7 @@ function initializeSampleSet(ctx, dataUrl, track) {
 }
 
 window.onload = function () {
-  // ... (Implementation for setting up and loading audio)
+  ctx = new AudioContext();
   schedule = new tracker(ctx, scheduleAudioBeat);
   getSetAudioOptions.setTrackerControls(defaultTrack.settings);
   initializeSampleSet(ctx, defaultTrack.settings.sampleSet, defaultTrack);

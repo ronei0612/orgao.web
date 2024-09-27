@@ -1,5 +1,6 @@
-// WAAClock.js
+
 function WAAClock(context, opts) {
+  opts = opts || {};
   this.tickMethod = opts.tickMethod || 'ScriptProcessorNode';
   this.toleranceEarly = opts.toleranceEarly || 0.001;
   this.toleranceLate = opts.toleranceLate || 0.10;
@@ -187,3 +188,4 @@ WAAClock.prototype._absTime = function (relTime) {
 WAAClock.prototype._relTime = function (absTime) {
   return absTime - this.context.currentTime;
 };
+
