@@ -6,9 +6,8 @@ var _tocandoBateria = false;
 var _colId;
 
 var instrumentData = {};
-var schedule;
-
 const ctx = new AudioContext();
+let schedule;
 
 function initializeSampleSet(ctx, dataUrl, track) {
   var sampleSetPromise = loadSampleSet(ctx, dataUrl);
@@ -33,69 +32,13 @@ function initializeSampleSet(ctx, dataUrl, track) {
 
 window.onload = function () {
   // ... (Implementation for setting up and loading audio)
+  schedule = new tracker(ctx, scheduleAudioBeat);
   getSetAudioOptions.setTrackerControls(defaultTrack.settings);
   initializeSampleSet(ctx, defaultTrack.settings.sampleSet, defaultTrack);
   setupBaseEvents();
 };
 
-schedule = new tracker(ctx, scheduleAudioBeat);
-
-function setupTrackerHtml(data, measureLength) {
-  if (typeof data === 'undefined')
-    alert('Erro nos sons! Recarregue a página por favor.');
-
-  instrumentData = data;
-  instrumentData.title = instrumentData.filename;
-  schedule.drawTracker(data.filename.length, measureLength, instrumentData);
-  return;
-}
-
-function scheduleAudioBeat(rowId, triggerTime) {
-  let instrumentName = instrumentData.filename[rowId];
-  let instrument = buffers[instrumentName].get();
-
-  function play(source) {
-    let node = routeGain(source);
-    node.connect(ctx.destination);
-    fecharChimbal(instrumentName, _sourceChimbalAberto, triggerTime);
-    source.start(triggerTime);
-  }
-
-  function routeGain(source) {
-    let gain = new adsrGainNode(ctx);
-    gain.mode = 'linearRampToValueAtTime';
-    let options = getSetAudioOptions.getTrackerControls();
-    let gainNode;
-    gain.setOptions(options);
-    gainNode = gain.getGainNode(triggerTime);
-    source.connect(gainNode);
-    return gainNode;
-  }
-
-  // ... (Implementations for playBaixo, playViolao, playCravo)
-
-  if (_acordeSelecionado) {
-    playViolao();
-    playBaixo();
-  }
-
-  if (_cravoSelecionado) playCravo();
-  else guardarChimbalAberto(instrumentName, instrument);
-
-  play(instrument);
-}
-
-// ... (Implementations for playBateria, stopBateria, routeGain, tocarBateria, setupBaseEvents)
-
-// Other DOM manipulation and event listeners
-// (Make sure to replace placeholders like `selectRitmo`, `aro`, `meiaLua`, etc.
-// with the actual IDs or class names of your DOM elements)
-
-// ... (Code for managing audio playback, tempo, and user interactions) 
-
-var instrumentData = {};
-var schedule = new simpleTracker(ctx, scheduleAudioBeat);
-//gerarRitmosNomes(ritmosNomes);
+gerarRitmosNomes(ritmosNomes);
 
 function setupTrackerHtml(data, measureLength) {
   if (typeof data === 'undefined')
@@ -216,7 +159,7 @@ function stopBateria(trocandoInstrumento) {
 
     if (_cravoSelecionado || trocandoInstrumento) {
       schedule.stop();
-      schedule = new simpleTracker(ctx, scheduleAudioBeat);
+      schedule = new tracker(ctx, scheduleAudioBeat);
 
       _violaoSelecionado = false;
       _epianoSelecionado = false;
@@ -437,4 +380,4 @@ $('#sampleSet').on('change', function () {
   initializeSampleSet(ctx, this.value);
 });
 
-gerarRitmosNomes(ritmosNomes);
+//gerarRitmosNomes(ritmosNomes);

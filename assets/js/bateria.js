@@ -119,7 +119,6 @@ function mudarRitmo(ritmo) {
 }
 
 function gerarRitmosNomes(ritmosNomes) {
-    debugger;
     selectRitmo.innerHTML = "";
 
     if (_instrumentoSelecionado === 'orgao') {

@@ -10,6 +10,7 @@ function tracker(ctx, scheduleAudioBeat) {
   this.running = false;
 
   this.drawTracker = function (numRows, numCols, data) {
+    debugger;
     let htmlTable = new trackerTable();
     htmlTable.setRows(numRows, numCols, data);
     let str = htmlTable.getTable();
