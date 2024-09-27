@@ -1046,4 +1046,96 @@
         if (e.target.className === 'w3-modal')
             ocultarModal();
     });
+
+    var div = document.getElementById('bateria');
+    var selecionarRitmoElem = document.getElementById("selecionarRitmo");
+    var temporizador;
+
+    function showBateria(mostrarBateria) {
+        if (mostrarBateria) {
+            document.getElementById('container').classList.remove('container');
+            document.getElementById('textoBateria').style.color = 'black';
+            div.style.display = 'block';
+        }
+        else {
+            document.getElementById('container').classList.add('container');
+            div.style.display = 'none';
+            document.getElementById('textoBateria').style.color = 'grey';
+        }
+    }
+
+    function clicarUmBotaoTempo(tempoValor) {
+        var bpmElement = document.getElementById('bpm');
+        document.getElementById('bpmRange').value = tempoValor;
+        bpmElement.value = tempoValor;
+
+        var novoEvento = new Event('change');
+        bpmElement.dispatchEvent(novoEvento);
+        mudarTempoCompasso(false);
+    }
+
+    function escreverRitmo() {
+        var tabelaElem = document.getElementById('tracker-table');
+        var elementos = document.getElementsByClassName('tracker-enabled');
+        var texto = '';
+
+        Array.from(elementos).forEach((elemento) => {
+            texto += elemento.innerText + ', ';
+        });
+
+        textoRitmo.innerText = texto;
+    }
+
+    function playBotaoBateria(botao, tocar = true, levantarBotoes = true) {
+        if (!_configurandoTeclas)
+            pressionarBotao(botao, levantarBotoes);
+    }
+
+    function pressionarBotao(botao, levantarBotoes = true) {
+        var botaoPressionadoAntes = document.getElementsByClassName('selecionadoDrum');
+        var botaoPressionado = botaoPressionadoAntes.length > 0 ? botaoPressionadoAntes[0] : null;
+
+        // if (botao.id !== 'prato' && botao.id !== 'pratoCravo') {
+        // 	if (botao === play_pause_bateria) {
+        // 		if (prepararBateriaBotao.style.display !== 'none') {
+        // 			prepararBateriaBotao.style.display = 'none';
+        // 			pararBateriaBotao.style.display = '';
+        // 		} else {
+        // 			prepararBateriaBotao.style.display = '';
+        // 			pararBateriaBotao.style.display = 'none';
+        // 		}
+        // 	} else {
+        // 		prepararBateriaBotao.style.display = 'none';
+        // 		pararBateriaBotao.style.display = '';
+        // 	}
+        // }
+
+        if (levantarBotoes && botaoPressionado) {
+            if (botao === botaoPressionado) {
+                fazerViradaBateria();
+            } else {
+                botaoPressionado.classList.remove('selecionadoDrum');
+            }
+        }
+
+        if (botao.id === 'prato' || botao.id === 'pratoCravo') {
+            //chimesSound.play();
+            mudarIconeChimesPrato();
+        }
+
+        else if (botao.id !== 'prato' && botao.id !== 'pratoCravo') {
+            botao.classList.add('selecionadoDrum');
+        }
+    }
+
+    function mostrarBateriaConfig(mostrar) {
+        if (mostrar) {
+            temporizador = setTimeout(function () {
+                //bateria.style.display = '';
+                document.getElementById('mensagens').style.display = '';
+            }, 3000);
+        }
+        else 
+            clearTimeout(temporizador);
+    }
 </script>
