@@ -1086,10 +1086,11 @@ function verificarAcompanhamentoEtocar(acorde, acordeAntesSelecionado, continuar
 }
 
 function pararOsAcordes(removerSons = false, continuarStrings = false) {
-	if (_somSolo) {
-		_somSolo.stop();
-		_notasSolo = null;
-	}
+	// Comentado para funcionar por enquanto
+	// if (_somSolo) {
+	// 	_somSolo.stop();
+	// 	_notasSolo = null;
+	// }
 
 	if (_grupoNotas) {
 		_grupoNotas.stop();
