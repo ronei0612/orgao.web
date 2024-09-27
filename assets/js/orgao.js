@@ -1699,8 +1699,8 @@ function carregarConfiguracoesDoStorage() {
 		_instrumentoSelecionado = semacentos.toLowerCase().replace('banda', 'epiano');
 	}
 
-	gerarRitmosNomes(ritmosNomes);
-	selecionarRitmo(selectRitmo.value);
+	//gerarRitmosNomes(ritmosNomes); Comentado para funcionar por enquanto
+	//selecionarRitmo(selectRitmo.value); Comentado para funcionar por enquanto
 	//salvarDadosStorage('dadosLocais');
 }
 
@@ -2392,7 +2392,7 @@ function selecionarInstrumento(bateria = false, manualmente = false) {
 		ocultarBotoesCravo(true);
 	}
 
-	mudarTempoCompasso();
+	//mudarTempoCompasso(); Comentado para funcionar por enquanto
 }
 
 function calcularAlturaIframe() {

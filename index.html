@@ -986,19 +986,20 @@
 	var chimesSound = new Pizzicato.Sound({ source: 'file', options: { path: './assets/audio/Percussao/chimes.ogg' } });
 
 	function mostrarCompartilhado() {
-		if ('@Model.CompartilhadoNome' !== '') {
-			if ('@Model.CompartilhadoNome' === 'Erro')
-				alert('Ocorreu um erro ao mostrar compartilhamento! Tente novamente.');
-			else {
-				if (confirm('Carregar o compartilhamento?')) {
-					//localStorage.setItem('compartilhados', JSON.stringify(@Html.Raw(@Model.CompartilhadoConteudo)));				
-					mostrarModal('salvar');
-				}
-			}
-		}
+        //Comentado para funcionar por enquanto
+		// if ('@Model.CompartilhadoNome' !== '') {
+		// 	if ('@Model.CompartilhadoNome' === 'Erro')
+		// 		alert('Ocorreu um erro ao mostrar compartilhamento! Tente novamente.');
+		// 	else {
+		// 		if (confirm('Carregar o compartilhamento?')) {
+		// 			localStorage.setItem('compartilhados', JSON.stringify(@Html.Raw(@Model.CompartilhadoConteudo)));				
+		// 			mostrarModal('salvar');
+		// 		}
+		// 	}
+		// }
 
-		if (window.location.href.includes('compartilhado'))
-			limparUrl();
+		// if (window.location.href.includes('compartilhado'))
+		// 	limparUrl();
 	}
 
 	function baixar() {
@@ -1029,16 +1030,15 @@
 	}
 </script>
 
-<script src="./assets/js/orgao.min.js"></script>
-
-
+<script src="./assets/js/orgao.js"></script>
 <script src="./assets/js/site.js"></script> 
-<script src="./assets/js/bateria.js"></script>
-<script src="./assets/js/bundle.js"></script>
+<!-- <script src="./assets/js/bateria.js"></script>
+<script src="./assets/js/bundle.js"></script> -->
 
 <!-- <script src="./assets/js/site.min.js"></script> 
 <script src="./assets/js/bateria.min.js"></script>
-<script src="./assets/js/bundle.min.js"></script> -->
+<script src="./assets/js/bundle.min.js"></script>
+<script src="./assets/js/orgao.min.js"></script> -->
 
 <script>
     $(window).click(function (e) {

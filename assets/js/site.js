@@ -103,4 +103,4 @@ function removerComercial() {
 document.addEventListener('click', removerComercial);
 document.addEventListener('touchstart', removerComercial);
 
-verificarCertificadoVencendo();
+//verificarCertificadoVencendo(); Comentado para funcionar por enquanto
