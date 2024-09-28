@@ -11,18 +11,18 @@ class Tracker {
     this.scheduleMap = {};
 
     this.drawTracker = (numRows, numCols, data) => {
-      const htmlTable = new TrackerTable();
-      htmlTable.setRows(numRows, numCols, data);
+      const trackerTable = new TrackerTable();
+      trackerTable.setRows(numRows, numCols, data);
       const trackerParent = document.getElementById('tracker-parent');
       trackerParent.innerHTML = '';
-      trackerParent.insertAdjacentHTML('afterbegin', htmlTable.getTable());
+      trackerParent.insertAdjacentHTML('afterbegin', trackerTable.getTable());
     };
 
     this.next = () => {
       this.current = (this.current + 1) % this.measureLength;
     };
 
-    this.milliPerBeat = (beats = 60) => 1000 * 60 / beats;
+    this.milliPerBeat = (beats = 60) => (1000 * 60) / beats;
 
     this.getTrackerRowValues = (colId) => {
       const selector = `[data-col-id="${colId}"]`;
@@ -42,7 +42,7 @@ class Tracker {
     this.scheduleBeat = (beat, now) => {
       const triggerTime = now + this.scheduleForward;
       this.scheduleMap[beat.colId] = triggerTime;
-      playSolo(beat.colId);
+      this.playSolo(beat.colId);
 
       if (beat.enabled) {
         this.eventMap[this.getEventKey(beat)] = this.clock.callbackAtTime(
@@ -54,11 +54,7 @@ class Tracker {
 
     this.scheduleAudioBeatNow = (beat) => {
       if (beat.enabled) {
-        const beatEvent = this.eventMap[this.getEventKey(beat)];
-        if (beatEvent) {
-          beatEvent.clear();
-          delete this.eventMap[this.getEventKey(beat)];
-        }
+        this.clearBeatEvent(beat);
         return;
       }
 
@@ -68,6 +64,14 @@ class Tracker {
         () => this.scheduleAudioBeat(beat.rowId, triggerTime),
         now
       );
+    };
+
+    this.clearBeatEvent = (beat) => {
+      const beatEvent = this.eventMap[this.getEventKey(beat)];
+      if (beatEvent) {
+        beatEvent.clear();
+        delete this.eventMap[this.getEventKey(beat)];
+      }
     };
 
     this.runSchedule = (bpm) => {
@@ -129,6 +133,31 @@ class Tracker {
           event.target.classList.toggle('tracker-enabled');
         });
       });
+    };
+
+    this.playSolo = (colId) => {
+      if (colId !== _colId && _notasSolo) {
+        if (_notasSolo[_notasSoloIndex] !== '') {
+          if (_somSolo) {
+            _somSolo.stop();
+          }
+
+          _somSolo = acordes[`epiano_${_notasSolo[_notasSoloIndex].replace('0', '_baixo').replace('-1', '_grave')}`];
+          _somSolo.play();
+        }
+        if (_notasSoloIndex === _notasSolo.length - 1) {
+          if (_somSolo) {
+            _somSolo.stop();
+          }
+
+          _somSolo = null;
+          _notasSolo = null;
+          _notasSoloIndex = 0;
+        } else {
+          _notasSoloIndex++;
+        }
+      }
+      _colId = colId;
     };
   }
 }
@@ -263,8 +292,82 @@ class AudioBufferInstrument {
 
 class GetSetFormValues {
   constructor() {
-    this.set = setFormValues;
-    this.get = getFormValues;
+    this.set = this.setFormValues;
+    this.get = this.getFormValues;
+  }
+
+  getFormValues(formElement) {
+    const formParams = {};
+    for (let i = 0; i < formElement.elements.length; i++) {
+      const elem = formElement.elements[i];
+      switch (elem.type) {
+        case 'submit':
+          break;
+        case 'radio':
+          if (elem.checked) {
+            formParams[elem.name] = elem.value;
+          }
+          break;
+        case 'checkbox':
+          if (elem.checked) {
+            formParams[elem.name] = elem.value;
+          }
+          break;
+        case 'select-multiple':
+          const selectValues = this.getSelectValues(elem);
+          if (selectValues.length > 0) {
+            formParams[elem.name] = selectValues;
+          }
+          break;
+        default:
+          if (elem.value !== undefined) {
+            formParams[elem.name] = elem.value;
+          }
+      }
+    }
+    return formParams;
+  }
+
+  setFormValues(formElement, values) {
+    for (let i = 0; i < formElement.elements.length; i++) {
+      const elem = formElement.elements[i];
+      switch (elem.type) {
+        case 'submit':
+          break;
+        case 'radio':
+          elem.checked = values[elem.name] === elem.value;
+          break;
+        case 'checkbox':
+          elem.checked = values[elem.name] === elem.value;
+          break;
+        case 'select-multiple':
+          if (values[elem.name]) {
+            this.setSelectValues(elem, values[elem.name]);
+          }
+          break;
+        default:
+          if (values[elem.name] !== undefined) {
+            elem.value = values[elem.name];
+          }
+      }
+    }
+  }
+
+  setSelectValues(selectElem, values) {
+    for (let i = 0; i < selectElem.options.length; i++) {
+      selectElem.options[i].selected = values.indexOf(selectElem.options[i].value) > -1;
+    }
+  }
+
+  getSelectValues(select) {
+    const result = [];
+    if (select && select.options) {
+      for (let i = 0; i < select.options.length; i++) {
+        const opt = select.options[i];
+        opt.selected && result.push(opt.value || opt.text);
+      }
+    }
+    return result;
   }
 }
 
@@ -429,48 +532,6 @@ function getFormValues(formElement) {
   return formParams;
 }
 
-function setFormValues(formElement, values) {
-  for (let i = 0; i < formElement.elements.length; i++) {
-    const elem = formElement.elements[i];
-    switch (elem.type) {
-      case 'submit':
-        break;
-      case 'radio':
-        elem.checked = values[elem.name] === elem.value;
-        break;
-      case 'checkbox':
-        elem.checked = values[elem.name] === elem.value;
-        break;
-      case 'select-multiple':
-        if (values[elem.name]) {
-          setSelectValues(elem, values[elem.name]);
-        }
-        break;
-      default:
-        if (values[elem.name] !== undefined) {
-          elem.value = values[elem.name];
-        }
-    }
-  }
-}
-
-function setSelectValues(selectElem, values) {
-  for (let i = 0; i < selectElem.options.length; i++) {
-    selectElem.options[i].selected = values.indexOf(selectElem.options[i].value) > -1;
-  }
-}
-
-function getSelectValues(select) {
-  const result = [];
-  if (select && select.options) {
-    for (let i = 0; i < select.options.length; i++) {
-      const opt = select.options[i];
-      opt.selected && result.push(opt.value || opt.text);
-    }
-  }
-  return result;
-}
-
 function sampleLoader(context, url) {
   return new Promise((resolve, reject) => {
     const request = new XMLHttpRequest();
@@ -527,28 +588,3 @@ function getSamplePromises(audioContext, data) {
 }
 
 const getSetAudioOptions = new GetSetControls();
-
-function playSolo(colId) {
-  if (colId !== _colId && _notasSolo) {
-    if (_notasSolo[_notasSoloIndex] !== '') {
-      if (_somSolo) {
-        _somSolo.stop();
-      }
-
-      _somSolo = acordes[`epiano_${_notasSolo[_notasSoloIndex].replace('0', '_baixo').replace('-1', '_grave')}`];
-      _somSolo.play();
-    }
-    if (_notasSoloIndex === _notasSolo.length - 1) {
-      if (_somSolo) {
-        _somSolo.stop();
-      }
-
-      _somSolo = null;
-      _notasSolo = null;
-      _notasSoloIndex = 0;
-    } else {
-      _notasSoloIndex++;
-    }
-  }
-  _colId = colId;
-}
