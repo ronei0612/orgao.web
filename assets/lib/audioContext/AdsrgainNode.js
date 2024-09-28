@@ -1,26 +1,27 @@
 var buffers = {};
 
-function AdsrGainNode(ctx) {
-  this.ctx = ctx;
-  this.mode = 'exponentialRampToValueAtTime';
-  this.options = {
-    attackAmp: 0.1,
-    decayAmp: 0.3,
-    sustainAmp: 0.7,
-    releaseAmp: 0.01,
-    attackTime: 0.1,
-    decayTime: 0.2,
-    sustainTime: 1.0,
-    releaseTime: 3.4,
-    autoRelease: true
-  };
+class AdsrGainNode {
+  constructor(ctx) {
+    this.ctx = ctx;
+    this.mode = 'exponentialRampToValueAtTime';
+    this.options = {
+      attackAmp: 0.1,
+      decayAmp: 0.3,
+      sustainAmp: 0.7,
+      releaseAmp: 0.01,
+      attackTime: 0.1,
+      decayTime: 0.2,
+      sustainTime: 1.0,
+      releaseTime: 3.4,
+      autoRelease: true
+    };
+  }
 
-  this.setOptions = options => this.options = Object.assign(this.options, options);
+  setOptions(options) {
+    this.options = Object.assign(this.options, options);
+  }
 
-  this.gainNode;
-  this.audioTime;
-
-  this.getGainNode = audioTime => {
+  getGainNode(audioTime) {
     this.gainNode = this.ctx.createGain();
     this.audioTime = audioTime;
 
@@ -35,41 +36,49 @@ function AdsrGainNode(ctx) {
     }
 
     return this.gainNode;
-  };
+  }
 
-  this.releaseNow = () => {
+  releaseNow() {
     this.gainNode.gain[this.mode](this.options.releaseAmp, this.ctx.currentTime + this.options.releaseTime);
     this.disconnect(this.options.releaseTime);
-  };
+  }
 
-  this.releaseTime = () => this.options.attackTime + this.options.decayTime + this.options.sustainTime + this.options.releaseTime;
+  releaseTime() {
+    return this.options.attackTime + this.options.decayTime + this.options.sustainTime + this.options.releaseTime;
+  }
 
-  this.releaseTimeNow = () => this.ctx.currentTime + this.releaseTime();
+  releaseTimeNow() {
+    return this.ctx.currentTime + this.releaseTime();
+  }
 
-  this.disconnect = disconnectTime => setTimeout(() => this.gainNode.disconnect(), disconnectTime * 1000);
+  disconnect(disconnectTime) {
+    setTimeout(() => this.gainNode.disconnect(), disconnectTime * 1000);
+  }
 }
 
-function audioBufferInstrument(context, buffer) {
-  this.context = context;
-  this.buffer = buffer;
+class audioBufferInstrument {
+  constructor(context, buffer) {
+    this.context = context;
+    this.buffer = buffer;
+  }
+
+  setup() {
+    this.source = this.context.createBufferSource();
+    this.source.buffer = this.buffer;
+    this.source.connect(this.context.destination);
+  }
+
+  get() {
+    this.source = this.context.createBufferSource();
+    this.source.buffer = this.buffer;
+    return this.source;
+  }
+
+  trigger(time) {
+    this.setup();
+    this.source.start(time);
+  }
 }
-
-audioBufferInstrument.prototype.setup = function () {
-  this.source = this.context.createBufferSource();
-  this.source.buffer = this.buffer;
-  this.source.connect(this.context.destination);
-};
-
-audioBufferInstrument.prototype.get = function () {
-  this.source = this.context.createBufferSource();
-  this.source.buffer = this.buffer;
-  return this.source;
-};
-
-audioBufferInstrument.prototype.trigger = function (time) {
-  this.setup();
-  this.source.start(time);
-};
 
 function getFormValues(formElement) {
   const formParams = {};
@@ -79,17 +88,25 @@ function getFormValues(formElement) {
       case 'submit':
         break;
       case 'radio':
-        elem.checked && (formParams[elem.name] = elem.value);
+        if (elem.checked) {
+          formParams[elem.name] = elem.value;
+        }
         break;
       case 'checkbox':
-        elem.checked && (formParams[elem.name] = elem.value);
+        if (elem.checked) {
+          formParams[elem.name] = elem.value;
+        }
         break;
       case 'select-multiple':
         const selectValues = getSelectValues(elem);
-        selectValues.length > 0 && (formParams[elem.name] = selectValues);
+        if (selectValues.length > 0) {
+          formParams[elem.name] = selectValues;
+        }
         break;
       default:
-        elem.value !== undefined && (formParams[elem.name] = elem.value);
+        if (elem.value !== undefined) {
+          formParams[elem.name] = elem.value;
+        }
     }
   }
   return formParams;
@@ -108,10 +125,14 @@ function setFormValues(formElement, values) {
         elem.checked = values[elem.name] === elem.value;
         break;
       case 'select-multiple':
-        values[elem.name] && setSelectValues(elem, values[elem.name]);
+        if (values[elem.name]) {
+          setSelectValues(elem, values[elem.name]);
+        }
         break;
       default:
-        values[elem.name] !== undefined && (elem.value = values[elem.name]);
+        if (values[elem.name] !== undefined) {
+          elem.value = values[elem.name];
+        }
     }
   }
 }
@@ -133,57 +154,61 @@ function getSelectValues(select) {
   return result;
 }
 
-function getSetFormValues() {
-  this.set = setFormValues;
-  this.get = getFormValues;
+class getSetFormValues {
+  constructor() {
+    this.set = setFormValues;
+    this.get = getFormValues;
+  }
 }
 
-function selectElement(appendToID, selectID, options, selected) {
-  this.appendToID = appendToID;
-  this.selectID = selectID;
-  this.options = options;
-  this.selected = selected;
-  this.selectList;
+class selectElement {
+  constructor(appendToID, selectID, options, selected) {
+    this.appendToID = appendToID;
+    this.selectID = selectID;
+    this.options = options;
+    this.selected = selected;
+    this.selectList;
 
-  this.create = cb => {
-    const appendToID = document.getElementById(this.appendToID);
-    this.selectList = document.createElement('select');
-    this.selectList.id = this.selectID;
-    appendToID.appendChild(this.selectList);
-    this.update(selectID, this.options, this.selected);
-  };
+    this.create = cb => {
+      const appendToID = document.getElementById(this.appendToID);
+      this.selectList = document.createElement('select');
+      this.selectList.id = this.selectID;
+      appendToID.appendChild(this.selectList);
+      this.update(selectID, this.options, this.selected);
+    };
 
-  this.onChange = cb => this.selectList.addEventListener('change', () => cb(this.selectList.value));
+    this.onChange = cb => this.selectList.addEventListener('change', () => cb(this.selectList.value));
 
-  this.update = (elem, options, selected) => {
-    this.delete(elem);
-    const selectList = document.getElementById(elem);
-    for (const key in options) {
-      const option = document.createElement('option');
-      option.value = key;
-      option.text = options[key];
-      selectList.appendChild(option);
-      key === selected && option.setAttribute('selected', true);
-    }
-  };
+    this.update = (elem, options, selected) => {
+      this.delete(elem);
+      const selectList = document.getElementById(elem);
+      for (const key in options) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.text = options[key];
+        selectList.appendChild(option);
+        key === selected && option.setAttribute('selected', true);
+      }
+    };
 
-  this.getSelected = elem => {
-    const selectList = document.getElementById(elem);
-    for (let i = 0; i < selectList.options.length; i++) {
-      const opt = selectList.options[i];
-      if (opt.selected) return opt.value;
-    }
-    return false;
-  };
+    this.getSelected = elem => {
+      const selectList = document.getElementById(elem);
+      for (let i = 0; i < selectList.options.length; i++) {
+        const opt = selectList.options[i];
+        if (opt.selected) return opt.value;
+      }
+      return false;
+    };
 
-  this.delete = elem => {
-    const selectList = document.getElementById(elem);
-    for (const option in selectList) {
-      selectList.remove(option);
-    }
-  };
+    this.delete = elem => {
+      const selectList = document.getElementById(elem);
+      for (const option in selectList) {
+        selectList.remove(option);
+      }
+    };
 
-  this.getAsString = () => document.getElementById(this.appendToID).outerHTML;
+    this.getAsString = () => document.getElementById(this.appendToID).outerHTML;
+  }
 }
 
 function sampleLoader(context, url) {
@@ -191,8 +216,8 @@ function sampleLoader(context, url) {
     const request = new XMLHttpRequest();
     request.open('get', url, true);
     request.responseType = 'arraybuffer';
-    request.onload = () => request.status === 200 
-      ? context.decodeAudioData(request.response, resolve) 
+    request.onload = () => request.status === 200
+      ? context.decodeAudioData(request.response, resolve)
       : reject('tiny-sample-loader request failed');
     request.send();
   });
@@ -203,8 +228,8 @@ function getJSONPromise(url) {
     const request = new XMLHttpRequest();
     request.open('get', url, true);
     request.responseType = 'text';
-    request.onload = () => request.status === 200 
-      ? resolve(JSON.parse(request.responseText)) 
+    request.onload = () => request.status === 200
+      ? resolve(JSON.parse(request.responseText))
       : reject('JSON could not be loaded ' + url);
     request.send();
   });
@@ -232,7 +257,7 @@ function getSamplePromises(ctx, data) {
     const filename = val.replace(/\.[^/.]+$/, '');
     data.filename.push(filename);
     const remoteUrl = baseUrl + val;
-    
+
     const loaderPromise = sampleLoader(ctx, remoteUrl);
     loaderPromise.then(buffer => buffers[filename] = new audioBufferInstrument(ctx, buffer));
     promises.push(loaderPromise);
@@ -241,43 +266,45 @@ function getSamplePromises(ctx, data) {
   return promises;
 }
 
-function trackerTable() {
-  this.str = '';
+class trackerTable {
+  constructor() {
+    this.str = '';
 
-  this.getTable = () => `<table id="tracker-table">${this.str}</table>`;
+    this.getTable = () => `<table id="tracker-table">${this.str}</table>`;
 
-  this.setHeader = (numRows, data) => {
-    this.str += `<tr class="tracker-row header">`;
-    this.str += this.getCells('header', numRows, { header: true });
-    this.str += `</tr>`;
-  };
-
-  this.setRows = (numRows, numCols, data) => {
-    this.setHeader(numCols, data);
-    for (let rowID = 0; rowID < numRows; rowID++) {
-      this.str += `<tr class="tracker-row" data-id="${rowID}">`;
-      this.str += data.title && (data.title[rowID].includes('baixo') || data.title[rowID].includes('cravo') || data.title[rowID].includes('violao')) 
-        ? '' 
-        : this.getCells(rowID, numCols, data);
+    this.setHeader = (numRows, data) => {
+      this.str += `<tr class="tracker-row header">`;
+      this.str += this.getCells('header', numRows, { header: true });
       this.str += `</tr>`;
-    }
-  };
+    };
 
-  let i = 0;
-  this.getFirstCell = (rowID, data) => `<td class="tracker-first-cell" data-row-id="${rowID}">${data.title ? data.title[rowID] : ''}</td>`;
+    this.setRows = (numRows, numCols, data) => {
+      this.setHeader(numCols, data);
+      for (let rowID = 0; rowID < numRows; rowID++) {
+        this.str += `<tr class="tracker-row" data-id="${rowID}">`;
+        this.str += data.title && (data.title[rowID].includes('baixo') || data.title[rowID].includes('cravo') || data.title[rowID].includes('violao'))
+          ? ''
+          : this.getCells(rowID, numCols, data);
+        this.str += `</tr>`;
+      }
+    };
 
-  this.getCells = (rowID, numRows, data) => {
-    let str = this.getFirstCell(rowID, data);
-    let cssClass = 'tracker-cell';
-    rowID === 'header' && (cssClass = 'tracker-cell-header');
+    let i = 0;
+    this.getFirstCell = (rowID, data) => `<td class="tracker-first-cell" data-row-id="${rowID}">${data.title ? data.title[rowID] : ''}</td>`;
 
-    for (let c = 0; c < numRows; c++) {
-      const num = cssClass === 'tracker-cell' ? i : '';
-      str += `<td class="${cssClass}" data-row-id="${rowID}" data-col-id="${c}">${num}`;
-      i++;
-      data.header && (str += c + 1);
-      str += `</td>`;
-    }
-    return str;
-  };
+    this.getCells = (rowID, numRows, data) => {
+      let str = this.getFirstCell(rowID, data);
+      let cssClass = 'tracker-cell';
+      rowID === 'header' && (cssClass = 'tracker-cell-header');
+
+      for (let c = 0; c < numRows; c++) {
+        const num = cssClass === 'tracker-cell' ? i : '';
+        str += `<td class="${cssClass}" data-row-id="${rowID}" data-col-id="${c}">${num}`;
+        i++;
+        data.header && (str += c + 1);
+        str += `</td>`;
+      }
+      return str;
+    };
+  }
 }
