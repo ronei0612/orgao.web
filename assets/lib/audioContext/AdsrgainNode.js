@@ -1,4 +1,3 @@
-// AdsrgainNode.js
 function AdsrGainNode(ctx) {
   this.ctx = ctx;
   this.mode = 'exponentialRampToValueAtTime';
@@ -14,39 +13,22 @@ function AdsrGainNode(ctx) {
     autoRelease: true
   };
 
-  this.setOptions = function (options) {
-    this.options = Object.assign(this.options, options);
-  };
+  this.setOptions = options => this.options = Object.assign(this.options, options);
 
   this.gainNode;
   this.audioTime;
 
-  this.getGainNode = (audioTime) => {
+  this.getGainNode = audioTime => {
     this.gainNode = this.ctx.createGain();
     this.audioTime = audioTime;
 
     this.gainNode.gain.setValueAtTime(0.0000001, audioTime);
-
-    this.gainNode.gain[this.mode](
-      this.options.attackAmp,
-      audioTime + this.options.attackTime
-    );
-
-    this.gainNode.gain[this.mode](
-      this.options.decayAmp,
-      audioTime + this.options.attackTime + this.options.decayTime
-    );
-
-    this.gainNode.gain[this.mode](
-      this.options.sustainAmp,
-      audioTime + this.options.attackTime + this.options.sustainTime
-    );
+    this.gainNode.gain[this.mode](this.options.attackAmp, audioTime + this.options.attackTime);
+    this.gainNode.gain[this.mode](this.options.decayAmp, audioTime + this.options.attackTime + this.options.decayTime);
+    this.gainNode.gain[this.mode](this.options.sustainAmp, audioTime + this.options.attackTime + this.options.sustainTime);
 
     if (this.options.autoRelease) {
-      this.gainNode.gain[this.mode](
-        this.options.releaseAmp,
-        audioTime + this.releaseTime()
-      );
+      this.gainNode.gain[this.mode](this.options.releaseAmp, audioTime + this.releaseTime());
       this.disconnect(audioTime + this.releaseTime());
     }
 
@@ -54,34 +36,17 @@ function AdsrGainNode(ctx) {
   };
 
   this.releaseNow = () => {
-    this.gainNode.gain[this.mode](
-      this.options.releaseAmp,
-      this.ctx.currentTime + this.options.releaseTime
-    );
+    this.gainNode.gain[this.mode](this.options.releaseAmp, this.ctx.currentTime + this.options.releaseTime);
     this.disconnect(this.options.releaseTime);
   };
 
-  this.releaseTime = function () {
-    return (
-      this.options.attackTime +
-      this.options.decayTime +
-      this.options.sustainTime +
-      this.options.releaseTime
-    );
-  };
+  this.releaseTime = () => this.options.attackTime + this.options.decayTime + this.options.sustainTime + this.options.releaseTime;
 
-  this.releaseTimeNow = function () {
-    return this.ctx.currentTime + this.releaseTime();
-  };
+  this.releaseTimeNow = () => this.ctx.currentTime + this.releaseTime();
 
-  this.disconnect = (disconnectTime) => {
-    setTimeout(() => {
-      this.gainNode.disconnect();
-    }, disconnectTime * 1000);
-  };
+  this.disconnect = disconnectTime => setTimeout(() => this.gainNode.disconnect(), disconnectTime * 1000);
 }
 
-// audioBufferInstrument.js
 function audioBufferInstrument(context, buffer) {
   this.context = context;
   this.buffer = buffer;
