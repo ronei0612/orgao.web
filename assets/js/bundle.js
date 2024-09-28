@@ -10,37 +10,29 @@ let ctx;// = new AudioContext();
 let schedule;
 
 const defaultTrack = {
-    beat: [
-      { rowId: '0', colId: '0', enabled: false },
-    ],
-    settings: {
-      // sampleSet: '../assets/audio/studio/samples.json',
-      sampleSet: 'https://roneicostasoares.com.br/Orgao/assets/audio/studio/samples.json',
-      measureLength: 16,
-      bpm: 90,
-      detune: 0,
-      gainEnabled: 'gain',
-      attackAmp: 0,
-      sustainAmp: 0.4,
-      decayAmp: 0.7,
-      releaseAmp: 1,
-      attackTime: 0,
-      decayTime: 0,
-      sustainTime: 2,
-      releaseTime: 2,
-      adsrInterval: 0.1,
-      delay: 0.01,
-      filter: 1000,
-    },
-  };
-
-  // hasClass.js
-function hasClass(el, str) {
-    if (el.classList) {
-      return el.classList.contains(str);
-    }
-    return new RegExp('(^| )' + str + '( |$)', 'gi').test(el.className);
-  }
+  beat: [
+    { rowId: '0', colId: '0', enabled: false },
+  ],
+  settings: {
+    // sampleSet: '../assets/audio/studio/samples.json',
+    sampleSet: 'https://roneicostasoares.com.br/Orgao/assets/audio/studio/samples.json',
+    measureLength: 16,
+    bpm: 90,
+    detune: 0,
+    gainEnabled: 'gain',
+    attackAmp: 0,
+    sustainAmp: 0.4,
+    decayAmp: 0.7,
+    releaseAmp: 1,
+    attackTime: 0,
+    decayTime: 0,
+    sustainTime: 2,
+    releaseTime: 2,
+    adsrInterval: 0.1,
+    delay: 0.01,
+    filter: 1000,
+  },
+};
 
 function initializeSampleSet(ctx, dataUrl, track) {
   var sampleSetPromise = loadSampleSet(ctx, dataUrl);
@@ -185,6 +177,7 @@ function playBateria() {
   prepararBateriaBotao.style.display = 'none';
   pararBateriaBotao.style.display = '';
 }
+
 function stopBateria(trocandoInstrumento) {
   if (schedule.running) {
     //if (_autoMudarRitmo && !trocandoInstrumento && !_brushSelecionado && !_cravoSelecionado)
@@ -230,6 +223,7 @@ function tocarBateria(botao = null, tocar) {
   else
     stopBateria();
 }
+
 function setupBaseEvents() {
   function verificarETocarBateria(mudarRitmoNome, tunerAcompanhamento, instrumentoAcompanhamento) {
     if (verificarETocarBateria_2(tunerAcompanhamento, instrumentoAcompanhamento)) {
@@ -382,7 +376,7 @@ function setupBaseEvents() {
     bpm.value = parseInt(bpmRange.value);
     _tempo = bpmRange.value;
   });
-  
+
   bpmRange.addEventListener('change', function (e) {
     setTempoRitmo();
   });
@@ -417,5 +411,3 @@ function setupBaseEvents() {
 $('#sampleSet').on('change', function () {
   initializeSampleSet(ctx, this.value);
 });
-
-//gerarRitmosNomes(ritmosNomes);
