@@ -1,15 +1,14 @@
-
-function WAAClock(context, opts) {
-  opts = opts || {};
-  this.tickMethod = opts.tickMethod || 'ScriptProcessorNode';
-  this.toleranceEarly = opts.toleranceEarly || 0.001;
-  this.toleranceLate = opts.toleranceLate || 0.10;
+function WAAClock(context, options) {
+  options = options || {};
+  this.tickMethod = options.tickMethod || 'ScriptProcessorNode';
+  this.toleranceEarly = options.toleranceEarly || 0.001;
+  this.toleranceLate = options.toleranceLate || 0.10;
   this.context = context;
   this._events = [];
   this._started = false;
 }
 
-var CLOCK_DEFAULTS = {
+const CLOCK_DEFAULTS = {
   toleranceLate: 0.10,
   toleranceEarly: 0.001
 };
@@ -126,12 +125,13 @@ WAAClock.prototype.start = function () {
       var bufferSize = 256;
       this._clockNode = this.context.createScriptProcessor(bufferSize, 1, 1);
       this._clockNode.connect(this.context.destination);
+
       this._clockNode.onaudioprocess = function () {
         setTimeout(function () {
           self._tick();
         }, 0);
       };
-    } else if (this.tickMethod === 'manual') null; // _tick is called manually
+    } else if (this.tickMethod === 'manual') null;
     else throw new Error('invalid tickMethod ' + this.tickMethod);
   }
 };
@@ -145,10 +145,12 @@ WAAClock.prototype.stop = function () {
 
 WAAClock.prototype._tick = function () {
   var event = this._events.shift();
+
   while (event && event._earliestTime <= this.context.currentTime) {
     event._execute();
     event = this._events.shift();
   }
+
   if (event) this._events.unshift(event);
 };
 
@@ -170,9 +172,10 @@ WAAClock.prototype._hasEvent = function (event) {
 };
 
 WAAClock.prototype._indexByTime = function (deadline) {
-  var low = 0,
-    high = this._events.length,
-    mid;
+  var low = 0;
+  var high = this._events.length;
+  var mid;
+
   while (low < high) {
     mid = Math.floor((low + high) / 2);
     if (this._events[mid]._earliestTime < deadline) low = mid + 1;
@@ -188,4 +191,3 @@ WAAClock.prototype._absTime = function (relTime) {
 WAAClock.prototype._relTime = function (absTime) {
   return absTime - this.context.currentTime;
 };
-
