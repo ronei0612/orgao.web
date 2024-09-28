@@ -1,8 +1,8 @@
 var buffers = {};
 
 class AdsrGainNode {
-  constructor(ctx) {
-    this.ctx = ctx;
+  constructor(audioContext) {
+    this.audioContext = audioContext;
     this.mode = 'exponentialRampToValueAtTime';
     this.options = {
       attackAmp: 0.1,
@@ -22,7 +22,7 @@ class AdsrGainNode {
   }
 
   getGainNode(audioTime) {
-    this.gainNode = this.ctx.createGain();
+    this.gainNode = this.audioContext.createGain();
     this.audioTime = audioTime;
 
     this.gainNode.gain.setValueAtTime(0.0000001, audioTime);
@@ -39,7 +39,7 @@ class AdsrGainNode {
   }
 
   releaseNow() {
-    this.gainNode.gain[this.mode](this.options.releaseAmp, this.ctx.currentTime + this.options.releaseTime);
+    this.gainNode.gain[this.mode](this.options.releaseAmp, this.audioContext.currentTime + this.options.releaseTime);
     this.disconnect(this.options.releaseTime);
   }
 
@@ -48,7 +48,7 @@ class AdsrGainNode {
   }
 
   releaseTimeNow() {
-    return this.ctx.currentTime + this.releaseTime();
+    return this.audioContext.currentTime + this.releaseTime();
   }
 
   disconnect(disconnectTime) {
@@ -235,11 +235,11 @@ function getJSONPromise(url) {
   });
 }
 
-function loadSampleSet(ctx, dataUrl) {
+function loadSampleSet(audioContext, dataUrl) {
   return new Promise((resolve, reject) => {
     getJSONPromise(dataUrl)
       .then(data => {
-        const samplePromises = getSamplePromises(ctx, data);
+        const samplePromises = getSamplePromises(audioContext, data);
         Promise.all(samplePromises)
           .then(() => resolve({ data, buffers }))
           .catch(error => console.log(error));
@@ -248,7 +248,7 @@ function loadSampleSet(ctx, dataUrl) {
   });
 }
 
-function getSamplePromises(ctx, data) {
+function getSamplePromises(audioContext, data) {
   const baseUrl = data.samples;
   const promises = [];
   data.filename = [];
@@ -258,8 +258,8 @@ function getSamplePromises(ctx, data) {
     data.filename.push(filename);
     const remoteUrl = baseUrl + val;
 
-    const loaderPromise = sampleLoader(ctx, remoteUrl);
-    loaderPromise.then(buffer => buffers[filename] = new audioBufferInstrument(ctx, buffer));
+    const loaderPromise = sampleLoader(audioContext, remoteUrl);
+    loaderPromise.then(buffer => buffers[filename] = new audioBufferInstrument(audioContext, buffer));
     promises.push(loaderPromise);
   });
 

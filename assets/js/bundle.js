@@ -5,7 +5,7 @@ var _brushSelecionado = false;
 var _tocandoBateria = false;
 
 let instrumentData = {};
-let ctx;// = new AudioContext();
+let audioContext;
 let schedule;
 
 function setupTrackerHtml(data, measureLength) {
@@ -24,14 +24,14 @@ function scheduleAudioBeat(rowId, triggerTime) { //tocar os beats
 
   function play(source) {
     let node = routeGain(source)
-    node.connect(ctx.destination);
+    node.connect(audioContext.destination);
     fecharChimbal(instrumentName, _sourceChimbalAberto, triggerTime);
     source.start(triggerTime);
     //console.log(triggerTime);
   }
 
   function routeGain(source) {
-    let gain = new AdsrGainNode(ctx);
+    let gain = new AdsrGainNode(audioContext);
     gain.mode = 'linearRampToValueAtTime';
     let options = getSetAudioOptions.getTrackerControls();
 
@@ -128,7 +128,7 @@ function stopBateria(trocandoInstrumento) {
 
     if (_cravoSelecionado || trocandoInstrumento) {
       schedule.stop();
-      schedule = new tracker(ctx, scheduleAudioBeat);
+      schedule = new tracker(audioContext, scheduleAudioBeat);
 
       _violaoSelecionado = false;
       _epianoSelecionado = false;
@@ -352,5 +352,5 @@ function setupBaseEvents() {
 }
 
 $('#sampleSet').on('change', function () {
-  initializeSampleSet(ctx, this.value);
+  initializeSampleSet(audioContext, this.value);
 });

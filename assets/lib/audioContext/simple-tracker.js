@@ -1,11 +1,11 @@
 class tracker {
-  constructor(ctx, scheduleAudioBeat) {
+  constructor(audioContext, scheduleAudioBeat) {
     this.measureLength = 16;
     this.scheduleAudioBeat = scheduleAudioBeat;
     this.scheduleForward = 0.1;
     this.current = 0;
     this.eventMap = {};
-    this.clock = new WAAClock(ctx);
+    this.clock = new WAAClock(audioContext);
     this.clock.start();
     this.running = false;
 
@@ -70,7 +70,7 @@ class tracker {
 
     this.schedule = function () {
       let beatColumn = this.getTrackerRowValues(this.current);
-      let now = ctx.currentTime;
+      let now = audioContext.currentTime;
       beatColumn.forEach((beat) => {
         this.scheduleBeat(beat, now);
       });
@@ -107,7 +107,7 @@ class tracker {
 
       let triggerTime = this.scheduleMap[0] +
         (beat.colId * this.milliPerBeat(this.bpm)) / 1000;
-      let now = ctx.currentTime;
+      let now = audioContext.currentTime;
       this.eventMap[this.getEventKey(beat)] = this.clock.callbackAtTime(
         () => {
           this.scheduleAudioBeat(beat.rowId, triggerTime);
@@ -213,8 +213,8 @@ const defaultTrack = {
   },
 };
 
-function initializeSampleSet(ctx, dataUrl, track) {
-  var sampleSetPromise = loadSampleSet(ctx, dataUrl);
+function initializeSampleSet(audioContext, dataUrl, track) {
+  var sampleSetPromise = loadSampleSet(audioContext, dataUrl);
   sampleSetPromise.then(function (data) {
     buffers = data.buffers;
     sampleData = data.data;
@@ -235,10 +235,10 @@ function initializeSampleSet(ctx, dataUrl, track) {
 }
 
 window.onload = function () {
-  ctx = new AudioContext();
-  schedule = new tracker(ctx, scheduleAudioBeat);
+  audioContext = new AudioContext();
+  schedule = new tracker(audioContext, scheduleAudioBeat);
   getSetAudioOptions.setTrackerControls(defaultTrack.settings);
-  initializeSampleSet(ctx, defaultTrack.settings.sampleSet, defaultTrack);
+  initializeSampleSet(audioContext, defaultTrack.settings.sampleSet, defaultTrack);
   setupBaseEvents();
 };
 
