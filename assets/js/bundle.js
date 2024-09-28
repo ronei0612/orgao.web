@@ -258,6 +258,7 @@ function setupBaseEvents() {
     else if (_baixoSelecionado || _violaoSelecionado)
       verificarETocarBateria('', false);
   });
+
   aro.addEventListener('click', function (e) {
     if (_configurandoTeclas) {
       capturarTeclaConfiguracaoTeclas(aro);
@@ -267,6 +268,7 @@ function setupBaseEvents() {
     autoMudarRitmo(aro, true);
     _tocandoBateria = true;
   });
+
   meiaLua.addEventListener('click', function (e) {
     if (_configurandoTeclas) {
       capturarTeclaConfiguracaoTeclas(meiaLua);
@@ -276,6 +278,7 @@ function setupBaseEvents() {
     autoMudarRitmo(meiaLua, true);
     _tocandoBateria = true;
   });
+
   caixa.addEventListener('click', function (e) {
     if (_configurandoTeclas) {
       capturarTeclaConfiguracaoTeclas(caixa);
@@ -285,6 +288,7 @@ function setupBaseEvents() {
     autoMudarRitmo(caixa, true);
     _tocandoBateria = true;
   });
+
   brush.addEventListener('click', function (e) {
     if (_configurandoTeclas) {
       capturarTeclaConfiguracaoTeclas(brush);
@@ -295,6 +299,7 @@ function setupBaseEvents() {
     autoMudarRitmo(brush, true);
     _tocandoBateria = true;
   });
+
   chimbal.addEventListener('click', function (e) {
     if (_configurandoTeclas) {
       capturarTeclaConfiguracaoTeclas(chimbal);
@@ -304,6 +309,7 @@ function setupBaseEvents() {
     autoMudarRitmo(chimbal, true);
     _tocandoBateria = true;
   });
+
   cravo.addEventListener('click', function (e) {
     if (_configurandoTeclas) {
       capturarTeclaConfiguracaoTeclas(cravo);
@@ -311,6 +317,7 @@ function setupBaseEvents() {
     }
     verificarETocarBateria('cravo', true, 'stringsSolo');
   });
+
   brushCravo.addEventListener('click', function (e) {
     if (_configurandoTeclas) {
       capturarTeclaConfiguracaoTeclas(brushCravo);
@@ -318,6 +325,7 @@ function setupBaseEvents() {
     }
     verificarETocarBateria('brushCravo', true, 'stringsSolo');
   });
+
   baixoBotao.addEventListener('click', function (e) {
     if (_configurandoTeclas) {
       capturarTeclaConfiguracaoTeclas(baixoBotao);
@@ -326,6 +334,7 @@ function setupBaseEvents() {
     if (_baixoSelecionado && !_ritmoSelecionado)
       verificarETocarBateria('', false)
   });
+
   violaoBotao.addEventListener('click', function (e) {
     if (_configurandoTeclas) {
       capturarTeclaConfiguracaoTeclas(violaoBotao);
@@ -334,6 +343,7 @@ function setupBaseEvents() {
     if (_violaoSelecionado && !_ritmoSelecionado)
       verificarETocarBateria('', false)
   });
+
   cifraAvancar.addEventListener('click', function (e) {
     if (_configurandoTeclas) {
       return;
@@ -342,6 +352,7 @@ function setupBaseEvents() {
       if (!schedule.running)
         playBateria();
   });
+
   play_pause_bateria.addEventListener('mousedown', function (e) {
     if (_configurandoTeclas) {
       capturarTeclaConfiguracaoTeclas(play_pause_bateria);
@@ -361,17 +372,21 @@ function setupBaseEvents() {
     else
       tocarBateria();
   });
+
   bpm.addEventListener('change', function (e) {
     mudarTempoCompasso(false);
     setTempoRitmo();
   });
+
   bpmRange.addEventListener('input', function (e) {
     bpm.value = parseInt(bpmRange.value);
     _tempo = bpmRange.value;
   });
+  
   bpmRange.addEventListener('change', function (e) {
     setTempoRitmo();
   });
+
   measureLength.addEventListener('change', (e) => {
     let length = parseInt(measureLength.value);
     if (length < 1) return;

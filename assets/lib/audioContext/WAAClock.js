@@ -14,7 +14,7 @@ var CLOCK_DEFAULTS = {
   toleranceEarly: 0.001
 };
 
-function Event(clock, deadline, func) {
+function EventWAAClock(clock, deadline, func) {
   this.clock = clock;
   this.func = func;
   this._cleared = false;
@@ -27,13 +27,13 @@ function Event(clock, deadline, func) {
   this.schedule(deadline);
 }
 
-Event.prototype.clear = function () {
+EventWAAClock.prototype.clear = function () {
   this.clock._removeEvent(this);
   this._cleared = true;
   return this;
 };
 
-Event.prototype.repeat = function (time) {
+EventWAAClock.prototype.repeat = function (time) {
   if (time === 0) throw new Error('delay cannot be 0');
   this.repeatTime = time;
   if (!this.clock._hasEvent(this))
@@ -41,7 +41,7 @@ Event.prototype.repeat = function (time) {
   return this;
 };
 
-Event.prototype.tolerance = function (values) {
+EventWAAClock.prototype.tolerance = function (values) {
   if (typeof values.late === 'number') this.toleranceLate = values.late;
   if (typeof values.early === 'number') this.toleranceEarly = values.early;
   this._refreshEarlyLateDates();
@@ -52,11 +52,11 @@ Event.prototype.tolerance = function (values) {
   return this;
 };
 
-Event.prototype.isRepeated = function () {
+EventWAAClock.prototype.isRepeated = function () {
   return this.repeatTime !== null;
 };
 
-Event.prototype.schedule = function (deadline) {
+EventWAAClock.prototype.schedule = function (deadline) {
   this._cleared = false;
   this.deadline = deadline;
   this._refreshEarlyLateDates();
@@ -71,7 +71,7 @@ Event.prototype.schedule = function (deadline) {
   }
 };
 
-Event.prototype.timeStretch = function (tRef, ratio) {
+EventWAAClock.prototype.timeStretch = function (tRef, ratio) {
   if (this.isRepeated()) this.repeatTime = this.repeatTime * ratio;
 
   var deadline = tRef + ratio * (this.deadline - tRef);
@@ -82,7 +82,7 @@ Event.prototype.timeStretch = function (tRef, ratio) {
   this.schedule(deadline);
 };
 
-Event.prototype._execute = function () {
+EventWAAClock.prototype._execute = function () {
   if (this.clock._started === false) return;
   this.clock._removeEvent(this);
 
@@ -96,7 +96,7 @@ Event.prototype._execute = function () {
     this.schedule(this.deadline + this.repeatTime);
 };
 
-Event.prototype._refreshEarlyLateDates = function () {
+EventWAAClock.prototype._refreshEarlyLateDates = function () {
   this._latestTime = this.deadline + this.toleranceLate;
   this._earliestTime = this.deadline - this.toleranceEarly;
 };
@@ -153,7 +153,7 @@ WAAClock.prototype._tick = function () {
 };
 
 WAAClock.prototype._createEvent = function (func, deadline) {
-  return new Event(this, deadline, func);
+  return new EventWAAClock(this, deadline, func);
 };
 
 WAAClock.prototype._insertEvent = function (event) {
