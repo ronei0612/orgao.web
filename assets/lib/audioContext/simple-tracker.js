@@ -1,4 +1,4 @@
-class tracker {
+class Tracker {
   constructor(audioContext, scheduleAudioBeat) {
     this.measureLength = 16;
     this.scheduleAudioBeat = scheduleAudioBeat;
@@ -8,96 +8,53 @@ class tracker {
     this.clock = new WAAClock(audioContext);
     this.clock.start();
     this.running = false;
+    this.scheduleMap = {};
 
-    this.drawTracker = function (numRows, numCols, data) {
-      let htmlTable = new trackerTable();
+    this.drawTracker = (numRows, numCols, data) => {
+      const htmlTable = new TrackerTable();
       htmlTable.setRows(numRows, numCols, data);
-      let str = htmlTable.getTable();
-      let t = document.getElementById('tracker-parent');
-      t.innerHTML = '';
-      t.insertAdjacentHTML('afterbegin', str);
+      const trackerParent = document.getElementById('tracker-parent');
+      trackerParent.innerHTML = '';
+      trackerParent.insertAdjacentHTML('afterbegin', htmlTable.getTable());
     };
 
-    this.next = function () {
-      this.current++;
-      if (this.current >= this.measureLength) {
-        this.current = 0;
-      }
+    this.next = () => {
+      this.current = (this.current + 1) % this.measureLength;
     };
 
-    this.milliPerBeat = function (beats) {
-      if (!beats) {
-        beats = 60;
-      }
-      return 1000 * 60 / beats;
+    this.milliPerBeat = (beats = 60) => 1000 * 60 / beats;
+
+    this.getTrackerRowValues = (colId) => {
+      const selector = `[data-col-id="${colId}"]`;
+      const elems = document.querySelectorAll(selector);
+      return Array.from(elems).map((el) => ({
+        ...el.dataset,
+        enabled: el.classList.contains('tracker-enabled'),
+      }));
     };
 
-    this.getTrackerRowValues = function (colId) {
-      let values = [];
-      let selector = `[data-col-id="${colId}"]`;
-      let elems = document.querySelectorAll(selector);
-      elems.forEach((el) => {
-        let val = Object.assign({}, el.dataset);
-        val.enabled = el.classList.contains('tracker-enabled');
-        values.push(val);
-      });
-      return values;
+    this.schedule = () => {
+      const beatColumn = this.getTrackerRowValues(this.current);
+      const now = audioContext.currentTime;
+      beatColumn.forEach((beat) => this.scheduleBeat(beat, now));
     };
 
-    function playSolo(colId) {
-      if (colId !== _colId && _notasSolo) {
-        if (_notasSolo[_notasSoloIndex] !== '') {
-          if (_somSolo)
-            _somSolo.stop();
-
-          _somSolo = acordes['epiano_' + _notasSolo[_notasSoloIndex].replace('0', '_baixo').replace('-1', '_grave')];
-          _somSolo.play();
-        }
-        if (_notasSoloIndex === _notasSolo.length - 1) {
-          if (_somSolo)
-            _somSolo.stop();
-
-          _somSolo = null;
-          _notasSolo = null;
-          _notasSoloIndex = 0;
-        }
-
-        else
-          _notasSoloIndex++;
-      }
-      _colId = colId;
-    }
-
-    this.schedule = function () {
-      let beatColumn = this.getTrackerRowValues(this.current);
-      let now = audioContext.currentTime;
-      beatColumn.forEach((beat) => {
-        this.scheduleBeat(beat, now);
-      });
-    };
-
-    this.scheduleBeat = function (beat, now) {
-      let triggerTime = now + this.scheduleForward;
+    this.scheduleBeat = (beat, now) => {
+      const triggerTime = now + this.scheduleForward;
       this.scheduleMap[beat.colId] = triggerTime;
-
       playSolo(beat.colId);
 
       if (beat.enabled) {
-        // ... (Implementation for scheduling beat playback)
         this.eventMap[this.getEventKey(beat)] = this.clock.callbackAtTime(
-          () => {
-            this.scheduleAudioBeat(beat.rowId, triggerTime);
-          },
+          () => this.scheduleAudioBeat(beat.rowId, triggerTime),
           now
         );
       }
     };
 
-    this.scheduleMap = {};
-
-    this.scheduleAudioBeatNow = function (beat) {
+    this.scheduleAudioBeatNow = (beat) => {
       if (beat.enabled) {
-        let beatEvent = this.eventMap[this.getEventKey(beat)];
+        const beatEvent = this.eventMap[this.getEventKey(beat)];
         if (beatEvent) {
           beatEvent.clear();
           delete this.eventMap[this.getEventKey(beat)];
@@ -105,23 +62,18 @@ class tracker {
         return;
       }
 
-      let triggerTime = this.scheduleMap[0] +
-        (beat.colId * this.milliPerBeat(this.bpm)) / 1000;
-      let now = audioContext.currentTime;
+      const triggerTime = this.scheduleMap[0] + (beat.colId * this.milliPerBeat(this.bpm)) / 1000;
+      const now = audioContext.currentTime;
       this.eventMap[this.getEventKey(beat)] = this.clock.callbackAtTime(
-        () => {
-          this.scheduleAudioBeat(beat.rowId, triggerTime);
-        },
+        () => this.scheduleAudioBeat(beat.rowId, triggerTime),
         now
       );
     };
 
-    this.interval;
-    this.runSchedule = function (bpm) {
-      bpm = bpm * 4;
+    this.runSchedule = (bpm) => {
       this.running = true;
-      this.bpm = bpm;
-      let interval = this.milliPerBeat(bpm);
+      this.bpm = bpm * 4;
+      const interval = this.milliPerBeat(this.bpm);
       setTimeout(() => {
         this.schedule();
         this.next();
@@ -133,35 +85,28 @@ class tracker {
       }, interval);
     };
 
-    this.stop = function () {
+    this.stop = () => {
       this.running = false;
       clearInterval(this.interval);
     };
 
-    this.getEventKey = function getEventKey(beat) {
-      return beat.rowId + beat.colId;
+    this.getEventKey = (beat) => `${beat.rowId}${beat.colId}`;
+
+    this.getTrackerValues = () => {
+      const elems = document.querySelectorAll('.tracker-cell');
+      return Array.from(elems).map((e) => ({
+        ...e.dataset,
+        enabled: e.classList.contains('tracker-enabled'),
+      }));
     };
 
-    this.getTrackerValues = function () {
-      let values = [];
-      let elems = document.querySelectorAll('.tracker-cell');
-      elems.forEach(function (e) {
-        let val = Object.assign({}, e.dataset);
-        val.enabled = hasClass(e, 'tracker-enabled');
-        values.push(val);
-      });
-      return values;
-    };
-
-    this.loadTrackerValues = function (json) {
-      let elems = document.querySelectorAll('.tracker-enabled');
-      elems.forEach(function (e) {
-        e.classList.remove('tracker-enabled');
-      });
-      json.forEach(function (data) {
-        if (data.enabled === true) {
-          let selector = `.tracker-cell[data-row-id="${data.rowId}"][data-col-id="${data.colId}"]`;
-          let elem = document.querySelector(selector);
+    this.loadTrackerValues = (json) => {
+      const enabledElems = document.querySelectorAll('.tracker-enabled');
+      enabledElems.forEach((e) => e.classList.remove('tracker-enabled'));
+      json.forEach((data) => {
+        if (data.enabled) {
+          const selector = `.tracker-cell[data-row-id="${data.rowId}"][data-col-id="${data.colId}"]`;
+          const elem = document.querySelector(selector);
           if (elem) {
             elem.classList.add('tracker-enabled');
           }
@@ -169,24 +114,26 @@ class tracker {
       });
     };
 
-    this.setupEvents = function () {
-      let elems = document.querySelectorAll('.tracker-cell');
-      elems.forEach(function (e) {
-        e.addEventListener('click', function (e) {
-          let val = Object.assign({}, e.target.dataset);
-          val.enabled = hasClass(e.target, 'tracker-enabled');
-          let currentBeat = e.target.dataset.colId;
+    this.setupEvents = () => {
+      const elems = document.querySelectorAll('.tracker-cell');
+      elems.forEach((e) => {
+        e.addEventListener('click', (event) => {
+          const val = {
+            ...event.target.dataset,
+            enabled: event.target.classList.contains('tracker-enabled'),
+          };
+          const currentBeat = event.target.dataset.colId;
           if (val.colId > currentBeat) {
             this.scheduleAudioBeatNow(val);
           }
-          e.target.classList.toggle('tracker-enabled');
+          event.target.classList.toggle('tracker-enabled');
         });
       });
     };
   }
 }
 
-var _colId;
+let _colId;
 
 const defaultTrack = {
   beat: [
@@ -214,44 +161,25 @@ const defaultTrack = {
 };
 
 function initializeSampleSet(audioContext, dataUrl, track) {
-  var sampleSetPromise = loadSampleSet(audioContext, dataUrl);
-  sampleSetPromise.then(function (data) {
-    buffers = data.buffers;
-    sampleData = data.data;
+  loadSampleSet(audioContext, dataUrl)
+    .then((data) => {
+      buffers = data.buffers;
+      sampleData = data.data;
 
-    if (!track) {
-      track = storage.getTrack();
-    }
+      if (!track) {
+        track = storage.getTrack();
+      }
 
-    if (!track.settings.measureLength) {
-      track.settings.measureLength = 16;
-    }
+      if (!track.settings.measureLength) {
+        track.settings.measureLength = 16;
+      }
 
-    currentSampleData = sampleData;
-    setupTrackerHtml(sampleData, track.settings.measureLength);
-    schedule.loadTrackerValues(track.beat);
-    schedule.setupEvents();
-  });
+      currentSampleData = sampleData;
+      setupTrackerHtml(sampleData, track.settings.measureLength);
+      schedule.loadTrackerValues(track.beat);
+      schedule.setupEvents();
+    });
 }
-
-window.onload = function () {
-  audioContext = new AudioContext();
-  schedule = new tracker(audioContext, scheduleAudioBeat);
-  getSetAudioOptions.setTrackerControls(defaultTrack.settings);
-  initializeSampleSet(audioContext, defaultTrack.settings.sampleSet, defaultTrack);
-  setupBaseEvents();
-};
-
-gerarRitmosNomes(ritmosNomes);
-
-function hasClass(el, str) {
-  if (el.classList) {
-    return el.classList.contains(str);
-  }
-  return new RegExp('(^| )' + str + '( |$)', 'gi').test(el.className);
-}
-
-var buffers = {};
 
 class AdsrGainNode {
   constructor(audioContext) {
@@ -266,12 +194,12 @@ class AdsrGainNode {
       decayTime: 0.2,
       sustainTime: 1.0,
       releaseTime: 3.4,
-      autoRelease: true
+      autoRelease: true,
     };
   }
 
   setOptions(options) {
-    this.options = Object.assign(this.options, options);
+    this.options = { ...this.options, ...options };
   }
 
   getGainNode(audioTime) {
@@ -309,7 +237,7 @@ class AdsrGainNode {
   }
 }
 
-class audioBufferInstrument {
+class AudioBufferInstrument {
   constructor(context, buffer) {
     this.context = context;
     this.buffer = buffer;
@@ -332,6 +260,142 @@ class audioBufferInstrument {
     this.source.start(time);
   }
 }
+
+class GetSetFormValues {
+  constructor() {
+    this.set = setFormValues;
+    this.get = getFormValues;
+  }
+}
+
+class SelectElement {
+  constructor(appendToID, selectID, options, selected) {
+    this.appendToID = appendToID;
+    this.selectID = selectID;
+    this.options = options;
+    this.selected = selected;
+    this.selectList;
+
+    this.create = (cb) => {
+      const appendToID = document.getElementById(this.appendToID);
+      this.selectList = document.createElement('select');
+      this.selectList.id = this.selectID;
+      appendToID.appendChild(this.selectList);
+      this.update(selectID, this.options, this.selected);
+    };
+
+    this.onChange = (cb) => this.selectList.addEventListener('change', () => cb(this.selectList.value));
+
+    this.update = (elem, options, selected) => {
+      this.delete(elem);
+      const selectList = document.getElementById(elem);
+      for (const key in options) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.text = options[key];
+        selectList.appendChild(option);
+        key === selected && option.setAttribute('selected', true);
+      }
+    };
+
+    this.getSelected = (elem) => {
+      const selectList = document.getElementById(elem);
+      for (let i = 0; i < selectList.options.length; i++) {
+        const opt = selectList.options[i];
+        if (opt.selected) return opt.value;
+      }
+      return false;
+    };
+
+    this.delete = (elem) => {
+      const selectList = document.getElementById(elem);
+      for (const option in selectList) {
+        selectList.remove(option);
+      }
+    };
+
+    this.getAsString = () => document.getElementById(this.appendToID).outerHTML;
+  }
+}
+
+class TrackerTable {
+  constructor() {
+    this.str = '';
+
+    this.getTable = () => `<table id="tracker-table">${this.str}</table>`;
+
+    this.setHeader = (numRows, data) => {
+      this.str += `<tr class="tracker-row header">`;
+      this.str += this.getCells('header', numRows, { header: true });
+      this.str += `</tr>`;
+    };
+
+    this.setRows = (numRows, numCols, data) => {
+      this.setHeader(numCols, data);
+      for (let rowID = 0; rowID < numRows; rowID++) {
+        this.str += `<tr class="tracker-row" data-id="${rowID}">`;
+        this.str += data.title && (data.title[rowID].includes('baixo') || data.title[rowID].includes('cravo') || data.title[rowID].includes('violao'))
+          ? ''
+          : this.getCells(rowID, numCols, data);
+        this.str += `</tr>`;
+      }
+    };
+
+    let i = 0;
+    this.getFirstCell = (rowID, data) => `<td class="tracker-first-cell" data-row-id="${rowID}">${data.title ? data.title[rowID] : ''}</td>`;
+
+    this.getCells = (rowID, numRows, data) => {
+      let str = this.getFirstCell(rowID, data);
+      let cssClass = 'tracker-cell';
+      rowID === 'header' && (cssClass = 'tracker-cell-header');
+
+      for (let c = 0; c < numRows; c++) {
+        const num = cssClass === 'tracker-cell' ? i : '';
+        str += `<td class="${cssClass}" data-row-id="${rowID}" data-col-id="${c}">${num}`;
+        i++;
+        data.header && (str += c + 1);
+        str += `</td>`;
+      }
+      return str;
+    };
+  }
+}
+
+class GetSetControls {
+  constructor() {
+    const trackerControls = JSON.parse(
+      '{ "": 90, "adsrInterval": 0.1, "attackTime": 0, "bpm": 90, "decayAmp": 0.7, "decayTime": 0, "delay": 0.01, "filter": 1000, "releaseAmp": 1, "releaseTime": 2, "sustainAmp": 0.4, "sustainTime": 2 }'
+    );
+
+    this.getTrackerControls = () => trackerControls;
+
+    this.setTrackerControls = (values) => {
+      if (!values) {
+        values = this.getTrackerControls();
+      }
+      this.options = values;
+    };
+  }
+}
+
+window.onload = () => {
+  audioContext = new AudioContext();
+  schedule = new Tracker(audioContext, scheduleAudioBeat);
+  getSetAudioOptions.setTrackerControls(defaultTrack.settings);
+  initializeSampleSet(audioContext, defaultTrack.settings.sampleSet, defaultTrack);
+  setupBaseEvents();
+};
+
+gerarRitmosNomes(ritmosNomes);
+
+function hasClass(el, str) {
+  if (el.classList) {
+    return el.classList.contains(str);
+  }
+  return new RegExp('(^| )' + str + '( |$)', 'gi').test(el.className);
+}
+
+let buffers = {};
 
 function getFormValues(formElement) {
   const formParams = {};
@@ -407,63 +471,6 @@ function getSelectValues(select) {
   return result;
 }
 
-class getSetFormValues {
-  constructor() {
-    this.set = setFormValues;
-    this.get = getFormValues;
-  }
-}
-
-class selectElement {
-  constructor(appendToID, selectID, options, selected) {
-    this.appendToID = appendToID;
-    this.selectID = selectID;
-    this.options = options;
-    this.selected = selected;
-    this.selectList;
-
-    this.create = cb => {
-      const appendToID = document.getElementById(this.appendToID);
-      this.selectList = document.createElement('select');
-      this.selectList.id = this.selectID;
-      appendToID.appendChild(this.selectList);
-      this.update(selectID, this.options, this.selected);
-    };
-
-    this.onChange = cb => this.selectList.addEventListener('change', () => cb(this.selectList.value));
-
-    this.update = (elem, options, selected) => {
-      this.delete(elem);
-      const selectList = document.getElementById(elem);
-      for (const key in options) {
-        const option = document.createElement('option');
-        option.value = key;
-        option.text = options[key];
-        selectList.appendChild(option);
-        key === selected && option.setAttribute('selected', true);
-      }
-    };
-
-    this.getSelected = elem => {
-      const selectList = document.getElementById(elem);
-      for (let i = 0; i < selectList.options.length; i++) {
-        const opt = selectList.options[i];
-        if (opt.selected) return opt.value;
-      }
-      return false;
-    };
-
-    this.delete = elem => {
-      const selectList = document.getElementById(elem);
-      for (const option in selectList) {
-        selectList.remove(option);
-      }
-    };
-
-    this.getAsString = () => document.getElementById(this.appendToID).outerHTML;
-  }
-}
-
 function sampleLoader(context, url) {
   return new Promise((resolve, reject) => {
     const request = new XMLHttpRequest();
@@ -491,11 +498,11 @@ function getJSONPromise(url) {
 function loadSampleSet(audioContext, dataUrl) {
   return new Promise((resolve, reject) => {
     getJSONPromise(dataUrl)
-      .then(data => {
+      .then((data) => {
         const samplePromises = getSamplePromises(audioContext, data);
         Promise.all(samplePromises)
           .then(() => resolve({ data, buffers }))
-          .catch(error => console.log(error));
+          .catch((error) => console.log(error));
       })
       .catch(reject);
   });
@@ -506,79 +513,42 @@ function getSamplePromises(audioContext, data) {
   const promises = [];
   data.filename = [];
 
-  data.files.forEach(val => {
+  data.files.forEach((val) => {
     const filename = val.replace(/\.[^/.]+$/, '');
     data.filename.push(filename);
     const remoteUrl = baseUrl + val;
 
     const loaderPromise = sampleLoader(audioContext, remoteUrl);
-    loaderPromise.then(buffer => buffers[filename] = new audioBufferInstrument(audioContext, buffer));
+    loaderPromise.then((buffer) => (buffers[filename] = new AudioBufferInstrument(audioContext, buffer)));
     promises.push(loaderPromise);
   });
 
   return promises;
 }
 
-class trackerTable {
-  constructor() {
-    this.str = '';
+const getSetAudioOptions = new GetSetControls();
 
-    this.getTable = () => `<table id="tracker-table">${this.str}</table>`;
-
-    this.setHeader = (numRows, data) => {
-      this.str += `<tr class="tracker-row header">`;
-      this.str += this.getCells('header', numRows, { header: true });
-      this.str += `</tr>`;
-    };
-
-    this.setRows = (numRows, numCols, data) => {
-      this.setHeader(numCols, data);
-      for (let rowID = 0; rowID < numRows; rowID++) {
-        this.str += `<tr class="tracker-row" data-id="${rowID}">`;
-        this.str += data.title && (data.title[rowID].includes('baixo') || data.title[rowID].includes('cravo') || data.title[rowID].includes('violao'))
-          ? ''
-          : this.getCells(rowID, numCols, data);
-        this.str += `</tr>`;
+function playSolo(colId) {
+  if (colId !== _colId && _notasSolo) {
+    if (_notasSolo[_notasSoloIndex] !== '') {
+      if (_somSolo) {
+        _somSolo.stop();
       }
-    };
 
-    let i = 0;
-    this.getFirstCell = (rowID, data) => `<td class="tracker-first-cell" data-row-id="${rowID}">${data.title ? data.title[rowID] : ''}</td>`;
-
-    this.getCells = (rowID, numRows, data) => {
-      let str = this.getFirstCell(rowID, data);
-      let cssClass = 'tracker-cell';
-      rowID === 'header' && (cssClass = 'tracker-cell-header');
-
-      for (let c = 0; c < numRows; c++) {
-        const num = cssClass === 'tracker-cell' ? i : '';
-        str += `<td class="${cssClass}" data-row-id="${rowID}" data-col-id="${c}">${num}`;
-        i++;
-        data.header && (str += c + 1);
-        str += `</td>`;
+      _somSolo = acordes[`epiano_${_notasSolo[_notasSoloIndex].replace('0', '_baixo').replace('-1', '_grave')}`];
+      _somSolo.play();
+    }
+    if (_notasSoloIndex === _notasSolo.length - 1) {
+      if (_somSolo) {
+        _somSolo.stop();
       }
-      return str;
-    };
+
+      _somSolo = null;
+      _notasSolo = null;
+      _notasSoloIndex = 0;
+    } else {
+      _notasSoloIndex++;
+    }
   }
+  _colId = colId;
 }
-
-class getSetControls {
-  constructor() {
-    const trackerControls = JSON.parse(
-      '{ "": 90, "adsrInterval": 0.1, "attackTime": 0, "bpm": 90, "decayAmp": 0.7, "decayTime": 0, "delay": 0.01, "filter": 1000, "releaseAmp": 1, "releaseTime": 2, "sustainAmp": 0.4, "sustainTime": 2 }'
-    );
-
-    this.getTrackerControls = function () {
-      return trackerControls;
-    };
-
-    this.setTrackerControls = function (values) {
-      if (!values) {
-        values = this.getTrackerControls();
-      }
-      this.options = values;
-    };
-  }
-}
-
-const getSetAudioOptions = new getSetControls();

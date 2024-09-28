@@ -128,7 +128,7 @@ function stopBateria(trocandoInstrumento) {
 
     if (_cravoSelecionado || trocandoInstrumento) {
       schedule.stop();
-      schedule = new tracker(audioContext, scheduleAudioBeat);
+      schedule = new Tracker(audioContext, scheduleAudioBeat);
 
       _violaoSelecionado = false;
       _epianoSelecionado = false;
