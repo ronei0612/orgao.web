@@ -299,7 +299,7 @@ function setupBaseEvents() {
     ativarBotao(play_pause_bateria);
 
     if (tunerDiv.style.display !== 'none' || _autoMudarRitmo) {
-      autoTunerCheck.checked = false;
+      //autoTunerCheck.checked = false;
       //pararOsAcordes();
       play_pause.dispatchEvent(eventoClick);
     }
