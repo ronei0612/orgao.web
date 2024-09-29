@@ -45,6 +45,15 @@ class Tracker {
       this.playSolo(beat.colId);
 
       if (beat.enabled) {
+        if (_viradaRitmo !== '') {
+          _trocarRitmo = true;
+          selecionarRitmo(_viradaRitmo, true);
+        }
+        if (beat.colId == 0) {
+            selecionarRitmo(_ritmoSelecionado);
+            _viradaRitmo = '';
+        }
+
         this.eventMap[this.getEventKey(beat)] = this.clock.callbackAtTime(
           () => this.scheduleAudioBeat(beat.rowId, triggerTime),
           now
