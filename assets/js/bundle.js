@@ -72,7 +72,7 @@ function scheduleAudioBeat(rowId, triggerTime) { //tocar os beats
           let matches = acordeViolao.match(/^[A-Z]#?m?/);
           if (matches) {
             let nota = matches[0];
-            nota = nota.replace('#', '_');
+            nota = nota.replace('#', '_').toLowerCase();
 
             if (instrumentName === '1')
               nota = nota + '1';
