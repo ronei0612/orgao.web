@@ -147,20 +147,20 @@ function verificarETocarBateria_2(tunerAcompanhamento, instrumentoAcompanhamento
     if (iconVolumeMute.style.display === 'none') {
         if (tunerDiv.style.display !== 'none') {
             if (tunerAcompanhamento) {
-                if (autoTunerCheck.checked === false)
-                    autoTunerCheck.checked = true;
+                // if (autoTunerCheck.checked === false)
+                //     autoTunerCheck.checked = true;
 
                 _instrumentoSelecionado = instrumentoAcompanhamento;
                 _acordeAntesSelecionado = verificarAcompanhamentoEtocar(notaTuner.innerText, _acordeAntesSelecionado);
 
-                autoTunerCheck.dispatchEvent(eventoChange);
+                //autoTunerCheck.dispatchEvent(eventoChange);
             }
             else {
-                if (autoTunerCheck.checked) {
-                    pararOsAcordes();
-                    autoTunerCheck.checked = false;
-                    autoTunerCheck.dispatchEvent(eventoChange);
-                }
+                // if (autoTunerCheck.checked) {
+                //     pararOsAcordes();
+                //     autoTunerCheck.checked = false;
+                //     autoTunerCheck.dispatchEvent(eventoChange);
+                // }
             }
         }
 

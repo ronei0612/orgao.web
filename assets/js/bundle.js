@@ -72,7 +72,7 @@ function scheduleAudioBeat(rowId, triggerTime) { //tocar os beats
           let matches = acordeViolao.match(/^[A-Z]#?m?/);
           if (matches) {
             let nota = matches[0];
-            nota = nota.replace('#', '_');
+            nota = nota.replace('#', '_').toLowerCase();
 
             if (instrumentName === '1')
               nota = nota + '1';
@@ -299,7 +299,7 @@ function setupBaseEvents() {
     ativarBotao(play_pause_bateria);
 
     if (tunerDiv.style.display !== 'none' || _autoMudarRitmo) {
-      autoTunerCheck.checked = false;
+      //autoTunerCheck.checked = false;
       //pararOsAcordes();
       play_pause.dispatchEvent(eventoClick);
     }
