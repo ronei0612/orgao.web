@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproduzir Áudio em Tempo Real</title>
+</head>
+<body>
+    <h1>Reproduzir Áudio em Tempo Real</h1>
+    <button id="startButton">Iniciar Transmissão</button>
+    <button id="stopButton" disabled>Parar Transmissão</button>
+    <audio id="audioPlayback" controls autoplay></audio>
+
+    <script>
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const audioPlayback = document.getElementById('audioPlayback');
+
+        let mediaStream;
+
+        startButton.addEventListener('click', async () => {
+            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            audioPlayback.srcObject = mediaStream;
+
+            startButton.disabled = true;
+            stopButton.disabled = false;
+        });
+
+        stopButton.addEventListener('click', () => {
+            const tracks = mediaStream.getTracks();
+            tracks.forEach(track => track.stop());
+
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        });
+    </script>
+</body>
+</html>
