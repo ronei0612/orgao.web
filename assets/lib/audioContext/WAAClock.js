@@ -1,6 +1,5 @@
 class WAAClock {
-  constructor(context, options) {
-    options = options || {};
+  constructor(context, options = {}) {
     this.tickMethod = options.tickMethod || 'ScriptProcessorNode';
     this.toleranceEarly = options.toleranceEarly || 0.001;
     this.toleranceLate = options.toleranceLate || 0.10;
@@ -8,91 +7,102 @@ class WAAClock {
     this._events = [];
     this._started = false;
   }
+
   setTimeout(func, delay) {
     return this._createEvent(func, this._absTime(delay));
   }
+
   callbackAtTime(func, deadline) {
     return this._createEvent(func, deadline);
   }
+
   timeStretch(tRef, events, ratio) {
-    events.forEach(function (event) {
-      event.timeStretch(tRef, ratio);
-    });
+    events.forEach(event => event.timeStretch(tRef, ratio));
     return events;
   }
+
   start() {
-    if (this._started === false) {
-      var self = this;
+    if (!this._started) {
       this._started = true;
       this._events = [];
 
       if (this.tickMethod === 'ScriptProcessorNode') {
-        var bufferSize = 256;
+        const bufferSize = 256;
         this._clockNode = this.context.createScriptProcessor(bufferSize, 1, 1);
         this._clockNode.connect(this.context.destination);
 
-        this._clockNode.onaudioprocess = function () {
-          setTimeout(function () {
-            self._tick();
-          }, 0);
+        this._clockNode.onaudioprocess = () => {
+          setTimeout(() => this._tick(), 0);
         };
-      } else if (this.tickMethod === 'manual') null;
-      else throw new Error('invalid tickMethod ' + this.tickMethod);
+      } else if (this.tickMethod !== 'manual') {
+        throw new Error('invalid tickMethod ' + this.tickMethod);
+      }
     }
   }
+
   stop() {
-    if (this._started === true) {
+    if (this._started) {
       this._started = false;
       this._clockNode.disconnect();
     }
   }
+
   _tick() {
-    var event = this._events.shift();
+    let event = this._events.shift();
 
     while (event && event._earliestTime <= this.context.currentTime) {
       event._execute();
       event = this._events.shift();
     }
 
-    if (event) this._events.unshift(event);
+    if (event) {
+      this._events.unshift(event);
+    }
   }
+
   _createEvent(func, deadline) {
     return new EventWAAClock(this, deadline, func);
   }
+
   _insertEvent(event) {
     this._events.splice(this._indexByTime(event._earliestTime), 0, event);
   }
+
   _removeEvent(event) {
-    var ind = this._events.indexOf(event);
-    if (ind !== -1) this._events.splice(ind, 1);
+    const index = this._events.indexOf(event);
+    if (index !== -1) {
+      this._events.splice(index, 1);
+    }
   }
+
   _hasEvent(event) {
     return this._events.indexOf(event) !== -1;
   }
+
   _indexByTime(deadline) {
-    var low = 0;
-    var high = this._events.length;
-    var mid;
+    let low = 0;
+    let high = this._events.length;
+    let mid;
 
     while (low < high) {
       mid = Math.floor((low + high) / 2);
-      if (this._events[mid]._earliestTime < deadline) low = mid + 1;
-      else high = mid;
+      if (this._events[mid]._earliestTime < deadline) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
     }
     return low;
   }
+
   _absTime(relTime) {
     return relTime + this.context.currentTime;
   }
+
   _relTime(absTime) {
     return absTime - this.context.currentTime;
   }
 }
-
-const CLOCK_DEFAULTS = {
-  toleranceLate: 0.10,
-  toleranceEarly: 0.001
-};
 
 class EventWAAClock {
   constructor(clock, deadline, func) {
@@ -107,21 +117,31 @@ class EventWAAClock {
     this.repeatTime = null;
     this.schedule(deadline);
   }
+
   clear() {
     this.clock._removeEvent(this);
     this._cleared = true;
     return this;
   }
+
   repeat(time) {
-    if (time === 0) throw new Error('delay cannot be 0');
+    if (time === 0) {
+      throw new Error('delay cannot be 0');
+    }
     this.repeatTime = time;
-    if (!this.clock._hasEvent(this))
+    if (!this.clock._hasEvent(this)) {
       this.schedule(this.deadline + this.repeatTime);
+    }
     return this;
   }
+
   tolerance(values) {
-    if (typeof values.late === 'number') this.toleranceLate = values.late;
-    if (typeof values.early === 'number') this.toleranceEarly = values.early;
+    if (typeof values.late === 'number') {
+      this.toleranceLate = values.late;
+    }
+    if (typeof values.early === 'number') {
+      this.toleranceEarly = values.early;
+    }
     this._refreshEarlyLateDates();
     if (this.clock._hasEvent(this)) {
       this.clock._removeEvent(this);
@@ -129,9 +149,11 @@ class EventWAAClock {
     }
     return this;
   }
+
   isRepeated() {
     return this.repeatTime !== null;
   }
+
   schedule(deadline) {
     this._cleared = false;
     this.deadline = deadline;
@@ -146,29 +168,40 @@ class EventWAAClock {
       this.clock._insertEvent(this);
     }
   }
-  timeStretch(tRef, ratio) {
-    if (this.isRepeated()) this.repeatTime = this.repeatTime * ratio;
 
-    var deadline = tRef + ratio * (this.deadline - tRef);
+  timeStretch(tRef, ratio) {
     if (this.isRepeated()) {
-      while (this.clock.context.currentTime >= deadline - this.toleranceEarly)
+      this.repeatTime = this.repeatTime * ratio;
+    }
+
+    const deadline = tRef + ratio * (this.deadline - tRef);
+    if (this.isRepeated()) {
+      while (this.clock.context.currentTime >= deadline - this.toleranceEarly) {
         deadline += this.repeatTime;
+      }
     }
     this.schedule(deadline);
   }
+
   _execute() {
-    if (this.clock._started === false) return;
+    if (this.clock._started === false) {
+      return;
+    }
     this.clock._removeEvent(this);
 
-    if (this.clock.context.currentTime < this._latestTime)
+    if (this.clock.context.currentTime < this._latestTime) {
       this.func(this);
-    else {
-      if (this.onexpired) this.onexpired(this);
+    } else {
+      if (this.onexpired) {
+        this.onexpired(this);
+      }
       console.warn('event expired');
     }
-    if (!this.clock._hasEvent(this) && this.isRepeated() && !this._cleared)
+    if (!this.clock._hasEvent(this) && this.isRepeated() && !this._cleared) {
       this.schedule(this.deadline + this.repeatTime);
+    }
   }
+
   _refreshEarlyLateDates() {
     this._latestTime = this.deadline + this.toleranceLate;
     this._earliestTime = this.deadline - this.toleranceEarly;
