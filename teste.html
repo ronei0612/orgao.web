@@ -15,12 +15,26 @@
         const startButton = document.getElementById('startButton');
         const stopButton = document.getElementById('stopButton');
         const audioPlayback = document.getElementById('audioPlayback');
-
         let mediaStream;
+        let audioContext;
+        let source;
 
         startButton.addEventListener('click', async () => {
             mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            audioPlayback.srcObject = mediaStream;
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            source = audioContext.createMediaStreamSource(mediaStream);
+
+            const audioDestination = audioContext.createMediaStreamDestination();
+            source.connect(audioDestination);
+
+            const tracks = audioDestination.stream.getAudioTracks();
+            if (tracks.length > 0) {
+                const audioOutputDevice = await navigator.mediaDevices.enumerateDevices().then(devices => devices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth')));
+                if (audioOutputDevice) {
+                    await audioPlayback.setSinkId(audioOutputDevice.deviceId);
+                }
+            }
+            audioPlayback.srcObject = audioDestination.stream;
 
             startButton.disabled = true;
             stopButton.disabled = false;
@@ -29,6 +43,8 @@
         stopButton.addEventListener('click', () => {
             const tracks = mediaStream.getTracks();
             tracks.forEach(track => track.stop());
+            source.disconnect();
+            audioContext.close();
 
             startButton.disabled = false;
             stopButton.disabled = true;
