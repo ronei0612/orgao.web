@@ -12,39 +12,54 @@
     <audio id="audioPlayback" controls autoplay></audio>
 
     <script>
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        
+        var aCtx;
+        var analyser;
+        var microphone;
         const startButton = document.getElementById('startButton');
         const stopButton = document.getElementById('stopButton');
         const audioPlayback = document.getElementById('audioPlayback');
         let mediaStream;
-        let audioContext;
-        let source;
+
+        if (navigator.getUserMedia) {
+            navigator.getUserMedia(
+                { audio: true },
+                function(stream) {
+                    aCtx = new AudioContext();
+                    mediaStream = stream;
+                    microphone = aCtx.createMediaStreamSource(stream);
+                    var destination = aCtx.destination;
+                    microphone.connect(destination);
+                    audioPlayback.srcObject = stream;
+                    
+                    startButton.disabled = true;
+                    stopButton.disabled = false;
+                },
+                function() { console.log("Error 003."); }
+            );
+        }
 
         startButton.addEventListener('click', async () => {
-            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            source = audioContext.createMediaStreamSource(mediaStream);
-
-            const audioDestination = audioContext.createMediaStreamDestination();
-            source.connect(audioDestination);
-
-            const tracks = audioDestination.stream.getAudioTracks();
-            if (tracks.length > 0) {
-                const audioOutputDevice = await navigator.mediaDevices.enumerateDevices().then(devices => devices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth')));
-                if (audioOutputDevice) {
-                    await audioPlayback.setSinkId(audioOutputDevice.deviceId);
-                }
+            if (navigator.getUserMedia) {
+                navigator.getUserMedia(
+                    { audio: true },
+                    function(stream) {
+                        mediaStream = stream;
+                        audioPlayback.srcObject = stream;
+                        
+                        startButton.disabled = true;
+                        stopButton.disabled = false;
+                    },
+                    function() { console.log("Error 003."); }
+                );
             }
-            audioPlayback.srcObject = audioDestination.stream;
-
-            startButton.disabled = true;
-            stopButton.disabled = false;
         });
 
         stopButton.addEventListener('click', () => {
             const tracks = mediaStream.getTracks();
             tracks.forEach(track => track.stop());
-            source.disconnect();
-            audioContext.close();
+            microphone.disconnect();
 
             startButton.disabled = false;
             stopButton.disabled = true;
