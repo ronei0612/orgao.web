@@ -2335,23 +2335,24 @@ function mostrarModal(nome) {
 }
 
 function mostrarAfinador(mostrar = true) {
-	if (mostrar) {
-		tunerDiv.style.display = '';
+	// Não usar afinador por enquanto
+	// if (mostrar) {
+	// 	tunerDiv.style.display = '';
 
-		if (autoTunerCheck.checked) {
-			autoTunerCheck.checked = false;
-			tunerDiv.style.display = 'none';
-		}
-		else
-			autoTunerCheck.checked = true;
+	// 	if (autoTunerCheck.checked) {
+	// 		autoTunerCheck.checked = false;
+	// 		tunerDiv.style.display = 'none';
+	// 	}
+	// 	else
+	// 		autoTunerCheck.checked = true;
 
-		autoTunerCheck.dispatchEvent(eventoClick);
-	}
-	else {
-		tunerDiv.style.display = 'none';
-		autoTunerCheck.checked = false;
-		autoTunerCheck.dispatchEvent(eventoClick);
-	}
+	// 	autoTunerCheck.dispatchEvent(eventoClick);
+	// }
+	// else {
+	// 	tunerDiv.style.display = 'none';
+	// 	autoTunerCheck.checked = false;
+	// 	autoTunerCheck.dispatchEvent(eventoClick);
+	// }
 }
 
 function selecionarInstrumento(bateria = false, manualmente = false) {
