@@ -418,7 +418,7 @@ musicaSearch.addEventListener('focus', function() {
     this.select();
 });
 
-esperarAudios(3000, true);
+esperarAudios(2000, true);
 
 function esperarAudios(tempoMiliseg, esperar_audios) {
 	if (esperar_audios == false) {
