@@ -1153,16 +1153,16 @@
     const startButton = document.getElementById('startButton');
     const stopButton = document.getElementById('stopButton');
     let mediaStream;
-    let audioContext;
+    let audioContextMic;
     let microphone;
     let destination;
 
     startButton.addEventListener('click', async () => {
         try {
             mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            microphone = audioContext.createMediaStreamSource(mediaStream);
-            destination = audioContext.destination;
+            audioContextMic = new (window.AudioContext || window.webkitAudioContext)();
+            microphone = audioContextMic.createMediaStreamSource(mediaStream);
+            destination = audioContextMic.destination;
 
             // Search bluetooth
             const audioOutputDevice = await navigator.mediaDevices.enumerateDevices()
@@ -1188,7 +1188,7 @@
             tracks.forEach(track => track.stop());
         }
         if (microphone) microphone.disconnect();
-        if (audioContext) audioContext.close();
+        if (audioContextMic) audioContextMic.close();
 
         startButton.disabled = false;
         stopButton.disabled = true;
