@@ -33,10 +33,11 @@
                     if (bluetoothDevice) {
                         destination = audioContext.createMediaStreamDestination(bluetoothDevice.deviceId);
                         microphone.connect(destination);
+                        alert('ok');
                     } else {
                         destination = audioContext.destination;
                         microphone.connect(destination);
-                        console.warn("Nenhum dispositivo Bluetooth encontrado. Usando saída padrão.");
+                        alert('Nenhum dispositivo Bluetooth encontrado. Usando saída padrão.');
                     }
                 } else {
                     const audioOutputDevice = await navigator.mediaDevices.enumerateDevices()
