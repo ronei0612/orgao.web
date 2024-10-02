@@ -1,4 +1,4 @@
-const notasFrequencias = {
+﻿const notasFrequencias = {
 	a: 110.00,
 	a_: 116.54,
 	b: 123.47,
@@ -415,7 +415,7 @@ window.addEventListener("orientationchange", (event) => {
 });
 
 musicaSearch.addEventListener('focus', function () {
-    this.select();
+	this.select();
 });
 
 esperarAudios(2000, true);
@@ -457,7 +457,7 @@ function capturarTeclaPressionada(tecla) {
 		if (_teclasConfiguracao[tecla][0].includes('Check'))
 			elemento.checked = !elemento.checked;
 
-		elemento.dispatchEvent(evento);		
+		elemento.dispatchEvent(evento);
 	}
 }
 
@@ -565,7 +565,7 @@ function salvarConfiguracaoTeclas() {
 function carregarConfiguracaoTeclas() {
 	const dadosStorage = localStorage.getItem('teclasConfiguracao');
 	if (dadosStorage)
-		_teclasConfiguracao = JSON.parse(dadosStorage);	
+		_teclasConfiguracao = JSON.parse(dadosStorage);
 }
 
 function capturarTeclaGravacaoCifras(botao) {
@@ -669,7 +669,7 @@ function ocultarBotoesCravo(ocultar = true) {
 	if (ocultar) {
 		for (let i = 0; i < cravoBotoes.length; i++)
 			cravoBotoes[i].style.display = 'none';
-		
+
 		baixo.style.display = 'none';
 		mao.style.display = 'none';
 		full.style.display = 'none';
@@ -780,7 +780,7 @@ function autoMudarRitmo(elementBotao = null, bateria = null) {
 				violaoBotao.classList.toggle('instrumentoSelecionado', false);
 				_violaoSelecionado = false;
 
-				stringsBotao.classList.toggle('instrumentoSelecionado', true);				
+				stringsBotao.classList.toggle('instrumentoSelecionado', true);
 				if (_acordeSelecionado && !_stringsSelecionado) {
 					_stringsSelecionado = true;
 					_acordeAntesSelecionado = verificarAcompanhamentoEtocar(_acordeSelecionado, _acordeAntesSelecionado, null, true);
@@ -923,7 +923,7 @@ function refinarAcorde(acorde) {
 		const soNota = acorde.slice(0, 2);
 		return acorde.replace(soNota, acidentesCorrespondentesJson[soNota]);
 	}
-	
+
 	return acorde;
 }
 
@@ -936,21 +936,21 @@ function getNotaBaixo(acorde) {
 
 		if (notaBaixo[0].toUpperCase() !== acordeBaixo[0]) {
 			mostrarMensagem('notaBaixo errado (/): ' + notaBaixo);
-	    	_notasAcordesJson = recuperarDadosStorage('dadosLocais');
+			_notasAcordesJson = recuperarDadosStorage('dadosLocais');
 			notaBaixo = _notasAcordesJson[acordeBaixo][0];
 		}
-	}		
+	}
 	else {
 		acorde = refinarAcorde(acorde);
 		notaBaixo = _notasAcordesJson[acorde][0];
 
 		if (notaBaixo[0].toUpperCase() !== acorde[0]) {
 			mostrarMensagem('notaBaixo errado: ' + notaBaixo);
-	    	_notasAcordesJson = recuperarDadosStorage('dadosLocais');			
+			_notasAcordesJson = recuperarDadosStorage('dadosLocais');
 			notaBaixo = _notasAcordesJson[acorde][0];
 		}
 	}
-	
+
 	return [acorde, notaBaixo];
 }
 
@@ -962,7 +962,7 @@ function montarAcordeNotas(acorde) {
 		_acordeBaixo = retorno[1];
 		_acordeNotas = _notasAcordesJson[acorde];
 	}
-	
+
 	_acordeSelecionado = acorde;
 }
 
@@ -1329,7 +1329,7 @@ function mudarParaTelaFrame() {
 	tdVolume.setAttribute('rowspan', '');
 	tdVolume.setAttribute('colspan', 5);
 	volumeDiv.style.display = 'block';
-	
+
 	textoVolume.classList.remove('textoVertical');
 	volumeInput.setAttribute('orient', '');
 
@@ -1356,7 +1356,7 @@ function addEventCifras(frame, mudarTomCifraId) {
 			e.target.classList.add('cifraSelecionada');
 			e.target.scrollIntoView();
 			parent.tocarCifraManualmente(e.target);
-			
+
 			parent.focus(); //Foca fora para funcionar o teclado físico
 		});
 	}
@@ -1563,7 +1563,7 @@ function voltarParaOrgao() {
 function mudarParaFullscreen() {
 	exitfullscreen.style.display = 'flex';
 	botaoFullscreen.style.display = 'none';
-	
+
 	bateria.style.display = 'none';
 	switchDarkDiv.style.display = 'none';
 	muteDiv.style.display = '';
@@ -1833,11 +1833,11 @@ function showselectIframe(mostrar) {
 
 function prepararMudarTomCifra(tomSelecionado) {
 	if (salvarDiv.style.display !== 'none') {
-	var esperar = 0;
-	if (typeof mudarTom !== 'function' || typeof mudarTomCifra !== 'function') //1º carregamento
-		esperar = 500;
+		var esperar = 0;
+		if (typeof mudarTom !== 'function' || typeof mudarTomCifra !== 'function') //1º carregamento
+			esperar = 500;
 
-	//setTimeout(function () {
+		//setTimeout(function () {
 		if (modal01.style.display === 'none') {
 			if (textoCifrasFrame.style.display === "none")
 				mudarTom(tomSelecionado);
@@ -1854,9 +1854,9 @@ function prepararMudarTomCifra(tomSelecionado) {
 					mudarTomCifra(false, Math.abs(index));
 				else
 					mudarTomCifra(true, index);
-					}
 			}
-	//}, esperar);
+		}
+		//}, esperar);
 	}
 }
 
@@ -2015,7 +2015,7 @@ function SearchNotasSolo(linhaSolo) {
 		let partsSolo = linhaSolo.split('.');
 		acorde = partsSolo[0];
 		partsSolo[0] = '';
-		
+
 		if (partsSolo.length >= 1) {
 			partsSolo.forEach(function (partSolo) {
 				let oitava = partSolo.includes('0') ? '0' : partSolo.includes('-1') ? '-1' : '';
@@ -2089,7 +2089,7 @@ function SearchAcordes(cifraTexto) {
 						texto.push("<b id=\"cifra" + acordeId + "\"" + cifraFormatada);
 
 						//if (acorde !== acordes[acordes.length - 1]) {
-							texto.push(" ");
+						texto.push(" ");
 						//}
 
 						acordeId++;
@@ -2266,7 +2266,7 @@ function mostrarModal(nome) {
 			if (selectSalvamento.value === '') {
 				let salvamentosStorage = localStorage.getItem('salvamentosv2');
 				let compartilhadosStorage = localStorage.getItem('compartilhados');
-				
+
 				if (salvamentosStorage && compartilhadosStorage)
 					compartilhadoDiv.style.display = 'block';
 				else
@@ -2281,7 +2281,7 @@ function mostrarModal(nome) {
 		case 'compartilhado':
 			const arquivoIdStorage = localStorage.getItem('fileId');
 			const nomeCompartilhamentoStorage = localStorage.getItem('nomeCompartilhamento');
-			
+
 			if (arquivoIdStorage && arquivoIdStorage !== 'undefined') {
 				selectOpcoes.style.display = 'none';
 				selectInstrumento.style.display = 'none';
@@ -2290,7 +2290,7 @@ function mostrarModal(nome) {
 				compartilharDiv.style.display = 'block';
 				//compartilhadoDiv.style.display = 'none';
 				selectConfiguracao.style.display = 'none';
-			
+
 				const url = document.location.href.replace('#', '').replace('?compartilhado=1', '');
 				const fileLink = `https://drive.google.com/file/d/${arquivoIdStorage}/view`;
 
@@ -2405,7 +2405,7 @@ function calcularAlturaIframe() {
 		elementosHeight += navBar.offsetHeight;
 		elementosHeight += 30;
 	}
-	
+
 	document.documentElement.style.setProperty('--element-height', elementosHeight + 'px');
 }
 
@@ -2634,94 +2634,106 @@ function salvarSalvamentoNoStorage(salvamentoNome, nomeStorage) {
 
 function salvarSalvamento(salvamentoSelecionado = '', nomeStorage) {
 	if (!nomeStorage) {
-		let salvamentosStorage = localStorage.getItem('salvamentosv2');
-		let compartilhadosStorage = localStorage.getItem('compartilhados');
+		const salvamentosStorage = localStorage.getItem('salvamentosv2');
+		const compartilhadosStorage = localStorage.getItem('compartilhados');
 		if (salvamentosStorage && compartilhadosStorage)
 			nomeStorage = document.getElementById('selectConjuntoSalvamento').value;
 		else if (salvamentosStorage)
 			nomeStorage = 'salvamentosv2';
 		else if (compartilhadosStorage)
 			nomeStorage = 'compartilhados';
+		else
+			nomeStorage = 'salvamentosv2';
 	}
 
-	if (salvamentoSelecionado !== '') {
+	if (salvamentoSelecionado) {
 		salvarSalvamentoNoStorage(salvamentoSelecionado, nomeStorage);
-	}
-	
-	else if (selectSalvamento.value !== '') {
+	} else if (selectSalvamento.value !== '') {
 		const antesEstavaFull = sairDeFullscreen();
 
 		salvamentoSelecionado = selectSalvamento.value;
-		if (confirm('Deseja salvar?\n' + salvamentoSelecionado))
+		if (confirm(`Deseja salvar?\n${salvamentoSelecionado}`)) {
 			salvarSalvamentoNoStorage(salvamentoSelecionado, nomeStorage);
+		}
 
-		if (antesEstavaFull)
+		if (antesEstavaFull) {
 			botaoFullscreen.dispatchEvent(eventoClick);
+		}
 	}
 }
 
 function carregar_Salvamento() {
 	voltarParaOrgao();
 
-	let salvamentosStorage = localStorage.getItem('salvamentosv2');
-	let compartilhadosStorage = localStorage.getItem('compartilhados');
-	let storage = salvamentosStorage;
+	const salvamentosStorage = localStorage.getItem('salvamentosv2');
+	const compartilhadosStorage = localStorage.getItem('compartilhados');
 
-	if (salvamentosStorage && compartilhadosStorage) {
-		nomeStorage = document.getElementById('selectConjuntoSalvamento').value;
-		if (nomeStorage === 'compartilhados')
-			storage = compartilhadosStorage;
+	if (!salvamentosStorage && !compartilhadosStorage) {
+		return;
 	}
-	else if (compartilhadosStorage)
+
+	let storage = salvamentosStorage || compartilhadosStorage;
+
+	const nomeStorage = document.getElementById('selectConjuntoSalvamento').value;
+	if (nomeStorage === 'compartilhados') {
 		storage = compartilhadosStorage;
+	}
 
-	var salvamentoSelecionado = selectSalvamento.value;
+	const salvamentoSelecionado = selectSalvamento.value;
+	if (!salvamentoSelecionado) {
+		return;
+	}
 
-	if (salvamentoSelecionado) {
-		var dadosSalvos = JSON.parse(storage)[salvamentoSelecionado];
+	try {
+		const dadosSalvos = JSON.parse(storage)[salvamentoSelecionado];
 
 		if (dadosSalvos) {
-			let temCifra = false;
-			var keys = Object.keys(dadosSalvos);
+			const temCifra = Object.keys(dadosSalvos).includes('frameCifra');
+			if (temCifra) {
+				const tom = dadosSalvos['frameTom'];
+				const cifraTexto = dadosSalvos['frameCifra'];
 
-			if (keys.includes('frameCifra')) {
-				temCifra = true;
-				let tom = dadosSalvos['frameTom'];
-				let cifraTexto = dadosSalvos['frameCifra'];
 				escreverCifraTextArea.style.display = 'block';
-
 				mostrarTextoCifrasCarregado(tom, cifraTexto);
-
 				textoCifras.contentWindow.document.querySelector('pre').style.fontSize = selectFonte.value + 'px';
 
-				let cifraElem = selecionarCifraId();
-				if (cifraElem)
+				const cifraElem = selecionarCifraId();
+				if (cifraElem) {
 					cifraElem.scrollIntoView();
-			}
-			else
+				}
+			} else {
 				voltarParaOrgao();
+			}
 
-			keys.forEach(function (key) {
-				var value = dadosSalvos[key];
-				var element = document.getElementById(key);
-
+			Object.entries(dadosSalvos).forEach(([key, value]) => {
+				const element = document.getElementById(key);
 				if (element && element.id !== 'frameCifra' && element.id !== 'frameTom') {
-					if (key === 'bpm') {
-						element.value = value;
-						bpmRange.value = bpm.value;
-					} else if (value === 'selecionado') {
-						escolherAcompanhamentoOrgao(element.id, element);
-					} else if (key === 'tomMenorSwitch' || key === 'autoCheck' || key === 'acompCheck') {
-						element.checked = value;
-					} else {
-						element.selectedIndex = value;
+					switch (key) {
+						case 'bpm':
+							element.value = value;
+							bpmRange.value = bpm.value;
+							break;
+						case 'tomMenorSwitch':
+						case 'autoCheck':
+						case 'acompCheck':
+							element.checked = value;
+							break;
+						case 'selecionado':
+							escolherAcompanhamentoOrgao(element.id, element);
+							break;
+						default:
+							element.selectedIndex = value;
+							break;
 					}
 
-					if ((temCifra && element.id === 'tomSelect') == false)
+					if (!(temCifra && key === 'tomSelect')) {
 						element.dispatchEvent(new Event('change'));
+					}
 				}
 			});
 		}
+	} catch (error) {
+		console.error('Erro ao carregar salvamento:', error);
 	}
 
 	ocultarModal();
