@@ -1,79 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reproduzir Áudio em Tempo Real</title>
-</head>
-<body>
-    <h1>Reproduzir Áudio em Tempo Real</h1>
-    <button id="startButton">Iniciar Transmissão</button>
-    <button id="stopButton" disabled>Parar Transmissão</button>
-    <audio id="audioPlayback" controls autoplay style="display: none;"></audio>
-
-    <script>
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-        
-        var aCtx;// = new AudioContext();
-        var analyser;
-        var microphone;
-        const startButton = document.getElementById('startButton');
-        const stopButton = document.getElementById('stopButton');
-        const audioPlayback = document.getElementById('audioPlayback');
-        let mediaStream;
-
-        // if (navigator.getUserMedia) {
-        //     navigator.getUserMedia(
-        //         { audio: true },
-        //         function(stream) {
-        //             aCtx = new AudioContext();
-        //             mediaStream = stream;
-        //             microphone = aCtx.createMediaStreamSource(stream);
-        //             var destination = aCtx.destination;
-        //             microphone.connect(destination);
-        //             audioPlayback.srcObject = stream;
-                    
-        //             startButton.disabled = true;
-        //             stopButton.disabled = false;
-        //         },
-        //         function() { console.log("Error 003."); }
-        //     );
-        // }
-
-        startButton.addEventListener('click', async () => {
-            if (navigator.getUserMedia) {
-                navigator.getUserMedia(
-                    { audio: true },
-                    function(stream) {
-                        aCtx = new AudioContext();
-                        mediaStream = stream;
-                        microphone = aCtx.createMediaStreamSource(stream);
-                        var destination = aCtx.destination;
-                        microphone.connect(destination);
-                        audioPlayback.srcObject = stream;
-                        
-                        startButton.disabled = true;
-                        stopButton.disabled = false;
-                    },
-                    function() { console.log("Error 003."); }
-                );
-            }
-        });
-
-        stopButton.addEventListener('click', () => {
-            const tracks = mediaStream.getTracks();
-            tracks.forEach(track => track.stop());
-            microphone.disconnect();
-            //aCtx.close();
-
-            startButton.disabled = false;
-            stopButton.disabled = true;
-        });
-    </script>
-</body>
-</html> -->
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -85,7 +9,6 @@
     <h1>Reproduzir Áudio em Tempo Real</h1>
     <button id="startButton">Iniciar Transmissão</button>
     <button id="stopButton" disabled>Parar Transmissão</button>
-    <!-- <audio id="audioPlayback" controls autoplay style="display: none;"></audio> -->
 
     <script>
         const startButton = document.getElementById('startButton');
@@ -102,8 +25,17 @@
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 microphone = audioContext.createMediaStreamSource(mediaStream);
                 destination = audioContext.destination;
+
+                // Search bluetooth
+                const audioOutputDevice = await navigator.mediaDevices.enumerateDevices()
+                    .then(devices => devices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth')));
+                
+                if (audioOutputDevice) {
+                    await audioPlayback.setSinkId(audioOutputDevice.deviceId);
+                }
+                /////
+
                 microphone.connect(destination);
-                //audioPlayback.srcObject = mediaStream;
 
                 startButton.disabled = true;
                 stopButton.disabled = false;
