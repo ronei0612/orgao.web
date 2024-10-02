@@ -1,4 +1,4 @@
-﻿const notasFrequencias = {
+const notasFrequencias = {
 	a: 110.00,
 	a_: 116.54,
 	b: 123.47,
@@ -414,7 +414,7 @@ window.addEventListener("orientationchange", (event) => {
 	orientacaoCelularAlterado(event);
 });
 
-musicaSearch.addEventListener('focus', function() {
+musicaSearch.addEventListener('focus', function () {
     this.select();
 });
 
@@ -2589,15 +2589,12 @@ function carregarSalvamentosList(salvamentoStorage) {
 	if (salvamentos) {
 		selectSalvamento.innerHTML = "";
 
-		// Adiciona um option com texto vazio
 		var optionVazio = document.createElement("option");
 		optionVazio.text = "";
 		selectSalvamento.add(optionVazio);
 
-		// Ordena os salvamentos
 		var keys = Object.keys(salvamentos).sort();
 
-		// Adicionar no elemento select
 		keys.forEach(function (key) {
 			var option = document.createElement("option");
 			option.text = key;
@@ -2607,7 +2604,6 @@ function carregarSalvamentosList(salvamentoStorage) {
 }
 
 function salvarSalvamentoNoStorage(salvamentoNome, nomeStorage) {
-	// Criar objeto para armazenar todas as informações
 	var dadosSalvos = {
 		instrumentoSelect: instrumentoSelect.selectedIndex,
 		selectRitmo: selectRitmo.selectedIndex,
@@ -2617,26 +2613,20 @@ function salvarSalvamentoNoStorage(salvamentoNome, nomeStorage) {
 		acompCheck: acompCheck.checked
 	};
 
-	// Verificar se algum botão de mão foi selecionado e adicionar ao objeto se houver
 	var maoBotaoSelecionado = document.getElementsByClassName('selecionado');
 	if (maoBotaoSelecionado.length > 0)
 		dadosSalvos[maoBotaoSelecionado[0].id] = 'selecionado';
 
-	// Adicionar informações sobre tomMenorSwitch se estiver visível
 	if (tomMenorSwitchDiv.style.display !== 'none')
 		dadosSalvos.tomMenorSwitch = tomMenorSwitch.checked;
 
-	// Salvar informações do frame de texto de cifras se estiver visível
 	if (textoCifrasFrame.style.display !== 'none') {
 		dadosSalvos.frameTom = tomSelect.value;
 		dadosSalvos.frameCifra = textoCifras.contentDocument.body.innerHTML;
 	}
 
-	// Obter dados salvos anteriores
 	var salvamentos = JSON.parse(localStorage.getItem(nomeStorage)) || {};
-	// Adicionar ou atualizar dados do salvamento selecionado
 	salvamentos[salvamentoNome] = dadosSalvos;
-	// Salvar no localStorage
 	localStorage.setItem(nomeStorage, JSON.stringify(salvamentos));
 
 	modal01.style.display = 'none';
