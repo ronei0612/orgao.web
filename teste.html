@@ -26,10 +26,11 @@
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 microphone = audioContext.createMediaStreamSource(mediaStream);
 
-                //if (navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i)) {
-                    alert('a');
+                if (navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i)) {
                     const outputDevices = await navigator.mediaDevices.getOutputDevices();
+                    alert('a');
                     const bluetoothDevice = outputDevices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth'));
+                    alert('b');
 
                     if (bluetoothDevice) {
                         destination = audioContext.createMediaStreamDestination(bluetoothDevice.deviceId);
@@ -40,8 +41,7 @@
                         microphone.connect(destination);
                         alert('Nenhum dispositivo Bluetooth encontrado. Usando saída padrão.');
                     }
-                //} else {
-                if (1 === 2) {
+                } else {
                     const audioOutputDevice = await navigator.mediaDevices.enumerateDevices()
                         .then(devices => devices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth')));
 
