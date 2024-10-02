@@ -644,6 +644,8 @@ function mostrarBateria(mostrar = true) {
 		bateriaBotoes.style.display = 'none';
 
 	localStorage.setItem('acompCheck', acompCheck.checked);
+	
+	calcularAlturaIframe();
 }
 
 function ocultarBotoesAcompanhamentoCravo(ocultar = true) {
