@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -9,12 +9,12 @@
     <h1>Reproduzir Áudio em Tempo Real</h1>
     <button id="startButton">Iniciar Transmissão</button>
     <button id="stopButton" disabled>Parar Transmissão</button>
-    <audio id="audioPlayback" controls autoplay></audio>
+    <audio id="audioPlayback" controls autoplay style="display: none;"></audio>
 
     <script>
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         
-        var aCtx;
+        var aCtx;// = new AudioContext();
         var analyser;
         var microphone;
         const startButton = document.getElementById('startButton');
@@ -22,30 +22,34 @@
         const audioPlayback = document.getElementById('audioPlayback');
         let mediaStream;
 
-        if (navigator.getUserMedia) {
-            navigator.getUserMedia(
-                { audio: true },
-                function(stream) {
-                    aCtx = new AudioContext();
-                    mediaStream = stream;
-                    microphone = aCtx.createMediaStreamSource(stream);
-                    var destination = aCtx.destination;
-                    microphone.connect(destination);
-                    audioPlayback.srcObject = stream;
+        // if (navigator.getUserMedia) {
+        //     navigator.getUserMedia(
+        //         { audio: true },
+        //         function(stream) {
+        //             aCtx = new AudioContext();
+        //             mediaStream = stream;
+        //             microphone = aCtx.createMediaStreamSource(stream);
+        //             var destination = aCtx.destination;
+        //             microphone.connect(destination);
+        //             audioPlayback.srcObject = stream;
                     
-                    startButton.disabled = true;
-                    stopButton.disabled = false;
-                },
-                function() { console.log("Error 003."); }
-            );
-        }
+        //             startButton.disabled = true;
+        //             stopButton.disabled = false;
+        //         },
+        //         function() { console.log("Error 003."); }
+        //     );
+        // }
 
         startButton.addEventListener('click', async () => {
             if (navigator.getUserMedia) {
                 navigator.getUserMedia(
                     { audio: true },
                     function(stream) {
+                        aCtx = new AudioContext();
                         mediaStream = stream;
+                        microphone = aCtx.createMediaStreamSource(stream);
+                        var destination = aCtx.destination;
+                        microphone.connect(destination);
                         audioPlayback.srcObject = stream;
                         
                         startButton.disabled = true;
@@ -60,6 +64,61 @@
             const tracks = mediaStream.getTracks();
             tracks.forEach(track => track.stop());
             microphone.disconnect();
+            //aCtx.close();
+
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        });
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproduzir Áudio em Tempo Real</title>
+</head>
+<body>
+    <h1>Reproduzir Áudio em Tempo Real</h1>
+    <button id="startButton">Iniciar Transmissão</button>
+    <button id="stopButton" disabled>Parar Transmissão</button>
+    <audio id="audioPlayback" controls autoplay style="display: none;"></audio>
+
+    <script>
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const audioPlayback = document.getElementById('audioPlayback');
+        let mediaStream;
+        let audioContext;
+        let microphone;
+        let destination;
+
+        startButton.addEventListener('click', async () => {
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                microphone = audioContext.createMediaStreamSource(mediaStream);
+                destination = audioContext.destination;
+                microphone.connect(destination);
+                audioPlayback.srcObject = mediaStream;
+
+                startButton.disabled = true;
+                stopButton.disabled = false;
+            } catch (err) {
+                console.error("Error accessing microphone:", err);
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            if (mediaStream) {
+                const tracks = mediaStream.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+            if (microphone) microphone.disconnect();
+            if (audioContext) audioContext.close();
 
             startButton.disabled = false;
             stopButton.disabled = true;
