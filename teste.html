@@ -26,29 +26,37 @@
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 microphone = audioContext.createMediaStreamSource(mediaStream);
 
-                if (navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i)) {
-                    const outputDevices = await navigator.mediaDevices.getOutputDevices();
-                    const bluetoothDevice = outputDevices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth'));
+                let outputDevice;
 
-                    if (bluetoothDevice) {
-                        destination = audioContext.createMediaStreamDestination(bluetoothDevice.deviceId);
-                        microphone.connect(destination);
-                    } else {
-                        destination = audioContext.destination;
-                        microphone.connect(destination);
-                        console.warn("Nenhum dispositivo Bluetooth encontrado. Usando saída padrão.");
-                    }
+                // Tenta encontrar o dispositivo Bluetooth usando getOutputDevices()
+                try {
+                const outputDevices = await navigator.mediaDevices.getOutputDevices();
+                outputDevice = outputDevices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth'));
+                } catch (error) {
+                // Se getOutputDevices() não estiver disponível, use a saída padrão
+                console.warn("getOutputDevices() não está disponível. Usando saída padrão.");
+                outputDevice = null;
+                }
+
+                // Define a saída de áudio
+                if (outputDevice) {
+                // Tenta usar setSinkId()
+                try {
+                    await microphone.track.setSinkId(outputDevice.deviceId);
+                    destination = audioContext.destination;
+                    microphone.connect(destination);
+                    console.log("Áudio encaminhado para o dispositivo Bluetooth:", outputDevice.label);
+                } catch (error) {
+                    // Se setSinkId() falhar, usa a saída padrão
+                    console.warn("setSinkId() falhou. Usando saída padrão.");
+                    destination = audioContext.destination;
+                    microphone.connect(destination);
+                }
                 } else {
-                    const audioOutputDevice = await navigator.mediaDevices.enumerateDevices()
-                        .then(devices => devices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth')));
-
-                    if (audioOutputDevice) {
-                        await audioPlayback.setSinkId(audioOutputDevice.deviceId);
-                    } else {
-                        destination = audioContext.destination;
-                        microphone.connect(destination);
-                        console.warn("Nenhum dispositivo Bluetooth encontrado. Usando saída padrão.");
-                    }
+                // Se nenhum dispositivo Bluetooth for encontrado, usa a saída padrão
+                destination = audioContext.destination;
+                microphone.connect(destination);
+                console.warn("Nenhum dispositivo Bluetooth encontrado. Usando saída padrão.");
                 }
 
                 startButton.disabled = true;
@@ -56,7 +64,7 @@
             } catch (err) {
                 console.error("Error accessing microphone:", err);
             }
-        });
+            });
 
         stopButton.addEventListener('click', () => {
             if (mediaStream) {
