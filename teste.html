@@ -27,6 +27,7 @@
                 microphone = audioContext.createMediaStreamSource(mediaStream);
 
                 if (navigator.userAgent.match(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i)) {
+                    alert('a');
                     const outputDevices = await navigator.mediaDevices.getOutputDevices();
                     const bluetoothDevice = outputDevices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth'));
 
