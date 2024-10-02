@@ -85,7 +85,7 @@
     <h1>Reproduzir Áudio em Tempo Real</h1>
     <button id="startButton">Iniciar Transmissão</button>
     <button id="stopButton" disabled>Parar Transmissão</button>
-    <audio id="audioPlayback" controls autoplay style="display: none;"></audio>
+    <!-- <audio id="audioPlayback" controls autoplay style="display: none;"></audio> -->
 
     <script>
         const startButton = document.getElementById('startButton');
@@ -103,7 +103,7 @@
                 microphone = audioContext.createMediaStreamSource(mediaStream);
                 destination = audioContext.destination;
                 microphone.connect(destination);
-                audioPlayback.srcObject = mediaStream;
+                //audioPlayback.srcObject = mediaStream;
 
                 startButton.disabled = true;
                 stopButton.disabled = false;
