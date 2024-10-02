@@ -5,6 +5,7 @@ var _brushSelecionado = false;
 var _tocandoBateria = false;
 
 let instrumentData = {};
+let currentSampleData;
 let audioContext;
 let schedule;
 
