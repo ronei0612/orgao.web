@@ -840,6 +840,9 @@
             </div>
         </main>
     </div>
+
+    <button id="startButton">Iniciar Transmissão</button>
+    <button id="stopButton" disabled>Parar Transmissão</button>
     
 <script src="./assets/lib/jquery/dist/jquery.min.js"></script>
 <script src="./assets/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -1144,4 +1147,97 @@
         else 
             clearTimeout(temporizador);
     }
+</script>
+
+<script>
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    let mediaStream;
+    let audioContext;
+    let microphone;
+    let destination;
+
+    startButton.addEventListener('click', async () => {
+        try {
+            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            microphone = audioContext.createMediaStreamSource(mediaStream);
+            destination = audioContext.destination;
+
+            // Search bluetooth
+            const audioOutputDevice = await navigator.mediaDevices.enumerateDevices()
+                .then(devices => devices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth')));
+            
+            if (audioOutputDevice) {
+                await audioPlayback.setSinkId(audioOutputDevice.deviceId);
+            }
+            /////
+
+            microphone.connect(destination);
+
+            startButton.disabled = true;
+            stopButton.disabled = false;
+        } catch (err) {
+            console.error("Error accessing microphone:", err);
+        }
+    });
+
+    stopButton.addEventListener('click', () => {
+        if (mediaStream) {
+            const tracks = mediaStream.getTracks();
+            tracks.forEach(track => track.stop());
+        }
+        if (microphone) microphone.disconnect();
+        if (audioContext) audioContext.close();
+
+        startButton.disabled = false;
+        stopButton.disabled = true;
+    });
+
+    // teste bluetooth no celular
+    // startButton.addEventListener('click', async () => {
+    //     try {
+    //         mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    //         audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    //         microphone = audioContext.createMediaStreamSource(mediaStream);
+
+    //         let outputDevice;
+
+    //         // Tenta encontrar o dispositivo Bluetooth usando getOutputDevices()
+    //         try {
+    //         const outputDevices = await navigator.mediaDevices.getOutputDevices();
+    //         outputDevice = outputDevices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth'));
+    //         } catch (error) {
+    //         // Se getOutputDevices() não estiver disponível, use a saída padrão
+    //         console.warn("getOutputDevices() não está disponível. Usando saída padrão.");
+    //         outputDevice = null;
+    //         }
+
+    //         // Define a saída de áudio
+    //         if (outputDevice) {
+    //         // Tenta usar setSinkId()
+    //         try {
+    //             await microphone.track.setSinkId(outputDevice.deviceId);
+    //             destination = audioContext.destination;
+    //             microphone.connect(destination);
+    //             console.log("Áudio encaminhado para o dispositivo Bluetooth:", outputDevice.label);
+    //         } catch (error) {
+    //             // Se setSinkId() falhar, usa a saída padrão
+    //             console.warn("setSinkId() falhou. Usando saída padrão.");
+    //             destination = audioContext.destination;
+    //             microphone.connect(destination);
+    //         }
+    //         } else {
+    //         // Se nenhum dispositivo Bluetooth for encontrado, usa a saída padrão
+    //         destination = audioContext.destination;
+    //         microphone.connect(destination);
+    //         console.warn("Nenhum dispositivo Bluetooth encontrado. Usando saída padrão.");
+    //         }
+
+    //         startButton.disabled = true;
+    //         stopButton.disabled = false;
+    //     } catch (err) {
+    //         console.error("Error accessing microphone:", err);
+    //     }
+    //     });
 </script>
