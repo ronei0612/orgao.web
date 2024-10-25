@@ -559,7 +559,7 @@ const defaultTrack = {
   ],
   settings: {
     // sampleSet: '../assets/audio/studio/samples.json',
-    sampleSet: 'https://roneicostasoares.com.br/Orgao/assets/audio/studio/samples.json',
+    sampleSet: 'https://roneicostasoares.com.br/Orgao.Web/assets/audio/studio/samples.json',
     measureLength: 16,
     bpm: 90,
     detune: 0,
