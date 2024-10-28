@@ -53,7 +53,6 @@
 }
 
 window.addEventListener('DOMContentLoaded', function () {
-	removerComercial();
 	if (699 >= window.innerWidth) {
 		var imgs = document.querySelectorAll('img');
 		imgs.forEach(function (img) {
@@ -69,38 +68,3 @@ window.addEventListener('DOMContentLoaded', function () {
 		});
 	}
 });
-
-async function verificarCertificadoVencendo() {
-	let validadeCertificadoCookieExists = document.cookie.indexOf('validadeCertificado=') !== -1;
-
-	if (!validadeCertificadoCookieExists) {
-		const dataHoje = new Date();
-		dataHoje.setHours(23, 59, 59, 999);
-		document.cookie = `validadeCertificado=VerificadoHoje; expires=${dataHoje.toUTCString()}; path=/`;
-
-		var url = window.location.origin + "/Home/ObterDataValidadeCertificado";
-
-		fetch(url)
-			.then(response => response.json())
-			.then(data => {
-				if (!data.success) {
-					alert("Se você é ADMINISTRADOR: O certificado está próximo de expirar!");
-				}
-			})
-			.catch(error => console.error("Erro ao verificar a validade do certificado:", error));
-	}
-}
-
-function removerComercial() {
-	setTimeout(function () {
-		$("div[style='opacity: 0.9; z-index: 2147483647; position: fixed; left: 0px; bottom: 0px; height: 65px; right: 0px; display: block; width: 100%; background-color: #202020; margin: 0px; padding: 0px;']").remove();
-		$("div[style='margin: 0px; padding: 0px; left: 0px; width: 100%; height: 65px; right: 0px; bottom: 0px; display: block; position: fixed; z-index: 2147483647; opacity: 0.9; background-color: rgb(32, 32, 32);']").remove();
-		$("div[onmouseover='S_ssac();']").remove();
-		$("center").remove();
-	}, 500);
-}
-
-// document.addEventListener('click', removerComercial);
-// document.addEventListener('touchstart', removerComercial);
-
-//verificarCertificadoVencendo(); Comentado para funcionar por enquanto
