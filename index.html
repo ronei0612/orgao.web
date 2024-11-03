@@ -244,17 +244,11 @@
                         </select>
 
                         <button class="btn btn-success" type="button" onclick="novaGravacao()">
-                            <svg width="20" height="20" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-                            </svg>
+                            <i class="bi bi-plus-square"></i>
                         </button>
 
                         <button class="btn btn-danger" type="button" onclick="deletarGravacao()">
-                            <svg width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                            </svg>
+                            <i class="bi bi-trash"></i>
                         </button>
                         <br /><br />
 
@@ -263,9 +257,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="" aria-label="Pesquisar" aria-describedby="basic-addon1" name="texto" id="musicaSearch">
                         <span class="input-group-text" id="basic-addon1" onclick="pesquisarMusica()">
-                            <svg width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
-                            </svg>
+                            <i class="bi bi-search"></i>
                         </span>
                     </div>
                     <br />
@@ -337,20 +329,12 @@
                                         <option value="18">18</option>
                                     </select>
                                     <button class="btn btn-primary me-1" id="diminuirTomMenos" type="button" ondblclick="aumentarTom_clickDuplo(false)" dataEventoTecla="eventoClick" onclick="aumentarTom_click(false)">
-                                        <svg width="16" height="16" fill="currentColor" class="bi bi-dash-lg" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 8" />
-                                        </svg>
+                                        <i class="bi bi-dash-lg"></i>
                                     </button>
                                     <select class="form-control me-1" id="tomSelect" onchange="prepararMudarTomCifra(this.value)" dataEventoTecla="eventoClick" onclick="pegarTomCifra(this.value)" style="text-align-last:center">
-                                        <!-- @* @foreach (var tom in Model.TonsMaiores)
-                                        { -->
-                                            <!-- <option value="C">C</option> -->
-                                        <!-- } *@ -->
                                     </select>
                                     <button class="btn btn-primary me-1" id="aumentarTomMais" type="button" ondblclick="aumentarTom_clickDuplo(true)" dataEventoTecla="eventoClick" onclick="aumentarTom_click(true)">
-                                        <svg width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
-                                        </svg>
+                                        <i class="bi bi-plus-lg"></i>
                                     </button>
                                 </div>
             
@@ -384,14 +368,10 @@
                                     </td>
                                     <td>
                                         <button id="botaoBuscar" data-playing="false" class="botao parar" onclick="mostrarModal('gravar')">
-                                            <svg width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                                            </svg>
+                                            <i class="bi bi-search"></i>
                                         </button>
                                         <button id="play_pause" data-playing="false" class="botao parar" dataEventoTecla="eventoClick" onclick="escolherAcorde('', this)" style="display:none">
-                                            <svg width="20" height="20" fill="currentColor" class="bi bi-stop-fill" viewBox="0 0 16 16">
-                                                <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z" />
-                                            </svg>
+                                            <i class="bi bi-stop-fill"></i>
                                         </button>
                                     </td>
                                     <td>
@@ -445,24 +425,17 @@
                                 <tr id="orgaoCifrasBotoes" style="display:none">
                                     <td>
                                         <button class="botao vermelho acorde" onmousedown="avancarCifra('retroceder', this)" dataEventoTecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this)" id="cifraRetroceder">
-                                            <svg width="20" height="20" fill="currentColor" class="bi bi-skip-backward-fill" viewBox="0 0 16 16">
-                                                <path d="M.5 3.5A.5.5 0 0 0 0 4v8a.5.5 0 0 0 1 0V8.753l6.267 3.636c.54.313 1.233-.066 1.233-.697v-2.94l6.267 3.636c.54.314 1.233-.065 1.233-.696V4.308c0-.63-.693-1.01-1.233-.696L8.5 7.248v-2.94c0-.63-.692-1.01-1.233-.696L1 7.248V4a.5.5 0 0 0-.5-.5" />
-                                            </svg>
+                                            <i class="bi bi-skip-backward-fill"></i>
                                         </button>
                                     </td>
                                     <td>
                                         <button class="botao marrom acorde" onmousedown="avancarCifra('repetir', this)" dataEventoTecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this)" id="cifraRepetir">
-                                            <svg width="20" height="20" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-                                                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
-                                                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
-                                            </svg>
+                                            <i class="bi bi-arrow-clockwise"></i>
                                         </button>
                                     </td>
                                     <td>
                                         <button class="botao azul acorde" onmousedown="avancarCifra('avancar', this)" dataEventoTecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this)" id="cifraAvancar">
-                                            <svg width="20" height="20" fill="currentColor" class="bi bi-play-fill" viewBox="0 0 16 16">
-                                                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
-                                            </svg>
+                                            <i class="bi bi-play-fill"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -470,7 +443,6 @@
                                 <tr class="botoesAcompanhamentosRitmo">
                                     <td>
                                         <button id="baixo" class="botao dedo" onmousedown="escolherAcompanhamentoOrgao('baixo', this)" dataEventoTecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this)">
-                                            <!-- @* <svg width="28" height="28" viewBox="0 0 16 16"> <path d="M6.75 1a.75.75 0 0 1 .75.75V8a.5.5 0 0 0 1 0V5.467l.086-.004c.317-.012.637-.008.816.027.134.027.294.096.448.182.077.042.15.147.15.314V8a.5.5 0 1 0 1 0V6.435a4.9 4.9 0 0 1 .106-.01c.316-.024.584-.01.708.04.118.046.3.207.486.43.081.096.15.19.2.259V8.5a.5.5 0 0 0 1 0v-1h.342a1 1 0 0 1 .995 1.1l-.271 2.715a2.5 2.5 0 0 1-.317.991l-1.395 2.442a.5.5 0 0 1-.434.252H6.035a.5.5 0 0 1-.416-.223l-1.433-2.15a1.5 1.5 0 0 1-.243-.666l-.345-3.105a.5.5 0 0 1 .399-.546L5 8.11V9a.5.5 0 0 0 1 0V1.75A.75.75 0 0 1 6.75 1zM8.5 4.466V1.75a1.75 1.75 0 1 0-3.5 0v5.34l-1.2.24a1.5 1.5 0 0 0-1.196 1.636l.345 3.106a2.5 2.5 0 0 0 .405 1.11l1.433 2.15A1.5 1.5 0 0 0 6.035 16h6.385a1.5 1.5 0 0 0 1.302-.756l1.395-2.441a3.5 3.5 0 0 0 .444-1.389l.271-2.715a2 2 0 0 0-1.99-2.199h-.581a5.114 5.114 0 0 0-.195-.248c-.191-.229-.51-.568-.88-.716-.364-.146-.846-.132-1.158-.108l-.132.012a1.26 1.26 0 0 0-.56-.642 2.632 2.632 0 0 0-.738-.288c-.31-.062-.739-.058-1.05-.046l-.048.002zm2.094 2.025z" /> </svg> *@ -->
                                             <svg version="1.0" width="28" height="28" viewBox="0 0 256.000000 256.000000" preserveAspectRatio="xMidYMid meet">
                                                 <g transform="translate(0.000000,256.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
                                                     <path d="M1203 2546 c-23 -8 -57 -23 -77 -35 -34 -21 -126 -116 -126 -130 0 -4 -26 -7 -57 -6 -86 0 -125 -11 -191 -55 -91 -61 -141 -144 -157 -261 l-6 -46 -54 -6 c-113 -12 -211 -78 -266 -179 l-34 -63 -3 -434 -3 -433 61 -327 c33 -179 68 -346 77 -371 22 -60 102 -142 166 -171 l52 -24 575 0 575 0 55 26 c31 14 73 41 95 60 59 52 629 817 651 875 13 34 19 74 19 134 0 110 -33 186 -111 260 -74 70 -129 93 -234 98 -80 4 -109 -1 -182 -33 -16 -6 -17 18 -20 347 -3 338 -4 355 -25 400 -54 118 -177 199 -305 203 -67 3 -68 3 -100 46 -85 112 -245 165 -375 125z m167 -188 c25 -13 55 -38 67 -57 l23 -34 0 -493 0 -494 25 0 25 0 0 398 c1 355 3 400 18 429 57 108 200 113 276 10 21 -28 21 -38 24 -614 l2 -585 120 158 c129 172 167 204 242 204 81 0 158 -60 179 -141 10 -38 10 -54 -2 -90 -10 -28 -116 -178 -300 -424 -158 -209 -295 -388 -307 -398 -50 -45 -71 -46 -606 -47 -488 0 -511 1 -551 20 -22 11 -48 32 -57 48 -10 17 -43 168 -78 351 l-60 322 0 387 c0 382 0 388 22 432 45 89 156 114 234 55 59 -45 64 -68 64 -305 l0 -210 25 0 25 0 0 396 c0 442 0 443 69 490 71 48 169 27 225 -49 20 -28 21 -41 24 -433 3 -393 3 -404 22 -404 20 0 20 10 20 473 0 279 4 486 10 507 17 62 88 116 155 119 12 1 41 -9 65 -21z" />
@@ -557,9 +529,7 @@
                                                     </g>
                                                 </svg>
                         
-                                                <svg width="20" height="20" fill="currentColor" class="bi bi-stop-fill" viewBox="0 0 16 16" style="display:none" id="pararBateriaBotao">
-                                                    <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z" />
-                                                </svg>
+                                                <i class="bi bi-stop-fill" style="display:none" id="pararBateriaBotao"></i>
                                             </button>
                                         </td>
                                         <td>
@@ -584,14 +554,6 @@
                                             </button>
                                         </td>
                                         <td>
-                                            <!-- @* <button id="cravo" class="botao dedo" onmousedown="playBotaoBateria(this)" dataEventoTecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this, true)">
-                                                <svg version="1.0" width="35" height="35" viewBox="0 0 405.000000 405.000000" preserveAspectRatio="xMidYMid meet">
-                                                    <g transform="translate(0.000000,405.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
-                                                        <path d="M29 4031 l-24 -19 -3 -1971 -2 -1971 2025 0 2025 0 0 1140 0 1140 -23 14 c-12 8 -200 59 -417 114 -430 108 -505 134 -650 230 -100 65 -239 200 -300 291 -23 35 -159 276 -301 535 -142 259 -267 481 -278 494 l-19 22 -1005 0 c-974 0 -1005 -1 -1028 -19z m2085 -658 c132 -241 263 -475 293 -521 62 -96 208 -251 302 -322 176 -129 293 -175 734 -286 l347 -87 0 -188 0 -189 -1755 0 -1755 0 0 1015 0 1015 798 0 797 0 239 -437z m-1512 -2269 l3 -356 24 -19 c21 -17 41 -19 201 -19 160 0 180 2 201 19 l24 19 3 356 3 356 69 0 69 0 3 -356 3 -356 24 -19 c21 -17 41 -19 201 -19 160 0 180 2 201 19 l24 19 3 356 3 356 69 0 69 0 3 -356 3 -356 24 -19 c21 -17 41 -19 201 -19 160 0 180 2 201 19 l24 19 3 356 3 356 69 0 69 0 3 -356 3 -356 24 -19 c21 -17 41 -19 201 -19 160 0 180 2 201 19 l24 19 3 356 3 356 69 0 69 0 3 -356 3 -356 24 -19 c21 -17 41 -19 201 -19 160 0 180 2 201 19 l24 19 3 356 3 356 164 0 165 0 0 -515 0 -515 -1755 0 -1755 0 0 515 0 515 160 0 159 0 3 -356z m298 56 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z" />
-                                                    </g>
-                                                </svg>
-                                            </button> *@ -->
-                        
                                             <button id="cravo" class="botao dedo" onmousedown="playBotaoBateria(this)" dataEventoTecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this, true)">
                                                 <svg version="1.0" width="32" height="32" viewBox="0 0 405.000000 405.000000" preserveAspectRatio="xMidYMid meet">
                                                     <g transform="translate(0.000000,405.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
@@ -615,13 +577,6 @@
                                                     </g>
                                                 </svg>
                                             </button>
-                                            <!-- @* <button id="cravoNaoUtilizado" class="botao dedo" onmousedown="playBotaoBateria(this)" dataEventoTecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this, true)">
-                                                <svg width="35" height="35" viewBox="0 0 512.000000 512.000000" preserveAspectRatio="xMidYMid meet">
-                                                    <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
-                                                        <path d="M567 5106 c-10 -8 -22 -29 -27 -47 -13 -46 -13 -4952 0 -4998 18 -65 -144 -60 2020 -60 2164 0 2002 -5 2020 60 14 47 13 3282 0 3330 -6 20 -20 41 -33 47 -12 6 -184 52 -382 101 -405 101 -475 123 -584 182 -156 84 -313 226 -405 366 -24 37 -160 279 -301 537 -141 259 -264 476 -273 483 -26 19 -2009 18 -2035 -1z m2187 -573 c132 -241 263 -475 293 -521 62 -96 208 -251 302 -322 176 -129 293 -175 734 -286 l347 -87 0 -233 0 -234 -1623 0 c-1620 0 -1623 0 -1645 -20 -30 -28 -30 -82 0 -110 22 -20 25 -20 1645 -20 l1623 0 0 -600 0 -600 -70 0 -70 0 0 478 c0 276 -4 491 -10 511 -18 65 115 60 -1720 60 -1835 0 -1702 5 -1720 -60 -6 -20 -10 -235 -10 -511 l0 -478 -70 0 -70 0 0 600 0 600 123 0 c110 0 126 2 145 20 14 14 22 33 22 55 0 22 -8 41 -22 55 -19 18 -35 20 -145 20 l-123 0 0 1060 0 1060 913 0 912 0 239 -437z m-1624 -2461 c0 -180 4 -342 10 -361 16 -57 27 -60 220 -60 193 0 204 3 220 60 6 19 10 181 10 361 l0 328 70 0 70 0 0 -328 c0 -180 4 -342 10 -361 16 -57 27 -60 220 -60 193 0 204 3 220 60 6 19 10 181 10 361 l0 328 70 0 70 0 0 -328 c0 -180 4 -342 10 -361 16 -57 27 -60 220 -60 193 0 204 3 220 60 6 19 10 181 10 361 l0 328 70 0 70 0 0 -328 c0 -180 4 -342 10 -361 16 -57 27 -60 220 -60 193 0 204 3 220 60 6 19 10 181 10 361 l0 328 70 0 70 0 0 -328 c0 -180 4 -342 10 -361 16 -57 27 -60 220 -60 193 0 204 3 220 60 6 19 10 181 10 361 l0 328 70 0 70 0 0 -450 0 -450 -1570 0 -1570 0 0 450 0 450 70 0 70 0 0 -328z m300 28 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 -1350 l0 -600 -70 0 -70 0 0 478 c0 276 -4 491 -10 511 -18 65 115 60 -1720 60 -1835 0 -1702 5 -1720 -60 -6 -20 -10 -235 -10 -511 l0 -478 -70 0 -70 0 0 600 0 600 1870 0 1870 0 0 -600z m-3300 -28 c0 -180 4 -342 10 -361 16 -57 27 -60 220 -60 193 0 204 3 220 60 6 19 10 181 10 361 l0 328 70 0 70 0 0 -328 c0 -180 4 -342 10 -361 16 -57 27 -60 220 -60 193 0 204 3 220 60 6 19 10 181 10 361 l0 328 70 0 70 0 0 -328 c0 -180 4 -342 10 -361 16 -57 27 -60 220 -60 193 0 204 3 220 60 6 19 10 181 10 361 l0 328 70 0 70 0 0 -328 c0 -180 4 -342 10 -361 16 -57 27 -60 220 -60 193 0 204 3 220 60 6 19 10 181 10 361 l0 328 70 0 70 0 0 -328 c0 -180 4 -342 10 -361 16 -57 27 -60 220 -60 193 0 204 3 220 60 6 19 10 181 10 361 l0 328 70 0 70 0 0 -450 0 -450 -1570 0 -1570 0 0 450 0 450 70 0 70 0 0 -328z m300 28 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z m600 0 l0 -300 -70 0 -70 0 0 300 0 300 70 0 70 0 0 -300z" />
-                                                    </g>
-                                                </svg>
-                                            </button> *@ -->
                                         </td>
                                     </tr>
                                     <tr class="trBateriaBotoes">
@@ -684,17 +639,6 @@
                                         </td>
                                         <td>
                                             <button id="ride" class="botao dedo" style="display:none">
-                                                <!-- @*<svg width="35" height="35" viewBox="0 0 32 32">
-                                                <g>
-                                                <path d="M16,9c-1.7,0-3-1.3-3-3s1.3-3,3-3s3,1.3,3,3S17.7,9,16,9z" />
-                                                </g>
-                                                <g>
-                                                <path d="M27,27H8.8c-0.6,0-1-0.4-1-1s0.4-1,1-1h16.4L16,9.9L7.9,23.7C7.6,24.2,7,24.3,6.5,24c-0.5-0.3-0.6-0.9-0.3-1.4l9-15.2 C15.3,7.2,15.6,7,16,7c0.3,0,0.7,0.2,0.9,0.5l11,18c0.2,0.3,0.2,0.7,0,1C27.7,26.8,27.4,27,27,27z" />
-                                                </g>
-                                                <g>
-                                                <path d="M23,30c-0.3,0-0.6-0.1-0.8-0.4l-6-8c-0.3-0.4-0.2-1.1,0.2-1.4c0.4-0.3,1.1-0.2,1.4,0.2l6,8c0.3,0.4,0.2,1.1-0.2,1.4 C23.4,29.9,23.2,30,23,30z" />
-                                                </g>
-                                                </svg>*@ -->
                                             </button>
                                             <button id="meiaLua" class="botao dedo" onmousedown="playBotaoBateria(this)" dataEventoTecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this, true)">
                                                 <svg version="1.1" id="Icons" width="35" height="35" viewBox="0 0 32 32" xml:space="preserve" class="st0">
