@@ -177,8 +177,6 @@ const textoAcordeMenor = document.getElementById('textoAcordeMenor');
 const textoCifrasFrame = document.getElementById('textoCifrasFrame');
 const container = document.getElementById('container');
 const voltar = document.getElementById('voltar');
-const botaoFonte = document.getElementById('botaoFonte');
-const selectFonte = document.getElementById('selectFonte');
 //const botaoTamanhoIframe = document.getElementById('botaoTamanhoIframe');
 //const selectTamanhoIframe = document.getElementById('selectTamanhoIframe');
 const tomMenorSwitchDiv = document.getElementById('tomMenorSwitchDiv');
@@ -281,8 +279,6 @@ const elementos = {
 	textoCifrasFrame: textoCifrasFrame,
 	container: container,
 	voltar: voltar,
-	botaoFonte: botaoFonte,
-	selectFonte: selectFonte,
 	tomMenorSwitchDiv: tomMenorSwitchDiv,
 	orgaoCifrasBotoes: orgaoCifrasBotoes,
 	tdVolume: tdVolume,
@@ -1319,8 +1315,6 @@ function mudarParaTelaFrame() {
 	container.classList.remove('d-sm-flex');
 	volumeDiv.style.display = 'none';
 	voltar.style.display = 'block';
-	botaoFonte.style.display = 'block';
-	selectFonte.style.display = "none";
 	//botaoTamanhoIframe.style.display = 'block';
 	//selectTamanhoIframe.style.display = "none";
 	tomMenorSwitchDiv.style.display = 'none';
@@ -1471,7 +1465,7 @@ function avancarCifra(avancar_retroceder, botao) {
 }
 
 function mudarTamanhoFrameCifras(aumentar) {
-	textoCifras.contentWindow.document.querySelector('pre').style.fontSize = selectFonte.value + 'px';
+	//textoCifras.contentWindow.document.querySelector('pre').style.fontSize = selectFonte.value + 'px';
 }
 
 function rolagemTelaOracaoEucaristica(guardar = true) {
@@ -1524,9 +1518,7 @@ function mostrarLiturgiaDiaria() {
 }
 
 function voltarParaOrgao() {
-	voltar.style.display = 'none';
-	botaoFonte.style.display = 'none';
-	selectFonte.style.display = "none";
+	voltar.style.display = 'none'
 	//botaoTamanhoIframe.style.display = 'none';
 	//selectTamanhoIframe.style.display = "none";
 	orgaoCifrasBotoes.style.display = 'none';
@@ -1804,18 +1796,6 @@ function aumentarTom_click(aumentar) {
 function aumentarTom_clickDuplo(aumentar) {
 	clearTimeout(timer);
 	aumentarTom(aumentar, 2, "tomSelect");
-}
-
-function showselectFonte(mostrar) {
-	if (mostrar) {
-		botaoFonte.style.display = "none";
-		selectFonte.style.display = "";
-	}
-	else {
-		if (textoCifras.style.display !== 'none') {
-			textoCifras.contentWindow.document.querySelector('pre').style.fontSize = selectFonte.value + 'px';
-		}
-	}
 }
 
 function showselectIframe(mostrar) {
@@ -2695,7 +2675,7 @@ function carregar_Salvamento() {
 
 				escreverCifraTextArea.style.display = 'block';
 				mostrarTextoCifrasCarregado(tom, cifraTexto);
-				textoCifras.contentWindow.document.querySelector('pre').style.fontSize = selectFonte.value + 'px';
+				//textoCifras.contentWindow.document.querySelector('pre').style.fontSize = selectFonte.value + 'px';
 
 				const cifraElem = selecionarCifraId();
 				if (cifraElem) {
