@@ -355,17 +355,11 @@
                                         </button>
                                     </td>
                                     <td>
-                                        <button id="stringsBotao" class="botao instrumento" onmousedown="escolherAcompanhamentoBateria(this, '_stringsSelecionado')" dataeventotecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this)">
-                                            <svg height="35px" width="35px" version="1.1" id="violinoDesenho" viewBox="0 0 32 32" xml:space="preserve" class="st0">
-                                            <polygon points="8.1,25.4 6.6,23.9 8.9,20.1 11.9,23.1 "></polygon>
-                                            <polygon points="24.5,6 26,7.5 17.1,17.9 14.1,14.9 "></polygon>
-                                            <polygon points="26,7.5 24.5,6 26,3 29,6 "></polygon>
-                                            <line x1="23.1" y1="4.5" x2="24.5" y2="6"></line>
-                                            <line x1="26" y1="7.5" x2="27.5" y2="8.9"></line>
-                                            <line x1="20.1" y1="6" x2="21.6" y2="7.5"></line>
-                                            <line x1="24.5" y1="10.4" x2="26" y2="11.9"></line>
-                                            <path d="M18.8,10.9c-2.4-1.4-5.6-1.1-7.6,1L11,12.1c0.6,1.2,0.4,2.6-0.6,3.6c-1.2,1.2-3.2,1.2-4.4,0.1 c-0.3,0.2-0.6,0.4-0.8,0.7c-2.9,2.9-2.9,7.6,0,10.4c2.9,2.9,7.6,2.9,10.4,0c0.3-0.3,0.5-0.5,0.7-0.8c-1.2-1.2-1.2-3.2,0.1-4.4 c1-1,2.4-1.2,3.6-0.6l0.1-0.1c2.1-2.1,2.4-5.2,1-7.6"></path>
-                                            </svg>
+                                        <button id="stringsBotao" class="botao instrumento"
+                                            onmousedown="escolherAcompanhamentoBateria(this, '_stringsSelecionado')"
+                                            dataeventotecla="eventoTouchstart"
+                                            ontouchstart="handleTouchStart(event, this)">
+                                            <img id="violinoDesenho" height="35px" width="35px" src="assets/lib/icons/violin.svg">
                                         </button>
                                     </td>
                                 
@@ -426,33 +420,22 @@
                                             <img src="assets/lib/icons/handLeft.svg" width="28" height="28">
                                         </button>
                                                                         
-                                        <button id="pianoBotao" class="botao dedo" onmousedown="escolherAcompanhamentoBateria(this, '_epianoSelecionado')" dataeventotecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this)" style="display:none">
-                                            <svg height="35px" width="35px" version="1.1" id="Icons" viewBox="0 0 32 32" xml:space="preserve" class="st0">
-                                            <rect x="3" y="4" width="26" height="24" />
-                                            <line x1="9" y1="17" x2="9" y2="28" />
-                                            <rect x="6" y="4" width="4" height="13" />
-                                            <line x1="16" y1="17" x2="16" y2="28" />
-                                            <rect x="14" y="4" width="4" height="13" />
-                                            <line x1="23" y1="17" x2="23" y2="28" />
-                                            <rect x="22" y="4" width="4" height="13" />
-                                            </svg>
-                                        </button>
+                                        <button id="pianoBotao" class="botao dedo"
+                                            onmousedown="escolherAcompanhamentoBateria(this, '_epianoSelecionado')"
+                                            dataeventotecla="eventoTouchstart"
+                                            ontouchstart="handleTouchStart(event, this)" style="display:none">
+                                            <img src="assets/lib/icons/piano.svg" width="35" height="35">
                                     </td>
                                     <td>
                                         <button id="mao" class="botao mao" onmousedown="escolherAcompanhamentoOrgao('mao', this)" dataEventoTecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this)">
                                             <img src="assets/lib/icons/handRight.svg" width="28" height="28">
                                         </button>
                                 
-                                        <button id="baixoBotao" class="botao dedo" onmousedown="escolherAcompanhamentoBateria(this, '_baixoSelecionado')" dataeventotecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this, true)" style="display:none">
-                                            <svg height="35px" width="35px" version="1.1" id="Icons" viewBox="0 0 32 32" xml:space="preserve" class="st0">
-                                            <path d="M12.8,21.8L12.8,21.8c-1.7-1.4-2.3-3.8-1.5-5.9l4.1-10.7C16.3,3,19,2.3,20.8,3.8l0,0c1.4,1.2,1.6,3.3,0.5,4.7 l-1.1,1.5l1.4,6.2c0.4,1.9-0.2,3.9-1.7,5.1l-0.4,0.4C17.5,23.4,14.7,23.4,12.8,21.8z" />
-                                            <line x1="14" y1="29" x2="14" y2="22.5" />
-                                            <line x1="19" y1="22.1" x2="19" y2="29" />
-                                            <line x1="9.6" y1="14.9" x2="11.4" y2="15.7" />
-                                            <line x1="10.6" y1="11.9" x2="12.5" y2="12.8" />
-                                            <line x1="11.6" y1="8.9" x2="13.6" y2="9.8" />
-                                            <line x1="12.6" y1="5.9" x2="14.8" y2="6.9" />
-                                            </svg>
+                                        <button id="baixoBotao" class="botao dedo"
+                                            onmousedown="escolherAcompanhamentoBateria(this, '_baixoSelecionado')"
+                                            dataeventotecla="eventoTouchstart"
+                                            ontouchstart="handleTouchStart(event, this, true)" style="display:none">
+                                            <img src="assets/lib/icons/bass.svg" width="35" height="35">
                                         </button>
                                     </td>
                                     <td>
@@ -460,13 +443,11 @@
                                             <img src="assets/lib/icons/hands.svg" width="50" height="30">
                                         </button>
                                 
-                                        <button id="violaoBotao" class="botao dedo" onmousedown="escolherAcompanhamentoBateria(this, '_violaoSelecionado')" dataeventotecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this, true)" style="display:none">
-                                            <svg height="35px" width="35px" version="1.1" id="violaoDesenho" viewBox="0 0 32 32" xml:space="preserve" class="st0">
-                                            <path d="M20.4,24.8l1.5-3.9c0.4-1.1,1.3-2.1,2.4-2.7l0,0c3.2-1.7,3.7-6.1,1-8.8l-2.3-2.3c-2.7-2.7-7.1-2.2-8.8,1l0,0 c-0.6,1.1-1.5,1.9-2.7,2.4l-3.9,1.5c-4.6,1.8-5.6,7.8-2,11.4L9,26.8C12.7,30.4,18.6,29.4,20.4,24.8z" />
-                                            <circle cx="18.2" cy="14.3" r="2.9" />
-                                            <line x1="9.7" y1="19.1" x2="13.4" y2="22.8" />
-                                            <polyline points="26.3,3.5 22.9,6.9 25.6,9.6 29,6.2 " />
-                                            </svg>
+                                        <button id="violaoBotao" class="botao dedo"
+                                            onmousedown="escolherAcompanhamentoBateria(this, '_violaoSelecionado')"
+                                            dataeventotecla="eventoTouchstart"
+                                            ontouchstart="handleTouchStart(event, this, true)" style="display:none">
+                                            <img src="assets/lib/icons/guitarAcoustic.svg" width="35" height="35">
                                         </button>
                                     </td>
                                 </tr>
@@ -553,14 +534,10 @@
                                         <td>
                                             <button id="ride" class="botao dedo" style="display:none">
                                             </button>
-                                            <button id="meiaLua" class="botao dedo" onmousedown="playBotaoBateria(this)" dataEventoTecla="eventoTouchstart" ontouchstart="handleTouchStart(event, this, true)">
-                                                <svg version="1.1" id="Icons" width="35" height="35" viewBox="0 0 32 32" xml:space="preserve" class="st0">
-                                                <circle cx="16" cy="17" r="11" />
-                                                <circle cx="16" cy="6" r="3" />
-                                                <circle cx="6.5" cy="11.5" r="3" />
-                                                <circle cx="6.5" cy="22.5" r="3" />
-                                                <circle cx="25.5" cy="22.5" r="3" />
-                                                <circle cx="25.5" cy="11.5" r="3" />
+                                            <button id="meiaLua" class="botao dedo" onmousedown="playBotaoBateria(this)"
+                                                dataEventoTecla="eventoTouchstart"
+                                                ontouchstart="handleTouchStart(event, this, true)">
+                                                <img src="assets/lib/icons/halfMoon.svg" width="35" height="35">
                                             </svg>
                                             </button>
                                         </td>
