@@ -415,6 +415,7 @@ musicaSearch.addEventListener('focus', function () {
 });
 
 esperarAudios(2000, true);
+darkModeLocalStorage();
 
 function esperarAudios(tempoMiliseg, esperar_audios) {
 	if (esperar_audios == false) {
@@ -1671,7 +1672,6 @@ function salvarDadosStorage(dadosStorage) {
 
 function carregarConfiguracoesDoStorage() {
 	selecionarInstrumento();
-	darkModeLocalStorage();
 	adicionarTonsSelect('tomSelect', 0, true);
 	ultimoTomSelecionadoStorage();
 

@@ -1,4 +1,5 @@
-﻿function DarkMode() {
+﻿document.getElementById('switchDark').addEventListener('click', DarkMode);
+function DarkMode() {
 	localStorage.setItem('darkMode', switchDark.checked);
 	const modal = document.getElementsByClassName("w3-modal-content");
 
