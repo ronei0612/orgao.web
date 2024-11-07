@@ -2786,58 +2786,77 @@ function escolherArquivo(event) {
 	}
 }
 
-function pesquisarMusica() {
+async function pesquisarMusica() {
 	modal_loading.style.display = 'block';
-
+  
 	listaMusicasCifra.innerHTML = '';
 	var textoPesquisa = musicaSearch.value;
-
-	$.ajax({
-		url: "Orgao/Pesquisar?texto=" + textoPesquisa, type: "post", dataType: "json",
-		success: function (data) {
-			if (data.success) {
-				escreverCifraTextArea.style.display = 'none';
-				linksCifraClubList.style.display = 'block';
-				botaoIniciar.style.display = 'none';
-
-				var titulosMusicas = data.lista;
-				var linksMusicas = data.links;
-
-				if (titulosMusicas.length > 0) {
-					for (i = 0; i < titulosMusicas.length; i += 1)
-						$('#listaMusicasCifra').append('<div class="list-group-item list-group-item-action" onclick="escolherLink(\'' + linksMusicas[i] + '\')">' + titulosMusicas[i] + '</div>');
-				}
-
-				else
-					alert('Não encontrado nenhuma cifra');
-			}
-			else
-				alert(data.message);
-
-			modal_loading.style.display = 'none';
+  
+	try {
+		const response = await fetch('https://apinode-h4wt.onrender.com/pesquisar', {
+			method: 'POST',
+			headers: {
+			  'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ texto: textoPesquisa }),
+		  });
+	  //const response = await fetch(`https://apinode-h4wt.onrender.com/pesquisar?texto=${textoPesquisa}`);
+	  const data = await response.json();
+  
+	  if (data.success) {
+		escreverCifraTextArea.style.display = 'none';
+		linksCifraClubList.style.display = 'block';
+		botaoIniciar.style.display = 'none';
+  
+		var titulosMusicas = data.lista;
+		var linksMusicas = data.links;
+  
+		if (titulosMusicas.length > 0) {
+		  for (let i = 0; i < titulosMusicas.length; i += 1) {
+			$('#listaMusicasCifra').append(
+			  `<div class="list-group-item list-group-item-action" onclick="escolherLink('${linksMusicas[i]}')">${titulosMusicas[i]}</div>`
+			);
+		  }
+		} else {
+		  alert('Não encontrado nenhuma cifra');
 		}
-	});
-}
-
-function escolherLink(urlLink) {
+	  } else {
+		alert(data.message);
+	  }
+	} catch (error) {
+	  console.error('Error fetching data:', error);
+	  alert('Erro: ' + error);
+	} finally {
+	  modal_loading.style.display = 'none';
+	}
+  }
+  
+  async function escolherLink(urlLink) {
 	modal_loading.style.display = 'block';
-	$.ajax({
-		type: "post",
-		dataType: "json",
-		url: "Orgao/DownloadSite",
-		data: {
-			url: urlLink,
+  
+	try {
+	  const response = await fetch('https://apinode-h4wt.onrender.com/downloadsite', {
+		method: 'POST',
+		headers: {
+		  'Content-Type': 'application/json',
 		},
-		success: function (data) {
-			if (data.success)
-				mudarParaTelaCifras(data);
-			else
-				alert(data.message);
-
-			modal_loading.style.display = 'none';
-		}
-	});
-}
+		body: JSON.stringify({ url: urlLink }),
+	  });
+  
+	  const data = await response.json();
+  
+	  if (data.success) {
+		mudarParaTelaCifras(data);
+	  } else {
+		alert(data.message);
+	  }
+	} catch (error) {
+	  console.error('Error fetching data:', error);
+	  alert('Erro ao baixar a cifra. Tente novamente mais tarde.');
+	} finally {
+	  modal_loading.style.display = 'none';
+	}
+  }
 
 function mudarParaTelaCifras(data) {
 	escreverCifraTextArea.style.display = 'block';
