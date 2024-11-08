@@ -629,6 +629,14 @@
     <script src="./assets/js/google.min.js"></script>
     <script src="./assets/js/Pizzicato.min.js"></script>
     <script>
+        async function acordarServidor() {
+            try {
+                const response = await fetch('https://apinode-h4wt.onrender.com');
+            } catch { }
+        }
+
+        window.onload = acordarServidor;
+
     //Impedir atualização errônea da página
     // window.onbeforeunload = function () {
     //     return "Deseja recarregar página?";
