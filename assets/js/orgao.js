@@ -1266,6 +1266,7 @@ function adicionarTonsSelect(element, index, maior) {
 
 function mostrarTextoCifrasCarregado(tom = null, texto = null) {
 	if (tom) {
+		tom = getAcorde(tom)[0];
 		if (tom.includes('m'))
 			adicionarTonsSelect('tomSelect', tonsMenores.indexOf(tom), false);
 		else
@@ -1275,7 +1276,7 @@ function mostrarTextoCifrasCarregado(tom = null, texto = null) {
 	}
 
 	if (texto)
-		textoCifras.contentDocument.body.innerHTML = texto;
+		textoCifras.contentDocument.body.innerHTML = getAcordes(texto);
 
 	if (document.body.classList.contains("bg-dark"))
 		textoCifras.contentWindow.document.querySelector('pre').style.color = '#fff';
