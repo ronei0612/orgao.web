@@ -636,6 +636,45 @@
             } catch { }
         }
 
+        function marcarAcordes(letra) {
+            debugger;
+  const acordesMatch = letra.match(/[A-G][#b]*\d*[\+\°m]*\s*/gi);
+  const letraMarcada = acordesMatch.reduce((letraComTags, acorde) => {
+    let cifraFormatada = acorde.trim();
+    // Vai removendo os últimos caracateres até chegar num que conheça como C#7sus encontra C#7
+    while (!notasAcordesJson.hasOwnProperty(cifraFormatada)) {
+      cifraFormatada = cifraFormatada.slice(0, -1);
+    }
+
+    // Substitui os acidentes pelos correspondentes
+    let acordeSubstituido = cifraFormatada;
+    const soNota = cifraFormatada.match(/[A-G][#b]*/)[0];
+    if (acidentesCorrespondentesJson.hasOwnProperty(soNota)) {
+      acordeSubstituido = acordeSubstituido.replace(soNota, acidentesCorrespondentesJson[soNota]);
+    }
+
+    // Verifica se tem baixo
+    const partesAcorde = acordeSubstituido.split('/');
+    if (partesAcorde.length > 1) {
+      const raizAcorde = partesAcorde[0];
+      const baixo = partesAcorde[1];
+      // Verifica se o baixo está na lista de tons maiores
+      if (tonsMaioresString.includes(baixo)) {
+        acordeSubstituido = `${raizAcorde}/${baixo}`;
+      }
+    }
+
+    const notasAcorde = notasAcordesJson[cifraFormatada];
+    if (notasAcorde) {
+      return letraComTags.replace(acorde, `<b>${acordeSubstituido}</b>`);
+    } else {
+      return letraComTags.replace(acorde, acorde);
+    }
+  }, letra);
+
+  return letraMarcada;
+}
+
         window.onload = acordarServidor;
 
     //Impedir atualização errônea da página

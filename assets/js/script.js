@@ -1,5 +1,6 @@
 ﻿function getAcorde(possivelAcorde) {
-	possivelAcorde = possivelAcorde.replace("(9)", "9").replace("m(5-)", "°").replace("m7(5-)", "°7").replace('º', '°');
+	//possivelAcorde = possivelAcorde.replace("(9)", "9").replace("m(5-)", "°").replace("m7(5-)", "°7").replace('º', '°');
+	possivelAcorde = possivelAcorde.replace("(9)", "").replace('(9-)', '').replace('(4)', '').replace("m(5-)", "°").replace("m7(5-)", "°7").replace('º', '°');
   
 	let cifraFormatada = possivelAcorde;
 	let cifraAcordeAlteracoes = "";
@@ -136,6 +137,10 @@
 			}
   
 			let retorno;
+			if (acorde.includes('B7(9-)')){
+				debugger;
+			  acorde = acorde;
+			}
 			if (acorde[0] === '(') {
 			  texto.push("(");
 			  retorno = getAcorde(acorde.split('(')[1].replace("|", ""));
@@ -143,8 +148,8 @@
 			  texto.push(")");
 			  retorno = getAcorde(acorde.split(')')[1].replace("|", ""));
 			} else if (acorde.endsWith(')')) {
-			  texto.push(")");
-			  retorno = getAcorde(acorde.split(')')[0].replace("|", ""));
+			  //texto.push(")");
+			  retorno = getAcorde(acorde.split(')')[0].replace("|", "") + ')');
 			} else if (acorde.endsWith('(')) {
 			  texto.push("(");
 			  retorno = getAcorde(acorde.split('(')[0].replace("|", ""));
