@@ -79,11 +79,17 @@
         <button class="btn-custom btn-stop pressed pulse" id="stopButton">
             <i class="bi bi-stop-fill"></i>
         </button>
+        <div class="mt-3">
+            <label for="pulseRange">Velocidade do Pulso (BPM):</label>
+            <input type="range" id="pulseRange" min="30" max="240" step="1" value="120">
+            <span id="bpmValue">120</span>
+        </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script>
         const playButton = document.getElementById('playButton');
         const stopButton = document.getElementById('stopButton');
+        const pulseRange = document.getElementById('pulseRange');
+        const bpmValue = document.getElementById('bpmValue');
 
         const togglePressedState = (event) => {
             const button = event.currentTarget;
@@ -99,11 +105,23 @@
             setTimeout(() => button.classList.add('pressed'), 100);
         };
 
+        const mudarTempoCompasso = (bpm) => {
+            const tempo = parseInt(bpm.value);
+            const bpmValor = 60000 / tempo;
+            bpmValue.textContent = tempo;
+
+            playButton.style.animationDuration = `${bpmValor}ms`;
+            stopButton.style.animationDuration = `${bpmValor}ms`;
+        };
+
+        pulseRange.addEventListener('input', () => mudarTempoCompasso(pulseRange));
         playButton.addEventListener('mousedown', togglePressedState);
         playButton.addEventListener('touchstart', togglePressedState);
-
         stopButton.addEventListener('mousedown', togglePressedState);
         stopButton.addEventListener('touchstart', togglePressedState);
+
+        // Inicializar a exibição do BPM no carregamento da página
+        mudarTempoCompasso(pulseRange);
     </script>
 </body>
 </html>
