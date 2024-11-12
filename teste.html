@@ -1,108 +1,48 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reproduzir Áudio em Tempo Real</title>
+    <title>Botão de Play</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .btn-play {
+            background-color: #C9A6D1; /* Roxo claro ajustado */
+            border-radius: 50%; /* Botão redondo */
+            color: white;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            border: none;
+            transition: 0.3s;
+            outline: none; /* Remove a borda preta ao focar */
+        }
+        .btn-play.pressed {
+            background-color: #8A2BE2; /* Roxo escuro */
+            box-shadow: 0 0 10px #8A2BE2; /* Efeito de brilho */
+        }
+        .btn-play:focus {
+            outline: none; /* Garante que o foco não adicione borda */
+        }
+    </style>
 </head>
-
-<body>
-    <h1>Reproduzir Áudio em Tempo Real</h1>
-    <button id="startButton">Iniciar Transmissão</button>
-    <button id="stopButton" disabled>Parar Transmissão</button>
-
+<body class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <button class="btn-play" id="playButton">
+        <i class="bi bi-play-fill"></i>
+    </button>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
-        const startButton = document.getElementById('startButton');
-        const stopButton = document.getElementById('stopButton');
-        let mediaStream;
-        let audioContext;
-        let microphone;
-        let destination;
+        const playButton = document.getElementById('playButton');
+        const togglePressedState = () => {
+            playButton.classList.remove('pressed');
+            setTimeout(() => playButton.classList.add('pressed'), 100);
+        };
 
-        startButton.addEventListener('click', async () => {
-            try {
-                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                microphone = audioContext.createMediaStreamSource(mediaStream);
-                destination = audioContext.destination;
-
-                // Search bluetooth
-                const audioOutputDevice = await navigator.mediaDevices.enumerateDevices()
-                    .then(devices => devices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth')));
-                
-                if (audioOutputDevice) {
-                    await audioPlayback.setSinkId(audioOutputDevice.deviceId);
-                }
-                /////
-
-                microphone.connect(destination);
-
-                startButton.disabled = true;
-                stopButton.disabled = false;
-            } catch (err) {
-                console.error("Error accessing microphone:", err);
-            }
-        });
-
-        stopButton.addEventListener('click', () => {
-            if (mediaStream) {
-                const tracks = mediaStream.getTracks();
-                tracks.forEach(track => track.stop());
-            }
-            if (microphone) microphone.disconnect();
-            if (audioContext) audioContext.close();
-
-            startButton.disabled = false;
-            stopButton.disabled = true;
-        });
-
-        // teste bluetooth no celular
-        // startButton.addEventListener('click', async () => {
-        //     try {
-        //         mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        //         audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        //         microphone = audioContext.createMediaStreamSource(mediaStream);
-
-        //         let outputDevice;
-
-        //         // Tenta encontrar o dispositivo Bluetooth usando getOutputDevices()
-        //         try {
-        //         const outputDevices = await navigator.mediaDevices.getOutputDevices();
-        //         outputDevice = outputDevices.find(device => device.kind === 'audiooutput' && device.label.includes('Bluetooth'));
-        //         } catch (error) {
-        //         // Se getOutputDevices() não estiver disponível, use a saída padrão
-        //         console.warn("getOutputDevices() não está disponível. Usando saída padrão.");
-        //         outputDevice = null;
-        //         }
-
-        //         // Define a saída de áudio
-        //         if (outputDevice) {
-        //         // Tenta usar setSinkId()
-        //         try {
-        //             await microphone.track.setSinkId(outputDevice.deviceId);
-        //             destination = audioContext.destination;
-        //             microphone.connect(destination);
-        //             console.log("Áudio encaminhado para o dispositivo Bluetooth:", outputDevice.label);
-        //         } catch (error) {
-        //             // Se setSinkId() falhar, usa a saída padrão
-        //             console.warn("setSinkId() falhou. Usando saída padrão.");
-        //             destination = audioContext.destination;
-        //             microphone.connect(destination);
-        //         }
-        //         } else {
-        //         // Se nenhum dispositivo Bluetooth for encontrado, usa a saída padrão
-        //         destination = audioContext.destination;
-        //         microphone.connect(destination);
-        //         console.warn("Nenhum dispositivo Bluetooth encontrado. Usando saída padrão.");
-        //         }
-
-        //         startButton.disabled = true;
-        //         stopButton.disabled = false;
-        //     } catch (err) {
-        //         console.error("Error accessing microphone:", err);
-        //     }
-        //     });
+        playButton.addEventListener('mousedown', togglePressedState);
+        playButton.addEventListener('touchstart', togglePressedState);
     </script>
 </body>
 </html>
