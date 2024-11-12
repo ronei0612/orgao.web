@@ -25,11 +25,14 @@
             -ms-user-select: none; /* Para navegadores Microsoft */
         }
         .btn-play {
-            background-color: #B0A1C4; /* Roxo claro ajustado */
+            background-color: #B0A1C4; /* Roxo claro #9370DB */
         }
         .btn-play.pressed {
             background-color: #8A2BE2; /* Roxo escuro */
             box-shadow: 0 0 10px #8A2BE2; /* Efeito de brilho */
+        }
+        .btn-play.pulse {
+            animation: pulsePlay 1s infinite; /* Animação de pulsação */
         }
         .btn-play:focus {
             outline: none; /* Garante que o foco não adicione borda */
@@ -41,8 +44,33 @@
             background-color: #FF4500; /* Vermelho mais claro */
             box-shadow: 0 0 10px #FF4500; /* Efeito de brilho */
         }
+        .btn-stop.pulse {
+            animation: pulseStop 1s infinite; /* Animação de pulsação */
+        }
         .btn-stop:focus {
             outline: none;
+        }
+        @keyframes pulsePlay {
+            0% {
+                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7); /* Roxo escuro */
+            }
+            50% {
+                box-shadow: 0 0 20px 5px rgba(138, 43, 226, 0.7); /* Roxo escuro */
+            }
+            100% {
+                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7); /* Roxo escuro */
+            }
+        }
+        @keyframes pulseStop {
+            0% {
+                box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7); /* Vermelho tomate */
+            }
+            50% {
+                box-shadow: 0 0 20px 5px rgba(255, 69, 0, 0.7); /* Vermelho tomate */
+            }
+            100% {
+                box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7); /* Vermelho tomate */
+            }
         }
     </style>
 </head>
@@ -51,7 +79,7 @@
         <button class="btn-custom btn-play" id="playButton">
             <i class="bi bi-play-fill"></i>
         </button>
-        <button class="btn-custom btn-stop pressed" id="stopButton">
+        <button class="btn-custom btn-stop pressed pulse" id="stopButton">
             <i class="bi bi-stop-fill"></i>
         </button>
     </div>
@@ -59,14 +87,17 @@
     <script>
         const playButton = document.getElementById('playButton');
         const stopButton = document.getElementById('stopButton');
+
         const togglePressedState = (event) => {
             const button = event.currentTarget;
             if (button === playButton) {
-                stopButton.classList.remove('pressed');
+                stopButton.classList.remove('pressed', 'pulse');
+                playButton.classList.add('pulse');
             } else {
-                playButton.classList.remove('pressed');
+                playButton.classList.remove('pressed', 'pulse');
+                stopButton.classList.add('pulse');
             }
-            
+
             button.classList.remove('pressed');
             setTimeout(() => button.classList.add('pressed'), 100);
         };
