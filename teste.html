@@ -11,65 +11,62 @@
             background-color: #F0F0F0;
         }
         .btn-custom {
-            border-radius: 50%; /* Botão redondo */
+            border-radius: 50%; 
             color: white;
             width: 60px;
             height: 60px;
             font-size: 24px;
             border: none;
             transition: background-color 0.3s, box-shadow 0.3s;
-            outline: none; /* Remove a borda preta ao focar */
-            user-select: none; /* Previne a seleção do botão */
-            -webkit-user-select: none; /* Para navegadores WebKit */
-            -moz-user-select: none; /* Para navegadores Mozilla */
-            -ms-user-select: none; /* Para navegadores Microsoft */
+            outline: none;
+            user-select: none; 
         }
         .btn-play {
-            background-color: #B0A1C4; /* Roxo claro #9370DB */
+            background-color: #B0A1C4; 
         }
         .btn-play.pressed {
-            background-color: #8A2BE2; /* Roxo escuro */
-            box-shadow: 0 0 10px #8A2BE2; /* Efeito de brilho */
+            background-color: #8A2BE2; 
+            box-shadow: 0 0 10px #8A2BE2;
         }
         .btn-play.pulse {
-            animation: pulsePlay 1s infinite; /* Animação de pulsação */
+            animation: pulsePlay 1s infinite; 
         }
         .btn-play:focus {
-            outline: none; /* Garante que o foco não adicione borda */
+            outline: none;
         }
         .btn-stop {
-            background-color: #FF6347; /* Vermelho tomate */
+            background-color: #FF6347; 
         }
         .btn-stop.pressed {
-            background-color: #FF4500; /* Vermelho mais claro */
-            box-shadow: 0 0 10px #FF4500; /* Efeito de brilho */
+            background-color: #FF4500; 
+            box-shadow: 0 0 10px #FF4500; 
         }
         .btn-stop.pulse {
-            animation: pulseStop 1s infinite; /* Animação de pulsação */
+            animation: pulseStop 1s infinite;
         }
         .btn-stop:focus {
             outline: none;
         }
         @keyframes pulsePlay {
             0% {
-                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7); /* Roxo escuro */
+                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7); 
             }
             50% {
-                box-shadow: 0 0 20px 5px rgba(138, 43, 226, 0.7); /* Roxo escuro */
+                box-shadow: 0 0 20px 5px rgba(138, 43, 226, 0.7); 
             }
             100% {
-                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7); /* Roxo escuro */
+                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7); 
             }
         }
         @keyframes pulseStop {
             0% {
-                box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7); /* Vermelho tomate */
+                box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7);
             }
             50% {
-                box-shadow: 0 0 20px 5px rgba(255, 69, 0, 0.7); /* Vermelho tomate */
+                box-shadow: 0 0 20px 5px rgba(255, 69, 0, 0.7);
             }
             100% {
-                box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7); /* Vermelho tomate */
+                box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7);
             }
         }
     </style>
