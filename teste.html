@@ -3,20 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Botão de Play</title>
+    <title>Botões de Play e Stop</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        .btn-play {
-            background-color: #C9A6D1; /* Roxo claro ajustado */
+        .btn-custom {
             border-radius: 50%; /* Botão redondo */
             color: white;
             width: 60px;
             height: 60px;
             font-size: 24px;
             border: none;
-            transition: 0.3s;
+            transition: background-color 0.3s, box-shadow 0.3s;
             outline: none; /* Remove a borda preta ao focar */
+            user-select: none; /* Previne a seleção do botão */
+            -webkit-user-select: none; /* Para navegadores WebKit */
+            -moz-user-select: none; /* Para navegadores Mozilla */
+            -ms-user-select: none; /* Para navegadores Microsoft */
+        }
+        .btn-play {
+            background-color: #C9A6D1; /* Roxo claro ajustado */
         }
         .btn-play.pressed {
             background-color: #8A2BE2; /* Roxo escuro */
@@ -25,24 +31,48 @@
         .btn-play:focus {
             outline: none; /* Garante que o foco não adicione borda */
         }
+        .btn-stop {
+            background-color: #FF6347;
+        }
+        .btn-stop.pressed {
+            background-color: #FF4500; /* cor mais clara */
+            box-shadow: 0 0 10px #FF4500; /* Efeito de brilho */
+        }
+        .btn-stop:focus {
+            outline: none;
+        }
     </style>
 </head>
 <body class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <button class="btn-play" id="playButton">
-        <i class="bi bi-play-fill"></i>
-    </button>
+    <div>
+        <button class="btn-custom btn-play" id="playButton">
+            <i class="bi bi-play-fill"></i>
+        </button>
+        <button class="btn-custom btn-stop pressed" id="stopButton">
+            <i class="bi bi-stop-fill"></i>
+        </button>
+    </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         const playButton = document.getElementById('playButton');
-        const togglePressedState = () => {
-            playButton.classList.remove('pressed');
-            setTimeout(() => playButton.classList.add('pressed'), 100);
+        const stopButton = document.getElementById('stopButton');
+        const togglePressedState = (event) => {
+            const button = event.currentTarget;
+            if (button === playButton) {
+                stopButton.classList.remove('pressed');
+            } else {
+                playButton.classList.remove('pressed');
+            }
+            
+            button.classList.remove('pressed');
+            setTimeout(() => button.classList.add('pressed'), 100);
         };
 
         playButton.addEventListener('mousedown', togglePressedState);
         playButton.addEventListener('touchstart', togglePressedState);
+
+        stopButton.addEventListener('mousedown', togglePressedState);
+        stopButton.addEventListener('touchstart', togglePressedState);
     </script>
 </body>
 </html>
