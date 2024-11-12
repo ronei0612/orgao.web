@@ -11,7 +11,7 @@
             background-color: #F0F0F0;
         }
         .btn-custom {
-            border-radius: 50%; 
+            border-radius: 50%;
             color: white;
             width: 60px;
             height: 60px;
@@ -19,27 +19,27 @@
             border: none;
             transition: background-color 0.3s, box-shadow 0.3s;
             outline: none;
-            user-select: none; 
+            user-select: none;
         }
         .btn-play {
-            background-color: #B0A1C4; 
+            background-color: #B0A1C4;
         }
         .btn-play.pressed {
-            background-color: #8A2BE2; 
+            background-color: #8A2BE2;
             box-shadow: 0 0 10px #8A2BE2;
         }
         .btn-play.pulse {
-            animation: pulsePlay 1s infinite; 
+            animation: pulsePlay 1s infinite;
         }
         .btn-play:focus {
             outline: none;
         }
         .btn-stop {
-            background-color: #FF6347; 
+            background-color: #FF6347;
         }
         .btn-stop.pressed {
-            background-color: #FF4500; 
-            box-shadow: 0 0 10px #FF4500; 
+            background-color: #FF4500;
+            box-shadow: 0 0 10px #FF4500;
         }
         .btn-stop.pulse {
             animation: pulseStop 1s infinite;
@@ -49,13 +49,13 @@
         }
         @keyframes pulsePlay {
             0% {
-                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7); 
+                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7);
             }
             50% {
-                box-shadow: 0 0 20px 5px rgba(138, 43, 226, 0.7); 
+                box-shadow: 0 0 20px 5px rgba(138, 43, 226, 0.7);
             }
             100% {
-                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7); 
+                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7);
             }
         }
         @keyframes pulseStop {
@@ -69,6 +69,23 @@
                 box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7);
             }
         }
+        .bpm-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .bpm-control label {
+            font-weight: bold;
+            color: #4F4F4F;
+        }
+        .bpm-control span {
+            font-size: 1.2em;
+            color: #4F4F4F;
+        }
+        .bpm-control input[type="range"] {
+            flex: 1;
+        }
     </style>
 </head>
 <body class="d-flex justify-content-center align-items-center" style="height: 100vh;">
@@ -79,7 +96,7 @@
         <button class="btn-custom btn-stop pressed pulse" id="stopButton">
             <i class="bi bi-stop-fill"></i>
         </button>
-        <div class="mt-3">
+        <div class="bpm-control">
             <label for="pulseRange">Velocidade do Pulso (BPM):</label>
             <input type="range" id="pulseRange" min="30" max="240" step="1" value="120">
             <span id="bpmValue">120</span>
