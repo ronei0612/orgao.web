@@ -378,7 +378,8 @@
         }
 
         elements.pulseRange.addEventListener('input', () => mudarTempoCompasso(elements.pulseRange));
-        ['mousedown', 'touchstart'].forEach(event => {
+        //['mousedown', 'touchstart'].forEach(event => {
+        ['mousedown'].forEach(event => {
             elements.playButton.addEventListener(event, togglePressedState);
             elements.stopButton.addEventListener(event, togglePressedState);
             elements.settingsButton.addEventListener(event, togglePressedState);
