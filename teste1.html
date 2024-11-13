@@ -195,7 +195,7 @@
                         <button class="btn btn-primary" type="button" id="searchButton">
                             <span class="spinner-border spinner-border-sm d-none" role="status"
                                 aria-hidden="true"></span>
-                            <i class="bi bi-search"></i>
+                            <i class="bi bi-search" id="searchIcon"></i>
                         </button>
                     </div>
                     <ul class="list-group mt-3" id="searchResults"></ul>
@@ -240,7 +240,7 @@
             searchButton: document.getElementById('searchButton'),
             searchInput: document.getElementById('searchInput'),
             spinner: document.querySelector('.spinner-border'),
-            searchIcon: document.querySelector('.bi-search'),
+            searchIcon: document.getElementById('searchIcon'),
             searchResultsList: document.getElementById('searchResults'),
             pulseRange: document.getElementById('pulseRange'),
             bpmValue: document.getElementById('bpmValue'),
@@ -324,10 +324,9 @@
 
 
         async function searchMusic() {
-            debugger;
-            elements.searchButton.disabled = true;
-            elements.spinner.classList.remove('d-none');
             elements.searchIcon.classList.add('d-none');
+            elements.spinner.classList.remove('d-none');
+            elements.searchButton.disabled = true;
             elements.searchResultsList.innerHTML = '';
 
             const textoPesquisa = elements.searchInput.value;
