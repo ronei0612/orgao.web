@@ -29,7 +29,7 @@
             box-shadow: 0 0 10px #8A2BE2;
         }
         .btn-play.pulse {
-            animation: pulsePlay 1s infinite;
+            box-shadow: 0 0 20px 5px rgba(138, 43, 226, 0.7);
         }
         .btn-play:focus {
             outline: none;
@@ -46,17 +46,6 @@
         }
         .btn-stop:focus {
             outline: none;
-        }
-        @keyframes pulsePlay {
-            0% {
-                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7);
-            }
-            50% {
-                box-shadow: 0 0 20px 5px rgba(138, 43, 226, 0.7);
-            }
-            100% {
-                box-shadow: 0 0 10px 0 rgba(138, 43, 226, 0.7);
-            }
         }
         @keyframes pulseStop {
             0% {
@@ -137,7 +126,6 @@
         stopButton.addEventListener('mousedown', togglePressedState);
         stopButton.addEventListener('touchstart', togglePressedState);
 
-        // Inicializar a exibição do BPM no carregamento da página
         mudarTempoCompasso(pulseRange);
     </script>
 </body>
