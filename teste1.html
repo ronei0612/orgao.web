@@ -341,7 +341,7 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const data = await response.json();
                 if (data.success) {
-                    const { titles, links } = data; // destructuring
+                    const { lista: titles, links } = data; // destructuring
                     if (titles.length > 0) {
                         titles.forEach((title, index) => {
                             const listItem = document.createElement('li');
