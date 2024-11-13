@@ -9,6 +9,18 @@
     <style>
         body {
             background-color: #F0F0F0;
+            transition: background-color 0.3s;
+        }
+        body.dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+        .modal-content {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark-mode .modal-content {
+            background-color: #444;
+            color: #fff;
         }
         .btn-custom {
             border-radius: 50%;
@@ -61,6 +73,20 @@
             background-color: #B0A1C4;
             cursor: not-allowed;
         }
+        .btn-settings {
+            background-color: #B0A1C4;
+        }
+        .btn-settings.pressed {
+            background-color: #8A2BE2;
+            box-shadow: 0 0 10px #8A2BE2;
+        }
+        .btn-settings:disabled {
+            background-color: #B0A1C4;
+            cursor: not-allowed;
+        }
+        .btn-settings:focus {
+            outline: none;
+        }
         @keyframes pulseStop {
             0% {
                 box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7);
@@ -102,6 +128,9 @@
         <button class="btn-custom btn-search pressed" id="searchButton" data-toggle="modal" data-target="#searchModal">
             <i class="bi bi-search"></i>
         </button>
+        <button class="btn-custom btn-settings pressed" id="settingsButton" data-toggle="modal" data-target="#settingsModal">
+            <i class="bi bi-gear-fill"></i>
+        </button>
         <div class="bpm-control">
             <label for="pulseRange">Velocidade do Pulso (BPM):</label>
             <input type="range" id="pulseRange" min="30" max="240" step="1" value="120">
@@ -109,7 +138,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Search Modal -->
     <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -133,27 +162,49 @@
         </div>
     </div>
 
+    <!-- Settings Modal -->
+    <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="settingsModalLabel">Configurações</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn btn-dark" id="toggleDarkMode">Modo Escuro</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         const playButton = document.getElementById('playButton');
         const stopButton = document.getElementById('stopButton');
         const searchButton = document.getElementById('searchButton');
+        const settingsButton = document.getElementById('settingsButton');
         const pulseRange = document.getElementById('pulseRange');
         const bpmValue = document.getElementById('bpmValue');
+        const toggleDarkModeButton = document.getElementById('toggleDarkMode');
 
         const togglePressedState = (event) => {
             const button = event.currentTarget;
             if (button === playButton) {
                 stopButton.classList.remove('pressed', 'pulse');
                 playButton.classList.add('pulse');
-                searchButton.classList.remove('pressed');
                 searchButton.disabled = true;
+                settingsButton.disabled = true;
             } else {
                 playButton.classList.remove('pressed', 'pulse');
                 stopButton.classList.add('pulse');
-                searchButton.classList.add('pressed');
                 searchButton.disabled = false;
+                settingsButton.disabled = false;
             }
 
             button.classList.remove('pressed');
@@ -169,6 +220,10 @@
             stopButton.style.animationDuration = `${bpmValor}ms`;
         };
 
+        const toggleDarkMode = () => {
+            document.body.classList.toggle('dark-mode');
+        };
+
         pulseRange.addEventListener('input', () => mudarTempoCompasso(pulseRange));
         playButton.addEventListener('mousedown', togglePressedState);
         playButton.addEventListener('touchstart', togglePressedState);
@@ -176,6 +231,9 @@
         stopButton.addEventListener('touchstart', togglePressedState);
         searchButton.addEventListener('mousedown', togglePressedState);
         searchButton.addEventListener('touchstart', togglePressedState);
+        settingsButton.addEventListener('mousedown', togglePressedState);
+        settingsButton.addEventListener('touchstart', togglePressedState);
+        toggleDarkModeButton.addEventListener('click', toggleDarkMode);
 
         mudarTempoCompasso(pulseRange);
     </script>
