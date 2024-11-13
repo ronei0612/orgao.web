@@ -57,6 +57,10 @@
         .btn-search:focus {
             outline: none;
         }
+        .btn-search:disabled {
+            background-color: #B0A1C4;
+            cursor: not-allowed;
+        }
         @keyframes pulseStop {
             0% {
                 box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7);
@@ -144,10 +148,12 @@
                 stopButton.classList.remove('pressed', 'pulse');
                 playButton.classList.add('pulse');
                 searchButton.classList.remove('pressed');
+                searchButton.disabled = true;
             } else {
                 playButton.classList.remove('pressed', 'pulse');
                 stopButton.classList.add('pulse');
                 searchButton.classList.add('pressed');
+                searchButton.disabled = false;
             }
 
             button.classList.remove('pressed');
