@@ -402,7 +402,7 @@
 
         const aplicarModoEscuroIframe = () => {
             const iframeDoc = iframeCifra.contentDocument || iframeCifra.contentWindow.document;
-            iframeDoc.body.style.color = document.body.classList.contains('dark-mode') ? '#4F4F4F' : '#000000';
+            iframeDoc.body.style.color = document.body.classList.contains('dark-mode') ? '#FFFFFF' : '#4F4F4F';
         };
 
         const savedDarkMode = localStorage.getItem('darkMode') === 'true';
