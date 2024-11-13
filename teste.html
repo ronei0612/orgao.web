@@ -12,14 +12,16 @@
             transition: background-color 0.3s;
         }
         body.dark-mode {
-            background-color: #333;
+            background-color: #1E0033;
             color: #fff;
         }
         .modal-content {
+            background-color: #F0F0F0;
+            color: #333333;
             transition: background-color 0.3s, color 0.3s;
         }
         .dark-mode .modal-content {
-            background-color: #444;
+            background-color: #1E0033;
             color: #fff;
         }
         .btn-custom {
@@ -107,6 +109,10 @@
         .bpm-control label {
             font-weight: bold;
             color: #4F4F4F;
+        }
+        body.dark-mode .bpm-control label,
+        body.dark-mode .bpm-control span {
+            color: #AAAAAA;
         }
         .bpm-control span {
             font-size: 1.2em;
