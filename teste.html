@@ -47,6 +47,16 @@
         .btn-stop:focus {
             outline: none;
         }
+        .btn-search {
+            background-color: #B0A1C4;
+        }
+        .btn-search.pressed {
+            background-color: #8A2BE2;
+            box-shadow: 0 0 10px #8A2BE2;
+        }
+        .btn-search:focus {
+            outline: none;
+        }
         @keyframes pulseStop {
             0% {
                 box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7);
@@ -85,15 +95,46 @@
         <button class="btn-custom btn-stop pressed pulse" id="stopButton">
             <i class="bi bi-stop-fill"></i>
         </button>
+        <button class="btn-custom btn-search pressed" id="searchButton" data-toggle="modal" data-target="#searchModal">
+            <i class="bi bi-search"></i>
+        </button>
         <div class="bpm-control">
             <label for="pulseRange">Velocidade do Pulso (BPM):</label>
             <input type="range" id="pulseRange" min="30" max="240" step="1" value="120">
             <span id="bpmValue">120</span>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchModalLabel">Pesquisa</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="searchInput">Digite sua pesquisa:</label>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Buscar...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary">Pesquisar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         const playButton = document.getElementById('playButton');
         const stopButton = document.getElementById('stopButton');
+        const searchButton = document.getElementById('searchButton');
         const pulseRange = document.getElementById('pulseRange');
         const bpmValue = document.getElementById('bpmValue');
 
@@ -102,9 +143,11 @@
             if (button === playButton) {
                 stopButton.classList.remove('pressed', 'pulse');
                 playButton.classList.add('pulse');
+                searchButton.classList.remove('pressed');
             } else {
                 playButton.classList.remove('pressed', 'pulse');
                 stopButton.classList.add('pulse');
+                searchButton.classList.add('pressed');
             }
 
             button.classList.remove('pressed');
@@ -125,6 +168,8 @@
         playButton.addEventListener('touchstart', togglePressedState);
         stopButton.addEventListener('mousedown', togglePressedState);
         stopButton.addEventListener('touchstart', togglePressedState);
+        searchButton.addEventListener('mousedown', togglePressedState);
+        searchButton.addEventListener('touchstart', togglePressedState);
 
         mudarTempoCompasso(pulseRange);
     </script>
