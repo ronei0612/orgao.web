@@ -165,7 +165,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Pesquisar Música..." aria-label="Pesquisar" aria-describedby="basic-addon1" name="texto" id="searchInput">
+                        <input type="text" class="form-control" placeholder="Pesquisar Música..." aria-label="Pesquisar" aria-describedby="basic-addon1" id="searchInput">
                         <span class="input-group-text" id="searchButton">
                             <i class="bi bi-search"></i>
                         </span>
@@ -207,6 +207,8 @@
         const playButton = document.getElementById('playButton');
         const stopButton = document.getElementById('stopButton');
         const settingsButton = document.getElementById('settingsButton');
+        const searchButton = document.getElementById('searchButton');
+        const searchInput = document.getElementById('searchInput');
         const pulseRange = document.getElementById('pulseRange');
         const bpmValue = document.getElementById('bpmValue');
         const toggleDarkModeButton = document.getElementById('toggleDarkMode');
@@ -251,6 +253,52 @@
             localStorage.setItem('darkMode', isDarkMode);
         };
 
+        async function searchMusic() {
+            searchInput.style.disabled = true;
+            var textoPesquisa = searchInput.value;
+
+            try {
+                const response = await fetch('https://apinode-h4wt.onrender.com/pesquisar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ texto: textoPesquisa }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    var titles = data.lista;
+                    var links = data.links;
+
+                    if (titles.length > 0) {
+                        const resultsDiv = document.createElement('div');
+                        resultsDiv.style.cssText = "margin-top:10px";
+                        resultsDiv.innerHTML = '<h3>Resultados da Busca:</h3>';
+                        for (let i = 0; i < titles.length; i += 1) {
+                            const link = document.createElement('a');
+                            link.href = links[i];
+                            link.target = '_blank';
+                            link.textContent = titles[i];
+                            resultsDiv.appendChild(link);
+                            resultsDiv.appendChild(document.createElement('br'));
+                        }
+                        document.querySelector('#searchModal .modal-body').appendChild(resultsDiv);
+                    } else {
+                        alert('Não encontrado nenhuma cifra');
+                    }
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('Erro: ' + error);
+            } finally {
+                searchInput.style.disabled = false;
+            }
+        }
+
         const savedDarkMode = localStorage.getItem('darkMode') === 'true';
         if (savedDarkMode) {
             document.body.classList.add('dark-mode');
@@ -267,6 +315,7 @@
         settingsButton.addEventListener('mousedown', togglePressedState);
         settingsButton.addEventListener('touchstart', togglePressedState);
         toggleDarkModeButton.addEventListener('click', toggleDarkMode);
+        searchButton.addEventListener('click', searchMusic);
 
         mudarTempoCompasso(pulseRange);
     </script>
