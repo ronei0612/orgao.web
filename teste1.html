@@ -204,31 +204,31 @@
     <script>
         const playButton = document.getElementById('playButton');
         const stopButton = document.getElementById('stopButton');
-        //const searchButton = document.getElementById('searchButton');
         const settingsButton = document.getElementById('settingsButton');
         const pulseRange = document.getElementById('pulseRange');
         const bpmValue = document.getElementById('bpmValue');
         const toggleDarkModeButton = document.getElementById('toggleDarkMode');
 
         const togglePressedState = (event) => {
-    const button = event.currentTarget;
-    if (button === playButton) {
-        stopButton.classList.remove('pulse');
-        stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
-        playButton.classList.add('pulse');
-        //searchButton.disabled = true;
-        settingsButton.disabled = true;
-    } else {
-        playButton.classList.remove('pressed', 'pulse');
-        stopButton.classList.add('pulse');
-        stopButton.innerHTML = '<i class="bi bi-search"></i>';
-        //searchButton.disabled = false;
-        settingsButton.disabled = false;
-    }
+            const button = event.currentTarget;
+            if (button === playButton) {
+                stopButton.classList.remove('pulse');
+                stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
+                playButton.classList.add('pulse');
+                settingsButton.disabled = true;
+            } else {
+                if (stopButton.innerHTML.includes('bi-search')) {
+                    $('#searchModal').modal('show');
+                }
+                playButton.classList.remove('pressed', 'pulse');
+                stopButton.classList.add('pulse');
+                stopButton.innerHTML = '<i class="bi bi-search"></i>';
+                settingsButton.disabled = false;
+            }
 
-    button.classList.remove('pressed');
-    setTimeout(() => button.classList.add('pressed'), 100);
-};
+            button.classList.remove('pressed');
+            setTimeout(() => button.classList.add('pressed'), 100);
+        };
 
         const mudarTempoCompasso = (bpm) => {
             const tempo = parseInt(bpm.value);
@@ -246,24 +246,19 @@
             localStorage.setItem('darkMode', isDarkMode);
         };
 
-        // Carregar o modo salvo
         const savedDarkMode = localStorage.getItem('darkMode') === 'true';
         if (savedDarkMode) {
             document.body.classList.add('dark-mode');
             toggleDarkModeButton.innerHTML = '<i class="bi bi-brightness-high-fill"></i> Modo Claro';
         }
 
-        // Event listener
         toggleDarkModeButton.addEventListener('click', toggleDarkMode);
-
 
         pulseRange.addEventListener('input', () => mudarTempoCompasso(pulseRange));
         playButton.addEventListener('mousedown', togglePressedState);
         playButton.addEventListener('touchstart', togglePressedState);
         stopButton.addEventListener('mousedown', togglePressedState);
-        stopButton.addEventListener('touchstart', togglePressedState);
-        //searchButton.addEventListener('mousedown', togglePressedState);
-        //searchButton.addEventListener('touchstart', togglePressedState);
+        stopButton.addEventListener('touchstart', togglePressedState)
         settingsButton.addEventListener('mousedown', togglePressedState);
         settingsButton.addEventListener('touchstart', togglePressedState);
         toggleDarkModeButton.addEventListener('click', toggleDarkMode);
