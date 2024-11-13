@@ -158,15 +158,17 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="searchModalLabel">Pesquisa</h5>
+                    <h5 class="modal-title" id="searchModalLabel">Cifras</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="searchInput">Digite sua pesquisa:</label>
-                        <input type="text" class="form-control" id="searchInput" placeholder="Buscar...">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Pesquisar Música..." aria-label="Pesquisar" aria-describedby="basic-addon1" name="texto" id="searchInput">
+                        <span class="input-group-text" id="searchButton">
+                            <i class="bi bi-search"></i>
+                        </span>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -217,7 +219,10 @@
                 playButton.classList.add('pulse');
                 settingsButton.disabled = true;
             } else {
-                if (stopButton.innerHTML.includes('bi-search')) {
+                if (button === settingsButton) {
+                    $('#settingsModal').modal('show');
+                }
+                else if (stopButton.innerHTML.includes('bi-search')) {
                     $('#searchModal').modal('show');
                 }
                 playButton.classList.remove('pressed', 'pulse');
