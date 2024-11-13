@@ -3,7 +3,7 @@
     const acidentesCorrespondentesJson = JSON.parse('{"Cb":"B","C":"C","C#":"C#","Db":"C#","D":"D","D#":"D#","Eb":"D#","E":"E","E#":"F","Fb":"E","F":"F","F#":"F#","Gb":"F#","G":"G","G#":"G#","Ab":"G#","A":"A","A#":"A#","Bb":"A#","B":"B","B#":"C"}');
 	const acordesTons = Object.keys(acordesCampoHarmonicoJson);
 	const tonsMaiores = 'C, C#, D, D#, E, F, F#, G, G#, A, A#, B'.split(', ');
-	const tonsMenores = '"Am", "A#m", "Bm", "Cm", "C#m", "Dm", "D#m", "Em", "Fm", "F#m", "Gm", "G#m"'.split(', ');
+	const tonsMenores = 'Am, A#m, Bm, Cm, C#m, Dm, D#m, Em, Fm, F#m, Gm, G#m'.split(', ');
 
     var audioPath = './assets/audio/';
     if (location.origin.includes('file:'))
