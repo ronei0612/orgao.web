@@ -1,31 +1,34 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang=pt-br>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset=UTF-8>
+    <meta name=viewport content="width=device-width,initial-scale=1">
     <title>Botões de Play e Stop</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href=https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css rel=stylesheet>
+    <link href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css rel=stylesheet>
     <style>
         body {
-            background-color: #F0F0F0;
-            transition: background-color 0.3s;
+            background-color: #f8f9fa;
+            /* Usando a cor de fundo padrão do Bootstrap */
+            transition: background-color .3s;
         }
 
         body.dark-mode {
-            background-color: #1E0033;
+            background-color: #343a40;
+            /* Usando a cor escura padrão do Bootstrap */
             color: #fff;
         }
 
         .modal-content {
-            background-color: #F0F0F0;
-            color: #333333;
-            transition: background-color 0.3s, color 0.3s;
+            background-color: #fff;
+            /* Usando a cor de fundo padrão dos modais do Bootstrap */
+            color: #333;
+            transition: background-color .3s, color .3s;
         }
 
         .dark-mode .modal-content {
-            background-color: #1E0033;
+            background-color: #343a40;
             color: #fff;
         }
 
@@ -40,41 +43,45 @@
 
         .btn-custom {
             border-radius: 50%;
-            color: white;
+            color: #fff;
             width: 60px;
             height: 60px;
             font-size: 24px;
             border: none;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            outline: none;
+            transition: background-color .3s, box-shadow .3s;
+            outline: 0;
             user-select: none;
             margin: 8px;
         }
 
         .btn-play {
-            background-color: #B0A1C4;
+            background-color: #007bff;
+            /* Usando a cor primária do Bootstrap */
         }
 
         .btn-play.pressed {
-            background-color: #8A2BE2;
-            box-shadow: 0 0 10px #8A2BE2;
+            background-color: #0056b3;
+            /* Usando uma cor de foco semelhante do Bootstrap */
+            box-shadow: 0 0 10px #0056b3;
         }
 
         .btn-play.pulse {
-            box-shadow: 0 0 20px 5px rgba(138, 43, 226, 0.7);
+            box-shadow: 0 0 20px 5px rgba(0, 123, 255, .7);
         }
 
         .btn-play:focus {
-            outline: none;
+            outline: 0;
         }
 
         .btn-stop {
-            background-color: #FF6347;
+            background-color: #dc3545;
+            /* Usando a cor de perigo do Bootstrap */
         }
 
         .btn-stop.pressed {
-            background-color: #FF4500;
-            box-shadow: 0 0 10px #FF4500;
+            background-color: #bd2130;
+            /* Usando uma cor de foco semelhante do Bootstrap */
+            box-shadow: 0 0 10px #bd2130;
         }
 
         .btn-stop.pulse {
@@ -82,56 +89,60 @@
         }
 
         .btn-stop:focus {
-            outline: none;
+            outline: 0;
         }
 
         .btn-search {
-            background-color: #B0A1C4;
+            background-color: #28a745;
+            /* Usando a cor de sucesso do Bootstrap */
         }
 
         .btn-search.pressed {
-            background-color: #8A2BE2;
-            box-shadow: 0 0 10px #8A2BE2;
+            background-color: #218838;
+            /* Usando uma cor de foco semelhante do Bootstrap */
+            box-shadow: 0 0 10px #218838;
         }
 
         .btn-search:focus {
-            outline: none;
+            outline: 0;
         }
 
         .btn-search:disabled {
-            background-color: #B0A1C4;
+            background-color: #28a745;
             cursor: not-allowed;
         }
 
         .btn-settings {
-            background-color: #B0A1C4;
+            background-color: #17a2b8;
+            /* Usando a cor de informação do Bootstrap */
         }
 
         .btn-settings.pressed {
-            background-color: #8A2BE2;
-            box-shadow: 0 0 10px #8A2BE2;
+            background-color: #138496;
+            /* Usando uma cor de foco semelhante do Bootstrap */
+            box-shadow: 0 0 10px #138496;
         }
 
         .btn-settings:disabled {
-            background-color: #B0A1C4;
+            background-color: #17a2b8;
             cursor: not-allowed;
         }
 
         .btn-settings:focus {
-            outline: none;
+            outline: 0;
         }
 
         @keyframes pulseStop {
             0% {
-                box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7);
+                box-shadow: 0 0 10px 0 rgba(255, 69, 0, .7);
             }
 
             50% {
-                box-shadow: 0 0 20px 5px rgba(255, 69, 0, 0.7);
+                box-shadow: 0 0 20px 5px rgba(255, 69, 0, .7);
             }
 
             100% {
-                box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7);
+                box-shadow: 0 0 10px 0 rgba(255, 69, 0, .7);
             }
         }
 
@@ -143,32 +154,32 @@
         }
 
         .bpm-control label {
-            font-weight: bold;
-            color: #4F4F4F;
+            font-weight: 700;
+            color: #4f4f4f;
         }
 
         body.dark-mode .bpm-control label,
         body.dark-mode .bpm-control span {
-            color: #AAAAAA;
+            color: #aaa;
         }
 
         .bpm-control span {
             font-size: 1.2em;
-            color: #4F4F4F;
+            color: #4f4f4f;
         }
 
-        .bpm-control input[type="range"] {
+        .bpm-control input[type=range] {
             flex: 1;
         }
-        
+
         #iframeCifra {
             background-color: #fff;
             border-radius: 8px;
-            transition: background-color 0.3s;
+            transition: background-color .3s;
         }
 
         body.dark-mode #iframeCifra {
-            background-color: #62566C;
+            background-color: #343a40;
             color: #fff;
         }
 
@@ -178,98 +189,93 @@
         }
 
         body.dark-mode .list-group-item {
-            background-color: #333;
+            background-color: #343a40;
             color: #fff;
             border: 1px solid #555;
         }
     </style>
 </head>
 
-<body class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+<body class="d-flex justify-content-center align-items-center" style=height:100vh>
     <div>
-        <!-- <iframe src="https://liturgiadiaria.edicoescnbb.com.br/" width="100%" height="400" style="border: 1px solid #ccc;" id="iframe"></iframe> -->
-        <iframe width="100%" height="400" style="border: 1px solid #ccc;" id="iframeCifra"></iframe>
-        <button class="btn-custom btn-play" id="playButton">
+        <iframe width=100% height=400 style="border:1px solid #ccc" id=iframeCifra></iframe>
+        <button class="btn-custom btn-play" id=playButton>
             <i class="bi bi-play-fill"></i>
         </button>
-        <button class="btn-custom btn-stop pressed pulse" id="stopButton">
+        <button class="btn-custom btn-stop pressed pulse" id=stopButton>
             <i class="bi bi-search"></i>
         </button>
-        <button class="btn-custom btn-settings pressed" id="settingsButton" data-toggle="modal" data-target="#settingsModal">
+        <button class="btn-custom btn-settings pressed" id=settingsButton data-toggle=modal data-target=#settingsModal>
             <i class="bi bi-gear-fill"></i>
         </button>
-        <div class="bpm-control">
-            <label for="pulseRange">Velocidade do Pulso (BPM):</label>
-            <input type="range" id="pulseRange" min="30" max="240" step="1" value="120">
-            <span id="bpmValue">120</span>
+        <div class=bpm-control>
+            <label for=pulseRange>Velocidade do Pulso (BPM):</label>
+            <input type=range id=pulseRange min=30 max=240 step=1 value=120>
+            <span id=bpmValue>120</span>
         </div>
     </div>
-
-    <!-- Search Modal -->
-    <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="searchModalLabel">Cifras</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
+    <div class="modal fade" id=searchModal tabindex=-1 role=dialog aria-labelledby=searchModalLabel aria-hidden=true>
+        <div class=modal-dialog role=document>
+            <div class=modal-content>
+                <div class=modal-header>
+                    <h5 class=modal-title id=searchModalLabel>Cifras</h5>
+                    <button type=button class=close data-dismiss=modal aria-label=Close>
+                        <span aria-hidden=true>×</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Pesquisar Música..." aria-label="Pesquisar" aria-describedby="basic-addon1" id="searchInput">
-                        <button class="btn btn-primary" type="button" id="searchButton">
-                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                <div class=modal-body>
+                    <div class=input-group>
+                        <input class=form-control placeholder="Pesquisar Música..." aria-label=Pesquisar
+                            aria-describedby=basic-addon1 id=searchInput>
+                        <button class="btn btn-primary" type=button id=searchButton>
+                            <span class="spinner-border spinner-border-sm d-none" role=status aria-hidden=true></span>
                             <i class="bi bi-search"></i>
                         </button>
                     </div>
-                    <ul class="list-group mt-3" id="searchResults"></ul>
+                    <ul class="list-group mt-3" id=searchResults></ul>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <div class=modal-footer>
+                    <button type=button class="btn btn-secondary" data-dismiss=modal>Fechar</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Settings Modal -->
-    <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="settingsModalLabel">Configurações</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+    <div class="modal fade" id=settingsModal tabindex=-1 role=dialog aria-labelledby=settingsModalLabel
+        aria-hidden=true>
+        <div class=modal-dialog role=document>
+            <div class=modal-content>
+                <div class=modal-header>
+                    <h5 class=modal-title id=settingsModalLabel>Configurações</h5>
+                    <button type=button class=close data-dismiss=modal aria-label=Close>
+                        <span aria-hidden=true>&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <button type="button" class="btn btn-dark" id="toggleDarkMode">
+                <div class=modal-body>
+                    <button type=button class="btn btn-dark" id=toggleDarkMode>
                         <i class="bi bi-moon-fill"></i> Modo Escuro
-                    </button>                    
+                    </button>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <div class=modal-footer>
+                    <button type=button class="btn btn-secondary" data-dismiss=modal>Fechar</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src=https://code.jquery.com/jquery-3.3.1.slim.min.js></script>
+    <script src=https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js></script>
     <script>
-        const playButton = document.getElementById('playButton');
-        const stopButton = document.getElementById('stopButton');
-        const settingsButton = document.getElementById('settingsButton');
-        const searchButton = document.getElementById('searchButton');
-        const searchInput = document.getElementById('searchInput');
-        const spinner = searchButton.querySelector('.spinner-border');
-        const searchIcon = searchButton.querySelector('.bi-search');
-        const searchResultsList = document.getElementById('searchResults');
-        const pulseRange = document.getElementById('pulseRange');
-        const bpmValue = document.getElementById('bpmValue');
-        const toggleDarkModeButton = document.getElementById('toggleDarkMode');
-        // const iframe = document.getElementById('iframe');
-        const iframeCifra = document.getElementById('iframeCifra');
+        const playButton = document.getElementById("playButton"),
+            stopButton = document.getElementById("stopButton"),
+            settingsButton = document.getElementById("settingsButton"),
+            searchButton = document.getElementById("searchButton"),
+            searchInput = document.getElementById("searchInput"),
+            spinner = searchButton.querySelector(".spinner-border"),
+            searchIcon = searchButton.querySelector(".bi-search"),
+            searchResultsList = document.getElementById("searchResults"),
+            pulseRange = document.getElementById("pulseRange"),
+            bpmValue = document.getElementById("bpmValue"),
+            toggleDarkModeButton = document.getElementById("toggleDarkMode"),
+            iframeCifra = document.getElementById("iframeCifra");
 
         async function choseLink(urlLink) {
             searchButton.disabled = true;
@@ -372,15 +378,15 @@
 
                     if (titles.length > 0) {
                         titles.forEach((title, index) => {
-                        const listItem = document.createElement('li');
-                        listItem.className = 'list-group-item';
-                        const link = document.createElement('a');
-                        link.href = '#';
-                        link.onclick = () => choseLink(links[index]);
-                        link.textContent = title;
-                        listItem.appendChild(link);
-                        searchResultsList.appendChild(listItem);
-                    });
+                            const listItem = document.createElement('li');
+                            listItem.className = 'list-group-item';
+                            const link = document.createElement('a');
+                            link.href = '#';
+                            link.onclick = () => choseLink(links[index]);
+                            link.textContent = title;
+                            listItem.appendChild(link);
+                            searchResultsList.appendChild(listItem);
+                        });
                     } else {
                         const listItem = document.createElement('li');
                         listItem.className = 'list-group-item';
