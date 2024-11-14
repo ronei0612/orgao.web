@@ -163,19 +163,33 @@
 </head>
 
 <body>
-    <div class="m-2">
+    <div class="container mt-3" style="max-width: 600px;">
+        <div class="mb-3">
+            <iframe class="w-100" height="300" style="border: 1px solid #ccc;" id="iframeCifra"></iframe>
+        </div>
+        <div class="d-flex justify-content-center mb-3">
+            <button class="btn btn-primary btn-custom mx-2" data-action="play" id="playButton"><i class="bi bi-play-fill"></i></button>
+            <button class="btn btn-danger btn-custom pressed pulse mx-2" data-action="stop" id="stopButton"><i class="bi bi-search"></i></button>
+            <button class="btn btn-secondary btn-custom mx-2" data-action="notes" id="notesButton"><i class="bi bi-music-note-beamed"></i></button>
+        </div>
+        <div class="bpm-control d-flex align-items-center justify-content-center">
+            <label for="pulseRange" class="form-label mr-2">Tempo:</label>
+            <input type="range" class="form-range flex-grow-1 mx-2" id="pulseRange" min="30" max="240" step="1" value="120">
+            <span id="bpmValue">120</span>
+        </div>
+    </div>
+    <!-- <div class="m-2">
         <iframe width="100%" height="400" style="border: 1px solid #ccc;" id="iframeCifra"></iframe>
         <div class="d-flex justify-content-center align-items-center">
             <button class="btn-custom" data-action="play" id="playButton"><i class="bi bi-play-fill"></i></button>
             <button class="btn-custom pressed pulse" data-action="stop" id="stopButton"><i class="bi bi-search"></i></button>
             <button class="btn-custom" data-action="notes" id="notesButton"><i class="bi bi-music-note-beamed"></i></button>
-        </div>
         <div class="bpm-control">
             <label for="pulseRange">Tempo:</label>
             <input type="range" id="pulseRange" min="30" max="240" step="1" value="120">
             <span id="bpmValue">120</span>
         </div>
-    </div>
+    </div> -->
 
     <!-- Search Modal -->
     <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel"
