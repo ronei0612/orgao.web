@@ -68,6 +68,15 @@
             box-shadow: 0 0 20px 5px rgba(138, 43, 226, 0.7);
         }
 
+        .btn-custom[data-action="notes"] {
+            background-color: #9988B4;
+        }
+
+        .btn-custom[data-action="notes"].pressed {
+            background-color: #8A2BE2;
+            box-shadow: 0 0 10px #8A2BE2;
+        }
+
         .btn-custom[data-action="stop"] {
             background-color: #FF6347;
         }
@@ -79,15 +88,6 @@
 
         .btn-custom[data-action="stop"].pulse {
             animation: pulseStop 1s infinite;
-        }
-
-        .btn-custom[data-action="settings"] {
-            background-color: #9988B4;
-        }
-
-        .btn-custom[data-action="settings"].pressed {
-            background-color: #8A2BE2;
-            box-shadow: 0 0 10px #8A2BE2;
         }
 
         .btn-custom:focus {
@@ -162,16 +162,14 @@
     </style>
 </head>
 
-<body class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-    <div>
+<body class="d-flex justify-content-center align-items-center">
+    <div class="m-2">
         <iframe width="100%" height="400" style="border: 1px solid #ccc;" id="iframeCifra"></iframe>
         <button class="btn-custom" data-action="play" id="playButton"><i class="bi bi-play-fill"></i></button>
-        <button class="btn-custom pressed pulse" data-action="stop" id="stopButton"><i
-                class="bi bi-search"></i></button>
-        <button class="btn-custom pressed" data-action="settings" id="settingsButton" data-toggle="modal"
-            data-target="#settingsModal"><i class="bi bi-gear-fill"></i></button>
+        <button class="btn-custom pressed pulse" data-action="stop" id="stopButton"><i class="bi bi-search"></i></button>
+        <button class="btn-custom" data-action="notes" id="notesButton"><i class="bi bi-music-note-beamed"></i></button>
         <div class="bpm-control">
-            <label for="pulseRange">Velocidade do Pulso (BPM):</label>
+            <label for="pulseRange">Tempo:</label>
             <input type="range" id="pulseRange" min="30" max="240" step="1" value="120">
             <span id="bpmValue">120</span>
         </div>
@@ -200,30 +198,10 @@
                     </div>
                     <ul class="list-group mt-3" id="searchResults"></ul>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="settingsModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="settingsModalLabel">Configurações</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
+                <div class="modal-footer">                    
                     <button type="button" class="btn btn-dark" id="toggleDarkMode">
                         <i class="bi bi-moon-fill"></i> Modo Escuro
                     </button>
-                </div>
-                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                 </div>
             </div>
@@ -235,8 +213,8 @@
     <script>
         const elements = {
             playButton: document.getElementById('playButton'),
+            notesButton: document.getElementById('notesButton'),
             stopButton: document.getElementById('stopButton'),
-            settingsButton: document.getElementById('settingsButton'),
             searchButton: document.getElementById('searchButton'),
             searchInput: document.getElementById('searchInput'),
             spinner: document.querySelector('.spinner-border'),
@@ -280,26 +258,29 @@
         const togglePressedState = (event) => {
             const button = event.currentTarget;
             const action = button.dataset.action;
-            button.classList.remove('pressed');
-            setTimeout(() => button.classList.add('pressed'), 100);
+            
+            if (action === 'notes') {
+                if (elements.notesButton.classList.contains('pressed')) {
+                    elements.notesButton.classList.remove('pressed');
+                } else {
+                    elements.notesButton.classList.add('pressed');
+                }
+            } else {
+                button.classList.remove('pressed');
+                setTimeout(() => button.classList.add('pressed'), 100);
 
-            if (action === 'play') {
+                if (action === 'play') {
                 elements.stopButton.classList.remove('pulse');
                 elements.stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
                 elements.playButton.classList.add('pulse');
-                elements.settingsButton.disabled = true;
-                elements.settingsButton.classList.remove('pressed');
             } else {
-                if (action === 'settings') {
-                    $('#settingsModal').modal('show');
-                } else if (elements.stopButton.innerHTML.includes('bi-search')) {
+                if (action === 'stop' && elements.stopButton.innerHTML.includes('bi-search')) {
                     $('#searchModal').modal('show');
                 }
                 elements.playButton.classList.remove('pressed', 'pulse');
                 elements.stopButton.classList.add('pulse');
                 elements.stopButton.innerHTML = '<i class="bi bi-search"></i>';
-                elements.settingsButton.disabled = false;
-                elements.settingsButton.classList.add('pressed');
+            }
             }
         };
 
@@ -378,10 +359,11 @@
         }
 
         elements.pulseRange.addEventListener('input', () => mudarTempoCompasso(elements.pulseRange));
-        ['mousedown', 'touchstart'].forEach(event => {
+
+        ['mousedown'].forEach(event => {
             elements.playButton.addEventListener(event, togglePressedState);
+            elements.notesButton.addEventListener(event, togglePressedState);
             elements.stopButton.addEventListener(event, togglePressedState);
-            elements.settingsButton.addEventListener(event, togglePressedState);
         });
         elements.toggleDarkModeButton.addEventListener('click', toggleDarkMode);
         elements.searchButton.addEventListener('click', searchMusic);
