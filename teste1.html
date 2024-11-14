@@ -160,12 +160,30 @@
             color: #fff;
             border: 1px solid #555;
         }
+
+        #decreaseTom, #increaseTom {
+            background-color: #9988B4;
+            border-color: #9988B4;
+        }
+
+        .top-control { display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
     </style>
 </head>
 
 <body>
     <div class="container mt-3 d-flex flex-column vh-100" style="max-width: 600px;">
-        <div class="mb-3 mt-3 flex-grow-1">
+        <div class="mt-3 d-flex justify-content-center mb-3"> <button class="btn btn-secondary" id="decreaseTom"><i class="bi bi-dash"></i></button>
+            <select class="form-control mx-2 w-auto" id="tomSelect"> <option value="">C</option> </select>
+            <button class="btn btn-secondary" id="increaseTom"><i class="bi bi-plus"></i></button>
+        </div>
+        <!-- <div class="d-flex">
+            <button class="btn btn-secondary" id="decreaseTom"><i class="bi bi-dash"></i></button>
+            <select class="form-control mx-2" id="tomSelect">
+                <option value="">C</option>
+            </select>
+            <button class="btn btn-secondary" id="increaseTom"><i class="bi bi-plus"></i></button>
+        </div> -->
+        <div class="mb-3 flex-grow-1">
             <iframe class="w-100 border border-secondary rounded" style="height: 100%;" id="iframeCifra"></iframe>
         </div>
         <div class="d-flex justify-content-center mb-3">
