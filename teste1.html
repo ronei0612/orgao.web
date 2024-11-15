@@ -424,19 +424,20 @@
 
         function destacarCifras(texto) {
             const linhas = texto.split('\n');
-            let contadorCifras = 1;
+            let cifraNum = 1;
             const linhasDestacadas = linhas.map(linha => {
-                linha = linha.replace(/\(.*?\)/g, '');
-                const possuiPalavras = /[a-zA-Z]{3,}/.test(linha);
-                if (!possuiPalavras) {
+                if (!/[a-zA-Z]{3,}/.test(linha)) {
                     const palavras = linha.split(/\s+/);
-                    palavras.forEach(palavra => {
-                        console.log(palavra);
-                        const regex = new RegExp(`\\b${palavra}\\b`, 'g');
-                        if (notasAcordes.includes(palavra)) {
-                            linha = linha.replace(regex, `<b id="cifra${contadorCifras++}">${palavra}</b>`);
+                    const espacos = linha.match(/\s+/g) || [];
+                    const linhaProcessada = palavras.map((palavra, index) => {
+                        let acorde = palavra;
+                        while (!notasAcordes.includes(acorde) && acorde) {
+                            acorde = acorde.slice(0, -1);
                         }
-                    });
+                        const elemento = notasAcordes.includes(acorde) ? `<b id="cifra${cifraNum++}">${acorde}</b>` : palavra;
+                        return index < palavras.length - 1 && espacos[index] ? elemento + espacos[index] : elemento;
+                    }).join('');
+                    return linhaProcessada;
                 }
                 return linha;
             });
