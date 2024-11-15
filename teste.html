@@ -408,12 +408,13 @@
                 !document.webkitFullscreenElement && // Old WebKit
                 !document.mozFullScreenElement && // Old Firefox
                 !document.msFullscreenElement) {  // IE/Edge
-                var el = document.body;
-                var requestMethod = el.requestFullScreen || el.webkitRequestFullScreen
-                    || el.mozRequestFullScreen || el.msRequestFullScreen;
+                    var el = document.documentElement;
+                var requestMethod = el.requestFullscreen || el.webkitRequestFullscreen ||
+                    el.mozRequestFullScreen || el.msRequestFullscreen;
 
-                if (requestMethod)
+                if (requestMethod) {
                     requestMethod.call(el);
+                }
             }
         }
 
