@@ -401,6 +401,22 @@
             //addEventCifras(iframeCifra);
         }
 
+        function fullScreen() {
+            if (!document.fullscreenElement &&    // Opera 12.1, Firefox, Chrome, Edge, Safari
+                !document.webkitFullscreenElement && // Old WebKit
+                !document.mozFullScreenElement && // Old Firefox
+                !document.msFullscreenElement) {  // IE/Edge
+                var el = document.body;
+                var requestMethod = el.requestFullScreen || el.webkitRequestFullScreen
+                    || el.mozRequestFullScreen || el.msRequestFullScreen;
+
+                if (requestMethod)
+                    requestMethod.call(el);
+            }
+        }
+
+        document.addEventListener('mousedown', fullScreen);
+
         function adicionarTonsSelect(element, index, maior) {
             var selectElem = document.getElementById(element);
             selectElem.innerHTML = "";
