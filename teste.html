@@ -479,6 +479,46 @@
             });
             return linhasDestacadas.join('\n');
         }
+
+        let acordeGroup = null;
+
+        function tocarAcorde(acorde) {
+            pararAcorde();
+            
+            if (!acordeGroup) {
+                acordeGroup = new Pizzicato.Group();
+                acordeGroup.attack = 0.1;
+            }
+
+            const notas = notasAcordesJson[acorde];
+
+            acordeGroup.addSound(acordes[`orgao_${notas[0]}_grave`]);
+            notas.forEach(nota => {
+                acordeGroup.addSound(acordes[`orgao_${nota}_baixo`]);
+                acordeGroup.addSound(acordes[`strings_${nota}_baixo`]);
+            });
+
+            acordeGroup.play();
+        }
+
+        function pararAcorde() {
+            if (acordeGroup) {
+                acordeGroup.stop();
+
+                var sons = acordeGroup.sounds.length;
+                for (let i = sons - 1; i > -1; i--) {
+                    acordeGroup.removeSound(acordeGroup.sounds[i]);
+                };
+            }
+        }
+
+        elements.playButton.addEventListener('mousedown', function () {
+            tocarAcorde('C');
+        });
+        
+        elements.stopButton.addEventListener('mousedown', function () {
+            pararAcorde();
+        });
     </script>
 </body>
 
