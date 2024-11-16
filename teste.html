@@ -185,7 +185,7 @@
 </head>
 
 <body>
-    <div class="container d-flex flex-column vh-100" style="max-width: 600px;">
+    <div class="container d-flex flex-column vh-100" style="max-width: 700px;">
         <div class="d-flex justify-content-center align-items-center mb-3">
             <button class="btn btn-dark-cyan mx-2" id="decreaseTom"><i class="bi bi-dash"></i></button>
             <select class="form-control mx-2 w-auto" id="tomSelect"></select>
@@ -195,12 +195,18 @@
         <div class="mb-3 flex-grow-1">
             <iframe class="w-100 border border-secondary rounded" style="height: 100%;" id="iframeCifra"></iframe>
         </div>
-        <div class="d-flex justify-content-center mb-3">
+        <div class="d-flex justify-content-center mb-3" id="controlButtons">
+            <button class="btn btn-link" id="prevButton">
+                <i class="bi bi-chevron-left"></i>
+            </button>
             <button class="btn-custom mx-2" data-action="play" id="playButton"><i class="bi bi-play-fill"></i></button>
             <button class="btn-custom pressed pulse mx-2" data-action="stop" id="stopButton"><i
                     class="bi bi-search"></i></button>
             <button class="btn-custom mx-2" data-action="notes" id="notesButton"><i
                     class="bi bi-music-note-beamed"></i></button>
+            <button class="btn btn-link" id="nextButton">
+                <i class="bi bi-chevron-right"></i>
+            </button>
         </div>
     </div>
 
@@ -245,6 +251,7 @@
     <script src="./assets/js/audios.js"></script>
     <script>
         const elements = {
+            controlButtons: document.getElementById('controlButtons'),
             editTextarea: document.getElementById('editTextarea'),
             saveButton: document.getElementById('saveButton'),
             playButton: document.getElementById('playButton'),
@@ -259,6 +266,8 @@
             bpmValue: document.getElementById('bpmValue'),
             toggleDarkModeButton: document.getElementById('toggleDarkMode'),
             iframeCifra: document.getElementById('iframeCifra'),
+            prevButton: document.getElementById('prevButton'),
+            nextButton: document.getElementById('nextButton')
         };
 
         elements.saveButton.addEventListener('click', () => {
@@ -267,6 +276,28 @@
             elements.iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
             addEventCifrasIframe(elements.iframeCifra);
             $('#searchModal').modal('hide');
+        });
+
+        elements.prevButton.addEventListener('click', () => {
+            if (elements.controlButtons.classList.contains('justify-content-center')) {
+                elements.controlButtons.classList.remove('justify-content-center');
+                elements.controlButtons.classList.add('justify-content-left');
+            }
+            else if (elements.controlButtons.classList.contains('justify-content-end')) {
+                elements.controlButtons.classList.remove('justify-content-end');
+                elements.controlButtons.classList.add('justify-content-center');
+            }
+        });
+
+        elements.nextButton.addEventListener('click', () => {
+            if (elements.controlButtons.classList.contains('justify-content-center')) {                
+                elements.controlButtons.classList.remove('justify-content-center');
+                elements.controlButtons.classList.add('justify-content-end');
+            }
+            else if (elements.controlButtons.classList.contains('justify-content-left')) {
+                elements.controlButtons.classList.remove('justify-content-left');
+                elements.controlButtons.classList.add('justify-content-center');
+            }
         });
 
         async function searchMusic() {
@@ -357,9 +388,10 @@
                 setTimeout(() => button.classList.add('pressed'), 100);
 
                 if (action === 'play') {
+                    setTimeout(() => button.classList.add('pulse'), 100);                    
                     elements.stopButton.classList.remove('pulse');
                     elements.stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
-                    elements.playButton.classList.add('pulse');
+                    elements.playButton.classList.remove('pulse');
                 } else {
                     if (action === 'stop' && elements.stopButton.innerHTML.includes('bi-search')) {
                         $('#searchModal').modal('show');
@@ -514,17 +546,26 @@
             const notas = notasAcordesJson[acorde];
 
             acordeGroup.addSound(acordes[`orgao_${notas[0]}_grave`]);
+            acordeGroup.addSound(acordes[`strings_${notas[0]}_grave`]);
+
             notas.forEach(nota => {
                 acordeGroup.addSound(acordes[`orgao_${nota}_baixo`]);
                 acordeGroup.addSound(acordes[`strings_${nota}_baixo`]);
+
+                if (elements.notesButton.classList.contains('pressed')) {
+                    acordeGroup.addSound(acordes[`orgao_${nota}`]);
+                    acordeGroup.addSound(acordes[`strings_${nota}`]);
+                }
             });
 
+            parado = false;
             acordeGroup.play();
         }
 
         function pararAcorde() {
             if (acordeGroup) {
                 acordeGroup.stop();
+                parado = true;
 
                 var sons = acordeGroup.sounds.length;
                 for (let i = sons - 1; i > -1; i--) {
@@ -533,66 +574,78 @@
             }
         }
 
-        let parado = false;
-    let indiceAcorde = 0;
+        let parado = true;
+        let indiceAcorde = 0;
 
-    elements.playButton.addEventListener('mousedown', function () {
-        avancarCifra();
-    });
+        elements.playButton.addEventListener('mousedown', function () {
+            avancarCifra();
+        });
 
-    function removerClasseCifraSelecionada(iframeDoc, excecao = null) {
-        const elementos = iframeDoc.querySelectorAll('.cifraSelecionada');
-        elementos.forEach(elemento => {
-            if (elemento !== excecao) {
-                elemento.classList.remove('cifraSelecionada');
+        function removerClasseCifraSelecionada(iframeDoc, excecao = null) {
+            const elementos = iframeDoc.querySelectorAll('.cifraSelecionada');
+            elementos.forEach(elemento => {
+                if (elemento !== excecao) {
+                    elemento.classList.remove('cifraSelecionada');
+                }
+            });
+        }
+
+        elements.notesButton.addEventListener('mousedown', function () {
+            if (indiceAcorde > 0) {
+                indiceAcorde--;
+            }
+            
+            if (!parado) {
+                pararAcorde();
+                avancarCifra();                
             }
         });
-    }
 
+        elements.stopButton.addEventListener('mousedown', function () {
+            pararAcorde();
+            const frameContent = elements.iframeCifra.contentDocument;
+            const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
 
-    elements.stopButton.addEventListener('mousedown', function () {
-        pararAcorde();
-        const frameContent = elements.iframeCifra.contentDocument;
-        const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
+            Array.from(cifraElems).forEach(elemento => {
+                elemento.classList.remove('cifraSelecionada');
+            });
 
-        Array.from(cifraElems).forEach(elemento => {
-            elemento.classList.remove('cifraSelecionada');
+            if (indiceAcorde > 0) {
+                //tocando = false;
+                indiceAcorde--;
+            }
         });
 
-        if (indiceAcorde > 0) {
-            tocando = false;
-            indiceAcorde--;
-        }
-    });
-
-    function avancarCifra() {
-        const frameContent = elements.iframeCifra.contentDocument;
-        const elements_b = frameContent.getElementsByTagName('b');
-        const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
-
-        if (indiceAcorde < elements_b.length) {
-            if (cifraElems.length > 0)
-                cifraElems[0].classList.remove('cifraSelecionada');
-
+        function avancarCifra() {
+            const frameContent = elements.iframeCifra.contentDocument;
+            const elements_b = frameContent.getElementsByTagName('b');
+            const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
             parado = false;
 
-            let cifraElem = elements_b[indiceAcorde];
-            let cifra = cifraElem.innerHTML.trim();
-            tocarAcorde(cifra);
+            if (indiceAcorde < elements_b.length) {
+                if (cifraElems.length > 0)
+                    cifraElems[0].classList.remove('cifraSelecionada');
 
-            cifraElem.classList.add('cifraSelecionada');
-            cifraElem.scrollIntoView();
+                const cifraElem = elements_b[indiceAcorde];
+                if (cifraElem) {
+                    const cifra = cifraElem.innerHTML.trim();
+                    tocarAcorde(cifra);
 
-            indiceAcorde++;
+                    cifraElem.classList.add('cifraSelecionada');
+                    cifraElem.scrollIntoView();
+
+                    indiceAcorde++;
+                }
+            }
         }
-    }
 
-    function tocarCifraManualmente(cifraElem) {
-        indiceAcorde = cifraElem.id.split('cifra')[1] - 1;
+        function tocarCifraManualmente(cifraElem) {
+            indiceAcorde = cifraElem.id.split('cifra')[1] - 1;
 
-        if (parado === false)
-            avancarCifra();
-    }
+            if (parado === false) {
+                elements.playButton.dispatchEvent(new Event('mousedown'));
+            }
+        }
     </script>
 </body>
 
