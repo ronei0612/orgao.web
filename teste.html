@@ -357,9 +357,10 @@
                 setTimeout(() => button.classList.add('pressed'), 100);
 
                 if (action === 'play') {
+                    setTimeout(() => button.classList.add('pulse'), 100);                    
                     elements.stopButton.classList.remove('pulse');
                     elements.stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
-                    elements.playButton.classList.add('pulse');
+                    elements.playButton.classList.remove('pulse');
                 } else {
                     if (action === 'stop' && elements.stopButton.innerHTML.includes('bi-search')) {
                         $('#searchModal').modal('show');
