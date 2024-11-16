@@ -8,6 +8,13 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        .modal-textarea {
+            width: 100%;
+            height: 300px;
+            resize: vertical;
+            padding: 10px;
+        }
+
         body {
             background-color: #F0F0F0;
             transition: background-color 0.3s;
@@ -196,6 +203,8 @@
                     class="bi bi-music-note-beamed"></i></button>
         </div>
     </div>
+
+    <!-- Modal para pesquisa -->
     <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel"
         aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -215,6 +224,7 @@
                                 aria-hidden="true"></span>
                             <i class="bi bi-search" id="searchIcon"></i>
                         </button>
+                        <textarea class="modal-textarea mt-3" id="editTextarea"></textarea>
                     </div>
                     <ul class="list-group mt-3" id="searchResults"></ul>
                 </div>
@@ -222,6 +232,7 @@
                     <button type="button" class="btn btn-dark" id="toggleDarkMode">
                         <i class="bi bi-moon-fill"></i> Modo Escuro
                     </button>
+                    <button type="button" class="btn btn-primary" id="saveButton">Iniciar</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                 </div>
             </div>
@@ -234,6 +245,8 @@
     <script src="./assets/js/audios.js"></script>
     <script>
         const elements = {
+            editTextarea: document.getElementById('editTextarea'),
+            saveButton: document.getElementById('saveButton'),
             playButton: document.getElementById('playButton'),
             notesButton: document.getElementById('notesButton'),
             stopButton: document.getElementById('stopButton'),
@@ -247,6 +260,59 @@
             toggleDarkModeButton: document.getElementById('toggleDarkMode'),
             iframeCifra: document.getElementById('iframeCifra'),
         };
+
+        elements.saveButton.addEventListener('click', () => {
+            mostrarTextoCifrasCarregado(null, elements.editTextarea.value);
+            const texto = elements.editTextarea.value;
+            iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
+            //elements.editTextarea.value = destacarCifras(texto);
+            addEventCifrasIframe(iframeCifra);
+            $('#searchModal').modal('hide');
+        });
+
+        async function searchMusic() {
+            elements.editTextarea.classList.add('d-none');
+            elements.searchIcon.classList.add('d-none');
+            elements.spinner.classList.remove('d-none');
+            elements.searchButton.disabled = true;
+            elements.searchResultsList.innerHTML = '';
+
+            const textoPesquisa = elements.searchInput.value;
+
+            try {
+                const response = await fetch('https://apinode-h4wt.onrender.com/pesquisar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texto: textoPesquisa }),
+                });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                if (data.success) {
+                    const { lista: titles, links } = data; // destructuring
+                    if (titles.length > 0) {
+                        titles.forEach((title, index) => {
+                            const listItem = document.createElement('li');
+                            listItem.className = 'list-group-item';
+                            const link = document.createElement('a');
+                            link.href = '#';
+                            link.onclick = () => choseLink(links[index]);
+                            link.textContent = title;
+                            listItem.appendChild(link);
+                            elements.searchResultsList.appendChild(listItem);
+                        });
+                    } else {
+                        elements.searchResultsList.innerHTML = '<li class="list-group-item">Nenhuma cifra encontrada.</li>';
+                    }
+                } else { throw new Error(data.message); }
+            } catch (error) {
+                console.error('Erro na busca:', error);
+                alert(`Erro na busca: ${error.message}`);
+            } finally {
+                elements.searchButton.disabled = false;
+                elements.spinner.classList.add('d-none');
+                elements.searchIcon.classList.remove('d-none');
+            }
+        }
 
         async function choseLink(urlLink) {
             elements.searchButton.disabled = true;
@@ -263,7 +329,7 @@
                 const data = await response.json();
                 if (data.success) {
                     mostrarTextoCifrasCarregado(data.tom, data.message);
-                    $('#searchModal').modal('hide');
+                    elements.editTextarea.classList.remove('d-none');
                 } else {
                     alert(data.message);
                 }
@@ -325,50 +391,6 @@
             elements.toggleDarkModeButton.innerHTML = document.body.classList.contains('dark-mode') ? '<i class="bi bi-brightness-high-fill"></i> Modo Claro' : '<i class="bi bi-moon-fill"></i> Modo Escuro';
         };
 
-
-        async function searchMusic() {
-            elements.searchIcon.classList.add('d-none');
-            elements.spinner.classList.remove('d-none');
-            elements.searchButton.disabled = true;
-            elements.searchResultsList.innerHTML = '';
-
-            const textoPesquisa = elements.searchInput.value;
-
-            try {
-                const response = await fetch('https://apinode-h4wt.onrender.com/pesquisar', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ texto: textoPesquisa }),
-                });
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data = await response.json();
-                if (data.success) {
-                    const { lista: titles, links } = data; // destructuring
-                    if (titles.length > 0) {
-                        titles.forEach((title, index) => {
-                            const listItem = document.createElement('li');
-                            listItem.className = 'list-group-item';
-                            const link = document.createElement('a');
-                            link.href = '#';
-                            link.onclick = () => choseLink(links[index]);
-                            link.textContent = title;
-                            listItem.appendChild(link);
-                            elements.searchResultsList.appendChild(listItem);
-                        });
-                    } else {
-                        elements.searchResultsList.innerHTML = '<li class="list-group-item">Nenhuma cifra encontrada.</li>';
-                    }
-                } else { throw new Error(data.message); }
-            } catch (error) {
-                console.error('Erro na busca:', error);
-                alert(`Erro na busca: ${error.message}`);
-            } finally {
-                elements.searchButton.disabled = false;
-                elements.spinner.classList.add('d-none');
-                elements.searchIcon.classList.remove('d-none');
-            }
-        }
-
         const aplicarModoEscuroIframe = () => {
             const iframeDoc = elements.iframeCifra.contentDocument || elements.iframeCifra.contentWindow.document;
             iframeDoc.body.style.color = document.body.classList.contains('dark-mode') ? '#FFFFFF' : '#4F4F4F';
@@ -397,10 +419,10 @@
                     adicionarTonsSelect('tomSelect', tonsMaiores.indexOf(tom), true);
             }
 
-            if (texto)
-                iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
-
-            addEventCifrasIframe(iframeCifra);
+            if (texto) {                
+                const textoSemTags = texto.replace(/<\/?[^>]+(>|$)/g, "");
+                elements.editTextarea.value = textoSemTags;
+            }
         }
 
         function addEventCifrasIframe(frame) {
@@ -477,7 +499,7 @@
                 }
                 return linha;
             });
-            return linhasDestacadas.join('\n');
+            return (`<pre>${linhasDestacadas.join('\n')}</pre>`);
         }
 
         let acordeGroup = null;
