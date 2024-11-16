@@ -590,8 +590,9 @@
     function tocarCifraManualmente(cifraElem) {
         indiceAcorde = cifraElem.id.split('cifra')[1] - 1;
 
-        if (parado === false)
-            avancarCifra();
+        if (parado === false) {
+            elements.playButton.dispatchEvent(new Event('mousedown'));
+        }
     }
     </script>
 </body>
