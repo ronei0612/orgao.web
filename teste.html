@@ -515,17 +515,26 @@
             const notas = notasAcordesJson[acorde];
 
             acordeGroup.addSound(acordes[`orgao_${notas[0]}_grave`]);
+            acordeGroup.addSound(acordes[`strings_${notas[0]}_grave`]);
+
             notas.forEach(nota => {
                 acordeGroup.addSound(acordes[`orgao_${nota}_baixo`]);
                 acordeGroup.addSound(acordes[`strings_${nota}_baixo`]);
+
+                if (elements.notesButton.classList.contains('pressed')) {
+                    acordeGroup.addSound(acordes[`orgao_${nota}`]);
+                    acordeGroup.addSound(acordes[`strings_${nota}`]);
+                }
             });
 
+            parado = false;
             acordeGroup.play();
         }
 
         function pararAcorde() {
             if (acordeGroup) {
                 acordeGroup.stop();
+                parado = true;
 
                 var sons = acordeGroup.sounds.length;
                 for (let i = sons - 1; i > -1; i--) {
@@ -534,67 +543,78 @@
             }
         }
 
-        let parado = false;
-    let indiceAcorde = 0;
+        let parado = true;
+        let indiceAcorde = 0;
 
-    elements.playButton.addEventListener('mousedown', function () {
-        avancarCifra();
-    });
+        elements.playButton.addEventListener('mousedown', function () {
+            avancarCifra();
+        });
 
-    function removerClasseCifraSelecionada(iframeDoc, excecao = null) {
-        const elementos = iframeDoc.querySelectorAll('.cifraSelecionada');
-        elementos.forEach(elemento => {
-            if (elemento !== excecao) {
-                elemento.classList.remove('cifraSelecionada');
+        function removerClasseCifraSelecionada(iframeDoc, excecao = null) {
+            const elementos = iframeDoc.querySelectorAll('.cifraSelecionada');
+            elementos.forEach(elemento => {
+                if (elemento !== excecao) {
+                    elemento.classList.remove('cifraSelecionada');
+                }
+            });
+        }
+
+        elements.notesButton.addEventListener('mousedown', function () {
+            if (indiceAcorde > 0) {
+                indiceAcorde--;
+            }
+            
+            if (!parado) {
+                pararAcorde();
+                avancarCifra();                
             }
         });
-    }
 
+        elements.stopButton.addEventListener('mousedown', function () {
+            pararAcorde();
+            const frameContent = elements.iframeCifra.contentDocument;
+            const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
 
-    elements.stopButton.addEventListener('mousedown', function () {
-        pararAcorde();
-        const frameContent = elements.iframeCifra.contentDocument;
-        const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
+            Array.from(cifraElems).forEach(elemento => {
+                elemento.classList.remove('cifraSelecionada');
+            });
 
-        Array.from(cifraElems).forEach(elemento => {
-            elemento.classList.remove('cifraSelecionada');
+            if (indiceAcorde > 0) {
+                //tocando = false;
+                indiceAcorde--;
+            }
         });
 
-        if (indiceAcorde > 0) {
-            tocando = false;
-            indiceAcorde--;
-        }
-    });
-
-    function avancarCifra() {
-        const frameContent = elements.iframeCifra.contentDocument;
-        const elements_b = frameContent.getElementsByTagName('b');
-        const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
-
-        if (indiceAcorde < elements_b.length) {
-            if (cifraElems.length > 0)
-                cifraElems[0].classList.remove('cifraSelecionada');
-
+        function avancarCifra() {
+            const frameContent = elements.iframeCifra.contentDocument;
+            const elements_b = frameContent.getElementsByTagName('b');
+            const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
             parado = false;
 
-            let cifraElem = elements_b[indiceAcorde];
-            let cifra = cifraElem.innerHTML.trim();
-            tocarAcorde(cifra);
+            if (indiceAcorde < elements_b.length) {
+                if (cifraElems.length > 0)
+                    cifraElems[0].classList.remove('cifraSelecionada');
 
-            cifraElem.classList.add('cifraSelecionada');
-            cifraElem.scrollIntoView();
+                const cifraElem = elements_b[indiceAcorde];
+                if (cifraElem) {
+                    const cifra = cifraElem.innerHTML.trim();
+                    tocarAcorde(cifra);
 
-            indiceAcorde++;
+                    cifraElem.classList.add('cifraSelecionada');
+                    cifraElem.scrollIntoView();
+
+                    indiceAcorde++;
+                }
+            }
         }
-    }
 
-    function tocarCifraManualmente(cifraElem) {
-        indiceAcorde = cifraElem.id.split('cifra')[1] - 1;
+        function tocarCifraManualmente(cifraElem) {
+            indiceAcorde = cifraElem.id.split('cifra')[1] - 1;
 
-        if (parado === false) {
-            elements.playButton.dispatchEvent(new Event('mousedown'));
+            if (parado === false) {
+                elements.playButton.dispatchEvent(new Event('mousedown'));
+            }
         }
-    }
     </script>
 </body>
 
