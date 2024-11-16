@@ -265,7 +265,6 @@
             mostrarTextoCifrasCarregado(null, elements.editTextarea.value);
             const texto = elements.editTextarea.value;
             iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
-            //elements.editTextarea.value = destacarCifras(texto);
             addEventCifrasIframe(iframeCifra);
             $('#searchModal').modal('hide');
         });
@@ -499,7 +498,7 @@
                 }
                 return linha;
             });
-            return (`<pre>${linhasDestacadas.join('\n')}</pre>`);
+            return (`<style>.cifraSelecionada{background-color:#DAA520}</style><pre>${linhasDestacadas.join('\n')}</pre>`);
         }
 
         let acordeGroup = null;
