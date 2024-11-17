@@ -263,6 +263,9 @@
     <script src="./assets/js/Pizzicato.min.js"></script>
     <script src="./assets/js/audios.js"></script>
     <script>
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        alert(`Viewport width: ${width}px, height: ${height}px`);
         const elements = {
             controlButtons: document.getElementById('controlButtons'),
             editTextarea: document.getElementById('editTextarea'),
