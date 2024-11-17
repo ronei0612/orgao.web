@@ -476,16 +476,23 @@
         }
 
         function fullScreen() {
-            if (!document.fullscreenElement &&    // Opera 12.1, Firefox, Chrome, Edge, Safari
-                !document.webkitFullscreenElement && // Old WebKit
-                !document.mozFullScreenElement && // Old Firefox
-                !document.msFullscreenElement) {  // IE/Edge
-                    var el = document.documentElement;
-                var requestMethod = el.requestFullscreen || el.webkitRequestFullscreen ||
-                    el.mozRequestFullScreen || el.msRequestFullscreen;
+            if (isMobileDevice()) {
+                if (!document.fullscreenElement &&    // Opera 12.1, Firefox, Chrome, Edge, Safari
+                    !document.webkitFullscreenElement && // Old WebKit
+                    !document.mozFullScreenElement && // Old Firefox
+                    !document.msFullscreenElement) {  // IE/Edge
+                        var el = document.documentElement;
+                    var requestMethod = el.requestFullscreen || el.webkitRequestFullscreen ||
+                        el.mozRequestFullScreen || el.msRequestFullscreen;
 
-                if (requestMethod) {
-                    requestMethod.call(el);
+                    if (requestMethod) {
+                        requestMethod.call(el);
+                    }
+
+                    let wakeLock = null;
+                    try {
+                        wakeLock = navigator.wakeLock.request("screen");
+                    } catch { }
                 }
             }
         }
