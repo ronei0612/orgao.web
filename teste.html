@@ -193,7 +193,10 @@
             margin-bottom: 20px;
         }
 
-        .btn-dark-cyan { background-color: #008B8B; color: #fff; }
+        .btn-dark-cyan {
+            background-color: #008B8B;
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -247,12 +250,14 @@
                     </div>
                     <ul class="list-group mt-3" id="searchResults"></ul>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-dark" id="toggleDarkMode">
                         <i class="bi bi-moon-fill"></i> Modo Escuro
                     </button>
-                    <button type="button" class="btn btn-primary" id="saveButton">Iniciar</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <div>
+                        <button type="button" class="btn btn-primary" id="saveButton">Iniciar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -303,7 +308,7 @@
         });
 
         elements.nextButton.addEventListener('click', () => {
-            if (elements.controlButtons.classList.contains('justify-content-center')) {                
+            if (elements.controlButtons.classList.contains('justify-content-center')) {
                 elements.controlButtons.classList.remove('justify-content-center');
                 elements.controlButtons.classList.add('justify-content-end');
             }
@@ -401,7 +406,7 @@
                 setTimeout(() => button.classList.add('pressed'), 100);
 
                 if (action === 'play') {
-                    setTimeout(() => button.classList.add('pulse'), 100);                    
+                    setTimeout(() => button.classList.add('pulse'), 100);
                     elements.stopButton.classList.remove('pulse');
                     elements.stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
                     elements.playButton.classList.remove('pulse');
@@ -463,7 +468,7 @@
                     adicionarTonsSelect('tomSelect', tonsMaiores.indexOf(tom), true);
             }
 
-            if (texto) {                
+            if (texto) {
                 const textoSemTags = texto.replace(/<\/?[^>]+(>|$)/g, "");
                 elements.editTextarea.value = textoSemTags;
             }
@@ -498,7 +503,7 @@
                     !document.webkitFullscreenElement && // Old WebKit
                     !document.mozFullScreenElement && // Old Firefox
                     !document.msFullscreenElement) {  // IE/Edge
-                        var el = document.documentElement;
+                    var el = document.documentElement;
                     var requestMethod = el.requestFullscreen || el.webkitRequestFullscreen ||
                         el.mozRequestFullScreen || el.msRequestFullscreen;
 
@@ -561,7 +566,7 @@
 
         function tocarAcorde(acorde) {
             pararAcorde();
-            
+
             if (!acordeGroup) {
                 acordeGroup = new Pizzicato.Group();
                 acordeGroup.attack = 0.1;
@@ -618,10 +623,10 @@
             if (indiceAcorde > 0) {
                 indiceAcorde--;
             }
-            
+
             if (!parado) {
                 pararAcorde();
-                avancarCifra();                
+                avancarCifra();
             }
         });
 
