@@ -101,6 +101,19 @@
             cursor: not-allowed;
         }
 
+        /* Media query for smaller screens (mobile) */
+        @media (max-width: 767px) {
+            #container {
+                max-width: 100%;
+            }
+        }
+
+        /* Media query for larger screens (desktop) */
+        @media (min-width: 768px) {
+            #container {
+                max-width: 600px;
+            }
+        }
 
         @keyframes pulseStop {
             0% {
@@ -185,8 +198,8 @@
 </head>
 
 <body>
-    <div class="container d-flex flex-column vh-100" style="max-width: 700px;">
-        <div class="d-flex justify-content-center align-items-center mb-3">
+    <div class="container d-flex flex-column vh-100" id="container" style="max-width: 600px;">
+        <div class="top-control d-flex justify-content-center align-items-center mb-3 mt-3">
             <button class="btn btn-dark-cyan mx-2" id="decreaseTom"><i class="bi bi-dash"></i></button>
             <select class="form-control mx-2 w-auto" id="tomSelect"></select>
             <button class="btn btn-dark-cyan mx-2" id="increaseTom"><i class="bi bi-plus"></i></button>
@@ -475,17 +488,28 @@
             }
         }
 
-        function fullScreen() {
-            if (!document.fullscreenElement &&    // Opera 12.1, Firefox, Chrome, Edge, Safari
-                !document.webkitFullscreenElement && // Old WebKit
-                !document.mozFullScreenElement && // Old Firefox
-                !document.msFullscreenElement) {  // IE/Edge
-                    var el = document.documentElement;
-                var requestMethod = el.requestFullscreen || el.webkitRequestFullscreen ||
-                    el.mozRequestFullScreen || el.msRequestFullscreen;
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
 
-                if (requestMethod) {
-                    requestMethod.call(el);
+        function fullScreen() {
+            if (isMobileDevice()) {
+                if (!document.fullscreenElement &&    // Opera 12.1, Firefox, Chrome, Edge, Safari
+                    !document.webkitFullscreenElement && // Old WebKit
+                    !document.mozFullScreenElement && // Old Firefox
+                    !document.msFullscreenElement) {  // IE/Edge
+                        var el = document.documentElement;
+                    var requestMethod = el.requestFullscreen || el.webkitRequestFullscreen ||
+                        el.mozRequestFullScreen || el.msRequestFullscreen;
+
+                    if (requestMethod) {
+                        requestMethod.call(el);
+                    }
+
+                    let wakeLock = null;
+                    try {
+                        wakeLock = navigator.wakeLock.request("screen");
+                    } catch { }
                 }
             }
         }
