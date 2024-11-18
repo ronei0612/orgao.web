@@ -327,8 +327,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <label class="switch" id="darkModeToggle">
-                        <input type="checkbox" id="modeToggle">
+                    <label class="switch" for="darkModeToggle">
+                        <input type="checkbox" id="darkModeToggle" />
                         <span class="slider"></span>
                     </label>
                     <h5 class="modal-title mx-auto" id="searchModalLabel">Cifras</h5>
@@ -350,8 +350,8 @@
                     <ul class="list-group mt-3" id="searchResults"></ul>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-dark" id="toggleDarkMode">
-                        <i class="bi bi-moon-fill"></i> Modo Escuro
+                    <button type="button" class="btn btn-dark" id="back">
+                        <i class="bi bi-arrow-left"></i> Voltar
                     </button>
                     <div>
                         <button class="btn btn-control-custom btn-add" id="addButton">
@@ -391,11 +391,13 @@
             searchResultsList: document.getElementById('searchResults'),
             pulseRange: document.getElementById('pulseRange'),
             bpmValue: document.getElementById('bpmValue'),
-            toggleDarkModeButton: document.getElementById('toggleDarkMode'),
             iframeCifra: document.getElementById('iframeCifra'),
             prevButton: document.getElementById('prevButton'),
-            nextButton: document.getElementById('nextButton')
+            nextButton: document.getElementById('nextButton'),
+            darkModeToggle: document.getElementById('darkModeToggle')
         };
+        
+        elements.darkModeToggle.addEventListener('change', toggleDarkMode);
 
         elements.saveButton.addEventListener('click', () => {
             mostrarTextoCifrasCarregado(null, elements.editTextarea.value);
@@ -538,15 +540,20 @@
             elements.stopButton.style.animationDuration = `${bpmValor}ms`;
         };
 
-        const toggleDarkMode = () => {
+        function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-            updateDarkModeText();
+            //updateDarkModeText();
             aplicarModoEscuroIframe();
         };
 
-        const updateDarkModeText = () => {
-            elements.toggleDarkModeButton.innerHTML = document.body.classList.contains('dark-mode') ? '<i class="bi bi-brightness-high-fill"></i> Modo Claro' : '<i class="bi bi-moon-fill"></i> Modo Escuro';
+        const updateSwitchDarkMode = () => {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            if (isDarkMode) {
+                elements.darkModeToggle.checked = true;
+            } else {
+                elements.darkModeToggle.checked = false;
+            }
         };
 
         const aplicarModoEscuroIframe = () => {
@@ -556,7 +563,7 @@
 
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
-            updateDarkModeText();
+            updateSwitchDarkMode();
             aplicarModoEscuroIframe();
         }
 
@@ -565,7 +572,7 @@
             elements.notesButton.addEventListener(event, togglePressedState);
             elements.stopButton.addEventListener(event, togglePressedState);
         });
-        elements.toggleDarkModeButton.addEventListener('click', toggleDarkMode);
+        
         elements.searchButton.addEventListener('click', searchMusic);
 
         function mostrarTextoCifrasCarregado(tom = null, texto = null) {
