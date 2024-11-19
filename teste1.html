@@ -366,7 +366,7 @@
                         Fechar</button>
                     <div>
                         <button class="btn btn-control-custom btn-add" id="addButton">
-                            <i class="bi bi-plus-circle"></i> Novo
+                            <i class="bi bi-pencil-square"></i> Edição
                         </button>
                         <button class="btn btn-control-custom btn-add d-none" id="saveButton">
                             <i class="bi bi-save"></i> Salvar
@@ -425,34 +425,34 @@
         $('#searchModal').on('shown.bs.modal', exibirListaSaves);
 
         elements.backButton.addEventListener('click', () => {
-            //exibirListaSaves();
-            let saves = localStorage.getItem('saves');
-            if (saves && saves !== '{}') {
-                elements.savesList.classList.remove('d-none');
-                elements.editTextarea.classList.add('d-none');
-                elements.searchResultsList.classList.add('d-none');
-                elements.saveButton.classList.add('d-none');
-                elements.addButton.classList.remove('d-none');
-                elements.searchModalLabel.textContent = 'Cifras';
+            exibirListaSaves();
+            // let saves = localStorage.getItem('saves');
+            // if (saves && saves !== '{}') {
+            //     elements.savesList.classList.remove('d-none');
+            //     elements.editTextarea.classList.add('d-none');
+            //     elements.searchResultsList.classList.add('d-none');
+            //     elements.saveButton.classList.add('d-none');
+            //     elements.addButton.classList.remove('d-none');
+            //     elements.searchModalLabel.textContent = 'Cifras';
 
-                saves = JSON.parse(saves);
+            //     saves = JSON.parse(saves);
 
-                for (const saveName in saves) {
-                    const listItem = criarItemLista(saveName, saves[saveName]);
-                    elements.savesList.appendChild(listItem);
-                }
-            }
-            else {
-                elements.editTextarea.value = '';
-                elements.editTextarea.classList.remove('d-none');
-                elements.savesList.classList.add('d-none');
-                elements.searchResultsList.classList.remove('d-none');
-                elements.addButton.classList.add('d-none');
-                elements.saveButton.classList.remove('d-none');
-                elements.backButton.classList.add('d-none');
-                elements.closeButton.classList.remove('d-none');
-                elements.searchInput.focus();
-            }
+            //     for (const saveName in saves) {
+            //         const listItem = criarItemLista(saveName, saves[saveName]);
+            //         elements.savesList.appendChild(listItem);
+            //     }
+            // }
+            // else {
+            //     elements.editTextarea.value = '';
+            //     elements.editTextarea.classList.remove('d-none');
+            //     elements.savesList.classList.add('d-none');
+            //     elements.searchResultsList.classList.remove('d-none');
+            //     elements.addButton.classList.add('d-none');
+            //     elements.saveButton.classList.remove('d-none');
+            //     elements.backButton.classList.add('d-none');
+            //     elements.closeButton.classList.remove('d-none');
+            //     elements.searchInput.focus();
+            // }
         })
 
         elements.addButton.addEventListener('click', () => {
@@ -460,7 +460,7 @@
             elements.addButton.classList.add('d-none');
             elements.savesList.classList.add('d-none');
             elements.startButton.classList.remove('d-none');
-            elements.editTextarea.value = '';
+            elements.editTextarea.value = iframeCifra.contentDocument.body.innerHTML.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, '');
             elements.searchModalLabel.textContent = 'Novo';
             elements.editTextarea.classList.remove('d-none');
             elements.editTextarea.focus();
@@ -572,22 +572,24 @@
 
             let saves = localStorage.getItem('saves');
 
-            if (iframeCifra.contentDocument.body.innerHTML) {
-                const textoSemTags = elements.iframeCifra.contentDocument.body.innerHTML.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
-                elements.editTextarea.value = textoSemTags;
-                elements.editTextarea.classList.remove('d-none');
-                elements.savesList.classList.add('d-none');
-                elements.addButton.classList.add('d-none');
-                elements.saveButton.classList.remove('d-none');
-                elements.startButton.classList.remove('d-none');
-                elements.closeButton.classList.add('d-none');
-                elements.backButton.classList.remove('d-none');
-            } else if (saves && saves !== '{}') {
+            // if (iframeCifra.contentDocument.body.innerHTML) {
+            //     const textoSemTags = elements.iframeCifra.contentDocument.body.innerHTML.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
+            //     elements.editTextarea.value = textoSemTags;
+            //     elements.editTextarea.classList.remove('d-none');
+            //     elements.savesList.classList.add('d-none');
+            //     elements.addButton.classList.add('d-none');
+            //     elements.saveButton.classList.remove('d-none');
+            //     elements.startButton.classList.remove('d-none');
+            //     elements.closeButton.classList.add('d-none');
+            //     elements.backButton.classList.remove('d-none');
+            // } else if (saves && saves !== '{}') {
+            if (saves && saves !== '{}') {
                 elements.savesList.classList.remove('d-none');
                 elements.editTextarea.classList.add('d-none');
                 elements.searchResultsList.classList.add('d-none');
                 elements.saveButton.classList.add('d-none');
                 elements.addButton.classList.remove('d-none');
+                elements.startButton.classList.add('d-none');
                 elements.searchModalLabel.textContent = 'Cifras';
 
                 saves = JSON.parse(saves);
@@ -607,6 +609,7 @@
         }
 
         function criarItemLista(saveName, saveContent) {
+            elements.savesList.innerHTML = '';
             const listItem = document.createElement('li');
             listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
 
