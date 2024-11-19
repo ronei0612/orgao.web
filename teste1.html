@@ -414,7 +414,8 @@
             prevButton: document.getElementById('prevButton'),
             nextButton: document.getElementById('nextButton'),
             darkModeToggle: document.getElementById('darkModeToggle'),
-            closeButton: document.getElementById('closeButton')
+            closeButton: document.getElementById('closeButton'),
+            searchModalLabel: document.getElementById('searchModalLabel')
         };
 
         let acordeGroup = null;
@@ -440,6 +441,7 @@
             elements.savesList.classList.add('d-none');
             elements.startButton.classList.remove('d-none');
             elements.editTextarea.value = '';
+            elements.searchModalLabel.textContent = 'Novo';
             elements.editTextarea.classList.remove('d-none');
             elements.editTextarea.focus();
         })
@@ -602,6 +604,7 @@
                 desselecionarTodos();
                 listItem.classList.add('selected');
                 elements.editTextarea.value = saveContent;
+                elements.searchModalLabel.textContent = saveName;
                 elements.editTextarea.classList.remove('d-none');
                 elements.savesList.classList.add('d-none');
                 elements.saveButton.classList.remove('d-none');
@@ -655,7 +658,7 @@
                             listItem.className = 'list-group-item';
                             const link = document.createElement('a');
                             link.href = '#';
-                            link.onclick = () => choseLink(links[index]);
+                            link.onclick = () => choseLink(links[index], title);
                             link.textContent = title;
                             listItem.appendChild(link);
                             elements.searchResultsList.appendChild(listItem);
@@ -675,7 +678,7 @@
             }
         }
 
-        async function choseLink(urlLink) {
+        async function choseLink(urlLink, text) {
             elements.searchButton.disabled = true;
             elements.spinner.classList.remove('d-none');
             elements.searchIcon.classList.add('d-none');
@@ -689,7 +692,8 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    mostrarTextoCifrasCarregado(data.tom, data.message);
+                    mostrarTextoCifrasCarregado(data.tom, data.message);                    
+                    elements.searchModalLabel.textContent = text;
                     elements.editTextarea.classList.remove('d-none');
                     elements.startButton.classList.remove('d-none');
                     elements.saveButton.classList.remove('d-none');
