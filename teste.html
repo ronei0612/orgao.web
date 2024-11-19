@@ -9,6 +9,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        #savesSelect option:not(:first-child) {
+            color: black;
+        }
+
         #savesSelect {
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
@@ -572,7 +576,7 @@
                 const texto = elements.editTextarea.value;
                 elements.iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
                 addEventCifrasIframe(elements.iframeCifra);
-                $('#searchModal').modal('hide');                
+                $('#searchModal').modal('hide');
             }
             else {
                 elements.searchInput.focus();
@@ -675,7 +679,7 @@
             // Important: Check if the option already exists to avoid duplicates
             const existingOption = elements.savesSelect.querySelector(`option[value="${saveName}"]`);
             if (!existingOption) {
-            elements.savesSelect.appendChild(option);
+                elements.savesSelect.appendChild(option);
             }
 
             // Optionally, add an event listener for the select option
@@ -768,8 +772,8 @@
             elements.savesList.classList.add('d-none');
             elements.saveButton.classList.add('d-none');
             elements.startButton.classList.add('d-none');
-            elements.backButton.classList.remove('d-none');
-            elements.closeButton.classList.add('d-none');
+            //elements.backButton.classList.remove('d-none');
+            //elements.closeButton.classList.add('d-none');
             elements.searchResultsList.classList.remove('d-none');
             elements.searchResultsList.innerHTML = '';
             elements.searchButton.disabled = true;
