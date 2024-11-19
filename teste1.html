@@ -425,14 +425,34 @@
         $('#searchModal').on('shown.bs.modal', exibirListaSaves);
 
         elements.backButton.addEventListener('click', () => {
-            exibirListaSaves();
-            // elements.saveButton.classList.remove('d-none');
-            // elements.editTextarea.classList.remove('d-none');
-            // elements.searchResultsList.classList.add('d-none');
-            // elements.backButton.classList.add('d-none');
-            // elements.closeButton.classList.remove('d-none');
-            // elements.addButton.classList.add('d-none');
-            // elements.editTextarea.classList.add('d-none');
+            //exibirListaSaves();
+            let saves = localStorage.getItem('saves');
+            if (saves && saves !== '{}') {
+                elements.savesList.classList.remove('d-none');
+                elements.editTextarea.classList.add('d-none');
+                elements.searchResultsList.classList.add('d-none');
+                elements.saveButton.classList.add('d-none');
+                elements.addButton.classList.remove('d-none');
+                elements.searchModalLabel.textContent = 'Cifras';
+
+                saves = JSON.parse(saves);
+
+                for (const saveName in saves) {
+                    const listItem = criarItemLista(saveName, saves[saveName]);
+                    elements.savesList.appendChild(listItem);
+                }
+            }
+            else {
+                elements.editTextarea.value = '';
+                elements.editTextarea.classList.remove('d-none');
+                elements.savesList.classList.add('d-none');
+                elements.searchResultsList.classList.remove('d-none');
+                elements.addButton.classList.add('d-none');
+                elements.saveButton.classList.remove('d-none');
+                elements.backButton.classList.add('d-none');
+                elements.closeButton.classList.remove('d-none');
+                elements.searchInput.focus();
+            }
         })
 
         elements.addButton.addEventListener('click', () => {
@@ -543,7 +563,7 @@
             exibirListaSaves();
         }
 
-        function exibirListaSaves() {
+        function exibirListaSaves(botaoVoltarPressionado) {
             elements.closeButton.classList.remove('d-none');
             elements.backButton.classList.add('d-none');
             elements.startButton.classList.remove('d-none');
@@ -553,6 +573,8 @@
             let saves = localStorage.getItem('saves');
 
             if (iframeCifra.contentDocument.body.innerHTML) {
+                const textoSemTags = elements.iframeCifra.contentDocument.body.innerHTML.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
+                elements.editTextarea.value = textoSemTags;
                 elements.editTextarea.classList.remove('d-none');
                 elements.savesList.classList.add('d-none');
                 elements.addButton.classList.add('d-none');
