@@ -652,8 +652,8 @@
                 saves = JSON.parse(saves);
 
                 for (const saveName in saves) {
-                    const listItem = criarItemLista(saveName, saves[saveName]);
-                    elements.savesList.appendChild(listItem);
+                    const listItem = criarItemSelect(saveName, saves[saveName]);
+                    elements.savesSelect.appendChild(listItem);
                 }
             }
             // else {
@@ -663,6 +663,30 @@
             //     elements.addButton.classList.add('d-none');
             //     elements.saveButton.classList.remove('d-none');
             // }
+        }
+
+        function criarItemSelect(saveName, saveContent) {
+            const option = document.createElement('option');
+
+            option.value = saveName;
+            option.textContent = saveName;
+
+            // Important: Check if the option already exists to avoid duplicates
+            const existingOption = elements.savesSelect.querySelector(`option[value="${saveName}"]`);
+            if (!existingOption) {
+            elements.savesSelect.appendChild(option);
+            }
+
+            // Optionally, add an event listener for the select option
+            option.addEventListener('click', () => {
+                //Handle what happens when the option is selected
+                //You would likely want to load the saveContent into editTextarea
+                //Example, but adjust this to your needs.
+                elements.editTextarea.value = saveContent;
+                elements.searchModalLabel.textContent = saveName; //Update modal label
+            });
+
+            return option;
         }
 
         function criarItemLista(saveName, saveContent) {
@@ -704,6 +728,30 @@
         function desselecionarTodos() {
             const allItems = document.querySelectorAll('.list-group-item');
             allItems.forEach(item => item.classList.remove('selected'));
+        }
+
+        function editarSave(saveName) {
+            let optionToEdit = savesSelect.querySelector(`option[value="${saveName}"]`);
+
+            if (optionToEdit){
+                let saves = JSON.parse(localStorage.getItem('saves')) || {};
+                const newSaveName = prompt("Digite o novo nome para o save:");
+
+                if (newSaveName) {
+                    if (saves.hasOwnProperty(newSaveName)) {
+                        alert("Já existe esse nome!");
+                        return;
+                    }
+
+                    const saveContent = saves[saveName];
+                    saves[newSaveName] = saveContent;
+                    delete saves[saveName];
+                    localStorage.setItem('saves', JSON.stringify(saves));
+
+                    optionToEdit.textContent = newSaveName;
+                    optionToEdit.value = newSaveName;
+                }
+            }
         }
 
         function deletarSave(saveName) {
