@@ -376,6 +376,9 @@
                         <select class="form-control rounded-left" id="savesSelect">
                             <option value="all">Selecione uma Cifra...</option>
                         </select>
+                        <button class="btn btn-control-custom btn-success rounded-0" id="editSavesSelect">
+                            <i class="bi bi-pencil"></i>
+                        </button>
                         <button class="btn btn-danger rounded-right" id="deleteSavesSelect">
                             <i class="bi bi-trash"></i>
                         </button>
@@ -391,10 +394,10 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeButton">×
                         Fechar</button>
                     <div>
-                        <button class="btn btn-control-custom btn-add" id="addButton">
+                        <button class="btn btn-control-custom btn-add d-none" id="addButton">
                             <i class="bi bi-pencil-square"></i> Edição
                         </button>
-                        <button class="btn btn-control-custom btn-add d-none" id="saveButton">
+                        <button class="btn btn-control-custom btn-add" id="saveButton">
                             <i class="bi bi-save"></i> Salvar
                         </button>
                         <!-- <button class="btn btn-control-custom btn-success" id="editButton">
@@ -441,7 +444,9 @@
             nextButton: document.getElementById('nextButton'),
             darkModeToggle: document.getElementById('darkModeToggle'),
             closeButton: document.getElementById('closeButton'),
-            searchModalLabel: document.getElementById('searchModalLabel')
+            searchModalLabel: document.getElementById('searchModalLabel'),
+            editSavesSelect: document.getElementById('editSavesSelect'),
+            deleteSavesSelect: document.getElementById('deleteSavesSelect')
         };
 
         let acordeGroup = null;
@@ -535,17 +540,24 @@
                 if (saveName) {
                     salvarSaves(saveName, saveContent);
                 }
+            } else {
+                elements.editTextarea.focus();
             }
         });
 
         elements.darkModeToggle.addEventListener('change', toggleDarkMode);
 
         elements.startButton.addEventListener('click', () => {
-            mostrarTextoCifrasCarregado(null, elements.editTextarea.value);
-            const texto = elements.editTextarea.value;
-            elements.iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
-            addEventCifrasIframe(elements.iframeCifra);
-            $('#searchModal').modal('hide');
+            if (elements.editTextarea.value) {
+                mostrarTextoCifrasCarregado(null, elements.editTextarea.value);
+                const texto = elements.editTextarea.value;
+                elements.iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
+                addEventCifrasIframe(elements.iframeCifra);
+                $('#searchModal').modal('hide');                
+            }
+            else {
+                elements.searchInput.focus();
+            }
         });
 
         elements.prevButton.addEventListener('click', () => {
