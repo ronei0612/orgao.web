@@ -445,6 +445,7 @@
             darkModeToggle: document.getElementById('darkModeToggle'),
             closeButton: document.getElementById('closeButton'),
             searchModalLabel: document.getElementById('searchModalLabel'),
+            savesSelect: document.getElementById('savesSelect'),
             editSavesSelect: document.getElementById('editSavesSelect'),
             deleteSavesSelect: document.getElementById('deleteSavesSelect')
         };
@@ -454,6 +455,24 @@
         let indiceAcorde = 0;
 
         $('#searchModal').on('shown.bs.modal', exibirListaSaves);
+
+        elements.editSavesSelect.addEventListener('click', () => {
+            const saveName = elements.savesSelect.value;
+            if (saveName !== 'all') {
+                editarSave(saveName);
+                exibirListaSaves();
+            }
+        });
+
+        elements.deleteSavesSelect.addEventListener('click', () => {
+            const saveName = elements.savesSelect.value;
+            if (saveName !== 'all') {
+                if (confirm(`Deseja excluir ${saveName}?`)) {
+                    deletarSave(saveName);
+                    exibirListaSaves();
+                }
+            }
+        });
 
         elements.backButton.addEventListener('click', () => {
             exibirListaSaves();
