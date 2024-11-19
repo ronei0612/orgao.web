@@ -815,7 +815,7 @@
             }
 
             if (texto) {
-                const textoSemTags = texto.replace(/<\/?[^>]+(>|$)/g, "");
+                const textoSemTags = texto.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
                 elements.editTextarea.value = textoSemTags;
             }
         }
