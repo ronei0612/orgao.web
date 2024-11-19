@@ -605,6 +605,12 @@
             }
         });
 
+        elements.savesSelect.addEventListener('change', () => {
+            const selectItem = elements.savesSelect.value;
+            const saves = JSON.parse(localStorage.getItem('saves'));
+            elements.editTextarea.value = saves[selectItem];
+        })
+
         function salvarSaves(saveName, saveContent) {
             let saves = localStorage.getItem('saves');
             if (saves) {
@@ -618,6 +624,7 @@
                 saves = {};
             }
 
+            saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
             saves[saveName] = saveContent;
             localStorage.setItem('saves', JSON.stringify(saves));
 
