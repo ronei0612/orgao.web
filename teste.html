@@ -618,6 +618,7 @@
             localStorage.setItem('saves', JSON.stringify(saves));
 
             exibirListaSaves();
+            elements.savesSelect.value = saveName;
         }
 
         function exibirListaSaves(botaoVoltarPressionado) {
@@ -646,8 +647,8 @@
                 // elements.saveButton.classList.add('d-none');
                 // elements.addButton.classList.remove('d-none');
                 // elements.startButton.classList.add('d-none');
-                elements.savesList.classList.remove('d-none');
-                elements.searchModalLabel.textContent = 'Cifras';
+                //elements.savesList.classList.remove('d-none');
+                //elements.searchModalLabel.textContent = 'Cifras';
 
                 saves = JSON.parse(saves);
 
