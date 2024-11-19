@@ -448,7 +448,7 @@
 
         elements.searchButton.addEventListener('click', searchMusic);
 
-        elements.notesButton.addEventListener('mousedown', function () {
+        elements.notesButton.addEventListener('click', function () {
             if (indiceAcorde > 0) {
                 indiceAcorde--;
             }
@@ -546,7 +546,7 @@
         function exibirListaSaves() {
             elements.closeButton.classList.remove('d-none');
             elements.backButton.classList.add('d-none');
-            elements.startButton.classList.add('d-none');
+            elements.startButton.classList.remove('d-none');
             elements.savesList.innerHTML = '';
             elements.searchInput.focus();
 
