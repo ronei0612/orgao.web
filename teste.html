@@ -562,6 +562,7 @@
                 const texto = elements.editTextarea.value;
                 elements.iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
                 addEventCifrasIframe(elements.iframeCifra);
+                
                 $('#searchModal').modal('hide');
             }
             else {
@@ -1016,7 +1017,7 @@
                     e.target.scrollIntoView();
                     parent.tocarCifraManualmente(e.target);
 
-                    parent.focus(); //Foca fora para funcionar o teclado físico
+                    //parent.focus(); //Foca fora para funcionar o teclado físico
                 });
             }
         }
