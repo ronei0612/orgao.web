@@ -392,24 +392,11 @@
                     <ul class="list-group mt-3 d-none" id="saves"></ul>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-dark d-none" id="backButton">
-                        <i class="bi bi-arrow-left"></i> Voltar
-                    </button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeButton">×
-                        Fechar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeButton">× Fechar</button>
                     <div>
-                        <button class="btn btn-control-custom btn-add d-none" id="addButton">
-                            <i class="bi bi-pencil-square"></i> Edição
-                        </button>
                         <button class="btn btn-control-custom btn-add" id="saveButton">
                             <i class="bi bi-save"></i> Salvar
                         </button>
-                        <!-- <button class="btn btn-control-custom btn-success" id="editButton">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-delete btn-control-custom mr-2" id="deleteButton">
-                            <i class="bi bi-trash"></i>
-                        </button> -->
                         <button type="button" class="btn btn-primary" id="startButton">
                             <i class="bi bi-check"></i> Tocar
                         </button>
@@ -430,8 +417,6 @@
             editTextarea: document.getElementById('editTextarea'),
             startButton: document.getElementById('startButton'),
             saveButton: document.getElementById('saveButton'),
-            backButton: document.getElementById('backButton'),
-            addButton: document.getElementById('addButton'),
             playButton: document.getElementById('playButton'),
             notesButton: document.getElementById('notesButton'),
             stopButton: document.getElementById('stopButton'),
@@ -447,7 +432,6 @@
             prevButton: document.getElementById('prevButton'),
             nextButton: document.getElementById('nextButton'),
             darkModeToggle: document.getElementById('darkModeToggle'),
-            closeButton: document.getElementById('closeButton'),
             searchModalLabel: document.getElementById('searchModalLabel'),
             savesSelect: document.getElementById('savesSelect'),
             editSavesSelect: document.getElementById('editSavesSelect'),
@@ -498,6 +482,12 @@
 
         $('#searchModal').on('shown.bs.modal', exibirListaSaves);
 
+        elements.savesSelect.addEventListener('change', () => {
+            const selectItem = elements.savesSelect.value;
+            const saves = JSON.parse(localStorage.getItem('saves'));
+            elements.editTextarea.value = saves[selectItem];
+        })
+
         elements.editSavesSelect.addEventListener('click', () => {
             const saveName = elements.savesSelect.value;
             if (saveName !== 'all') {
@@ -515,48 +505,6 @@
                 }
             }
         });
-
-        elements.backButton.addEventListener('click', () => {
-            exibirListaSaves();
-            // let saves = localStorage.getItem('saves');
-            // if (saves && saves !== '{}') {
-            //     elements.savesList.classList.remove('d-none');
-            //     elements.editTextarea.classList.add('d-none');
-            //     elements.searchResultsList.classList.add('d-none');
-            //     elements.saveButton.classList.add('d-none');
-            //     elements.addButton.classList.remove('d-none');
-            //     elements.searchModalLabel.textContent = 'Cifras';
-
-            //     saves = JSON.parse(saves);
-
-            //     for (const saveName in saves) {
-            //         const listItem = criarItemLista(saveName, saves[saveName]);
-            //         elements.savesList.appendChild(listItem);
-            //     }
-            // }
-            // else {
-            //     elements.editTextarea.value = '';
-            //     elements.editTextarea.classList.remove('d-none');
-            //     elements.savesList.classList.add('d-none');
-            //     elements.searchResultsList.classList.remove('d-none');
-            //     elements.addButton.classList.add('d-none');
-            //     elements.saveButton.classList.remove('d-none');
-            //     elements.backButton.classList.add('d-none');
-            //     elements.closeButton.classList.remove('d-none');
-            //     elements.searchInput.focus();
-            // }
-        })
-
-        elements.addButton.addEventListener('click', () => {
-            elements.saveButton.classList.remove('d-none');
-            elements.addButton.classList.add('d-none');
-            elements.savesList.classList.add('d-none');
-            elements.startButton.classList.remove('d-none');
-            elements.editTextarea.value = iframeCifra.contentDocument.body.innerHTML.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, '');
-            elements.searchModalLabel.textContent = 'Novo';
-            elements.editTextarea.classList.remove('d-none');
-            elements.editTextarea.focus();
-        })
 
         elements.searchButton.addEventListener('click', searchMusic);
 
@@ -581,7 +529,6 @@
             });
 
             if (indiceAcorde > 0) {
-                //tocando = false;
                 indiceAcorde--;
             }
         });
@@ -643,12 +590,6 @@
                 elements.controlButtons.classList.add('justify-content-center');
             }
         });
-
-        elements.savesSelect.addEventListener('change', () => {
-            const selectItem = elements.savesSelect.value;
-            const saves = JSON.parse(localStorage.getItem('saves'));
-            elements.editTextarea.value = saves[selectItem];
-        })
 
         function salvarSaves(saveName, saveContent) {
             let saves = localStorage.getItem('saves');
@@ -750,10 +691,10 @@
 
             for (const tom in possiveisTons) {
                 if (camposHarmonicos[tom][0] === primeiroAcorde) {
-                    possiveisTons[tom] += 1; // Adiciona 1 ponto se o primeiro acorde está no início do campo harmônico
+                    possiveisTons[tom] += 1;
                 }
                 if (camposHarmonicos[tom][0] === ultimoAcorde) {
-                    possiveisTons[tom] += 1; // Adiciona 1 ponto se o último acorde está no início do campo harmônico
+                    possiveisTons[tom] += 1;
                 }
             }
 
@@ -773,7 +714,7 @@
                 possiveisTons[tom] = somenteCifras.filter(cifra => acordes.includes(cifra)).length;
                 somenteCifras.forEach(cifra => {
                     if (!acordes.includes(cifra)) {
-                        possiveisTons[tom] -= 1; // Subtrai 1 ponto se o acorde não estiver no campo harmônico
+                        possiveisTons[tom] -= 1;
                     }
                 });
             }
@@ -783,10 +724,10 @@
 
             for (const tom in possiveisTons) {
                 if (camposHarmonicos[tom][0] === primeiroAcorde) {
-                    possiveisTons[tom] += 1; // Adiciona 1 ponto se o primeiro acorde está no início do campo harmônico
+                    possiveisTons[tom] += 1;
                 }
                 if (camposHarmonicos[tom][0] === ultimoAcorde) {
-                    possiveisTons[tom] += 1; // Adiciona 1 ponto se o último acorde está no início do campo harmônico
+                    possiveisTons[tom] += 1;
                 }
             }
             
@@ -796,34 +737,10 @@
         }
 
         function exibirListaSaves(botaoVoltarPressionado) {
-            // elements.closeButton.classList.remove('d-none');
-            // elements.backButton.classList.add('d-none');
-            // elements.startButton.classList.remove('d-none');
-            // elements.savesList.innerHTML = '';
-            // elements.searchInput.focus();
 
             let saves = localStorage.getItem('saves');
-
-            // if (iframeCifra.contentDocument.body.innerHTML) {
-            //     const textoSemTags = elements.iframeCifra.contentDocument.body.innerHTML.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
-            //     elements.editTextarea.value = textoSemTags;
-            //     elements.editTextarea.classList.remove('d-none');
-            //     elements.savesList.classList.add('d-none');
-            //     elements.addButton.classList.add('d-none');
-            //     elements.saveButton.classList.remove('d-none');
-            //     elements.startButton.classList.remove('d-none');
-            //     elements.closeButton.classList.add('d-none');
-            //     elements.backButton.classList.remove('d-none');
-            // } else if (saves && saves !== '{}') {
+            
             if (saves && saves !== '{}') {
-                // elements.editTextarea.classList.add('d-none');
-                // elements.searchResultsList.classList.add('d-none');
-                // elements.saveButton.classList.add('d-none');
-                // elements.addButton.classList.remove('d-none');
-                // elements.startButton.classList.add('d-none');
-                //elements.savesList.classList.remove('d-none');
-                //elements.searchModalLabel.textContent = 'Cifras';
-
                 saves = JSON.parse(saves);
 
                 for (const saveName in saves) {
@@ -831,13 +748,6 @@
                     elements.savesSelect.appendChild(listItem);
                 }
             }
-            // else {
-            //     elements.editTextarea.classList.remove('d-none');
-            //     elements.savesList.classList.add('d-none');
-            //     elements.searchResultsList.classList.remove('d-none');
-            //     elements.addButton.classList.add('d-none');
-            //     elements.saveButton.classList.remove('d-none');
-            // }
         }
 
         function criarItemSelect(saveName, saveContent) {
@@ -892,10 +802,7 @@
                 elements.editTextarea.classList.remove('d-none');
                 elements.savesList.classList.add('d-none');
                 elements.saveButton.classList.remove('d-none');
-                elements.addButton.classList.add('d-none');
                 elements.startButton.classList.remove('d-none');
-                elements.backButton.classList.remove('d-none');
-                elements.closeButton.classList.add('d-none');
             });
             return listItem;
         }
@@ -942,8 +849,6 @@
             elements.savesList.classList.add('d-none');
             elements.saveButton.classList.add('d-none');
             elements.startButton.classList.add('d-none');
-            //elements.backButton.classList.remove('d-none');
-            //elements.closeButton.classList.add('d-none');
             elements.searchResultsList.classList.remove('d-none');
             elements.searchResultsList.innerHTML = '';
             elements.searchButton.disabled = true;
@@ -1005,7 +910,6 @@
                     elements.editTextarea.classList.remove('d-none');
                     elements.startButton.classList.remove('d-none');
                     elements.saveButton.classList.remove('d-none');
-                    elements.addButton.classList.add('d-none');
                 } else {
                     alert(data.message);
                 }
@@ -1061,7 +965,6 @@
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-            //updateDarkModeText();
             aplicarModoEscuroIframe();
         };
 
@@ -1142,25 +1045,6 @@
                     } catch { }
                 }
             }
-        }
-
-        function adicionarTonsSelect(element, index, maior) {
-            var selectElem = document.getElementById(element);
-            selectElem.innerHTML = "";
-
-            var tons = tonsMaiores;
-            if (maior === false)
-                tons = tonsMenores;
-
-            for (var i = 0; i < tons.length; i++) {
-                let opt = document.createElement('option');
-                opt.value = tons[i];
-                opt.textContent += tons[i];
-                selectElem.appendChild(opt);
-            };
-
-            selectElem.selectedIndex = index;
-            //textoAcordeMenor.innerText = tonsMenores[index];
         }
 
         function destacarCifras(texto) {
