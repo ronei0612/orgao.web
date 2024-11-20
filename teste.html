@@ -436,7 +436,9 @@
             savesSelect: document.getElementById('savesSelect'),
             editSavesSelect: document.getElementById('editSavesSelect'),
             deleteSavesSelect: document.getElementById('deleteSavesSelect'),
-            tomSelect: document.getElementById('tomSelect')
+            tomSelect: document.getElementById('tomSelect'),
+            decreaseTom: document.getElementById('decreaseTom'),
+            increaseTom: document.getElementById('increaseTom')
         };
 
         const camposHarmonicos = {
@@ -479,8 +481,64 @@
         let acordeGroup = null;
         let parado = true;
         let indiceAcorde = 0;
+        let tomAtual = 'C';
 
         $('#searchModal').on('shown.bs.modal', exibirListaSaves);
+
+        elements.tomSelect.addEventListener('change', () => {
+            if (elements.tomSelect.value) {
+                transposeCifra(elements.iframeCifra.contentDocument.body.innerText, elements.tomSelect.value);
+                tomAtual = elements.tomSelect.value;
+            }
+        });
+
+        elements.decreaseTom.addEventListener('click', () => {
+            if (elements.tomSelect.value) {
+                elements.tomSelect.value = elements.tomSelect.options[elements.tomSelect.selectedIndex - 1].value;
+                elements.tomSelect.dispatchEvent(new Event('change'));
+            }
+        });
+
+        elements.increaseTom.addEventListener('click', () => {
+            if (elements.tomSelect.value) {
+                elements.tomSelect.value = elements.tomSelect.options[elements.tomSelect.selectedIndex + 1].value;
+                elements.tomSelect.dispatchEvent(new Event('change'));
+            }
+        });
+
+        function transposeAcorde(acorde, steps) {
+            let index = tonsMaiores.indexOf(acorde);
+            if (index === -1)
+                return acorde;
+
+            index = (index + steps + tonsMaiores.length) % tonsMaiores.length;
+
+            return tonsMaiores[index];
+        }
+
+        function transposeCifra(texto, tom) {
+            let acordes;
+            if (tonsMaiores.includes(tom)) {
+                acordes = tonsMaiores;
+            } else if (tonsMenores.includes(tom)) {
+                acordes = tonsMenores;
+            }
+            
+            const cifras = elements.iframeCifra.contentDocument.querySelectorAll('b');
+
+            for (let i = 0; i < cifras.length; i++) {
+                const cifra = cifras[i];
+                let acorde = cifra.innerText;
+                const steps = acordes.indexOf(tom) - acordes.indexOf(tomAtual);
+
+                while (!tonsMaiores.includes(acorde) && acorde) {
+                    acorde = acorde.slice(0, -1);
+                }
+                
+                const newAcorde = transposeAcorde(acorde, acordes.indexOf(tom) - acordes.indexOf(tomAtual));
+                cifra.innerText = cifra.innerText.replace(acorde, newAcorde);
+            }
+        }
 
         elements.savesSelect.addEventListener('change', () => {
             const selectItem = elements.savesSelect.value;
@@ -633,6 +691,7 @@
             }
 
             elements.tomSelect.value = tom;
+            tomAtual = tom;
         }
 
         function descobrirTom(texto) {
