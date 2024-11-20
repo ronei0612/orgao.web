@@ -7,7 +7,32 @@
     <title>Botões de Play e Stop</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        #savesSelect option:not(:first-child) {
+            color: black;
+        }
+
+        #savesSelect {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        #searchInput {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        #searchButton {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        #deleteSavesSelect {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
         .modal-textarea {
             width: 100%;
             height: 300px;
@@ -140,6 +165,31 @@
             margin-top: 20px;
         }
 
+        .btn-delete {
+            background-color: #ff4500;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #B71C1C;
+            color: white;
+        }
+
+        .btn-add {
+            background-color: #008B8B;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background-color: #005F5F;
+            color: white;
+        }
+
+        .btn-control-custom:focus {
+            outline: none;
+            box-shadow: none
+        }
+
         .bpm-control label,
         .bpm-control span {
             font-weight: bold;
@@ -197,6 +247,83 @@
             background-color: #008B8B;
             color: #fff;
         }
+
+        .btn-dark-cyan:hover {
+            background-color: #005F5F;
+            color: white;
+        }
+
+        .btn-dark-cyan:focus {
+            outline: none;
+            box-shadow: none
+        }
+
+        .switch {
+            position: relative;
+            top: 3px;
+            left: 3px;
+            right: -3px;
+            bottom: -3px;
+            /* top: 10px;
+      right: 10px;
+      display: inline-block; */
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 28px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 5px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .slider:after {
+            content: "\f186";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            font-size: 15px;
+            color: #000;
+        }
+
+        input:checked+.slider:after {
+            content: "\f185";
+            right: 28px;
+            color: #ffd700;
+        }
+
+        input:checked+.slider {
+            background-color: #2196F3;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
     </style>
 </head>
 
@@ -232,36 +359,53 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="searchModalLabel">Cifras</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <label class="switch mr-auto" for="darkModeToggle">
+                        <input type="checkbox" id="darkModeToggle" />
+                        <span class="slider"></span>
+                    </label>
+                    <h5 class="modal-title mx-auto" id="searchModalLabel">Cifras</h5>
+                    <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
-                        <input class="form-control" placeholder="Pesquisar Música..." aria-label="Pesquisar"
-                            aria-describedby="basic-addon1" id="searchInput">
-                        <button class="btn btn-primary" type="button" id="searchButton">
-                            <span class="spinner-border spinner-border-sm d-none" role="status"
-                                aria-hidden="true"></span>
+                        <input class="form-control" placeholder="Pesquisar Música..." aria-label="Pesquisar" aria-describedby="basic-addon1" id="searchInput">
+                        <button class="btn btn-primary rounded-right" type="button" id="searchButton">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                             <i class="bi bi-search" id="searchIcon"></i>
                         </button>
-                        <textarea class="modal-textarea mt-3" id="editTextarea"></textarea>
                     </div>
-                    <ul class="list-group mt-3" id="searchResults"></ul>
+                    <div class="d-flex align-items-center justify-content-between mt-3">  <!-- Container for select and button -->
+                        <select class="form-control rounded-left" id="savesSelect">
+                            <option value="all">Selecione uma Cifra...</option>
+                        </select>
+                        <button class="btn btn-control-custom btn-success rounded-0" id="editSavesSelect">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger rounded-right" id="deleteSavesSelect">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                    <textarea class="modal-textarea mt-3" id="editTextarea" placeholder="Criar nova Cifra..."></textarea>
+                    <ul class="list-group mt-3 d-none" id="searchResults"></ul>
+                    <ul class="list-group mt-3 d-none" id="saves"></ul>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-dark" id="toggleDarkMode">
-                        <i class="bi bi-moon-fill"></i> Modo Escuro
-                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeButton">× Fechar</button>
                     <div>
-                        <button type="button" class="btn btn-primary" id="saveButton">Iniciar</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button class="btn btn-control-custom btn-add" id="saveButton">
+                            <i class="bi bi-save"></i> Salvar
+                        </button>
+                        <button type="button" class="btn btn-primary" id="startButton">
+                            <i class="bi bi-check"></i> Tocar
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="./assets/js/script.js"></script>
@@ -271,6 +415,7 @@
         const elements = {
             controlButtons: document.getElementById('controlButtons'),
             editTextarea: document.getElementById('editTextarea'),
+            startButton: document.getElementById('startButton'),
             saveButton: document.getElementById('saveButton'),
             playButton: document.getElementById('playButton'),
             notesButton: document.getElementById('notesButton'),
@@ -280,20 +425,216 @@
             spinner: document.querySelector('.spinner-border'),
             searchIcon: document.getElementById('searchIcon'),
             searchResultsList: document.getElementById('searchResults'),
+            savesList: document.getElementById('saves'),
             pulseRange: document.getElementById('pulseRange'),
             bpmValue: document.getElementById('bpmValue'),
-            toggleDarkModeButton: document.getElementById('toggleDarkMode'),
             iframeCifra: document.getElementById('iframeCifra'),
             prevButton: document.getElementById('prevButton'),
-            nextButton: document.getElementById('nextButton')
+            nextButton: document.getElementById('nextButton'),
+            darkModeToggle: document.getElementById('darkModeToggle'),
+            searchModalLabel: document.getElementById('searchModalLabel'),
+            savesSelect: document.getElementById('savesSelect'),
+            editSavesSelect: document.getElementById('editSavesSelect'),
+            deleteSavesSelect: document.getElementById('deleteSavesSelect'),
+            tomSelect: document.getElementById('tomSelect'),
+            decreaseTom: document.getElementById('decreaseTom'),
+            increaseTom: document.getElementById('increaseTom')
         };
 
-        elements.saveButton.addEventListener('click', () => {
-            mostrarTextoCifrasCarregado(null, elements.editTextarea.value);
-            const texto = elements.editTextarea.value;
-            elements.iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
-            addEventCifrasIframe(elements.iframeCifra);
-            $('#searchModal').modal('hide');
+        const camposHarmonicos = {
+            // Campos harmônicos maiores
+            'C': ['C', 'Dm', 'Em', 'F', 'G', 'Am'],
+            'Db': ['Db', 'Ebm', 'Fm', 'Gb', 'Ab', 'Bbm'],
+            'C#': ['C#', 'D#m', 'Fm', 'F#', 'G#', 'A#m'],
+            'D': ['D', 'Em', 'F#m', 'G', 'A', 'Bm'],
+            'Eb': ['Eb', 'Fm', 'Gm', 'Ab', 'Bb', 'Cm'],
+            'D#': ['D#', 'Fm', 'Gm', 'G#', 'A#', 'Cm'],
+            'E': ['E', 'F#m', 'G#m', 'A', 'B', 'C#m'],
+            'F': ['F', 'Gm', 'Am', 'Bb', 'C', 'Dm'],
+            'F#': ['F#', 'G#m', 'A#m', 'B', 'C#', 'D#m'],
+            'Gb': ['Gb', 'Abm', 'Bbm', 'B', 'Db', 'Ebm'],
+            'G': ['G', 'Am', 'Bm', 'C', 'D', 'Em'],
+            'G#': ['G#', 'A#m', 'B#m', 'C#', 'D#', 'Fm'],
+            'Ab': ['Ab', 'Bbm', 'Cm', 'Db', 'Eb', 'Fm'],
+            'A': ['A', 'Bm', 'C#m', 'D', 'E', 'F#m'],
+            'A#': ['A#', 'B#m', 'Dm', 'D#', 'F', 'Gm'],
+            'Bb': ['Bb', 'Cm', 'Dm', 'Eb', 'F', 'Gm'],
+            'B': ['B', 'C#m', 'D#m', 'E', 'F#', 'G#m'],
+            // Campos harmônicos menores
+            'Am': ['Am', 'C', 'Dm', 'Em', 'F', 'G'],
+            'Bbm': ['Bbm', 'Db', 'Ebm', 'Fm', 'Gb', 'Ab'],
+            'B#m': ['B#m', 'D', 'E#m', 'F#m', 'G', 'A'],
+            'Bm': ['Bm', 'D', 'Em', 'F#m', 'G', 'A'],
+            'Cm': ['Cm', 'Eb', 'Fm', 'Gm', 'Ab', 'Bb'],
+            'C#m': ['C#m', 'E', 'F#m', 'G#m', 'A', 'B'],
+            'Dm': ['Dm', 'F', 'Gm', 'Am', 'Bb', 'C'],
+            'D#m': ['D#m', 'Gb', 'Abm', 'Bbm', 'Cb', 'Db'],
+            'Ebm': ['Ebm', 'Gb', 'Abm', 'Bbm', 'Cb', 'Db'],
+            'Em': ['Em', 'G', 'Am', 'Bm', 'C', 'D'],
+            'Fm': ['Fm', 'Ab', 'Bbm', 'Cm', 'Db', 'Eb'],
+            'F#m': ['F#m', 'A', 'Bm', 'C#m', 'D', 'E'],
+            'Gm': ['Gm', 'Bb', 'Cm', 'Dm', 'Eb', 'F'],
+            'G#m': ['G#m', 'B', 'C#m', 'D#m', 'E', 'F#'],
+            'Abm': ['Abm', 'Cb', 'Dbm', 'Ebm', 'Fb', 'Gb'],
+            'A#m': ['A#m', 'D', 'E#m', 'F#m', 'G', 'A']
+        };
+        let acordeGroup = null;
+        let parado = true;
+        let indiceAcorde = 0;
+        let tomAtual = 'C';
+
+        $('#searchModal').on('shown.bs.modal', exibirListaSaves);
+
+        elements.tomSelect.addEventListener('change', () => {
+            if (elements.tomSelect.value) {
+                transposeCifra(elements.iframeCifra.contentDocument.body.innerText, elements.tomSelect.value);
+                tomAtual = elements.tomSelect.value;
+
+                if (indiceAcorde > 0) {
+                    indiceAcorde--;
+                }
+
+                if (!parado) {
+                    pararAcorde();
+                    avancarCifra();
+                }
+            }
+        });
+
+        elements.decreaseTom.addEventListener('click', () => {
+            if (elements.tomSelect.value) {
+                elements.tomSelect.value = elements.tomSelect.options[elements.tomSelect.selectedIndex - 1].value;
+                elements.tomSelect.dispatchEvent(new Event('change'));
+            }
+        });
+
+        elements.increaseTom.addEventListener('click', () => {
+            if (elements.tomSelect.value) {
+                elements.tomSelect.value = elements.tomSelect.options[elements.tomSelect.selectedIndex + 1].value;
+                elements.tomSelect.dispatchEvent(new Event('change'));
+            }
+        });
+
+        function transposeAcorde(acorde, steps) {
+            let index = tonsMaiores.indexOf(acorde);
+            if (index === -1)
+                return acorde;
+
+            index = (index + steps + tonsMaiores.length) % tonsMaiores.length;
+
+            return tonsMaiores[index];
+        }
+
+        function transposeCifra(texto, tom) {
+            let acordes;
+            if (tonsMaiores.includes(tom)) {
+                acordes = tonsMaiores;
+            } else if (tonsMenores.includes(tom)) {
+                acordes = tonsMenores;
+            }
+            
+            const cifras = elements.iframeCifra.contentDocument.querySelectorAll('b');
+
+            for (let i = 0; i < cifras.length; i++) {
+                const cifra = cifras[i];
+                let acorde = cifra.innerText;
+                const steps = acordes.indexOf(tom) - acordes.indexOf(tomAtual);
+
+                while (!tonsMaiores.includes(acorde) && acorde) {
+                    acorde = acorde.slice(0, -1);
+                }
+
+                const newAcorde = transposeAcorde(acorde, acordes.indexOf(tom) - acordes.indexOf(tomAtual));
+                cifra.innerText = cifra.innerText.replace(acorde, newAcorde);
+            }
+        }
+
+        elements.savesSelect.addEventListener('change', () => {
+            const selectItem = elements.savesSelect.value;
+            const saves = JSON.parse(localStorage.getItem('saves'));
+            elements.editTextarea.value = saves[selectItem];
+        })
+
+        elements.editSavesSelect.addEventListener('click', () => {
+            const saveName = elements.savesSelect.value;
+            if (saveName !== 'all') {
+                editarSave(saveName);
+                exibirListaSaves();
+            }
+        });
+
+        elements.deleteSavesSelect.addEventListener('click', () => {
+            const saveName = elements.savesSelect.value;
+            if (saveName !== 'all') {
+                if (confirm(`Deseja excluir ${saveName}?`)) {
+                    deletarSave(saveName);
+                    exibirListaSaves();
+                }
+            }
+        });
+
+        elements.searchButton.addEventListener('click', searchMusic);
+
+        elements.notesButton.addEventListener('click', function () {
+            if (indiceAcorde > 0) {
+                indiceAcorde--;
+            }
+
+            if (!parado) {
+                pararAcorde();
+                avancarCifra();
+            }
+        });
+
+        elements.stopButton.addEventListener('mousedown', function () {
+            pararAcorde();
+            const frameContent = elements.iframeCifra.contentDocument;
+            const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
+
+            Array.from(cifraElems).forEach(elemento => {
+                elemento.classList.remove('cifraSelecionada');
+            });
+
+            if (indiceAcorde > 0) {
+                indiceAcorde--;
+            }
+        });
+
+        document.addEventListener('mousedown', fullScreen);
+
+        elements.playButton.addEventListener('mousedown', function () {
+            avancarCifra();
+        });
+
+        elements.saveButton.addEventListener('click', function () {
+            const saveContent = elements.editTextarea.value;
+
+            if (saveContent) {
+                const saveName = prompt("Digite o nome para salvar:");
+
+                if (saveName) {
+                    salvarSaves(saveName, saveContent);
+                }
+            } else {
+                elements.editTextarea.focus();
+            }
+        });
+
+        elements.darkModeToggle.addEventListener('change', toggleDarkMode);
+
+        elements.startButton.addEventListener('click', () => {
+            if (elements.editTextarea.value) {
+                const tom = descobrirTom(elements.editTextarea.value);
+                mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
+                const texto = elements.editTextarea.value;
+                elements.iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
+                addEventCifrasIframe(elements.iframeCifra);
+                
+                $('#searchModal').modal('hide');
+            }
+            else {
+                elements.searchInput.focus();
+            }
         });
 
         elements.prevButton.addEventListener('click', () => {
@@ -318,12 +659,268 @@
             }
         });
 
+        function salvarSaves(saveName, saveContent) {
+            let saves = localStorage.getItem('saves');
+            if (saves) {
+                saves = JSON.parse(saves);
+
+                if (saves.hasOwnProperty(saveName)) {
+                    alert("Já existe esse nome!");
+                    return;
+                }
+            } else {
+                saves = {};
+            }
+
+            saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
+            saves[saveName] = saveContent;
+            localStorage.setItem('saves', JSON.stringify(saves));
+
+            exibirListaSaves();
+            elements.savesSelect.value = saveName;
+        }
+
+        function preencherSelect(tom) {
+            elements.tomSelect.innerHTML = '';
+
+            if (tonsMaiores.includes(tom)) {
+                tonsMaiores.forEach(tom => {
+                    const option = document.createElement('option');
+                    option.value = tom;
+                    option.text = tom;
+                    elements.tomSelect.appendChild(option);
+                });
+            } else if (tonsMenores.includes(tom)) {
+                tonsMenores.forEach(tom => {
+                    const option = document.createElement('option');
+                    option.value = tom;
+                    option.text = tom;
+                    elements.tomSelect.appendChild(option);
+                });
+            }
+
+            elements.tomSelect.value = tom;
+            tomAtual = tom;
+        }
+
+        function descobrirTom(texto) {
+            const somenteCifras = texto.match(/[A-G][#b]?m?/g);
+
+            if (!somenteCifras) {
+                return 'C';
+            }
+
+            const acordesOrdenados = [...somenteCifras].sort();
+
+            const padroesAcordes = {
+                doisMenores: false,
+                doisMaiores: false
+            };
+
+            for (let i = 0; i < acordesOrdenados.length - 1; i++) {
+                if (acordesOrdenados[i].endsWith('m') && acordesOrdenados[i + 1].endsWith('m')) {
+                    padroesAcordes.doisMenores = true;
+                }
+                if (!acordesOrdenados[i].endsWith('m') && !acordesOrdenados[i + 1].endsWith('m')) {
+                    padroesAcordes.doisMaiores = true;
+                }
+            }
+
+            const possiveisTons = {};
+            for (const [tom, acordes] of Object.entries(camposHarmonicos)) {
+                let pontos = 0;
+
+                if (padroesAcordes.doisMenores) {
+                    for (let i = 0; i < acordes.length - 1; i++) {
+                        if (acordes[i].endsWith('m') && acordes[i + 1].endsWith('m')) {
+                            pontos += 1;
+                        }
+                    }
+                }
+                if (padroesAcordes.doisMaiores) {
+                    for (let i = 0; i < acordes.length - 1; i++) {
+                        if (!acordes[i].endsWith('m') && !acordes[i + 1].endsWith('m')) {
+                            pontos += 1;
+                        }
+                    }
+                }
+
+                pontos += somenteCifras.filter(cifra => acordes.includes(cifra)).length;
+                somenteCifras.forEach(cifra => {
+                    if (!acordes.includes(cifra)) {
+                        pontos -= 1; // Subtrai 1 ponto se o acorde não estiver no campo harmônico
+                    }
+                });
+
+                possiveisTons[tom] = pontos;
+            }
+
+            const primeiroAcorde = somenteCifras[0];
+            const ultimoAcorde = somenteCifras[somenteCifras.length - 1];
+
+            for (const tom in possiveisTons) {
+                if (camposHarmonicos[tom][0] === primeiroAcorde) {
+                    possiveisTons[tom] += 1;
+                }
+                if (camposHarmonicos[tom][0] === ultimoAcorde) {
+                    possiveisTons[tom] += 1;
+                }
+            }
+
+            const tomProvavel = Object.keys(possiveisTons).reduce((a, b) => possiveisTons[a] > possiveisTons[b] ? a : b);
+            return tomProvavel;
+        }
+
+        function descobrirTomOld(texto) {
+            const somenteCifras = texto.match(/[A-G][#b]?m?/g);
+
+            if (!somenteCifras) {
+                return 'C';
+            }
+
+            const possiveisTons = {};
+            for (const [tom, acordes] of Object.entries(camposHarmonicos)) {
+                possiveisTons[tom] = somenteCifras.filter(cifra => acordes.includes(cifra)).length;
+                somenteCifras.forEach(cifra => {
+                    if (!acordes.includes(cifra)) {
+                        possiveisTons[tom] -= 1;
+                    }
+                });
+            }
+
+            const primeiroAcorde = somenteCifras[0];
+            const ultimoAcorde = somenteCifras[somenteCifras.length - 1];
+
+            for (const tom in possiveisTons) {
+                if (camposHarmonicos[tom][0] === primeiroAcorde) {
+                    possiveisTons[tom] += 1;
+                }
+                if (camposHarmonicos[tom][0] === ultimoAcorde) {
+                    possiveisTons[tom] += 1;
+                }
+            }
+            
+            const tomProvavel = Object.keys(possiveisTons).reduce((a, b) => possiveisTons[a] > possiveisTons[b] ? a : b);
+            
+            return tomProvavel;
+        }
+
+        function exibirListaSaves(botaoVoltarPressionado) {
+            elements.savesSelect.innerHTML = '<option value="all">Selecione uma Cifra...</option>';
+
+            let saves = localStorage.getItem('saves');            
+            if (saves && saves !== '{}') {
+                saves = JSON.parse(saves);
+
+                for (const saveName in saves) {
+                    const listItem = criarItemSelect(saveName, saves[saveName]);
+                    elements.savesSelect.appendChild(listItem);
+                }
+            }
+        }
+
+        function criarItemSelect(saveName, saveContent) {
+            const option = document.createElement('option');
+
+            option.value = saveName;
+            option.textContent = saveName;
+
+            // Important: Check if the option already exists to avoid duplicates
+            const existingOption = elements.savesSelect.querySelector(`option[value="${saveName}"]`);
+            if (!existingOption) {
+                elements.savesSelect.appendChild(option);
+            }
+
+            // Optionally, add an event listener for the select option
+            option.addEventListener('click', () => {
+                //Handle what happens when the option is selected
+                //You would likely want to load the saveContent into editTextarea
+                //Example, but adjust this to your needs.
+                elements.editTextarea.value = saveContent;
+                elements.searchModalLabel.textContent = saveName; //Update modal label
+            });
+
+            return option;
+        }
+
+        function criarItemLista(saveName, saveContent) {
+            elements.savesList.innerHTML = '';
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+
+            listItem.textContent = saveName;
+
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
+            deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
+
+            deleteButton.addEventListener('click', () => {
+                if (confirm(`Deseja excluir ${saveName}?`)) {
+                    deletarSave(saveName);
+                    exibirListaSaves();
+                }
+            });
+
+            listItem.appendChild(deleteButton);
+
+            listItem.addEventListener('click', () => {
+                desselecionarTodos();
+                listItem.classList.add('selected');
+                elements.editTextarea.value = saveContent;
+                elements.searchModalLabel.textContent = saveName;
+                elements.editTextarea.classList.remove('d-none');
+                elements.savesList.classList.add('d-none');
+                elements.saveButton.classList.remove('d-none');
+                elements.startButton.classList.remove('d-none');
+            });
+            return listItem;
+        }
+
+        function desselecionarTodos() {
+            const allItems = document.querySelectorAll('.list-group-item');
+            allItems.forEach(item => item.classList.remove('selected'));
+        }
+
+        function editarSave(saveName) {
+            let optionToEdit = savesSelect.querySelector(`option[value="${saveName}"]`);
+
+            if (optionToEdit) {
+                let saves = JSON.parse(localStorage.getItem('saves')) || {};
+                const newSaveName = prompt(`Digite o novo nome para "${saveName}":`, saveName);
+
+                if (newSaveName) {
+                    if (saves.hasOwnProperty(newSaveName)) {
+                        alert("Já existe esse nome!");
+                        return;
+                    }
+
+                    const saveContent = saves[saveName];
+                    saves[newSaveName] = saveContent;
+                    delete saves[saveName];
+                    localStorage.setItem('saves', JSON.stringify(saves));
+
+                    optionToEdit.textContent = newSaveName;
+                    optionToEdit.value = newSaveName;
+                }
+            }
+        }
+
+        function deletarSave(saveName) {
+            let saves = JSON.parse(localStorage.getItem('saves') || '{}');
+            delete saves[saveName];
+            localStorage.setItem('saves', JSON.stringify(saves));
+        }
+
         async function searchMusic() {
             elements.editTextarea.classList.add('d-none');
             elements.searchIcon.classList.add('d-none');
             elements.spinner.classList.remove('d-none');
-            elements.searchButton.disabled = true;
+            elements.savesList.classList.add('d-none');
+            elements.saveButton.classList.add('d-none');
+            elements.startButton.classList.add('d-none');
+            elements.searchResultsList.classList.remove('d-none');
             elements.searchResultsList.innerHTML = '';
+            elements.searchButton.disabled = true;
 
             const textoPesquisa = elements.searchInput.value;
 
@@ -343,7 +940,7 @@
                             listItem.className = 'list-group-item';
                             const link = document.createElement('a');
                             link.href = '#';
-                            link.onclick = () => choseLink(links[index]);
+                            link.onclick = () => choseLink(links[index], title);
                             link.textContent = title;
                             listItem.appendChild(link);
                             elements.searchResultsList.appendChild(listItem);
@@ -353,8 +950,9 @@
                     }
                 } else { throw new Error(data.message); }
             } catch (error) {
-                console.error('Erro na busca:', error);
                 alert(`Erro na busca: ${error.message}`);
+                elements.savesList.classList.remove('d-none');
+                elements.searchResultsList.classList.add('d-none');
             } finally {
                 elements.searchButton.disabled = false;
                 elements.spinner.classList.add('d-none');
@@ -362,7 +960,7 @@
             }
         }
 
-        async function choseLink(urlLink) {
+        async function choseLink(urlLink, text) {
             elements.searchButton.disabled = true;
             elements.spinner.classList.remove('d-none');
             elements.searchIcon.classList.add('d-none');
@@ -376,8 +974,11 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    mostrarTextoCifrasCarregado(data.tom, data.message);
+                    mostrarTextoCifrasCarregado(data.tom, data.message);                    
+                    elements.searchModalLabel.textContent = text;
                     elements.editTextarea.classList.remove('d-none');
+                    elements.startButton.classList.remove('d-none');
+                    elements.saveButton.classList.remove('d-none');
                 } else {
                     alert(data.message);
                 }
@@ -388,6 +989,7 @@
                 elements.searchButton.disabled = false;
                 elements.spinner.classList.add('d-none');
                 elements.searchIcon.classList.remove('d-none');
+                elements.searchResultsList.classList.add('d-none');
             }
         }
 
@@ -429,15 +1031,19 @@
             elements.stopButton.style.animationDuration = `${bpmValor}ms`;
         };
 
-        const toggleDarkMode = () => {
+        function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-            updateDarkModeText();
             aplicarModoEscuroIframe();
         };
 
-        const updateDarkModeText = () => {
-            elements.toggleDarkModeButton.innerHTML = document.body.classList.contains('dark-mode') ? '<i class="bi bi-brightness-high-fill"></i> Modo Claro' : '<i class="bi bi-moon-fill"></i> Modo Escuro';
+        const updateSwitchDarkMode = () => {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            if (isDarkMode) {
+                elements.darkModeToggle.checked = false;
+            } else {
+                elements.darkModeToggle.checked = true;
+            }
         };
 
         const aplicarModoEscuroIframe = () => {
@@ -445,31 +1051,22 @@
             iframeDoc.body.style.color = document.body.classList.contains('dark-mode') ? '#FFFFFF' : '#4F4F4F';
         };
 
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-            updateDarkModeText();
-            aplicarModoEscuroIframe();
-        }
-
-        ['mousedown'].forEach(event => {
-            elements.playButton.addEventListener(event, togglePressedState);
-            elements.notesButton.addEventListener(event, togglePressedState);
-            elements.stopButton.addEventListener(event, togglePressedState);
+        document.addEventListener('DOMContentLoaded', function () {
+            elements.darkModeToggle.checked = true;
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                updateSwitchDarkMode();
+                aplicarModoEscuroIframe();
+            }
         });
-        elements.toggleDarkModeButton.addEventListener('click', toggleDarkMode);
-        elements.searchButton.addEventListener('click', searchMusic);
 
         function mostrarTextoCifrasCarregado(tom = null, texto = null) {
             if (tom) {
-                tom = getAcorde(tom)[0];
-                if (tom.includes('m'))
-                    adicionarTonsSelect('tomSelect', tonsMenores.indexOf(tom), false);
-                else
-                    adicionarTonsSelect('tomSelect', tonsMaiores.indexOf(tom), true);
+                preencherSelect(tom);
             }
 
             if (texto) {
-                const textoSemTags = texto.replace(/<\/?[^>]+(>|$)/g, "");
+                const textoSemTags = texto.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
                 elements.editTextarea.value = textoSemTags;
             }
         }
@@ -488,7 +1085,7 @@
                     e.target.scrollIntoView();
                     parent.tocarCifraManualmente(e.target);
 
-                    parent.focus(); //Foca fora para funcionar o teclado físico
+                    //parent.focus(); //Foca fora para funcionar o teclado físico
                 });
             }
         }
@@ -519,27 +1116,6 @@
             }
         }
 
-        document.addEventListener('mousedown', fullScreen);
-
-        function adicionarTonsSelect(element, index, maior) {
-            var selectElem = document.getElementById(element);
-            selectElem.innerHTML = "";
-
-            var tons = tonsMaiores;
-            if (maior === false)
-                tons = tonsMenores;
-
-            for (var i = 0; i < tons.length; i++) {
-                let opt = document.createElement('option');
-                opt.value = tons[i];
-                opt.textContent += tons[i];
-                selectElem.appendChild(opt);
-            };
-
-            selectElem.selectedIndex = index;
-            //textoAcordeMenor.innerText = tonsMenores[index];
-        }
-
         function destacarCifras(texto) {
             const linhas = texto.split('\n');
             let cifraNum = 1;
@@ -561,8 +1137,6 @@
             });
             return (`<style>.cifraSelecionada{background-color:#DAA520}</style><pre>${linhasDestacadas.join('\n')}</pre>`);
         }
-
-        let acordeGroup = null;
 
         function tocarAcorde(acorde) {
             pararAcorde();
@@ -603,13 +1177,6 @@
             }
         }
 
-        let parado = true;
-        let indiceAcorde = 0;
-
-        elements.playButton.addEventListener('mousedown', function () {
-            avancarCifra();
-        });
-
         function removerClasseCifraSelecionada(iframeDoc, excecao = null) {
             const elementos = iframeDoc.querySelectorAll('.cifraSelecionada');
             elementos.forEach(elemento => {
@@ -618,32 +1185,6 @@
                 }
             });
         }
-
-        elements.notesButton.addEventListener('mousedown', function () {
-            if (indiceAcorde > 0) {
-                indiceAcorde--;
-            }
-
-            if (!parado) {
-                pararAcorde();
-                avancarCifra();
-            }
-        });
-
-        elements.stopButton.addEventListener('mousedown', function () {
-            pararAcorde();
-            const frameContent = elements.iframeCifra.contentDocument;
-            const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
-
-            Array.from(cifraElems).forEach(elemento => {
-                elemento.classList.remove('cifraSelecionada');
-            });
-
-            if (indiceAcorde > 0) {
-                //tocando = false;
-                indiceAcorde--;
-            }
-        });
 
         function avancarCifra() {
             const frameContent = elements.iframeCifra.contentDocument;
@@ -675,6 +1216,12 @@
                 elements.playButton.dispatchEvent(new Event('mousedown'));
             }
         }
+
+        ['mousedown'].forEach(event => {
+            elements.playButton.addEventListener(event, togglePressedState);
+            elements.notesButton.addEventListener(event, togglePressedState);
+            elements.stopButton.addEventListener(event, togglePressedState);
+        });
     </script>
 </body>
 
