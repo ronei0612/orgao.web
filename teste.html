@@ -818,7 +818,7 @@
 
             if (optionToEdit) {
                 let saves = JSON.parse(localStorage.getItem('saves')) || {};
-                const newSaveName = prompt("Digite o novo nome para o save:");
+                const newSaveName = prompt(`Digite o novo nome para "${saveName}":`, saveName);
 
                 if (newSaveName) {
                     if (saves.hasOwnProperty(newSaveName)) {
