@@ -436,7 +436,9 @@
             savesSelect: document.getElementById('savesSelect'),
             editSavesSelect: document.getElementById('editSavesSelect'),
             deleteSavesSelect: document.getElementById('deleteSavesSelect'),
-            tomSelect: document.getElementById('tomSelect')
+            tomSelect: document.getElementById('tomSelect'),
+            decreaseTom: document.getElementById('decreaseTom'),
+            increaseTom: document.getElementById('increaseTom')
         };
 
         const camposHarmonicos = {
@@ -479,8 +481,73 @@
         let acordeGroup = null;
         let parado = true;
         let indiceAcorde = 0;
+        let tomAtual = 'C';
 
         $('#searchModal').on('shown.bs.modal', exibirListaSaves);
+
+        elements.tomSelect.addEventListener('change', () => {
+            if (elements.tomSelect.value) {
+                transposeCifra(elements.iframeCifra.contentDocument.body.innerText, elements.tomSelect.value);
+                tomAtual = elements.tomSelect.value;
+
+                if (indiceAcorde > 0) {
+                    indiceAcorde--;
+                }
+
+                if (!parado) {
+                    pararAcorde();
+                    avancarCifra();
+                }
+            }
+        });
+
+        elements.decreaseTom.addEventListener('click', () => {
+            if (elements.tomSelect.value) {
+                elements.tomSelect.value = elements.tomSelect.options[elements.tomSelect.selectedIndex - 1].value;
+                elements.tomSelect.dispatchEvent(new Event('change'));
+            }
+        });
+
+        elements.increaseTom.addEventListener('click', () => {
+            if (elements.tomSelect.value) {
+                elements.tomSelect.value = elements.tomSelect.options[elements.tomSelect.selectedIndex + 1].value;
+                elements.tomSelect.dispatchEvent(new Event('change'));
+            }
+        });
+
+        function transposeAcorde(acorde, steps) {
+            let index = tonsMaiores.indexOf(acorde);
+            if (index === -1)
+                return acorde;
+
+            index = (index + steps + tonsMaiores.length) % tonsMaiores.length;
+
+            return tonsMaiores[index];
+        }
+
+        function transposeCifra(texto, tom) {
+            let acordes;
+            if (tonsMaiores.includes(tom)) {
+                acordes = tonsMaiores;
+            } else if (tonsMenores.includes(tom)) {
+                acordes = tonsMenores;
+            }
+            
+            const cifras = elements.iframeCifra.contentDocument.querySelectorAll('b');
+
+            for (let i = 0; i < cifras.length; i++) {
+                const cifra = cifras[i];
+                let acorde = cifra.innerText;
+                const steps = acordes.indexOf(tom) - acordes.indexOf(tomAtual);
+
+                while (!tonsMaiores.includes(acorde) && acorde) {
+                    acorde = acorde.slice(0, -1);
+                }
+
+                const newAcorde = transposeAcorde(acorde, acordes.indexOf(tom) - acordes.indexOf(tomAtual));
+                cifra.innerText = cifra.innerText.replace(acorde, newAcorde);
+            }
+        }
 
         elements.savesSelect.addEventListener('change', () => {
             const selectItem = elements.savesSelect.value;
@@ -562,6 +629,7 @@
                 const texto = elements.editTextarea.value;
                 elements.iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
                 addEventCifrasIframe(elements.iframeCifra);
+                
                 $('#searchModal').modal('hide');
             }
             else {
@@ -632,6 +700,7 @@
             }
 
             elements.tomSelect.value = tom;
+            tomAtual = tom;
         }
 
         function descobrirTom(texto) {
@@ -737,9 +806,9 @@
         }
 
         function exibirListaSaves(botaoVoltarPressionado) {
+            elements.savesSelect.innerHTML = '<option value="all">Selecione uma Cifra...</option>';
 
-            let saves = localStorage.getItem('saves');
-            
+            let saves = localStorage.getItem('saves');            
             if (saves && saves !== '{}') {
                 saves = JSON.parse(saves);
 
@@ -817,7 +886,7 @@
 
             if (optionToEdit) {
                 let saves = JSON.parse(localStorage.getItem('saves')) || {};
-                const newSaveName = prompt("Digite o novo nome para o save:");
+                const newSaveName = prompt(`Digite o novo nome para "${saveName}":`, saveName);
 
                 if (newSaveName) {
                     if (saves.hasOwnProperty(newSaveName)) {
@@ -971,9 +1040,9 @@
         const updateSwitchDarkMode = () => {
             const isDarkMode = document.body.classList.contains('dark-mode');
             if (isDarkMode) {
-                elements.darkModeToggle.checked = true;
-            } else {
                 elements.darkModeToggle.checked = false;
+            } else {
+                elements.darkModeToggle.checked = true;
             }
         };
 
@@ -983,13 +1052,13 @@
         };
 
         document.addEventListener('DOMContentLoaded', function () {
+            elements.darkModeToggle.checked = true;
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                updateSwitchDarkMode();
+                aplicarModoEscuroIframe();
+            }
         });
-
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-            updateSwitchDarkMode();
-            aplicarModoEscuroIframe();
-        }
 
         function mostrarTextoCifrasCarregado(tom = null, texto = null) {
             if (tom) {
@@ -1016,7 +1085,7 @@
                     e.target.scrollIntoView();
                     parent.tocarCifraManualmente(e.target);
 
-                    parent.focus(); //Foca fora para funcionar o teclado físico
+                    //parent.focus(); //Foca fora para funcionar o teclado físico
                 });
             }
         }
