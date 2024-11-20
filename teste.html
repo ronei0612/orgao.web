@@ -489,6 +489,15 @@
             if (elements.tomSelect.value) {
                 transposeCifra(elements.iframeCifra.contentDocument.body.innerText, elements.tomSelect.value);
                 tomAtual = elements.tomSelect.value;
+
+                if (indiceAcorde > 0) {
+                    indiceAcorde--;
+                }
+
+                if (!parado) {
+                    pararAcorde();
+                    avancarCifra();
+                }
             }
         });
 
@@ -534,7 +543,7 @@
                 while (!tonsMaiores.includes(acorde) && acorde) {
                     acorde = acorde.slice(0, -1);
                 }
-                
+
                 const newAcorde = transposeAcorde(acorde, acordes.indexOf(tom) - acordes.indexOf(tomAtual));
                 cifra.innerText = cifra.innerText.replace(acorde, newAcorde);
             }
