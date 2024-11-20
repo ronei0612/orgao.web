@@ -738,9 +738,9 @@
         }
 
         function exibirListaSaves(botaoVoltarPressionado) {
+            elements.savesSelect.innerHTML = '<option value="all">Selecione uma Cifra...</option>';
 
             let saves = localStorage.getItem('saves');
-            
             if (saves && saves !== '{}') {
                 saves = JSON.parse(saves);
 
