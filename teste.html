@@ -702,7 +702,25 @@
             const possiveisTons = {};
             for (const [tom, acordes] of Object.entries(camposHarmonicos)) {
                 possiveisTons[tom] = somenteCifras.filter(cifra => acordes.includes(cifra)).length;
+                somenteCifras.forEach(cifra => {
+                    if (!acordes.includes(cifra)) {
+                        possiveisTons[tom] -= 1; // Subtrai 1 ponto se o acorde não estiver no campo harmônico
+                    }
+                });
             }
+
+            const primeiroAcorde = somenteCifras[0];
+            const ultimoAcorde = somenteCifras[somenteCifras.length - 1];
+
+            for (const tom in possiveisTons) {
+                if (camposHarmonicos[tom][0] === primeiroAcorde) {
+                    possiveisTons[tom] += 1; // Adiciona 1 ponto se o primeiro acorde está no início do campo harmônico
+                }
+                if (camposHarmonicos[tom][0] === ultimoAcorde) {
+                    possiveisTons[tom] += 1; // Adiciona 1 ponto se o último acorde está no início do campo harmônico
+                }
+            }
+            
             const tomProvavel = Object.keys(possiveisTons).reduce((a, b) => possiveisTons[a] > possiveisTons[b] ? a : b);
             
             return tomProvavel;
