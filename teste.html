@@ -740,7 +740,7 @@
         function exibirListaSaves(botaoVoltarPressionado) {
             elements.savesSelect.innerHTML = '<option value="all">Selecione uma Cifra...</option>';
 
-            let saves = localStorage.getItem('saves');
+            let saves = localStorage.getItem('saves');            
             if (saves && saves !== '{}') {
                 saves = JSON.parse(saves);
 
@@ -972,9 +972,9 @@
         const updateSwitchDarkMode = () => {
             const isDarkMode = document.body.classList.contains('dark-mode');
             if (isDarkMode) {
-                elements.darkModeToggle.checked = true;
-            } else {
                 elements.darkModeToggle.checked = false;
+            } else {
+                elements.darkModeToggle.checked = true;
             }
         };
 
@@ -984,13 +984,13 @@
         };
 
         document.addEventListener('DOMContentLoaded', function () {
+            elements.darkModeToggle.checked = true;
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+                updateSwitchDarkMode();
+                aplicarModoEscuroIframe();
+            }
         });
-
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-            updateSwitchDarkMode();
-            aplicarModoEscuroIframe();
-        }
 
         function mostrarTextoCifrasCarregado(tom = null, texto = null) {
             if (tom) {
