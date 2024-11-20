@@ -696,8 +696,77 @@
         function descobrirTom(texto) {
             const somenteCifras = texto.match(/[A-G][#b]?m?/g);
 
-            if (!somenteCifras)
+            if (!somenteCifras) {
                 return 'C';
+            }
+
+            const acordesOrdenados = [...somenteCifras].sort();
+
+            const padroesAcordes = {
+                doisMenores: false,
+                doisMaiores: false
+            };
+
+            for (let i = 0; i < acordesOrdenados.length - 1; i++) {
+                if (acordesOrdenados[i].endsWith('m') && acordesOrdenados[i + 1].endsWith('m')) {
+                    padroesAcordes.doisMenores = true;
+                }
+                if (!acordesOrdenados[i].endsWith('m') && !acordesOrdenados[i + 1].endsWith('m')) {
+                    padroesAcordes.doisMaiores = true;
+                }
+            }
+
+            const possiveisTons = {};
+            for (const [tom, acordes] of Object.entries(camposHarmonicos)) {
+                let pontos = 0;
+
+                if (padroesAcordes.doisMenores) {
+                    for (let i = 0; i < acordes.length - 1; i++) {
+                        if (acordes[i].endsWith('m') && acordes[i + 1].endsWith('m')) {
+                            pontos += 1;
+                        }
+                    }
+                }
+                if (padroesAcordes.doisMaiores) {
+                    for (let i = 0; i < acordes.length - 1; i++) {
+                        if (!acordes[i].endsWith('m') && !acordes[i + 1].endsWith('m')) {
+                            pontos += 1;
+                        }
+                    }
+                }
+
+                pontos += somenteCifras.filter(cifra => acordes.includes(cifra)).length;
+                somenteCifras.forEach(cifra => {
+                    if (!acordes.includes(cifra)) {
+                        pontos -= 1; // Subtrai 1 ponto se o acorde não estiver no campo harmônico
+                    }
+                });
+
+                possiveisTons[tom] = pontos;
+            }
+
+            const primeiroAcorde = somenteCifras[0];
+            const ultimoAcorde = somenteCifras[somenteCifras.length - 1];
+
+            for (const tom in possiveisTons) {
+                if (camposHarmonicos[tom][0] === primeiroAcorde) {
+                    possiveisTons[tom] += 1; // Adiciona 1 ponto se o primeiro acorde está no início do campo harmônico
+                }
+                if (camposHarmonicos[tom][0] === ultimoAcorde) {
+                    possiveisTons[tom] += 1; // Adiciona 1 ponto se o último acorde está no início do campo harmônico
+                }
+            }
+
+            const tomProvavel = Object.keys(possiveisTons).reduce((a, b) => possiveisTons[a] > possiveisTons[b] ? a : b);
+            return tomProvavel;
+        }
+
+        function descobrirTomOld(texto) {
+            const somenteCifras = texto.match(/[A-G][#b]?m?/g);
+
+            if (!somenteCifras) {
+                return 'C';
+            }
 
             const possiveisTons = {};
             for (const [tom, acordes] of Object.entries(camposHarmonicos)) {
@@ -839,7 +908,7 @@
         function editarSave(saveName) {
             let optionToEdit = savesSelect.querySelector(`option[value="${saveName}"]`);
 
-            if (optionToEdit){
+            if (optionToEdit) {
                 let saves = JSON.parse(localStorage.getItem('saves')) || {};
                 const newSaveName = prompt("Digite o novo nome para o save:");
 
