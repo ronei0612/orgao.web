@@ -1198,8 +1198,10 @@
                 }
             });
 
-            parado = false;
-            acordeGroup.play();
+            setTimeout(() => {
+                parado = false;
+                acordeGroup.play();
+            }, 60);
         }
 
         function pararAcorde() {
