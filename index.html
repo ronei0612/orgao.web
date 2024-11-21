@@ -38,6 +38,14 @@
             height: 300px;
             resize: vertical;
             padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+        }
+
+        .modal-textarea:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         }
 
         body {
@@ -50,7 +58,6 @@
             color: #fff;
         }
 
-        /* .dark-mode, */
         .modal-content {
             transition: background-color 0.3s, color 0.3s;
         }
@@ -230,12 +237,6 @@
             border: 1px solid #555;
         }
 
-        /* #decreaseTom,
-        #increaseTom {
-            background-color: #9988B4;
-            border-color: #9988B4;
-        } */
-
         .top-control {
             display: flex;
             justify-content: center;
@@ -264,9 +265,6 @@
             left: 3px;
             right: -3px;
             bottom: -3px;
-            /* top: 10px;
-      right: 10px;
-      display: inline-block; */
             width: 50px;
             height: 28px;
         }
@@ -394,7 +392,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeButton">× Fechar</button>
                     <div>
                         <button class="btn btn-control-custom btn-add" id="addButton">
-                            <i class="bi bi-plus-circle"></i> Novo
+                            <i class="bi bi-plus-circle"></i>
                         </button>
                         <button class="btn btn-control-custom btn-add" id="saveButton">
                             <i class="bi bi-save"></i> Salvar
@@ -558,6 +556,13 @@
             elements.editTextarea.value = saves[selectItem];
             elements.searchModalLabel.textContent = selectItem;
             elements.savesSelect.style.color = 'black';
+
+            elements.searchInput.value = '';
+            elements.searchResultsList.classList.add('d-none');
+            elements.editTextarea.classList.remove('d-none');
+            elements.startButton.classList.remove('d-none');
+            elements.addButton.classList.remove('d-none');
+            elements.saveButton.classList.remove('d-none');
         })
 
         elements.editSavesSelect.addEventListener('click', () => {
@@ -831,7 +836,7 @@
 
         function exibirListaSaves() {
             if (elements.searchModalLabel.textContent === 'Cifras') {
-                elements.savesSelect.innerHTML = '<option selected disabled hidden>Selecione uma Cifra...</option>';
+                elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Cifra...</option>';
                 elements.savesSelect.style.color = '';
 
                 let saves = localStorage.getItem('saves');            
@@ -899,6 +904,7 @@
                 elements.savesList.classList.add('d-none');
                 elements.saveButton.classList.remove('d-none');
                 elements.startButton.classList.remove('d-none');
+                elements.addButton.classList.remove('d-none');
             });
             return listItem;
         }
@@ -947,6 +953,7 @@
             elements.savesList.classList.add('d-none');
             elements.saveButton.classList.add('d-none');
             elements.startButton.classList.add('d-none');
+            elements.addButton.classList.add('d-none');
             elements.searchResultsList.classList.remove('d-none');
             elements.searchResultsList.innerHTML = '';
             elements.searchButton.disabled = true;
@@ -1007,6 +1014,7 @@
                     elements.searchModalLabel.textContent = text;
                     elements.editTextarea.classList.remove('d-none');
                     elements.startButton.classList.remove('d-none');
+                    elements.addButton.classList.remove('d-none');
                     elements.saveButton.classList.remove('d-none');
                 } else {
                     alert(data.message);
@@ -1190,8 +1198,10 @@
                 }
             });
 
-            parado = false;
-            acordeGroup.play();
+            setTimeout(() => {
+                parado = false;
+                acordeGroup.play();
+            }, 60);
         }
 
         function pararAcorde() {
