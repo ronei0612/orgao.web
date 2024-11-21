@@ -394,7 +394,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeButton">× Fechar</button>
                     <div>
                         <button class="btn btn-control-custom btn-add" id="addButton">
-                            <i class="bi bi-plus-circle"></i> Novo
+                            <i class="bi bi-plus-circle"></i>
                         </button>
                         <button class="btn btn-control-custom btn-add" id="saveButton">
                             <i class="bi bi-save"></i> Salvar
@@ -558,6 +558,13 @@
             elements.editTextarea.value = saves[selectItem];
             elements.searchModalLabel.textContent = selectItem;
             elements.savesSelect.style.color = 'black';
+
+            elements.searchInput.value = '';
+            elements.searchResultsList.classList.add('d-none');
+            elements.editTextarea.classList.remove('d-none');
+            elements.startButton.classList.remove('d-none');
+            elements.addButton.classList.remove('d-none');
+            elements.saveButton.classList.remove('d-none');
         })
 
         elements.editSavesSelect.addEventListener('click', () => {
@@ -899,6 +906,7 @@
                 elements.savesList.classList.add('d-none');
                 elements.saveButton.classList.remove('d-none');
                 elements.startButton.classList.remove('d-none');
+                elements.addButton.classList.remove('d-none');
             });
             return listItem;
         }
@@ -947,6 +955,7 @@
             elements.savesList.classList.add('d-none');
             elements.saveButton.classList.add('d-none');
             elements.startButton.classList.add('d-none');
+            elements.addButton.classList.add('d-none');
             elements.searchResultsList.classList.remove('d-none');
             elements.searchResultsList.innerHTML = '';
             elements.searchButton.disabled = true;
@@ -1007,6 +1016,7 @@
                     elements.searchModalLabel.textContent = text;
                     elements.editTextarea.classList.remove('d-none');
                     elements.startButton.classList.remove('d-none');
+                    elements.addButton.classList.remove('d-none');
                     elements.saveButton.classList.remove('d-none');
                 } else {
                     alert(data.message);
