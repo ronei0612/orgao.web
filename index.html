@@ -831,7 +831,7 @@
 
         function exibirListaSaves() {
             if (elements.searchModalLabel.textContent === 'Cifras') {
-                elements.savesSelect.innerHTML = '<option selected disabled hidden>Selecione uma Cifra...</option>';
+                elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Cifra...</option>';
                 elements.savesSelect.style.color = '';
 
                 let saves = localStorage.getItem('saves');            
