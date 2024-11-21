@@ -9,7 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        #savesSelect option:not(:first-child) {
+        #savesSelect option {
             color: black;
         }
 
@@ -378,7 +378,6 @@
                     </div>
                     <div class="d-flex align-items-center justify-content-between mt-3">  <!-- Container for select and button -->
                         <select class="form-control rounded-left" id="savesSelect">
-                            <option value="all">Selecione uma Cifra...</option>
                         </select>
                         <button class="btn btn-control-custom btn-success rounded-0" id="editSavesSelect">
                             <i class="bi bi-pencil"></i>
@@ -394,6 +393,9 @@
                 <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeButton">× Fechar</button>
                     <div>
+                        <button class="btn btn-control-custom btn-add" id="addButton">
+                            <i class="bi bi-plus-circle"></i> Novo
+                        </button>
                         <button class="btn btn-control-custom btn-add" id="saveButton">
                             <i class="bi bi-save"></i> Salvar
                         </button>
@@ -417,6 +419,7 @@
             editTextarea: document.getElementById('editTextarea'),
             startButton: document.getElementById('startButton'),
             saveButton: document.getElementById('saveButton'),
+            addButton: document.getElementById('addButton'),
             playButton: document.getElementById('playButton'),
             notesButton: document.getElementById('notesButton'),
             stopButton: document.getElementById('stopButton'),
@@ -553,6 +556,8 @@
             const selectItem = elements.savesSelect.value;
             const saves = JSON.parse(localStorage.getItem('saves'));
             elements.editTextarea.value = saves[selectItem];
+            elements.searchModalLabel.textContent = selectItem;
+            elements.savesSelect.style.color = 'black';
         })
 
         elements.editSavesSelect.addEventListener('click', () => {
@@ -573,7 +578,14 @@
             }
         });
 
-        elements.searchButton.addEventListener('click', searchMusic);
+        elements.searchButton.addEventListener('click', () => {
+            if (elements.searchInput.value) {
+                elements.savesSelect.selectedIndex = 0;
+                elements.savesSelect.style.color = '';
+                elements.searchModalLabel.textContent = 'Cifras';
+                searchMusic();
+            }
+        });
 
         elements.notesButton.addEventListener('click', function () {
             if (indiceAcorde > 0) {
@@ -606,11 +618,21 @@
             avancarCifra();
         });
 
+        elements.addButton.addEventListener('click', function () {
+            elements.editTextarea.value = '';
+            elements.searchModalLabel.textContent = 'Cifras';
+            elements.savesSelect.selectedIndex = 0;
+            elements.savesSelect.style.color = '';
+            elements.searchInput.value = '';
+        });
+
         elements.saveButton.addEventListener('click', function () {
             const saveContent = elements.editTextarea.value;
 
             if (saveContent) {
-                const saveName = prompt("Digite o nome para salvar:");
+                let saveName = elements.searchModalLabel.textContent;
+                if (saveName === 'Cifras' || !confirm(`Deseja salvar ${saveName}?`))
+                    saveName = prompt("Digite o nome para salvar:");
 
                 if (saveName) {
                     salvarSaves(saveName, saveContent);
@@ -630,6 +652,7 @@
                 elements.iframeCifra.contentDocument.body.innerHTML = destacarCifras(texto);
                 addEventCifrasIframe(elements.iframeCifra);
                 
+                indiceAcorde = 0;
                 $('#searchModal').modal('hide');
             }
             else {
@@ -664,7 +687,7 @@
             if (saves) {
                 saves = JSON.parse(saves);
 
-                if (saves.hasOwnProperty(saveName)) {
+                if (saves.hasOwnProperty(saveName) && elements.searchModalLabel.textContent !== saveName) {
                     alert("Já existe esse nome!");
                     return;
                 }
@@ -678,6 +701,7 @@
 
             exibirListaSaves();
             elements.savesSelect.value = saveName;
+            elements.searchModalLabel.textContent = saveName;
         }
 
         function preencherSelect(tom) {
@@ -805,16 +829,19 @@
             return tomProvavel;
         }
 
-        function exibirListaSaves(botaoVoltarPressionado) {
-            elements.savesSelect.innerHTML = '<option value="all">Selecione uma Cifra...</option>';
+        function exibirListaSaves() {
+            if (elements.searchModalLabel.textContent === 'Cifras') {
+                elements.savesSelect.innerHTML = '<option selected disabled hidden>Selecione uma Cifra...</option>';
+                elements.savesSelect.style.color = '';
 
-            let saves = localStorage.getItem('saves');            
-            if (saves && saves !== '{}') {
-                saves = JSON.parse(saves);
+                let saves = localStorage.getItem('saves');            
+                if (saves && saves !== '{}') {
+                    saves = JSON.parse(saves);
 
-                for (const saveName in saves) {
-                    const listItem = criarItemSelect(saveName, saves[saveName]);
-                    elements.savesSelect.appendChild(listItem);
+                    for (const saveName in saves) {
+                        const listItem = criarItemSelect(saveName, saves[saveName]);
+                        elements.savesSelect.appendChild(listItem);
+                    }
                 }
             }
         }
@@ -901,6 +928,7 @@
 
                     optionToEdit.textContent = newSaveName;
                     optionToEdit.value = newSaveName;
+                    elements.searchModalLabel.textContent = newSaveName;
                 }
             }
         }
@@ -909,6 +937,7 @@
             let saves = JSON.parse(localStorage.getItem('saves') || '{}');
             delete saves[saveName];
             localStorage.setItem('saves', JSON.stringify(saves));
+            elements.searchModalLabel.textContent = 'Cifras';
         }
 
         async function searchMusic() {
@@ -1085,7 +1114,7 @@
                     e.target.scrollIntoView();
                     parent.tocarCifraManualmente(e.target);
 
-                    //parent.focus(); //Foca fora para funcionar o teclado físico
+                    parent.focus(); //Foca fora para funcionar o teclado físico
                 });
             }
         }
