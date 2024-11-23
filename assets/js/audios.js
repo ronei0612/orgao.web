@@ -4,132 +4,28 @@
     const acidentesCorrespondentesJson = JSON.parse('{"Cb":"B","C":"C","C#":"C#","Db":"C#","D":"D","D#":"D#","Eb":"D#","E":"E","E#":"F","Fb":"E","F":"F","F#":"F#","Gb":"F#","G":"G","G#":"G#","Ab":"G#","A":"A","A#":"A#","Bb":"A#","B":"B","B#":"C"}');
 	const acordesTons = Object.keys(acordesCampoHarmonicoJson);
 	const tonsMaiores = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-	const tonsMenores = ['Cm', 'C#m', 'Dm', 'D#m', 'Em', 'Fm', 'F#m', 'Gm', 'G#m', 'Am', 'A#m', 'Bm'];
+	const tonsMenores = tonsMaiores.map(tom => tom + 'm');
 
-    var audioPath = './assets/audio/';
-    if (location.origin.includes('file:'))
-        audioPath = 'https://ronei0612.github.io/orgao.web/assets/audio/';
+    const audioPath = location.origin.includes('file:') ? 'https://ronei0612.github.io/orgao.web/assets/audio/' : './assets/audio/';
 
 	localStorage.setItem('notasAcordesJson', JSON.stringify(notasAcordesJson));
 
-	 var acordes = {
-	 	'orgao_c': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_c.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_c#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_c_.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_d': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_d.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_d#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_d_.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_e': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_e.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_f': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_f.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_f#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_f_.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_g': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_g.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_g#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_g_.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_a': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_a.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_a#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_a_.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_b': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_b.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		
-		'orgao_c_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_c_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_c#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_c__baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_d_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_d_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_d#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_d__baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_e_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_e_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_f_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_f_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_f#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_f__baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_g_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_g_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_g#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_g__baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_a_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_a_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_a#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_a__baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_b_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_b_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
+	const acordes = {};
+	const instrumentos = ['orgao', 'strings'];
+	const oitavas = ['grave', 'baixo', ''];
+	const notas = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b'];
 
-		'orgao_c_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_c_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_c#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_c__grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_d_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_d_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_d#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_d__grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_e_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_e_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_f_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_f_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_f#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_f__grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_g_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_g_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_g#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_g__grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_a_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_a_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_a#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_a__grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'orgao_b_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Orgao/orgao_b_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-
-		// 'epiano_c': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_c.ogg' } }),
-		// 'epiano_c#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_c_.ogg' } }),
-		// 'epiano_d': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_d.ogg' } }),
-		// 'epiano_d#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_d_.ogg' } }),
-		// 'epiano_e': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_e.ogg' } }),
-		// 'epiano_f': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_f.ogg' } }),
-		// 'epiano_f#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_f_.ogg' } }),
-		// 'epiano_g': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_g.ogg' } }),
-		// 'epiano_g#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_g_.ogg' } }),
-		// 'epiano_a': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_a.ogg' } }),
-		// 'epiano_a#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_a_.ogg' } }),
-		// 'epiano_b': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_b.ogg' } }),
-
-		// 'epiano_c_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_c_baixo.ogg' } }),
-		// 'epiano_c#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_c__baixo.ogg' } }),
-		// 'epiano_d_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_d_baixo.ogg' } }),
-		// 'epiano_d#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_d__baixo.ogg' } }),
-		// 'epiano_e_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_e_baixo.ogg' } }),
-		// 'epiano_f_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_f_baixo.ogg' } }),
-		// 'epiano_f#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_f__baixo.ogg' } }),
-		// 'epiano_g_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_g_baixo.ogg' } }),
-		// 'epiano_g#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_g__baixo.ogg' } }),
-		// 'epiano_a_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_a_baixo.ogg' } }),
-		// 'epiano_a#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_a__baixo.ogg' } }),
-		// 'epiano_b_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_b_baixo.ogg' } }),
-
-		// 'epiano_c_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_c_grave.ogg' } }),
-		// 'epiano_c#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_c__grave.ogg' } }),
-		// 'epiano_d_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_d_grave.ogg' } }),
-		// 'epiano_d#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_d__grave.ogg' } }),
-		// 'epiano_e_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_e_grave.ogg' } }),
-		// 'epiano_f_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_f_grave.ogg' } }),
-		// 'epiano_f#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_f__grave.ogg' } }),
-		// 'epiano_g_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_g_grave.ogg' } }),
-		// 'epiano_g#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_g__grave.ogg' } }),
-		// 'epiano_a_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_a_grave.ogg' } }),
-		// 'epiano_a#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_a__grave.ogg' } }),
-		// 'epiano_b_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Epiano/epiano_b_grave.ogg' } }),
-
-		'strings_c': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_c.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_c#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_c_.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_d': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_d.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_d#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_d_.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_e': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_e.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_f': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_f.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_f#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_f_.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_g': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_g.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_g#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_g_.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_a': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_a.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_a#': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_a_.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_b': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_b.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-
-		'strings_c_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_c_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_c#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_c__baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_d_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_d_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_d#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_d__baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_e_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_e_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_f_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_f_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_f#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_f__baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_g_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_g_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_g#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_g__baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_a_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_a_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_a#_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_a__baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_b_baixo': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_b_baixo.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-
-		'strings_c_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_c_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_c#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_c__grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_d_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_d_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_d#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_d__grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_e_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_e_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_f_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_f_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_f#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_f__grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_g_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_g_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_g#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_g__grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_a_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_a_grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_a#_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_a__grave.ogg', loop: true, release: 0.5, attack: 0.1 } }),
-		'strings_b_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_b_grave.ogg', loop: true, release: 0.5, attack: 0.1 } })
-	 };
-
-	// var pratoSound = new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Percussao/prato.ogg' } });
-	// var chimesSound = new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Percussao/chimes.ogg' } });
+	instrumentos.forEach(instrumento => {
+		notas.forEach(nota => {
+			oitavas.forEach(oitava => {
+				const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
+				acordes[key] = new Pizzicato.Sound({
+					source: 'file',
+					options: {
+						path: `${audioPath}${instrumento.charAt(0).toUpperCase() + instrumento.slice(1)}/${key}.ogg`,
+						loop: true, release: 0.5, attack: 0.1
+					}
+				});
+			});
+		});
+	});
