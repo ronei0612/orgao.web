@@ -13,22 +13,12 @@
             color: black;
         }
 
-        #savesSelect {
+        .rounded-left-custom {
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
         }
 
-        #searchInput {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-
-        #searchButton {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-
-        #deleteSavesSelect {
+        .rounded-right-custom {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
         }
@@ -368,19 +358,22 @@
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
-                        <input class="form-control" placeholder="Pesquisar Música..." aria-label="Pesquisar" aria-describedby="basic-addon1" id="searchInput">
-                        <button class="btn btn-primary rounded-right" type="button" id="searchButton">
+                        <input class="form-control rounded-left-custom" placeholder="Pesquisar Música..." aria-label="Pesquisar" aria-describedby="basic-addon1" id="searchInput">
+                        <button class="btn btn-primary rounded-right-custom" type="button" id="searchButton">
                             <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                             <i class="bi bi-search" id="searchIcon"></i>
                         </button>
                     </div>
-                    <div class="d-flex align-items-center justify-content-between mt-3">  <!-- Container for select and button -->
-                        <select class="form-control rounded-left" id="savesSelect">
-                        </select>
-                        <button class="btn btn-control-custom btn-success rounded-0" id="editSavesSelect">
+                    <div class="d-flex align-items-center justify-content-between mt-3">
+                        <select class="form-control rounded-left-custom" id="savesSelect">
+                        </select>                        
+                        <button class="btn btn-control-custom btn-add rounded-right" id="addButton">
+                            <i class="bi bi-plus-square"></i>
+                        </button>
+                        <button class="btn btn-control-custom btn-success rounded-0 d-none" id="editSavesSelect">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <button class="btn btn-danger rounded-right" id="deleteSavesSelect">
+                        <button class="btn btn-danger rounded-right-custom d-none" id="deleteSavesSelect">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -391,9 +384,6 @@
                 <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeButton">× Fechar</button>
                     <div>
-                        <button class="btn btn-control-custom btn-add" id="addButton">
-                            <i class="bi bi-plus-circle"></i>
-                        </button>
                         <button class="btn btn-control-custom btn-add" id="saveButton">
                             <i class="bi bi-save"></i> Salvar
                         </button>
@@ -619,16 +609,46 @@
 
         document.addEventListener('mousedown', fullScreen);
 
+        document.addEventListener('click', (event) => {
+            if (!elements.addButton.contains(event.target) &&
+                !elements.deleteSavesSelect.contains(event.target) &&
+                !elements.editSavesSelect.contains(event.target) &&
+                !elements.savesSelect.contains(event.target)
+            ) {
+                hideEditDeleteButtons();
+            }
+        });
+
         elements.playButton.addEventListener('mousedown', function () {
             avancarCifra();
         });
 
+        function hideEditDeleteButtons() {
+            elements.deleteSavesSelect.classList.add('d-none');
+            elements.editSavesSelect.classList.add('d-none');
+            elements.addButton.classList.remove('rounded-0');
+            elements.addButton.classList.add('rounded-right-custom');
+        }
+
+        function toggleEditDeleteButtons() {
+            elements.deleteSavesSelect.classList.toggle('d-none');
+            elements.editSavesSelect.classList.toggle('d-none');
+            elements.addButton.classList.toggle('rounded-0');
+            elements.addButton.classList.toggle('rounded-right-custom');
+        }
+
         elements.addButton.addEventListener('click', function () {
-            elements.editTextarea.value = '';
-            elements.searchModalLabel.textContent = 'Cifras';
-            elements.savesSelect.selectedIndex = 0;
-            elements.savesSelect.style.color = '';
-            elements.searchInput.value = '';
+            toggleEditDeleteButtons();
+
+            // Important: Reset the form fields *only* if the buttons are hidden
+            if (elements.deleteSavesSelect.classList.contains('d-none')) {
+                const saveContent = elements.editTextarea.value;
+
+                const saveName = prompt("Digite o nome para salvar:");
+                if (saveName) {
+                    salvarSaves(saveName, saveContent);
+                }
+            }
         });
 
         elements.saveButton.addEventListener('click', function () {
@@ -835,6 +855,11 @@
         }
 
         function exibirListaSaves() {
+            elements.addButton.classList.add('rounded-right-custom');
+            elements.addButton.classList.remove('rounded-0');
+            elements.deleteSavesSelect.classList.add('d-none');
+            elements.editSavesSelect.classList.add('d-none');
+
             if (elements.searchModalLabel.textContent === 'Cifras') {
                 elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Cifra...</option>';
                 elements.savesSelect.style.color = '';
