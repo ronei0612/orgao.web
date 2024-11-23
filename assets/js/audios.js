@@ -8,7 +8,7 @@
 
     var audioPath = './assets/audio/';
     if (location.origin.includes('file:'))
-        audioPath = 'https://roneicostasoares.com.br/orgao.web/assets/audio/';
+        audioPath = 'https://ronei0612.github.io/orgao.web/assets/audio/';
 
 	localStorage.setItem('notasAcordesJson', JSON.stringify(notasAcordesJson));
 
