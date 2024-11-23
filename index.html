@@ -615,13 +615,20 @@
                 !elements.editSavesSelect.contains(event.target) &&
                 !elements.savesSelect.contains(event.target)
             ) {
-                toggleEditDeleteButtons();
+                hideEditDeleteButtons();
             }
         });
 
         elements.playButton.addEventListener('mousedown', function () {
             avancarCifra();
         });
+
+        function hideEditDeleteButtons() {
+            elements.deleteSavesSelect.classList.add('d-none');
+            elements.editSavesSelect.classList.add('d-none');
+            elements.addButton.classList.remove('rounded-0');
+            elements.addButton.classList.add('rounded-right-custom');
+        }
 
         function toggleEditDeleteButtons() {
             elements.deleteSavesSelect.classList.toggle('d-none');
