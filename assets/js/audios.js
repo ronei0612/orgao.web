@@ -131,5 +131,5 @@
 		'strings_b_grave': new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Strings/strings_b_grave.ogg', loop: true, release: 0.5, attack: 0.1 } })
 	 };
 
-	var pratoSound = new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Percussao/prato.ogg' } });
-	var chimesSound = new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Percussao/chimes.ogg' } });
+	// var pratoSound = new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Percussao/prato.ogg' } });
+	// var chimesSound = new Pizzicato.Sound({ source: 'file', options: { path: audioPath + 'Percussao/chimes.ogg' } });
