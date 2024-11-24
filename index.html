@@ -266,6 +266,7 @@
                     deletarSave(saveName);
                     exibirListaSaves();
                 }
+                fullScreen();
             }
         });
 
@@ -344,6 +345,8 @@
                 if (saveName) {
                     salvarSaves(saveName, saveContent);
                 }
+
+                fullScreen();
             }
         });
 
@@ -358,6 +361,8 @@
                 if (saveName) {
                     salvarSaves(saveName, saveContent);
                 }
+
+                fullScreen();
             } else {
                 elements.editTextarea.focus();
             }
@@ -612,6 +617,8 @@
                     deletarSave(saveName);
                     exibirListaSaves();
                 }
+                
+                fullScreen();
             });
 
             listItem.appendChild(deleteButton);
@@ -657,6 +664,8 @@
                     optionToEdit.value = newSaveName;
                     elements.searchModalLabel.textContent = newSaveName;
                 }
+
+                fullScreen();
             }
         }
 
