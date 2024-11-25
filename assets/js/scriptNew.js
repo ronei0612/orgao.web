@@ -265,17 +265,18 @@ class CifraPlayer {
     }
 
     pararAcorde() {
-        try{
-            if (this.acordeGroup) {
-                this.acordeGroup.stop();
-                this.parado = true;
+        if (document.location.href.includes('file:///')) return;
 
-                const sons = this.acordeGroup.sounds.length;
-                for (let i = sons - 1; i > -1; i--) {
-                    this.acordeGroup.removeSound(this.acordeGroup.sounds[i]);
-                }
+        if (this.acordeGroup) {
+            this.acordeGroup.stop();
+            this.parado = true;
+
+            const sons = this.acordeGroup.sounds.length;
+            if (sons === 0) return;
+            for (let i = sons - 1; i > -1; i--) {
+                this.acordeGroup.removeSound(this.acordeGroup.sounds[i]);
             }
-        } catch { }
+        }
     }
 
     removerClasseCifraSelecionada(iframeDoc, excecao = null) {
