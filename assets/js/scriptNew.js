@@ -11,19 +11,7 @@ class CifraPlayer {
         this.tonsMaiores = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
         this.tonsMenores = this.tonsMaiores.map(tom => tom + 'm');
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
-        this.initEventListeners();
         this.carregarAcordes();
-    }
-
-    initEventListeners() {
-        this.elements.playButton.addEventListener('mousedown', () => this.iniciarReproducao());
-        this.elements.notesButton.addEventListener('mousedown', () => this.alternarNotas());
-        this.elements.stopButton.addEventListener('mousedown', () => this.pararReproducao());
-        this.elements.prevButton.addEventListener('click', () => this.retroceder());
-        this.elements.nextButton.addEventListener('click', () => this.avancar());
-        // ... outros event listeners
-        this.elements.tomSelect.addEventListener('change', () => this.transposeCifra());
-        //this.elements.pulseRange.addEventListener('input', () => this.mudarTempoCompasso(this.elements.pulseRange));
     }
 
     destacarCifras(texto) {
