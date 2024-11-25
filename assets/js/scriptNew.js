@@ -865,6 +865,10 @@ const togglePressedState = (event) => {
     }
 };
 
+window.onerror = function (message, source, lineno, colno, error) {
+	alert("Erro!\n" + message + '\nArquivo: ' + source + '\nLinha: ' + lineno + '\nPosicao: ' + colno);
+};
+
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
