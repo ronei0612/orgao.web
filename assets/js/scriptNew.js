@@ -89,7 +89,6 @@ class CifraPlayer {
     }
     
     tocarCifraManualmente(cifraElem) {
-        debugger;
         this.indiceAcorde = parseInt(cifraElem.id.split('cifra')[1]) - 1;
         if (!this.parado) {
             this.iniciarReproducao();
@@ -191,6 +190,8 @@ class CifraPlayer {
         if (this.indiceAcorde > 0) {
             this.indiceAcorde--;
         }
+
+        this.parado = true;
     }
 
     avancarCifra() {
@@ -212,38 +213,46 @@ class CifraPlayer {
 
                 this.indiceAcorde++;
             }
-        } else {
-            this.pararAcorde();
         }
+        // else {
+        //     this.pararAcorde();
+        // }
     }
 
     tocarAcorde(acorde) {
         this.pararAcorde();
 
         if (!this.acordeGroup) {
-            this.acordeGroup = new Pizzicato.Group();
-            this.acordeGroup.attack = 0.1;
+            try {                
+                this.acordeGroup = new Pizzicato.Group();
+                this.acordeGroup.attack = 0.1;
+            } catch { }
         }
 
         const notas = this.notasAcordesJson[acorde];
-        if (!notas) return;
+        if (!notas) return;        
+                
+        try {
+            this.adicionarSomAoGrupo('orgao', notas[0], 'grave');
+            this.adicionarSomAoGrupo('strings', notas[0], 'grave');
 
-        this.adicionarSomAoGrupo('orgao', notas[0], 'grave');
-        this.adicionarSomAoGrupo('strings', notas[0], 'grave');
+            notas.forEach(nota => {
+                this.adicionarSomAoGrupo('orgao', nota, 'baixo');
+                this.adicionarSomAoGrupo('strings', nota, 'baixo');
 
-        notas.forEach(nota => {
-            this.adicionarSomAoGrupo('orgao', nota, 'baixo');
-            this.adicionarSomAoGrupo('strings', nota, 'baixo');
-
-            if (this.elements.notesButton.classList.contains('pressed')) {
-                this.adicionarSomAoGrupo('orgao', nota);
-                this.adicionarSomAoGrupo('strings', nota);
-            }
-        });
+                if (this.elements.notesButton.classList.contains('pressed')) {
+                    this.adicionarSomAoGrupo('orgao', nota);
+                    this.adicionarSomAoGrupo('strings', nota);
+                }
+            });
+        } catch { }
 
         setTimeout(() => {
             if (!this.parado) {
-                this.acordeGroup.play();
+                console.log(`Playing: ${acorde}`);
+                try {
+                    this.acordeGroup.play();
+                } catch { }
             }
         }, 60);
     }
@@ -256,11 +265,14 @@ class CifraPlayer {
     }
 
     pararAcorde() {
+        if (document.location.href.includes('file:///')) return;
+
         if (this.acordeGroup) {
             this.acordeGroup.stop();
             this.parado = true;
 
             const sons = this.acordeGroup.sounds.length;
+            if (sons === 0) return;
             for (let i = sons - 1; i > -1; i--) {
                 this.acordeGroup.removeSound(this.acordeGroup.sounds[i]);
             }
@@ -275,7 +287,6 @@ class CifraPlayer {
             }
         });
     }
-
 
     mudarTempoCompasso(bpm) {
         const tempo = parseInt(bpm.value);
@@ -863,6 +874,10 @@ const togglePressedState = (event) => {
             elements.stopButton.innerHTML = '<i class="bi bi-search"></i>';
         }
     }
+};
+
+window.onerror = function (message, source, lineno, colno, error) {
+	alert("Erro!\n" + message + '\nArquivo: ' + source + '\nLinha: ' + lineno + '\nPosicao: ' + colno);
 };
 
 function toggleDarkMode() {
