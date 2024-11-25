@@ -89,7 +89,6 @@ class CifraPlayer {
     }
     
     tocarCifraManualmente(cifraElem) {
-        debugger;
         this.indiceAcorde = parseInt(cifraElem.id.split('cifra')[1]) - 1;
         if (!this.parado) {
             this.iniciarReproducao();
@@ -221,29 +220,36 @@ class CifraPlayer {
         this.pararAcorde();
 
         if (!this.acordeGroup) {
-            this.acordeGroup = new Pizzicato.Group();
-            this.acordeGroup.attack = 0.1;
+            try {                
+                this.acordeGroup = new Pizzicato.Group();
+                this.acordeGroup.attack = 0.1;
+            } catch { }
         }
 
         const notas = this.notasAcordesJson[acorde];
-        if (!notas) return;
+        if (!notas) return;        
+                
+        try {
+            this.adicionarSomAoGrupo('orgao', notas[0], 'grave');
+            this.adicionarSomAoGrupo('strings', notas[0], 'grave');
 
-        this.adicionarSomAoGrupo('orgao', notas[0], 'grave');
-        this.adicionarSomAoGrupo('strings', notas[0], 'grave');
+            notas.forEach(nota => {
+                this.adicionarSomAoGrupo('orgao', nota, 'baixo');
+                this.adicionarSomAoGrupo('strings', nota, 'baixo');
 
-        notas.forEach(nota => {
-            this.adicionarSomAoGrupo('orgao', nota, 'baixo');
-            this.adicionarSomAoGrupo('strings', nota, 'baixo');
-
-            if (this.elements.notesButton.classList.contains('pressed')) {
-                this.adicionarSomAoGrupo('orgao', nota);
-                this.adicionarSomAoGrupo('strings', nota);
-            }
-        });
+                if (this.elements.notesButton.classList.contains('pressed')) {
+                    this.adicionarSomAoGrupo('orgao', nota);
+                    this.adicionarSomAoGrupo('strings', nota);
+                }
+            });
+        } catch { }
 
         setTimeout(() => {
             if (!this.parado) {
-                this.acordeGroup.play();
+                console.log(`Playing: ${acorde}`);
+                try {
+                    this.acordeGroup.play();
+                } catch { }
             }
         }, 60);
     }
@@ -256,15 +262,17 @@ class CifraPlayer {
     }
 
     pararAcorde() {
-        if (this.acordeGroup) {
-            this.acordeGroup.stop();
-            this.parado = true;
+        try{
+            if (this.acordeGroup) {
+                this.acordeGroup.stop();
+                this.parado = true;
 
-            const sons = this.acordeGroup.sounds.length;
-            for (let i = sons - 1; i > -1; i--) {
-                this.acordeGroup.removeSound(this.acordeGroup.sounds[i]);
+                const sons = this.acordeGroup.sounds.length;
+                for (let i = sons - 1; i > -1; i--) {
+                    this.acordeGroup.removeSound(this.acordeGroup.sounds[i]);
+                }
             }
-        }
+        } catch { }
     }
 
     removerClasseCifraSelecionada(iframeDoc, excecao = null) {
@@ -275,7 +283,6 @@ class CifraPlayer {
             }
         });
     }
-
 
     mudarTempoCompasso(bpm) {
         const tempo = parseInt(bpm.value);
