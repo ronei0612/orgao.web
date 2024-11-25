@@ -190,6 +190,8 @@ class CifraPlayer {
         if (this.indiceAcorde > 0) {
             this.indiceAcorde--;
         }
+
+        this.parado = true;
     }
 
     avancarCifra() {
