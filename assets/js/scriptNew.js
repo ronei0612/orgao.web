@@ -11,19 +11,7 @@ class CifraPlayer {
         this.tonsMaiores = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
         this.tonsMenores = this.tonsMaiores.map(tom => tom + 'm');
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
-        this.initEventListeners();
         this.carregarAcordes();
-    }
-
-    initEventListeners() {
-        this.elements.playButton.addEventListener('mousedown', () => this.iniciarReproducao());
-        this.elements.notesButton.addEventListener('mousedown', () => this.alternarNotas());
-        this.elements.stopButton.addEventListener('mousedown', () => this.pararReproducao());
-        this.elements.prevButton.addEventListener('click', () => this.retroceder());
-        this.elements.nextButton.addEventListener('click', () => this.avancar());
-        // ... outros event listeners
-        this.elements.tomSelect.addEventListener('change', () => this.transposeCifra());
-        //this.elements.pulseRange.addEventListener('input', () => this.mudarTempoCompasso(this.elements.pulseRange));
     }
 
     destacarCifras(texto) {
@@ -222,30 +210,26 @@ class CifraPlayer {
     tocarAcorde(acorde) {
         this.pararAcorde();
 
-        if (!this.acordeGroup) {
-            try {                
-                this.acordeGroup = new Pizzicato.Group();
-                this.acordeGroup.attack = 0.1;
-            } catch { }
+        if (!this.acordeGroup) {  
+            this.acordeGroup = new Pizzicato.Group();
+            this.acordeGroup.attack = 0.1;
         }
 
         const notas = this.notasAcordesJson[acorde];
         if (!notas) return;        
-                
-        try {
-            this.adicionarSomAoGrupo('orgao', notas[0], 'grave');
-            this.adicionarSomAoGrupo('strings', notas[0], 'grave');
+             
+        this.adicionarSomAoGrupo('orgao', notas[0], 'grave');
+        this.adicionarSomAoGrupo('strings', notas[0], 'grave');
 
-            notas.forEach(nota => {
-                this.adicionarSomAoGrupo('orgao', nota, 'baixo');
-                this.adicionarSomAoGrupo('strings', nota, 'baixo');
+        notas.forEach(nota => {
+            this.adicionarSomAoGrupo('orgao', nota, 'baixo');
+            this.adicionarSomAoGrupo('strings', nota, 'baixo');
 
-                if (this.elements.notesButton.classList.contains('pressed')) {
-                    this.adicionarSomAoGrupo('orgao', nota);
-                    this.adicionarSomAoGrupo('strings', nota);
-                }
-            });
-        } catch { }
+            if (this.elements.notesButton.classList.contains('pressed')) {
+                this.adicionarSomAoGrupo('orgao', nota);
+                this.adicionarSomAoGrupo('strings', nota);
+            }
+        });
 
         setTimeout(() => {
             if (!this.parado) {
@@ -265,11 +249,8 @@ class CifraPlayer {
     }
 
     pararAcorde() {
-        if (document.location.href.includes('file:///')) return;
-
         if (this.acordeGroup) {
             this.acordeGroup.stop();
-            this.parado = true;
 
             const sons = this.acordeGroup.sounds.length;
             if (sons === 0) return;
@@ -412,6 +393,10 @@ elements.notesButton.addEventListener('click', () => {
 elements.stopButton.addEventListener('mousedown', () => {
     cifraPlayer.pararReproducao();
 });
+
+elements.playButton.addEventListener('click', () => {
+    cifraPlayer.iniciarReproducao();
+})
 
 document.addEventListener('mousedown', fullScreen);
 
