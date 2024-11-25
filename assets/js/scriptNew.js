@@ -222,30 +222,26 @@ class CifraPlayer {
     tocarAcorde(acorde) {
         this.pararAcorde();
 
-        if (!this.acordeGroup) {
-            try {                
-                this.acordeGroup = new Pizzicato.Group();
-                this.acordeGroup.attack = 0.1;
-            } catch { }
+        if (!this.acordeGroup) {  
+            this.acordeGroup = new Pizzicato.Group();
+            this.acordeGroup.attack = 0.1;
         }
 
         const notas = this.notasAcordesJson[acorde];
         if (!notas) return;        
-                
-        try {
-            this.adicionarSomAoGrupo('orgao', notas[0], 'grave');
-            this.adicionarSomAoGrupo('strings', notas[0], 'grave');
+             
+        this.adicionarSomAoGrupo('orgao', notas[0], 'grave');
+        this.adicionarSomAoGrupo('strings', notas[0], 'grave');
 
-            notas.forEach(nota => {
-                this.adicionarSomAoGrupo('orgao', nota, 'baixo');
-                this.adicionarSomAoGrupo('strings', nota, 'baixo');
+        notas.forEach(nota => {
+            this.adicionarSomAoGrupo('orgao', nota, 'baixo');
+            this.adicionarSomAoGrupo('strings', nota, 'baixo');
 
-                if (this.elements.notesButton.classList.contains('pressed')) {
-                    this.adicionarSomAoGrupo('orgao', nota);
-                    this.adicionarSomAoGrupo('strings', nota);
-                }
-            });
-        } catch { }
+            if (this.elements.notesButton.classList.contains('pressed')) {
+                this.adicionarSomAoGrupo('orgao', nota);
+                this.adicionarSomAoGrupo('strings', nota);
+            }
+        });
 
         setTimeout(() => {
             if (!this.parado) {
@@ -265,7 +261,7 @@ class CifraPlayer {
     }
 
     pararAcorde() {
-        if (document.location.href.includes('file:///')) return;
+        //if (document.location.href.includes('file:///')) return;
 
         if (this.acordeGroup) {
             this.acordeGroup.stop();
