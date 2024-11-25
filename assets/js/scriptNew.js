@@ -213,9 +213,10 @@ class CifraPlayer {
 
                 this.indiceAcorde++;
             }
-        } else {
-            this.pararAcorde();
         }
+        // else {
+        //     this.pararAcorde();
+        // }
     }
 
     tocarAcorde(acorde) {
