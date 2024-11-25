@@ -124,7 +124,7 @@ class CifraPlayer {
 
         for (const cifra of cifras) {
             let acorde = cifra.innerText;
-            while (!this.tonsMaiores.includes(acorde) && acorde) {
+            while (!acordes.includes(acorde) && acorde) {
                 acorde = acorde.slice(0, -1);
             }
             const steps = acordes.indexOf(novoTom) - acordes.indexOf(this.tomAtual);
