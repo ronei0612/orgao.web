@@ -1,3 +1,239 @@
+class CifraPlayer {
+    constructor(elements) {
+        this.elements = elements;
+        this.acordeGroup = null;
+        this.parado = true;
+        this.indiceAcorde = 0;
+        this.tomAtual = 'C';
+        this.notasAcordesJson = JSON.parse('{"A#":["a#","d","f"],"A#4":["a#","d#","f"],"A#5+":["a#","d","f#"],"A#6":["a#","d","f","g"],"A#7":["a#","d","f","g#"],"A#7M":["a#","d","f","a"],"A#9":["a#","d","f","c"],"A#m":["a#","c#","f"],"A#m5+":["a#","c#","f#"],"A#m6":["a#","c#","f","g"],"A#m7":["a#","c#","f","g#"],"A#m7M":["a#","c#","f","a"],"A#°":["a#","c#","e"],"A#°7":["a#","c#","e","g#"],"A":["a","c#","e"],"A4":["a","d","e"],"A5+":["a","c#","f"],"A6":["a","c#","e","f#"],"A7":["a","c#","e","g"],"A7M":["a","c#","e","g#"],"A9":["a","c#","e","b"],"Am":["a","c","e"],"Am5+":["a","c","f"],"Am6":["a","c","e","f#"],"Am7":["a","c","e","g"],"Am7M":["a","c","e","g#"],"A°":["a","c","d#"],"A°7":["a","c","d#","g"],"Ab":["g#","c","d#"],"Ab4":["g#","c#","d#"],"Ab5+":["g#","c","e"],"Ab6":["g#","c","d#","f"],"Ab7":["g#","c","d#","f#"],"Ab7M":["g#","c","d#","g"],"Ab9":["g#","c","d#","a#"],"Abm":["g#","b","d#"],"Abm5+":["g#","b","e"],"Abm6":["g#","b","d#","f"],"Abm7":["g#","b","d#","f#"],"Abm7M":["g#","b","d#","g"],"Ab°":["g#","b","d"],"Ab°7":["g#","b","d","f#"],"B":["b","d#","f#"],"B4":["b","e","f#"],"B5+":["b","d#","g"],"B6":["b","d#","f#","g#"],"B7":["b","d#","f#","a"],"B7M":["b","d#","f#","a#"],"B9":["b","d#","f#","c#"],"Bm":["b","d","f#"],"Bm5+":["b","d","g"],"Bm6":["b","d","f#","g#"],"Bm7":["b","d","f#","a"],"Bm7M":["b","d","f#","a#"],"B°":["b","d","f"],"B°7":["b","d","f","a"],"Bb":["a#","d","f"],"Bb4":["a#","d#","f"],"Bb5+":["a#","d","f#"],"Bb6":["a#","d","f","g"],"Bb7":["a#","d","f","g#"],"Bb7M":["a#","d","f","a"],"Bb9":["a#","d","f","c"],"Bbm":["a#","c#","f"],"Bbm5+":["a#","c#","f#"],"Bbm6":["a#","c#","f","g"],"Bbm7":["a#","c#","f","g#"],"Bbm7M":["a#","c#","f","a"],"Bb°":["a#","c#","e"],"Bb°7":["a#","c#","e","g#"],"Cb":["b","d#","f#"],"Cb4":["b","e","f#"],"Cb5+":["b","d#","g"],"Cb6":["b","d#","f#","g#"],"Cb7":["b","d#","f#","a"],"Cb7M":["b","d#","f#","a#"],"Cb9":["b","d#","f#","c#"],"Cbm":["b","d","f#"],"Cbm5+":["b","d","g"],"Cbm6":["b","d","f#","g#"],"Cbm7":["b","d","f#","a"],"Cbm7M":["b","d","f#","a#"],"Cb°":["b","d","f"],"Cb°7":["b","d","f","a"],"C#":["c#","f","g#"],"C#4":["c#","f#","g#"],"C#5+":["c#","f","a"],"C#6":["c#","f","g#","a#"],"C#7":["c#","f","g#","b"],"C#7M":["c#","f","g#","c"],"C#9":["c#","f","g#","d#"],"C#m":["c#","e","g#"],"C#m5+":["c#","e","a"],"C#m6":["c#","e","g#","a#"],"C#m7":["c#","e","g#","b"],"C#m7M":["c#","e","g#","c"],"C#°":["c#","e","g"],"C#°7":["c#","e","g","b"],"C":["c","e","g"],"C4":["c","f","g"],"C5+":["c","e","g#"],"C6":["c","e","g","a"],"C7":["c","e","g","a#"],"C7M":["c","e","g","b"],"C9":["c","e","g","d"],"Cm":["c","d#","g"],"Cm5+":["c","d#","g#"],"Cm6":["c","d#","g","a"],"Cm7":["c","d#","g","a#"],"Cm7M":["c","d#","g","b"],"C°":["c","d#","f#"],"C°7":["c","d#","f#","a#"],"B#":["c","e","g"],"B#4":["c","f","g"],"B#5+":["c","e","g#"],"B#6":["c","e","g","a"],"B#7":["c","e","g","a#"],"B#7M":["c","e","g","b"],"B#9":["c","e","g","d"],"B#m":["c","d#","g"],"B#m5+":["c","d#","g#"],"B#m6":["c","d#","g","a"],"B#m7":["c","d#","g","a#"],"B#m7M":["c","d#","g","b"],"B#°":["c","d#","f#"],"B#°7":["c","d#","f#","a#"],"D":["d","f#","a"],"D#":["d#","g","a#"],"D#4":["d#","g#","a#"],"D#5+":["d#","g","b"],"D#6":["d#","g","a#","c"],"D#7":["d#","g","a#","c#"],"D#7M":["d#","g","a#","d"],"D#9":["d#","g","a#","f"],"D#m":["d#","f#","a#"],"D#m5+":["d#","f#","b"],"D#m6":["d#","f#","a#","c"],"D#m7":["d#","f#","a#","c#"],"D#m7M":["d#","f#","a#","d"],"D#°":["d#","f#","a"],"D#°7":["d#","f#","a","c#"],"D4":["d","g","a"],"D5+":["d","f#","a#"],"D6":["d","f#","a","b"],"D7":["d","f#","a","c"],"D7M":["d","f#","a","c#"],"D9":["d","f#","a","e"],"Db":["c#","f","g#"],"Db4":["c#","f#","g#"],"Db5+":["c#","f","a"],"Db6":["c#","f","g#","a#"],"Db7":["c#","f","g#","b"],"Db7M":["c#","f","g#","c"],"Db9":["c#","f","g#","d#"],"Dbm":["c#","e","g#"],"Dbm5+":["c#","e","a"],"Dbm6":["c#","e","g#","a#"],"Dbm7":["c#","e","g#","b"],"Dbm7M":["c#","e","g#","c"],"Db°":["c#","e","g"],"Db°7":["c#","e","g","b"],"Dm":["d","f","a"],"Dm5+":["d","f","a#"],"Dm6":["d","f","a","b"],"Dm7":["d","f","a","c"],"Dm7M":["d","f","a","c#"],"D°":["d","f","g#"],"D°7":["d","f","g#","c"],"Eb":["d#","g","a#"],"Eb4":["d#","g#","a#"],"Eb5+":["d#","g","b"],"Eb6":["d#","g","a#","c"],"Eb7":["d#","g","a#","c#"],"Eb7M":["d#","g","a#","d"],"Eb9":["d#","g","a#","f"],"Ebm":["d#","f#","a#"],"Ebm5+":["d#","f#","b"],"Ebm6":["d#","f#","a#","c"],"Ebm7":["d#","f#","a#","c#"],"Ebm7M":["d#","f#","a#","d"],"Eb°":["d#","f#","a"],"Eb°7":["d#","f#","a","c#"],"E":["e","g#","b"],"E4":["e","a","b"],"E5+":["e","g#","c"],"E6":["e","g#","b","c#"],"E7":["e","g#","b","d"],"E7M":["e","g#","b","d#"],"E9":["e","g#","b","f#"],"Em":["e","g","b"],"Em5+":["e","g","c"],"Em6":["e","g","b","c#"],"Em7":["e","g","b","d"],"Em7M":["e","g","b","d#"],"E°":["e","g","a#"],"E°7":["e","g","a#","d"],"Fb":["e","g#","b"],"Fb4":["e","a","b"],"Fb5+":["e","g#","c"],"Fb6":["e","g#","b","c#"],"Fb7":["e","g#","b","d"],"Fb7M":["e","g#","b","d#"],"Fb9":["e","g#","b","f#"],"Fbm":["e","g","b"],"Fbm5+":["e","g","c"],"Fbm6":["e","g","b","c#"],"Fbm7":["e","g","b","d"],"Fbm7M":["e","g","b","d#"],"Fb°":["e","g","a#"],"Fb°7":["e","g","a#","d"],"F#":["f#","a#","c#"],"F#4":["f#","b","c#"],"F#5+":["f#","a#","d"],"F#6":["f#","a#","c#","d#"],"F#7":["f#","a#","c#","e"],"F#7M":["f#","a#","c#","f"],"F#9":["f#","a#","c#","g#"],"F#m":["f#","a","c#"],"F#m5+":["f#","a","d"],"F#m6":["f#","a","c#","d#"],"F#m7":["f#","a","c#","e"],"F#m7M":["f#","a","c#","f"],"F#°":["f#","a","c"],"F#°7":["f#","a","c","e"],"E#":["f","a","c"],"E#4":["f","a#","c"],"E#5+":["f","a","c#"],"E#6":["f","a","c","d"],"E#7":["f","a","c","d#"],"E#7M":["f","a","c","e"],"E#9":["f","a","c","g"],"E#m":["f","g#","c"],"E#m5+":["f","g#","c#"],"E#m6":["f","g#","c","d"],"E#m7":["f","g#","c","d#"],"E#m7M":["f","g#","c","e"],"E#°":["f","g#","b"],"E#°7":["f","g#","b","d#"],"F":["f","a","c"],"F4":["f","a#","c"],"F5+":["f","a","c#"],"F6":["f","a","c","d"],"F7":["f","a","c","d#"],"F7M":["f","a","c","e"],"F9":["f","a","c","g"],"Fm":["f","g#","c"],"Fm5+":["f","g#","c#"],"Fm6":["f","g#","c","d"],"Fm7":["f","g#","c","d#"],"Fm7M":["f","g#","c","e"],"F°":["f","g#","b"],"F°7":["f","g#","b","d#"],"G":["g","b","d"],"G#":["g#","c","d#"],"G#4":["g#","c#","d#"],"G#5+":["g#","c","e"],"G#6":["g#","c","d#","f"],"G#7":["g#","c","d#","f#"],"G#7M":["g#","c","d#","g"],"G#9":["g#","c","d#","a#"],"G#m":["g#","b","d#"],"G#m5+":["g#","b","e"],"G#m6":["g#","b","d#","f"],"G#m7":["g#","b","d#","f#"],"G#m7M":["g#","b","d#","g"],"G#°":["g#","b","d"],"G#°7":["g#","b","d","f#"],"G4":["g","c","d"],"G5+":["g","b","d#"],"G6":["g","b","d","e"],"G7":["g","b","d","f"],"G7M":["g","b","d","f#"],"G9":["g","b","d","a"],"Gb":["f#","a#","c#"],"Gb4":["f#","b","c#"],"Gb5+":["f#","a#","d"],"Gb6":["f#","a#","c#","d#"],"Gb7":["f#","a#","c#","e"],"Gb7M":["f#","a#","c#","f"],"Gb9":["f#","a#","c#","g#"],"Gbm":["f#","a","c#"],"Gbm5+":["f#","a","d"],"Gbm6":["f#","a","c#","d#"],"Gbm7":["f#","a","c#","e"],"Gbm7M":["f#","a","c#","f"],"Gb°":["f#","a","c"],"Gb°7":["f#","a","c","e"],"Gm":["g","a#","d"],"Gm5+":["g","a#","d#"],"Gm6":["g","a#","d","e"],"Gm7":["g","a#","d","f"],"Gm7M":["g","a#","d","f#"],"G°":["g","a#","c#"],"G°7":["g","a#","c#","f"]}');
+        this.notasAcordes = Object.keys(this.notasAcordesJson);
+        this.acordes = {}; // Objeto para armazenar os sons dos acordes
+        this.audioPath = location.origin.includes('file:') ? 'https://ronei0612.github.io/orgao.web/assets/audio/' : './assets/audio/';
+        this.initEventListeners();
+        this.carregarAcordes(); // Carrega os sons dos acordes ao inicializar
+    }
+
+    initEventListeners() {
+        this.elements.playButton.addEventListener('mousedown', () => this.iniciarReproducao());
+        this.elements.notesButton.addEventListener('mousedown', () => this.alternarNotas());
+        this.elements.stopButton.addEventListener('mousedown', () => this.pararReproducao());
+        this.elements.prevButton.addEventListener('click', () => this.retroceder());
+        this.elements.nextButton.addEventListener('click', () => this.avancar());
+        // ... outros event listeners
+        this.elements.tomSelect.addEventListener('change', () => this.transposeCifra());
+        //this.elements.pulseRange.addEventListener('input', () => this.mudarTempoCompasso(this.elements.pulseRange));
+    }
+
+    carregarAcordes() {
+        const instrumentos = ['orgao', 'strings'];
+        const oitavas = ['grave', 'baixo', ''];
+        const notas = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b'];
+
+        instrumentos.forEach(instrumento => {
+            notas.forEach(nota => {
+                oitavas.forEach(oitava => {
+                    const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
+                    this.acordes[key] = new Pizzicato.Sound({
+                        source: 'file',
+                        options: {
+                            path: `${this.audioPath}${instrumento.charAt(0).toUpperCase() + instrumento.slice(1)}/${key}.ogg`,
+                            loop: true,
+                            release: 0.5,
+                            attack: 0.1
+                        }
+                    });
+                });
+            });
+        });
+    }
+
+    transposeCifra() {
+        if (this.elements.tomSelect.value) {
+            // Lógica de transposição, usando this.tomAtual e this.elements
+            const novoTom = this.elements.tomSelect.value;
+            this.transporCifraNoIframe(novoTom);
+            this.tomAtual = novoTom;
+
+            if (this.indiceAcorde > 0) {
+                this.indiceAcorde--;
+            }
+
+            if (!this.parado) {
+                this.pararAcorde();
+                this.avancarCifra();
+            }
+        }
+    }
+
+    transporCifraNoIframe(novoTom) {
+        const tonsMaiores = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const tonsMenores = tonsMaiores.map(tom => tom + 'm');
+
+
+        let acordes;
+        if (tonsMaiores.includes(novoTom)) {
+            acordes = tonsMaiores;
+        } else if (tonsMenores.includes(novoTom)) {
+            acordes = tonsMenores;
+        }
+
+        const cifras = this.elements.iframeCifra.contentDocument.querySelectorAll('b');
+
+        for (const cifra of cifras) {
+            let acorde = cifra.innerText;
+            while (!tonsMaiores.includes(acorde) && acorde) {
+                acorde = acorde.slice(0, -1);
+            }
+            const steps = acordes.indexOf(novoTom) - acordes.indexOf(this.tomAtual);
+            const novoAcorde = this.transposeAcorde(acorde, steps, acordes);
+            cifra.innerText = cifra.innerText.replace(acorde, novoAcorde);
+        }
+    }
+
+    transposeAcorde(acorde, steps, acordes) {
+        let index = acordes.indexOf(acorde);
+        if (index === -1) return acorde;
+
+        index = (index + steps + acordes.length) % acordes.length;
+        return acordes[index];
+    }
+
+    iniciarReproducao() {
+        if (!this.parado) {
+            this.pararAcorde();
+        }
+        this.avancarCifra();
+    }
+
+    alternarNotas() {
+        if (this.indiceAcorde > 0) {
+            this.indiceAcorde--;
+        }
+
+        if (!this.parado) {
+            this.pararAcorde();
+            this.avancarCifra();
+        }
+    }
+
+    pararReproducao() {
+        this.pararAcorde();
+        const frameContent = this.elements.iframeCifra.contentDocument;
+        const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
+
+        Array.from(cifraElems).forEach(elemento => {
+            elemento.classList.remove('cifraSelecionada');
+        });
+
+        if (this.indiceAcorde > 0) {
+            this.indiceAcorde--;
+        }
+    }
+
+    avancarCifra() {
+        const frameContent = this.elements.iframeCifra.contentDocument;
+        const elements_b = frameContent.getElementsByTagName('b');
+
+        this.parado = false; // Define parado como false antes de tocar o acorde
+
+        if (this.indiceAcorde < elements_b.length) {
+            this.removerClasseCifraSelecionada(frameContent);
+
+            const cifraElem = elements_b[this.indiceAcorde];
+            if (cifraElem) {
+                const cifra = cifraElem.innerHTML.trim();
+                this.tocarAcorde(cifra);
+
+                cifraElem.classList.add('cifraSelecionada');
+                cifraElem.scrollIntoView();
+
+                this.indiceAcorde++;
+            }
+        } else {
+            this.pararAcorde(); // Para a reprodução quando chega ao final
+        }
+    }
+
+    tocarAcorde(acorde) {
+        this.pararAcorde();
+
+        if (!this.acordeGroup) {
+            this.acordeGroup = new Pizzicato.Group();
+            this.acordeGroup.attack = 0.1;
+        }
+
+        const notas = this.notasAcordesJson[acorde];
+        if (!notas) return; // Sai da função se o acorde não for encontrado
+
+        // Adiciona os sons graves
+        this.adicionarSomAoGrupo('orgao', notas[0], 'grave');
+        this.adicionarSomAoGrupo('strings', notas[0], 'grave');
+
+        notas.forEach(nota => {
+            this.adicionarSomAoGrupo('orgao', nota, 'baixo');
+            this.adicionarSomAoGrupo('strings', nota, 'baixo');
+
+            if (this.elements.notesButton.classList.contains('pressed')) {
+                this.adicionarSomAoGrupo('orgao', nota);
+                this.adicionarSomAoGrupo('strings', nota);
+            }
+        });
+
+        setTimeout(() => {
+            if (!this.parado) { // Verifica se parado ainda é falso após o timeout
+                this.acordeGroup.play();
+            }
+        }, 60);
+    }
+
+    adicionarSomAoGrupo(instrumento, nota, oitava = '') {
+        const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
+        if (this.acordes[key]) {
+            this.acordeGroup.addSound(this.acordes[key]);
+        }
+    }
+
+    pararAcorde() {
+        if (this.acordeGroup) {
+            this.acordeGroup.stop();
+            this.parado = true;
+
+            const sons = this.acordeGroup.sounds.length;
+            for (let i = sons - 1; i > -1; i--) {
+                this.acordeGroup.removeSound(this.acordeGroup.sounds[i]);
+            }
+        }
+    }
+
+    removerClasseCifraSelecionada(iframeDoc, excecao = null) {
+        const elementos = iframeDoc.querySelectorAll('.cifraSelecionada');
+        elementos.forEach(elemento => {
+            if (elemento !== excecao) {
+                elemento.classList.remove('cifraSelecionada');
+            }
+        });
+    }
+
+
+    mudarTempoCompasso(bpm) {
+        const tempo = parseInt(bpm.value);
+        const bpmValor = 60000 / tempo;
+        this.elements.bpmValue.textContent = tempo;
+
+        // Define a duração da animação nos botões de play e stop
+        this.elements.playButton.style.animationDuration = `${bpmValor}ms`;
+        this.elements.stopButton.style.animationDuration = `${bpmValor}ms`;
+
+        if (this.acordeGroup) {
+            // Ajusta a velocidade de reprodução do acorde atual (se houver)
+            // ... (lógica para ajustar a velocidade com Pizzicato) ...
+        }
+    }
+
+    // ... outros métodos
+}
+
+
 const elements = {
     controlButtons: document.getElementById('controlButtons'),
     editTextarea: document.getElementById('editTextarea'),
@@ -25,28 +261,17 @@ const elements = {
     deleteSavesSelect: document.getElementById('deleteSavesSelect'),
     tomSelect: document.getElementById('tomSelect'),
     decreaseTom: document.getElementById('decreaseTom'),
-    increaseTom: document.getElementById('increaseTom')
+    increaseTom: document.getElementById('increaseTom'),
+    pulseRange: document.getElementById('pulseRange')
 };
-let acordeGroup = null;
-let parado = true;
-let indiceAcorde = 0;
-let tomAtual = 'C';
+
+const cifraPlayer = new CifraPlayer(elements);
 
 $('#searchModal').on('shown.bs.modal', exibirListaSaves);
 
 elements.tomSelect.addEventListener('change', () => {
     if (elements.tomSelect.value) {
-        transposeCifra(elements.iframeCifra.contentDocument.body.innerText, elements.tomSelect.value);
-        tomAtual = elements.tomSelect.value;
-
-        if (indiceAcorde > 0) {
-            indiceAcorde--;
-        }
-
-        if (!parado) {
-            pararAcorde();
-            avancarCifra();
-        }
+        cifraPlayer.transposeCifra(); // Chama o método da classe
     }
 });
 
@@ -63,40 +288,6 @@ elements.increaseTom.addEventListener('click', () => {
         elements.tomSelect.dispatchEvent(new Event('change'));
     }
 });
-
-function transposeAcorde(acorde, steps) {
-    let index = tonsMaiores.indexOf(acorde);
-    if (index === -1)
-        return acorde;
-
-    index = (index + steps + tonsMaiores.length) % tonsMaiores.length;
-
-    return tonsMaiores[index];
-}
-
-function transposeCifra(texto, tom) {
-    let acordes;
-    if (tonsMaiores.includes(tom)) {
-        acordes = tonsMaiores;
-    } else if (tonsMenores.includes(tom)) {
-        acordes = tonsMenores;
-    }
-    
-    const cifras = elements.iframeCifra.contentDocument.querySelectorAll('b');
-
-    for (let i = 0; i < cifras.length; i++) {
-        const cifra = cifras[i];
-        let acorde = cifra.innerText;
-        const steps = acordes.indexOf(tom) - acordes.indexOf(tomAtual);
-
-        while (!tonsMaiores.includes(acorde) && acorde) {
-            acorde = acorde.slice(0, -1);
-        }
-
-        const newAcorde = transposeAcorde(acorde, acordes.indexOf(tom) - acordes.indexOf(tomAtual));
-        cifra.innerText = cifra.innerText.replace(acorde, newAcorde);
-    }
-}
 
 elements.savesSelect.addEventListener('change', () => {
     const selectItem = elements.savesSelect.value;
@@ -141,29 +332,12 @@ elements.searchButton.addEventListener('click', () => {
     }
 });
 
-elements.notesButton.addEventListener('click', function () {
-    if (indiceAcorde > 0) {
-        indiceAcorde--;
-    }
-
-    if (!parado) {
-        pararAcorde();
-        avancarCifra();
-    }
+elements.notesButton.addEventListener('click', () => {
+    cifraPlayer.alternarNotas();
 });
 
-elements.stopButton.addEventListener('mousedown', function () {
-    pararAcorde();
-    const frameContent = elements.iframeCifra.contentDocument;
-    const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
-
-    Array.from(cifraElems).forEach(elemento => {
-        elemento.classList.remove('cifraSelecionada');
-    });
-
-    if (indiceAcorde > 0) {
-        indiceAcorde--;
-    }
+elements.stopButton.addEventListener('mousedown', () => {
+    cifraPlayer.pararReproducao();
 });
 
 document.addEventListener('mousedown', fullScreen);
@@ -179,7 +353,7 @@ document.addEventListener('click', (event) => {
 });
 
 elements.playButton.addEventListener('mousedown', function () {
-    avancarCifra();
+    cifraPlayer.avancarCifra();
 });
 
 function hideEditDeleteButtons() {
@@ -380,40 +554,6 @@ function descobrirTom(texto) {
     }
 
     const tomProvavel = Object.keys(possiveisTons).reduce((a, b) => possiveisTons[a] > possiveisTons[b] ? a : b);
-    return tomProvavel;
-}
-
-function descobrirTomOld(texto) {
-    const somenteCifras = texto.match(/[A-G][#b]?m?/g);
-
-    if (!somenteCifras) {
-        return 'C';
-    }
-
-    const possiveisTons = {};
-    for (const [tom, acordes] of Object.entries(camposHarmonicos)) {
-        possiveisTons[tom] = somenteCifras.filter(cifra => acordes.includes(cifra)).length;
-        somenteCifras.forEach(cifra => {
-            if (!acordes.includes(cifra)) {
-                possiveisTons[tom] -= 1;
-            }
-        });
-    }
-
-    const primeiroAcorde = somenteCifras[0];
-    const ultimoAcorde = somenteCifras[somenteCifras.length - 1];
-
-    for (const tom in possiveisTons) {
-        if (camposHarmonicos[tom][0] === primeiroAcorde) {
-            possiveisTons[tom] += 1;
-        }
-        if (camposHarmonicos[tom][0] === ultimoAcorde) {
-            possiveisTons[tom] += 1;
-        }
-    }
-    
-    const tomProvavel = Object.keys(possiveisTons).reduce((a, b) => possiveisTons[a] > possiveisTons[b] ? a : b);
-    
     return tomProvavel;
 }
 
@@ -652,14 +792,6 @@ const togglePressedState = (event) => {
     }
 };
 
-const mudarTempoCompasso = (bpm) => {
-    const tempo = parseInt(bpm.value);
-    const bpmValor = 60000 / tempo;
-    elements.bpmValue.textContent = tempo;
-    elements.playButton.style.animationDuration = `${bpmValor}ms`;
-    elements.stopButton.style.animationDuration = `${bpmValor}ms`;
-};
-
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
@@ -765,79 +897,6 @@ function destacarCifras(texto) {
         return linha;
     });
     return (`<style>.cifraSelecionada{background-color:#DAA520}</style><pre>${linhasDestacadas.join('\n')}</pre>`);
-}
-
-function tocarAcorde(acorde) {
-    pararAcorde();
-
-    if (!acordeGroup) {
-        acordeGroup = new Pizzicato.Group();
-        acordeGroup.attack = 0.1;
-    }
-
-    const notas = notasAcordesJson[acorde];
-
-    acordeGroup.addSound(acordes[`orgao_${notas[0]}_grave`]);
-    acordeGroup.addSound(acordes[`strings_${notas[0]}_grave`]);
-
-    notas.forEach(nota => {
-        acordeGroup.addSound(acordes[`orgao_${nota}_baixo`]);
-        acordeGroup.addSound(acordes[`strings_${nota}_baixo`]);
-
-        if (elements.notesButton.classList.contains('pressed')) {
-            acordeGroup.addSound(acordes[`orgao_${nota}`]);
-            acordeGroup.addSound(acordes[`strings_${nota}`]);
-        }
-    });
-
-    setTimeout(() => {
-        parado = false;
-        acordeGroup.play();
-    }, 60);
-}
-
-function pararAcorde() {
-    if (acordeGroup) {
-        acordeGroup.stop();
-        parado = true;
-
-        var sons = acordeGroup.sounds.length;
-        for (let i = sons - 1; i > -1; i--) {
-            acordeGroup.removeSound(acordeGroup.sounds[i]);
-        };
-    }
-}
-
-function removerClasseCifraSelecionada(iframeDoc, excecao = null) {
-    const elementos = iframeDoc.querySelectorAll('.cifraSelecionada');
-    elementos.forEach(elemento => {
-        if (elemento !== excecao) {
-            elemento.classList.remove('cifraSelecionada');
-        }
-    });
-}
-
-function avancarCifra() {
-    const frameContent = elements.iframeCifra.contentDocument;
-    const elements_b = frameContent.getElementsByTagName('b');
-    const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
-    parado = false;
-
-    if (indiceAcorde < elements_b.length) {
-        if (cifraElems.length > 0)
-            cifraElems[0].classList.remove('cifraSelecionada');
-
-        const cifraElem = elements_b[indiceAcorde];
-        if (cifraElem) {
-            const cifra = cifraElem.innerHTML.trim();
-            tocarAcorde(cifra);
-
-            cifraElem.classList.add('cifraSelecionada');
-            cifraElem.scrollIntoView();
-
-            indiceAcorde++;
-        }
-    }
 }
 
 function tocarCifraManualmente(cifraElem) {
