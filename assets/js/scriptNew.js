@@ -10,7 +10,7 @@ class CifraPlayer {
         this.acordes = {};
         this.tonsMaiores = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
         this.tonsMenores = this.tonsMaiores.map(tom => tom + 'm');
-        this.audioPath = location.origin.includes('file:') ? 'https://ronei0612.github.io/orgao.web/assets/audio/' : './assets/audio/';
+        this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
         this.initEventListeners();
         this.carregarAcordes();
     }
@@ -52,7 +52,7 @@ class CifraPlayer {
     carregarAcordes() {
         const instrumentos = ['orgao', 'strings'];
         const oitavas = ['grave', 'baixo', ''];
-        const notas = ['c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#', 'a', 'a#', 'b'];
+        const notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
 
         instrumentos.forEach(instrumento => {
             notas.forEach(nota => {
