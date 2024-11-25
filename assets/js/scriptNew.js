@@ -249,11 +249,8 @@ class CifraPlayer {
     }
 
     pararAcorde() {
-        //if (document.location.href.includes('file:///')) return;
-
         if (this.acordeGroup) {
             this.acordeGroup.stop();
-            this.parado = true;
 
             const sons = this.acordeGroup.sounds.length;
             if (sons === 0) return;
@@ -396,6 +393,10 @@ elements.notesButton.addEventListener('click', () => {
 elements.stopButton.addEventListener('mousedown', () => {
     cifraPlayer.pararReproducao();
 });
+
+elements.playButton.addEventListener('click', () => {
+    cifraPlayer.iniciarReproducao();
+})
 
 document.addEventListener('mousedown', fullScreen);
 
