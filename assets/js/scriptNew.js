@@ -127,10 +127,10 @@ class CifraPlayer {
         } else if (this.tonsMenores.includes(novoTom)) {
             tons = this.tonsMenores;
         }
-
+    
         const steps = tons.indexOf(novoTom) - tons.indexOf(this.tomAtual);
         const cifras = this.elements.iframeCifra.contentDocument.querySelectorAll('b');
-
+    
         for (const cifra of cifras) {
             let acorde = cifra.innerText;
             while (!this.acordesSustenidos.includes(acorde) && !this.acordesBemol.includes(acorde) && acorde) {
@@ -140,7 +140,7 @@ class CifraPlayer {
             cifra.innerText = cifra.innerText.replace(acorde, novoAcorde);
         }
     }
-
+    
     transposeAcorde(acorde, steps) {
         let tons = this.acordesSustenidos.includes(acorde) ? this.acordesSustenidos : this.acordesBemol;
         let index = tons.indexOf(acorde);
@@ -255,7 +255,7 @@ class CifraPlayer {
                 } catch { }
             }
         }, 60);
-    }    
+    }
 
     getNomeArquivoAudio(nota) {
         return this.acordeMap[nota] || nota;
@@ -408,9 +408,9 @@ elements.addButton.addEventListener('click', function () {
     if (elements.deleteSavesSelect.classList.contains('d-none')) {
         elements.itemNameInput.value = "";
         elements.savesSelect.selectedIndex = 0;
-        elements.iframeCifra.contentDocument.body.innerHTML = '';
-        elements.tomSelect.innerHTML = '';
-        
+        //elements.iframeCifra.contentDocument.body.innerHTML = '';
+        //elements.tomSelect.innerHTML = '';
+
         $('#itemModal').modal('show');
     }
 });
@@ -937,7 +937,8 @@ function salvarSave(newSaveName) {
             elements.savesSelect.value = newSaveName;
         }
 
-        saveContent = elements.iframeCifra.contentWindow.document.body.innerHTML;
+        saveContent = elements.editTextarea.value;
+        elements.iframeCifra.contentDocument.body.innerHTML = saveContent;
         saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
         saves[newSaveName] = saveContent;
         localStorage.setItem('saves', JSON.stringify(saves));
