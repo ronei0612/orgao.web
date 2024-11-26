@@ -331,7 +331,13 @@ const elements = {
     tomSelect: document.getElementById('tomSelect'),
     decreaseTom: document.getElementById('decreaseTom'),
     increaseTom: document.getElementById('increaseTom'),
-    pulseRange: document.getElementById('pulseRange')
+    pulseRange: document.getElementById('pulseRange'),
+    itemNameInput: document.getElementById('itemNameInput'),
+    alertModalLabel: document.getElementById('alertModalLabel'),
+    alertModalMessage: document.getElementById('alertModalMessage'),
+    cancelButtonAlert: document.getElementById('cancelButtonAlert'),
+    simButtonAlert: document.getElementById('simButtonAlert'),
+    okButtonAlert: document.getElementById('okButtonAlert')
 };
 
 const cifraPlayer = new CifraPlayer(elements);
@@ -393,15 +399,18 @@ elements.addButton.addEventListener('click', function () {
 
     // Important: Reset the form fields *only* if the buttons are hidden
     if (elements.deleteSavesSelect.classList.contains('d-none')) {
-        document.getElementById("newItemName").value = "";
-        $('#newItemModal').modal('show');
+        elements.itemNameInput.value = "";
+        elements.savesSelect.selectedIndex = 0;
+        elements.iframeCifra.contentDocument.body.innerHTML = '';
+        $('#itemModal').modal('show');
     }
 });
 
 elements.saveNewItemButton.addEventListener("click", () => {
-    let newSaveName = document.getElementById("newItemName").value;
+    let newSaveName = elements.itemNameInput.value;
+    if (newSaveName === '') return;
     salvarSave(newSaveName);
-    $('#newItemModal').modal('hide');
+    $('#itemModal').modal('hide');
 });
 
 elements.saveButton.addEventListener('click', function () {
@@ -409,11 +418,16 @@ elements.saveButton.addEventListener('click', function () {
 
     if (saveContent) {
         let saveName = elements.searchModalLabel.textContent;
-        if (saveName === 'Cifras' || !confirm(`Deseja salvar ${saveName}?`))
-            saveName = prompt("Digite o nome para salvar:");
-
         if (saveName) {
-            salvarSaves(saveName, saveContent);
+            salvarSave(saveName);
+
+            elements.alertModalMessage.textContent = `"${saveName}" salvo com sucesso!`;
+            elements.alertModalLabel.textContent = 'Cifras';
+            elements.simButtonAlert.classList.add('d-none');
+            elements.okButtonAlert.classList.remove('d-none');
+            elements.cancelButtonAlert.classList.add('d-none');
+
+            $('#alertModal').modal('show');
         }
 
         fullScreen();
@@ -489,19 +503,20 @@ elements.savesSelect.addEventListener('change', () => {
     elements.searchModalLabel.textContent = selectItem;
     elements.savesSelect.style.color = 'black';
 
-    elements.searchInput.value = '';
-    elements.searchResultsList.classList.add('d-none');
-    elements.editTextarea.classList.remove('d-none');
-    elements.startButton.classList.remove('d-none');
-    elements.addButton.classList.remove('d-none');
-    elements.saveButton.classList.remove('d-none');
+    const tom = descobrirTom(elements.editTextarea.value);
+    mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
+    const texto = elements.editTextarea.value;
+    elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(texto);
+    cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
+    
+    indiceAcorde = 0;
 })
 
 elements.editSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
-    if (saveName !== 'all') {
-        document.getElementById("newItemName").value = saveName ? saveName : "";
-        $('#newItemModal').modal('show');
+    if (elements.savesSelect.selectedIndex !== 0) {
+        elements.itemNameInput.value = saveName ? saveName : "";
+        $('#itemModal').modal('show');
         //editarSave(saveName);
         exibirListaSaves();
     }
@@ -509,12 +524,15 @@ elements.editSavesSelect.addEventListener('click', () => {
 
 elements.deleteSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
-    if (saveName !== 'all') {
-        if (confirm(`Deseja excluir ${saveName}?`)) {
-            deletarSave(saveName);
-            exibirListaSaves();
-        }
-        fullScreen();
+    if (elements.savesSelect.selectedIndex !== 0) {
+        elements.alertModalMessage.textContent = `Deseja excluir "${saveName}"?`;
+        elements.alertModalLabel.textContent = 'Atenção!';
+        elements.simButtonAlert.textContent = '✓ Sim';
+        elements.simButtonAlert.classList.remove('d-none');
+        elements.okButtonAlert.classList.add('d-none');
+        elements.cancelButtonAlert.classList.remove('d-none');
+
+        $('#alertModal').modal('show');
     }
 });
 
@@ -539,6 +557,12 @@ elements.playButton.addEventListener('click', () => {
     cifraPlayer.iniciarReproducao();
 })
 
+elements.simButtonAlert.addEventListener('click', () => {
+    saveName = elements.savesSelect.value;
+    deletarSave(saveName);
+    exibirListaSaves();
+});
+
 document.addEventListener('mousedown', fullScreen);
 
 document.addEventListener('click', (event) => {
@@ -549,6 +573,10 @@ document.addEventListener('click', (event) => {
     ) {
         hideEditDeleteButtons();
     }
+});
+
+$('#itemModal').on('shown.bs.modal', () => {
+    elements.itemNameInput.focus();
 });
 
 function hideEditDeleteButtons() {
@@ -563,28 +591,6 @@ function toggleEditDeleteButtons() {
     elements.editSavesSelect.classList.toggle('d-none');
     elements.addButton.classList.toggle('rounded-0');
     elements.addButton.classList.toggle('rounded-right-custom');
-}
-
-function salvarSaves(saveName, saveContent) {
-    let saves = localStorage.getItem('saves');
-    if (saves) {
-        saves = JSON.parse(saves);
-
-        if (saves.hasOwnProperty(saveName) && elements.searchModalLabel.textContent !== saveName) {
-            alert("Já existe esse nome!");
-            return;
-        }
-    } else {
-        saves = {};
-    }
-
-    saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
-    saves[saveName] = saveContent;
-    localStorage.setItem('saves', JSON.stringify(saves));
-
-    exibirListaSaves();
-    elements.savesSelect.value = saveName;
-    elements.searchModalLabel.textContent = saveName;
 }
 
 function descobrirTom(texto) {
@@ -701,76 +707,9 @@ function criarItemSelect(saveName, saveContent) {
     return option;
 }
 
-function criarItemLista(saveName, saveContent) {
-    elements.savesList.innerHTML = '';
-    const listItem = document.createElement('li');
-    listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
-
-    listItem.textContent = saveName;
-
-    const deleteButton = document.createElement('button');
-    deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
-    deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
-
-    deleteButton.addEventListener('click', () => {
-        if (confirm(`Deseja excluir ${saveName}?`)) {
-            deletarSave(saveName);
-            exibirListaSaves();
-        }
-
-        fullScreen();
-    });
-
-    listItem.appendChild(deleteButton);
-
-    listItem.addEventListener('click', () => {
-        desselecionarTodos();
-        listItem.classList.add('selected');
-        elements.editTextarea.value = saveContent;
-        elements.searchModalLabel.textContent = saveName;
-        elements.editTextarea.classList.remove('d-none');
-        elements.savesList.classList.add('d-none');
-        elements.saveButton.classList.remove('d-none');
-        elements.startButton.classList.remove('d-none');
-        elements.addButton.classList.remove('d-none');
-    });
-    return listItem;
-}
-
 function desselecionarTodos() {
     const allItems = document.querySelectorAll('.list-group-item');
     allItems.forEach(item => item.classList.remove('selected'));
-}
-
-function editarSave(saveName) {
-    let optionToEdit = savesSelect.querySelector(`option[value="${saveName}"]`);
-
-    if (optionToEdit) {
-        let saves = JSON.parse(localStorage.getItem('saves')) || {};
-        
-        let selectedOption = document.getElementById("savesSelect").options[document.getElementById("savesSelect").selectedIndex];
-        document.getElementById("newItemName").value = selectedOption ? selectedOption.text : "";
-        $('#newItemModal').modal('show');
-        //const newSaveName = prompt(`Digite o novo nome para "${saveName}":`, saveName);
-
-        if (newSaveName) {
-            if (saves.hasOwnProperty(newSaveName)) {
-                alert("Já existe esse nome!");
-                return;
-            }
-
-            const saveContent = saves[saveName];
-            saves[newSaveName] = saveContent;
-            delete saves[saveName];
-            localStorage.setItem('saves', JSON.stringify(saves));
-
-            optionToEdit.textContent = newSaveName;
-            optionToEdit.value = newSaveName;
-            elements.searchModalLabel.textContent = newSaveName;
-        }
-
-        fullScreen();
-    }
 }
 
 function deletarSave(saveName) {
@@ -778,6 +717,7 @@ function deletarSave(saveName) {
     delete saves[saveName];
     localStorage.setItem('saves', JSON.stringify(saves));
     elements.searchModalLabel.textContent = 'Cifras';
+    elements.iframeCifra.contentDocument.body.innerHTML = '';
 }
 
 async function searchMusic() {
@@ -951,26 +891,26 @@ function fullScreen() {
     }
 }
 
-['mousedown'].forEach(event => {
-    elements.playButton.addEventListener(event, togglePressedState);
-    elements.notesButton.addEventListener(event, togglePressedState);
-    elements.stopButton.addEventListener(event, togglePressedState);
-});
-
 
 function salvarSave(newSaveName) {
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
 
     if (newSaveName) {
-        if (saves.hasOwnProperty(newSaveName)) {
-            alert("Já existe esse nome!");
+        if (saves.hasOwnProperty(newSaveName) && elements.searchModalLabel.textContent !== newSaveName) {
+            elements.alertModalMessage.textContent = `Já existe esse nome!`;
+            elements.alertModalLabel.textContent = 'Atenção!';
+            elements.okButtonAlert.classList.remove('d-none');
+            elements.simButtonAlert.classList.add('d-none');
+            elements.cancelButtonAlert.classList.add('d-none');
+
+            $('#alertModal').modal('show');
             return;
         }
 
         let saveContent;
-        let selectedOption = document.getElementById("savesSelect").options[document.getElementById("savesSelect").selectedIndex];
+        let selectedOption = elements.savesSelect.options[elements.savesSelect.selectedIndex];
         
-        if (selectedOption) {
+        if (elements.savesSelect.selectedIndex !== 0) {
             // Edit existing save
             let oldSaveName = selectedOption.value;
             saveContent = saves[oldSaveName];
@@ -978,17 +918,27 @@ function salvarSave(newSaveName) {
             selectedOption.textContent = newSaveName;
             selectedOption.value = newSaveName;
         } else {
-            // Add new save
-            saveContent = {}; // Conteúdo do novo salvamento (ajuste conforme necessário)
+            // New save
             let newOption = document.createElement("option");
             newOption.text = newSaveName;
             newOption.value = newSaveName;
-            document.getElementById("savesSelect").add(newOption);
+            elements.savesSelect.add(newOption);
+            elements.savesSelect.value = newSaveName;
         }
 
+        saveContent = elements.iframeCifra.contentWindow.document.body.innerHTML;
+        saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
         saves[newSaveName] = saveContent;
         localStorage.setItem('saves', JSON.stringify(saves));
-        document.getElementById("searchModalLabel").textContent = newSaveName;
-        console.log(`Salvamento ${selectedOption ? "editado" : "criado"}: ${newSaveName}`);
+        elements.savesSelect.value = newSaveName;
+        elements.searchModalLabel.textContent = newSaveName;
+    
+        exibirListaSaves();
     }
 }
+
+['mousedown'].forEach(event => {
+    elements.playButton.addEventListener(event, togglePressedState);
+    elements.notesButton.addEventListener(event, togglePressedState);
+    elements.stopButton.addEventListener(event, togglePressedState);
+});
