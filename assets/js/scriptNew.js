@@ -19,6 +19,14 @@ class CifraPlayer {
         this.acordes = {};
         this.tonsMaiores = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
         this.tonsMenores = this.tonsMaiores.map(tom => tom + 'm');
+        this.acordesSustenidos = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        this.acordesBemol = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+        this.acordesMap = {
+            'B#': 'C',
+            'E#': 'F',
+            'Cb': 'B',
+            'Fb': 'E'
+        };
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
         this.carregarAcordes();
     }
@@ -113,32 +121,31 @@ class CifraPlayer {
     }
 
     transporCifraNoIframe(novoTom) {
-        let acordes;
+        let tons;
         if (this.tonsMaiores.includes(novoTom)) {
-            acordes = this.tonsMaiores;
+            tons = this.tonsMaiores;
         } else if (this.tonsMenores.includes(novoTom)) {
-            acordes = this.tonsMenores;
+            tons = this.tonsMenores;
         }
-
+    
+        const steps = tons.indexOf(novoTom) - tons.indexOf(this.tomAtual);
         const cifras = this.elements.iframeCifra.contentDocument.querySelectorAll('b');
-
+    
         for (const cifra of cifras) {
             let acorde = cifra.innerText;
-            while (!acordes.includes(acorde) && acorde) {
-                acorde = acorde.slice(0, -1);
+            while (!this.acordesSustenidos.includes(acorde) && !this.acordesBemol.includes(acorde) && acorde) {
+                acorde = this.acordesMap[acorde] || acorde.slice(0, -1);
             }
-            const steps = acordes.indexOf(novoTom) - acordes.indexOf(this.tomAtual);
-            const novoAcorde = this.transposeAcorde(acorde, steps, acordes);
+            const novoAcorde = this.transposeAcorde(acorde, steps);
             cifra.innerText = cifra.innerText.replace(acorde, novoAcorde);
         }
     }
-
-    transposeAcorde(acorde, steps, acordes) {
-        let index = acordes.indexOf(acorde);
-        if (index === -1) return acorde;
-
-        index = (index + steps + acordes.length) % acordes.length;
-        return acordes[index];
+    
+    transposeAcorde(acorde, steps) {
+        let tons = this.acordesSustenidos.includes(acorde) ? this.acordesSustenidos : this.acordesBemol;
+        let index = tons.indexOf(acorde);
+        let novoIndex = (index + steps + tons.length) % tons.length;
+        return tons[novoIndex];
     }
 
     addEventCifrasIframe(frame) {
@@ -248,7 +255,7 @@ class CifraPlayer {
                 } catch { }
             }
         }, 60);
-    }    
+    }
 
     getNomeArquivoAudio(nota) {
         return this.acordeMap[nota] || nota;
@@ -401,9 +408,9 @@ elements.addButton.addEventListener('click', function () {
     if (elements.deleteSavesSelect.classList.contains('d-none')) {
         elements.itemNameInput.value = "";
         elements.savesSelect.selectedIndex = 0;
-        elements.iframeCifra.contentDocument.body.innerHTML = '';
-        elements.tomSelect.innerHTML = '';
-        
+        //elements.iframeCifra.contentDocument.body.innerHTML = '';
+        //elements.tomSelect.innerHTML = '';
+
         $('#itemModal').modal('show');
     }
 });
@@ -930,7 +937,8 @@ function salvarSave(newSaveName) {
             elements.savesSelect.value = newSaveName;
         }
 
-        saveContent = elements.iframeCifra.contentWindow.document.body.innerHTML;
+        saveContent = elements.editTextarea.value;
+        elements.iframeCifra.contentDocument.body.innerHTML = saveContent;
         saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
         saves[newSaveName] = saveContent;
         localStorage.setItem('saves', JSON.stringify(saves));
