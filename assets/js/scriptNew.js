@@ -308,6 +308,7 @@ const elements = {
     startButton: document.getElementById('startButton'),
     saveButton: document.getElementById('saveButton'),
     addButton: document.getElementById('addButton'),
+    saveNewItemButton: document.getElementById('saveNewItemButton'),
     playButton: document.getElementById('playButton'),
     notesButton: document.getElementById('notesButton'),
     stopButton: document.getElementById('stopButton'),
@@ -335,7 +336,131 @@ const elements = {
 
 const cifraPlayer = new CifraPlayer(elements);
 
-$('#searchModal').on('shown.bs.modal', exibirListaSaves);
+const camposHarmonicos = {
+    // Campos harmônicos maiores
+    'C': ['C', 'Dm', 'Em', 'F', 'G', 'Am'],
+    'Db': ['Db', 'Ebm', 'Fm', 'Gb', 'Ab', 'Bbm'],
+    'C#': ['C#', 'D#m', 'Fm', 'F#', 'G#', 'A#m'],
+    'D': ['D', 'Em', 'F#m', 'G', 'A', 'Bm'],
+    'Eb': ['Eb', 'Fm', 'Gm', 'Ab', 'Bb', 'Cm'],
+    'D#': ['D#', 'Fm', 'Gm', 'G#', 'A#', 'Cm'],
+    'E': ['E', 'F#m', 'G#m', 'A', 'B', 'C#m'],
+    'F': ['F', 'Gm', 'Am', 'Bb', 'C', 'Dm'],
+    'F#': ['F#', 'G#m', 'A#m', 'B', 'C#', 'D#m'],
+    'Gb': ['Gb', 'Abm', 'Bbm', 'B', 'Db', 'Ebm'],
+    'G': ['G', 'Am', 'Bm', 'C', 'D', 'Em'],
+    'G#': ['G#', 'A#m', 'B#m', 'C#', 'D#', 'Fm'],
+    'Ab': ['Ab', 'Bbm', 'Cm', 'Db', 'Eb', 'Fm'],
+    'A': ['A', 'Bm', 'C#m', 'D', 'E', 'F#m'],
+    'A#': ['A#', 'B#m', 'Dm', 'D#', 'F', 'Gm'],
+    'Bb': ['Bb', 'Cm', 'Dm', 'Eb', 'F', 'Gm'],
+    'B': ['B', 'C#m', 'D#m', 'E', 'F#', 'G#m'],
+    // Campos harmônicos menores
+    'Am': ['Am', 'C', 'Dm', 'Em', 'F', 'G'],
+    'Bbm': ['Bbm', 'Db', 'Ebm', 'Fm', 'Gb', 'Ab'],
+    'B#m': ['B#m', 'D', 'E#m', 'F#m', 'G', 'A'],
+    'Bm': ['Bm', 'D', 'Em', 'F#m', 'G', 'A'],
+    'Cm': ['Cm', 'Eb', 'Fm', 'Gm', 'Ab', 'Bb'],
+    'C#m': ['C#m', 'E', 'F#m', 'G#m', 'A', 'B'],
+    'Dm': ['Dm', 'F', 'Gm', 'Am', 'Bb', 'C'],
+    'D#m': ['D#m', 'Gb', 'Abm', 'Bbm', 'Cb', 'Db'],
+    'Ebm': ['Ebm', 'Gb', 'Abm', 'Bbm', 'Cb', 'Db'],
+    'Em': ['Em', 'G', 'Am', 'Bm', 'C', 'D'],
+    'Fm': ['Fm', 'Ab', 'Bbm', 'Cm', 'Db', 'Eb'],
+    'F#m': ['F#m', 'A', 'Bm', 'C#m', 'D', 'E'],
+    'Gm': ['Gm', 'Bb', 'Cm', 'Dm', 'Eb', 'F'],
+    'G#m': ['G#m', 'B', 'C#m', 'D#m', 'E', 'F#'],
+    'Abm': ['Abm', 'Cb', 'Dbm', 'Ebm', 'Fb', 'Gb'],
+    'A#m': ['A#m', 'D', 'E#m', 'F#m', 'G', 'A']
+};
+
+window.onerror = function (message, source, lineno, colno, error) {
+	alert("Erro!\n" + message + '\nArquivo: ' + source + '\nLinha: ' + lineno + '\nPosicao: ' + colno);
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    elements.darkModeToggle.checked = true;
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        updateSwitchDarkMode();
+        aplicarModoEscuroIframe();
+    }
+    exibirListaSaves();
+});
+
+elements.addButton.addEventListener('click', function () {
+    toggleEditDeleteButtons();
+
+    // Important: Reset the form fields *only* if the buttons are hidden
+    if (elements.deleteSavesSelect.classList.contains('d-none')) {
+        document.getElementById("newItemName").value = "";
+        $('#newItemModal').modal('show');
+    }
+});
+
+elements.saveNewItemButton.addEventListener("click", () => {
+    let newSaveName = document.getElementById("newItemName").value;
+    salvarSave(newSaveName);
+    $('#newItemModal').modal('hide');
+});
+
+elements.saveButton.addEventListener('click', function () {
+    const saveContent = elements.editTextarea.value;
+
+    if (saveContent) {
+        let saveName = elements.searchModalLabel.textContent;
+        if (saveName === 'Cifras' || !confirm(`Deseja salvar ${saveName}?`))
+            saveName = prompt("Digite o nome para salvar:");
+
+        if (saveName) {
+            salvarSaves(saveName, saveContent);
+        }
+
+        fullScreen();
+    } else {
+        elements.editTextarea.focus();
+    }
+});
+
+elements.darkModeToggle.addEventListener('change', toggleDarkMode);
+
+elements.startButton.addEventListener('click', () => {
+    if (elements.editTextarea.value) {
+        const tom = descobrirTom(elements.editTextarea.value);
+        mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
+        const texto = elements.editTextarea.value;
+        elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(texto);
+        cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
+        
+        indiceAcorde = 0;
+        $('#searchModal').modal('hide');
+    }
+    else {
+        elements.searchInput.focus();
+    }
+});
+
+elements.prevButton.addEventListener('click', () => {
+    if (elements.controlButtons.classList.contains('justify-content-center')) {
+        elements.controlButtons.classList.remove('justify-content-center');
+        elements.controlButtons.classList.add('justify-content-left');
+    }
+    else if (elements.controlButtons.classList.contains('justify-content-end')) {
+        elements.controlButtons.classList.remove('justify-content-end');
+        elements.controlButtons.classList.add('justify-content-center');
+    }
+});
+
+elements.nextButton.addEventListener('click', () => {
+    if (elements.controlButtons.classList.contains('justify-content-center')) {
+        elements.controlButtons.classList.remove('justify-content-center');
+        elements.controlButtons.classList.add('justify-content-end');
+    }
+    else if (elements.controlButtons.classList.contains('justify-content-left')) {
+        elements.controlButtons.classList.remove('justify-content-left');
+        elements.controlButtons.classList.add('justify-content-center');
+    }
+});
 
 elements.tomSelect.addEventListener('change', () => {
     if (elements.tomSelect.value) {
@@ -375,7 +500,9 @@ elements.savesSelect.addEventListener('change', () => {
 elements.editSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
     if (saveName !== 'all') {
-        editarSave(saveName);
+        document.getElementById("newItemName").value = saveName ? saveName : "";
+        $('#newItemModal').modal('show');
+        //editarSave(saveName);
         exibirListaSaves();
     }
 });
@@ -438,80 +565,6 @@ function toggleEditDeleteButtons() {
     elements.addButton.classList.toggle('rounded-right-custom');
 }
 
-elements.addButton.addEventListener('click', function () {
-    toggleEditDeleteButtons();
-
-    // Important: Reset the form fields *only* if the buttons are hidden
-    if (elements.deleteSavesSelect.classList.contains('d-none')) {
-        const saveContent = elements.editTextarea.value;
-
-        const saveName = prompt("Digite o nome para salvar:");
-        if (saveName) {
-            salvarSaves(saveName, saveContent);
-        }
-
-        fullScreen();
-    }
-});
-
-elements.saveButton.addEventListener('click', function () {
-    const saveContent = elements.editTextarea.value;
-
-    if (saveContent) {
-        let saveName = elements.searchModalLabel.textContent;
-        if (saveName === 'Cifras' || !confirm(`Deseja salvar ${saveName}?`))
-            saveName = prompt("Digite o nome para salvar:");
-
-        if (saveName) {
-            salvarSaves(saveName, saveContent);
-        }
-
-        fullScreen();
-    } else {
-        elements.editTextarea.focus();
-    }
-});
-
-elements.darkModeToggle.addEventListener('change', toggleDarkMode);
-
-elements.startButton.addEventListener('click', () => {
-    if (elements.editTextarea.value) {
-        const tom = descobrirTom(elements.editTextarea.value);
-        mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
-        const texto = elements.editTextarea.value;
-        elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(texto);
-        cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
-        
-        indiceAcorde = 0;
-        $('#searchModal').modal('hide');
-    }
-    else {
-        elements.searchInput.focus();
-    }
-});
-
-elements.prevButton.addEventListener('click', () => {
-    if (elements.controlButtons.classList.contains('justify-content-center')) {
-        elements.controlButtons.classList.remove('justify-content-center');
-        elements.controlButtons.classList.add('justify-content-left');
-    }
-    else if (elements.controlButtons.classList.contains('justify-content-end')) {
-        elements.controlButtons.classList.remove('justify-content-end');
-        elements.controlButtons.classList.add('justify-content-center');
-    }
-});
-
-elements.nextButton.addEventListener('click', () => {
-    if (elements.controlButtons.classList.contains('justify-content-center')) {
-        elements.controlButtons.classList.remove('justify-content-center');
-        elements.controlButtons.classList.add('justify-content-end');
-    }
-    else if (elements.controlButtons.classList.contains('justify-content-left')) {
-        elements.controlButtons.classList.remove('justify-content-left');
-        elements.controlButtons.classList.add('justify-content-center');
-    }
-});
-
 function salvarSaves(saveName, saveContent) {
     let saves = localStorage.getItem('saves');
     if (saves) {
@@ -533,44 +586,6 @@ function salvarSaves(saveName, saveContent) {
     elements.savesSelect.value = saveName;
     elements.searchModalLabel.textContent = saveName;
 }
-
-const camposHarmonicos = {
-    // Campos harmônicos maiores
-    'C': ['C', 'Dm', 'Em', 'F', 'G', 'Am'],
-    'Db': ['Db', 'Ebm', 'Fm', 'Gb', 'Ab', 'Bbm'],
-    'C#': ['C#', 'D#m', 'Fm', 'F#', 'G#', 'A#m'],
-    'D': ['D', 'Em', 'F#m', 'G', 'A', 'Bm'],
-    'Eb': ['Eb', 'Fm', 'Gm', 'Ab', 'Bb', 'Cm'],
-    'D#': ['D#', 'Fm', 'Gm', 'G#', 'A#', 'Cm'],
-    'E': ['E', 'F#m', 'G#m', 'A', 'B', 'C#m'],
-    'F': ['F', 'Gm', 'Am', 'Bb', 'C', 'Dm'],
-    'F#': ['F#', 'G#m', 'A#m', 'B', 'C#', 'D#m'],
-    'Gb': ['Gb', 'Abm', 'Bbm', 'B', 'Db', 'Ebm'],
-    'G': ['G', 'Am', 'Bm', 'C', 'D', 'Em'],
-    'G#': ['G#', 'A#m', 'B#m', 'C#', 'D#', 'Fm'],
-    'Ab': ['Ab', 'Bbm', 'Cm', 'Db', 'Eb', 'Fm'],
-    'A': ['A', 'Bm', 'C#m', 'D', 'E', 'F#m'],
-    'A#': ['A#', 'B#m', 'Dm', 'D#', 'F', 'Gm'],
-    'Bb': ['Bb', 'Cm', 'Dm', 'Eb', 'F', 'Gm'],
-    'B': ['B', 'C#m', 'D#m', 'E', 'F#', 'G#m'],
-    // Campos harmônicos menores
-    'Am': ['Am', 'C', 'Dm', 'Em', 'F', 'G'],
-    'Bbm': ['Bbm', 'Db', 'Ebm', 'Fm', 'Gb', 'Ab'],
-    'B#m': ['B#m', 'D', 'E#m', 'F#m', 'G', 'A'],
-    'Bm': ['Bm', 'D', 'Em', 'F#m', 'G', 'A'],
-    'Cm': ['Cm', 'Eb', 'Fm', 'Gm', 'Ab', 'Bb'],
-    'C#m': ['C#m', 'E', 'F#m', 'G#m', 'A', 'B'],
-    'Dm': ['Dm', 'F', 'Gm', 'Am', 'Bb', 'C'],
-    'D#m': ['D#m', 'Gb', 'Abm', 'Bbm', 'Cb', 'Db'],
-    'Ebm': ['Ebm', 'Gb', 'Abm', 'Bbm', 'Cb', 'Db'],
-    'Em': ['Em', 'G', 'Am', 'Bm', 'C', 'D'],
-    'Fm': ['Fm', 'Ab', 'Bbm', 'Cm', 'Db', 'Eb'],
-    'F#m': ['F#m', 'A', 'Bm', 'C#m', 'D', 'E'],
-    'Gm': ['Gm', 'Bb', 'Cm', 'Dm', 'Eb', 'F'],
-    'G#m': ['G#m', 'B', 'C#m', 'D#m', 'E', 'F#'],
-    'Abm': ['Abm', 'Cb', 'Dbm', 'Ebm', 'Fb', 'Gb'],
-    'A#m': ['A#m', 'D', 'E#m', 'F#m', 'G', 'A']
-};
 
 function descobrirTom(texto) {
     const somenteCifras = texto.match(/[A-G][#b]?m?/g);
@@ -732,7 +747,11 @@ function editarSave(saveName) {
 
     if (optionToEdit) {
         let saves = JSON.parse(localStorage.getItem('saves')) || {};
-        const newSaveName = prompt(`Digite o novo nome para "${saveName}":`, saveName);
+        
+        let selectedOption = document.getElementById("savesSelect").options[document.getElementById("savesSelect").selectedIndex];
+        document.getElementById("newItemName").value = selectedOption ? selectedOption.text : "";
+        $('#newItemModal').modal('show');
+        //const newSaveName = prompt(`Digite o novo nome para "${saveName}":`, saveName);
 
         if (newSaveName) {
             if (saves.hasOwnProperty(newSaveName)) {
@@ -875,10 +894,6 @@ const togglePressedState = (event) => {
     }
 };
 
-window.onerror = function (message, source, lineno, colno, error) {
-	alert("Erro!\n" + message + '\nArquivo: ' + source + '\nLinha: ' + lineno + '\nPosicao: ' + colno);
-};
-
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
@@ -898,15 +913,6 @@ const aplicarModoEscuroIframe = () => {
     const iframeDoc = elements.iframeCifra.contentDocument || elements.iframeCifra.contentWindow.document;
     iframeDoc.body.style.color = document.body.classList.contains('dark-mode') ? '#FFFFFF' : '#4F4F4F';
 };
-
-document.addEventListener('DOMContentLoaded', function () {
-    elements.darkModeToggle.checked = true;
-    if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark-mode');
-        updateSwitchDarkMode();
-        aplicarModoEscuroIframe();
-    }
-});
 
 function mostrarTextoCifrasCarregado(tom = null, texto = null) {
     if (tom) {
@@ -950,3 +956,39 @@ function fullScreen() {
     elements.notesButton.addEventListener(event, togglePressedState);
     elements.stopButton.addEventListener(event, togglePressedState);
 });
+
+
+function salvarSave(newSaveName) {
+    let saves = JSON.parse(localStorage.getItem('saves')) || {};
+
+    if (newSaveName) {
+        if (saves.hasOwnProperty(newSaveName)) {
+            alert("Já existe esse nome!");
+            return;
+        }
+
+        let saveContent;
+        let selectedOption = document.getElementById("savesSelect").options[document.getElementById("savesSelect").selectedIndex];
+        
+        if (selectedOption) {
+            // Edit existing save
+            let oldSaveName = selectedOption.value;
+            saveContent = saves[oldSaveName];
+            delete saves[oldSaveName];
+            selectedOption.textContent = newSaveName;
+            selectedOption.value = newSaveName;
+        } else {
+            // Add new save
+            saveContent = {}; // Conteúdo do novo salvamento (ajuste conforme necessário)
+            let newOption = document.createElement("option");
+            newOption.text = newSaveName;
+            newOption.value = newSaveName;
+            document.getElementById("savesSelect").add(newOption);
+        }
+
+        saves[newSaveName] = saveContent;
+        localStorage.setItem('saves', JSON.stringify(saves));
+        document.getElementById("searchModalLabel").textContent = newSaveName;
+        console.log(`Salvamento ${selectedOption ? "editado" : "criado"}: ${newSaveName}`);
+    }
+}
