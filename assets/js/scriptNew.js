@@ -331,7 +331,8 @@ const elements = {
     tomSelect: document.getElementById('tomSelect'),
     decreaseTom: document.getElementById('decreaseTom'),
     increaseTom: document.getElementById('increaseTom'),
-    pulseRange: document.getElementById('pulseRange')
+    pulseRange: document.getElementById('pulseRange'),
+    itemNameInput: document.getElementById('itemNameInput')
 };
 
 const cifraPlayer = new CifraPlayer(elements);
@@ -393,15 +394,15 @@ elements.addButton.addEventListener('click', function () {
 
     // Important: Reset the form fields *only* if the buttons are hidden
     if (elements.deleteSavesSelect.classList.contains('d-none')) {
-        document.getElementById("newItemName").value = "";
-        $('#newItemModal').modal('show');
+        elements.itemNameInput.value = "";
+        $('#itemModal').modal('show');
     }
 });
 
 elements.saveNewItemButton.addEventListener("click", () => {
-    let newSaveName = document.getElementById("newItemName").value;
+    let newSaveName = elements.itemNameInput.value;
     salvarSave(newSaveName);
-    $('#newItemModal').modal('hide');
+    $('#itemModal').modal('hide');
 });
 
 elements.saveButton.addEventListener('click', function () {
@@ -500,8 +501,8 @@ elements.savesSelect.addEventListener('change', () => {
 elements.editSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
     if (saveName !== 'all') {
-        document.getElementById("newItemName").value = saveName ? saveName : "";
-        $('#newItemModal').modal('show');
+        elements.itemNameInput.value = saveName ? saveName : "";
+        $('#itemModal').modal('show');
         //editarSave(saveName);
         exibirListaSaves();
     }
@@ -549,6 +550,10 @@ document.addEventListener('click', (event) => {
     ) {
         hideEditDeleteButtons();
     }
+});
+
+$('#itemModal').on('shown.bs.modal', () => {
+    elements.itemNameInput.focus();
 });
 
 function hideEditDeleteButtons() {
@@ -749,8 +754,8 @@ function editarSave(saveName) {
         let saves = JSON.parse(localStorage.getItem('saves')) || {};
         
         let selectedOption = document.getElementById("savesSelect").options[document.getElementById("savesSelect").selectedIndex];
-        document.getElementById("newItemName").value = selectedOption ? selectedOption.text : "";
-        $('#newItemModal').modal('show');
+        elements.itemNameInput.value = selectedOption ? selectedOption.text : "";
+        $('#itemModal').modal('show');
         //const newSaveName = prompt(`Digite o novo nome para "${saveName}":`, saveName);
 
         if (newSaveName) {
@@ -951,12 +956,6 @@ function fullScreen() {
     }
 }
 
-['mousedown'].forEach(event => {
-    elements.playButton.addEventListener(event, togglePressedState);
-    elements.notesButton.addEventListener(event, togglePressedState);
-    elements.stopButton.addEventListener(event, togglePressedState);
-});
-
 
 function salvarSave(newSaveName) {
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
@@ -992,3 +991,9 @@ function salvarSave(newSaveName) {
         console.log(`Salvamento ${selectedOption ? "editado" : "criado"}: ${newSaveName}`);
     }
 }
+
+['mousedown'].forEach(event => {
+    elements.playButton.addEventListener(event, togglePressedState);
+    elements.notesButton.addEventListener(event, togglePressedState);
+    elements.stopButton.addEventListener(event, togglePressedState);
+});
