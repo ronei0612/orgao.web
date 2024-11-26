@@ -308,6 +308,7 @@ const elements = {
     startButton: document.getElementById('startButton'),
     saveButton: document.getElementById('saveButton'),
     addButton: document.getElementById('addButton'),
+    saveNewItemButton: document.getElementById('saveNewItemButton'),
     playButton: document.getElementById('playButton'),
     notesButton: document.getElementById('notesButton'),
     stopButton: document.getElementById('stopButton'),
@@ -335,7 +336,7 @@ const elements = {
 
 const cifraPlayer = new CifraPlayer(elements);
 
-$('#searchModal').on('shown.bs.modal', exibirListaSaves);
+//$('#searchModal').on('shown.bs.modal', exibirListaSaves);
 
 elements.tomSelect.addEventListener('change', () => {
     if (elements.tomSelect.value) {
@@ -443,15 +444,17 @@ elements.addButton.addEventListener('click', function () {
 
     // Important: Reset the form fields *only* if the buttons are hidden
     if (elements.deleteSavesSelect.classList.contains('d-none')) {
-        const saveContent = elements.editTextarea.value;
-
-        const saveName = prompt("Digite o nome para salvar:");
-        if (saveName) {
-            salvarSaves(saveName, saveContent);
-        }
-
-        fullScreen();
+        $('#newItemModal').modal('show');
     }
+});
+
+elements.saveNewItemButton.addEventListener("click", () => {
+    const saveContent = elements.editTextarea.value;
+    const saveName = document.getElementById("newItemName").value;
+    if (saveName) {
+        salvarSaves(saveName, saveContent);
+    }
+    $('#newItemModal').modal('hide');
 });
 
 elements.saveButton.addEventListener('click', function () {
@@ -899,13 +902,14 @@ const aplicarModoEscuroIframe = () => {
     iframeDoc.body.style.color = document.body.classList.contains('dark-mode') ? '#FFFFFF' : '#4F4F4F';
 };
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
     elements.darkModeToggle.checked = true;
     if (localStorage.getItem('darkMode') === 'true') {
         document.body.classList.add('dark-mode');
         updateSwitchDarkMode();
         aplicarModoEscuroIframe();
     }
+    exibirListaSaves();
 });
 
 function mostrarTextoCifrasCarregado(tom = null, texto = null) {
