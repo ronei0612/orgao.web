@@ -402,6 +402,8 @@ elements.addButton.addEventListener('click', function () {
         elements.itemNameInput.value = "";
         elements.savesSelect.selectedIndex = 0;
         elements.iframeCifra.contentDocument.body.innerHTML = '';
+        elements.tomSelect.innerHTML = '';
+        
         $('#itemModal').modal('show');
     }
 });
@@ -560,7 +562,6 @@ elements.playButton.addEventListener('click', () => {
 elements.simButtonAlert.addEventListener('click', () => {
     saveName = elements.savesSelect.value;
     deletarSave(saveName);
-    exibirListaSaves();
 });
 
 document.addEventListener('mousedown', fullScreen);
@@ -718,6 +719,9 @@ function deletarSave(saveName) {
     localStorage.setItem('saves', JSON.stringify(saves));
     elements.searchModalLabel.textContent = 'Cifras';
     elements.iframeCifra.contentDocument.body.innerHTML = '';
+    elements.tomSelect.innerHTML = '';
+
+    exibirListaSaves();
 }
 
 async function searchMusic() {
