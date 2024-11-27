@@ -44,6 +44,7 @@ class CifraPlayer {
                     while (!this.notasAcordes.includes(acorde) && acorde) {
                         acorde = acorde.slice(0, -1);
                     }
+                    acorde = acorde.replace('E#', 'F').replace('B#', 'C').replace('Cb', 'B').replace('Fb', 'E');
                     const elemento = this.notasAcordes.includes(acorde) ? `<b id="cifra${cifraNum++}">${acorde}</b>` : palavra;
                     return index < palavras.length - 1 && espacos[index] ? elemento + espacos[index] : elemento;
                 }).join('');
