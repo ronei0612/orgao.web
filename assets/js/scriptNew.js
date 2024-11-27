@@ -675,7 +675,7 @@ function exibirListaSaves() {
     elements.deleteSavesSelect.classList.add('d-none');
     elements.editSavesSelect.classList.add('d-none');
 
-    if (elements.searchModalLabel.textContent === 'Cifras') {
+    //if (elements.searchModalLabel.textContent === 'Cifras') {
         elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Cifra...</option>';
         elements.savesSelect.style.color = '';
 
@@ -683,12 +683,14 @@ function exibirListaSaves() {
         if (saves && saves !== '{}') {
             saves = JSON.parse(saves);
 
-            for (const saveName in saves) {
+            let saveNames = Object.keys(saves).sort();
+
+            saveNames.forEach(function (saveName) {
                 const listItem = criarItemSelect(saveName, saves[saveName]);
                 elements.savesSelect.appendChild(listItem);
+            });
             }
-        }
-    }
+    //}
 }
 
 function criarItemSelect(saveName, saveContent) {
@@ -901,7 +903,6 @@ function fullScreen() {
         }
     }
 }
-
 
 function salvarSave(newSaveName) {
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
