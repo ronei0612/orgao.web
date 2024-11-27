@@ -465,9 +465,11 @@ elements.startButton.addEventListener('click', () => {
 });
 
 elements.prevButton.addEventListener('click', () => {
+    elements.nextButton.classList.remove('d-none');
     if (elements.controlButtons.classList.contains('justify-content-center')) {
         elements.controlButtons.classList.remove('justify-content-center');
         elements.controlButtons.classList.add('justify-content-left');
+        elements.prevButton.classList.add('d-none');
     }
     else if (elements.controlButtons.classList.contains('justify-content-end')) {
         elements.controlButtons.classList.remove('justify-content-end');
@@ -476,9 +478,11 @@ elements.prevButton.addEventListener('click', () => {
 });
 
 elements.nextButton.addEventListener('click', () => {
+    elements.prevButton.classList.remove('d-none');
     if (elements.controlButtons.classList.contains('justify-content-center')) {
         elements.controlButtons.classList.remove('justify-content-center');
         elements.controlButtons.classList.add('justify-content-end');
+        elements.nextButton.classList.add('d-none');
     }
     else if (elements.controlButtons.classList.contains('justify-content-left')) {
         elements.controlButtons.classList.remove('justify-content-left');
