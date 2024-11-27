@@ -44,6 +44,7 @@ class CifraPlayer {
                     while (!this.notasAcordes.includes(acorde) && acorde) {
                         acorde = acorde.slice(0, -1);
                     }
+                    acorde = acorde.replace('E#', 'F').replace('B#', 'C').replace('Cb', 'B').replace('Fb', 'E');
                     const elemento = this.notasAcordes.includes(acorde) ? `<b id="cifra${cifraNum++}">${acorde}</b>` : palavra;
                     return index < palavras.length - 1 && espacos[index] ? elemento + espacos[index] : elemento;
                 }).join('');
@@ -464,9 +465,11 @@ elements.startButton.addEventListener('click', () => {
 });
 
 elements.prevButton.addEventListener('click', () => {
+    elements.nextButton.classList.remove('d-none');
     if (elements.controlButtons.classList.contains('justify-content-center')) {
         elements.controlButtons.classList.remove('justify-content-center');
         elements.controlButtons.classList.add('justify-content-left');
+        elements.prevButton.classList.add('d-none');
     }
     else if (elements.controlButtons.classList.contains('justify-content-end')) {
         elements.controlButtons.classList.remove('justify-content-end');
@@ -475,9 +478,11 @@ elements.prevButton.addEventListener('click', () => {
 });
 
 elements.nextButton.addEventListener('click', () => {
+    elements.prevButton.classList.remove('d-none');
     if (elements.controlButtons.classList.contains('justify-content-center')) {
         elements.controlButtons.classList.remove('justify-content-center');
         elements.controlButtons.classList.add('justify-content-end');
+        elements.nextButton.classList.add('d-none');
     }
     else if (elements.controlButtons.classList.contains('justify-content-left')) {
         elements.controlButtons.classList.remove('justify-content-left');
@@ -675,7 +680,7 @@ function exibirListaSaves() {
     elements.deleteSavesSelect.classList.add('d-none');
     elements.editSavesSelect.classList.add('d-none');
 
-    if (elements.searchModalLabel.textContent === 'Cifras') {
+    //if (elements.searchModalLabel.textContent === 'Cifras') {
         elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Cifra...</option>';
         elements.savesSelect.style.color = '';
 
@@ -683,12 +688,14 @@ function exibirListaSaves() {
         if (saves && saves !== '{}') {
             saves = JSON.parse(saves);
 
-            for (const saveName in saves) {
+            let saveNames = Object.keys(saves).sort();
+
+            saveNames.forEach(function (saveName) {
                 const listItem = criarItemSelect(saveName, saves[saveName]);
                 elements.savesSelect.appendChild(listItem);
+            });
             }
-        }
-    }
+    //}
 }
 
 function criarItemSelect(saveName, saveContent) {
@@ -901,7 +908,6 @@ function fullScreen() {
         }
     }
 }
-
 
 function salvarSave(newSaveName) {
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
