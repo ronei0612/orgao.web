@@ -52,7 +52,19 @@ class CifraPlayer {
             }
             return linha;
         });
-        return `<style>.cifraSelecionada{background-color:#DAA520}</style><pre>${linhasDestacadas.join('\n')}</pre>`;
+        
+        return `
+            <style>
+                .cifraSelecionada {
+                    background-color: #DAA520;
+                }
+                pre {
+                    font-size: 12pt;
+                    font-family: Consolas, 'Courier New', Courier, monospace;
+                }
+            </style>
+            <pre>${linhasDestacadas.join('\n')}</pre>
+        `;
     }
 
     carregarAcordes() {

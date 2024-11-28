@@ -295,6 +295,11 @@ body.dark-mode .list-group-item {
   color: #000;
 }
 
+#editTextarea {
+  font-size: 12pt;
+  font-family: Consolas, 'Courier New', Courier, monospace;
+}
+
 input:checked+.slider:after {
   content: "\f185";
   right: 28px;
