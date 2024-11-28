@@ -607,6 +607,8 @@ $('#itemModal').on('shown.bs.modal', () => {
 
 $('#searchModal').on('shown.bs.modal', () => {
     elements.searchInput.focus();
+    elements.searchResultsList.classList.add('d-none');
+    elements.editTextarea.classList.remove('d-none');
 });
 
 $('#alertModal').on('shown.bs.modal', () => {
