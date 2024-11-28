@@ -598,6 +598,10 @@ $('#itemModal').on('shown.bs.modal', () => {
     elements.itemNameInput.focus();
 });
 
+$('#searchModal').on('shown.bs.modal', () => {
+    elements.searchInput.focus();
+});
+
 function hideEditDeleteButtons() {
     elements.deleteSavesSelect.classList.add('d-none');
     elements.editSavesSelect.classList.add('d-none');
