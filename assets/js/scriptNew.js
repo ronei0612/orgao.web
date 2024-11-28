@@ -550,6 +550,12 @@ elements.deleteSavesSelect.addEventListener('click', () => {
     }
 });
 
+elements.searchInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        elements.searchButton.click();
+    }
+});
+
 elements.searchButton.addEventListener('click', () => {
     if (elements.searchInput.value) {
         elements.savesSelect.selectedIndex = 0;
