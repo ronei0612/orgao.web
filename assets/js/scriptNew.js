@@ -954,7 +954,8 @@ function salvarSave(newSaveName) {
         }
 
         saveContent = elements.editTextarea.value;
-        elements.iframeCifra.contentDocument.body.innerHTML = saveContent;
+        elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(saveContent);
+        cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
         saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
         saves[newSaveName] = saveContent;
         localStorage.setItem('saves', JSON.stringify(saves));
