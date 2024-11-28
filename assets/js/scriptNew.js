@@ -403,17 +403,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 elements.addButton.addEventListener('click', function () {
-    toggleEditDeleteButtons();
+    this.classList.add('pressed');
 
-    // Important: Reset the form fields *only* if the buttons are hidden
-    if (elements.deleteSavesSelect.classList.contains('d-none')) {
+    setTimeout(() => {
+        this.classList.remove('pressed');
+    }, 100);
+
+    if (!elements.deleteSavesSelect.classList.contains('d-none')) {
         elements.itemNameInput.value = "";
         elements.savesSelect.selectedIndex = 0;
-        //elements.iframeCifra.contentDocument.body.innerHTML = '';
-        //elements.tomSelect.innerHTML = '';
-
         $('#itemModal').modal('show');
     }
+
+    toggleEditDeleteButtons();
 });
 
 elements.saveNewItemButton.addEventListener("click", () => {
@@ -612,15 +614,38 @@ $('#alertModal').on('shown.bs.modal', () => {
 });
 
 function hideEditDeleteButtons() {
-    elements.deleteSavesSelect.classList.add('d-none');
-    elements.editSavesSelect.classList.add('d-none');
-    elements.addButton.classList.remove('rounded-0');
-    elements.addButton.classList.add('rounded-right-custom');
+    if (elements.deleteSavesSelect.classList.contains('show')) {
+        elements.deleteSavesSelect.classList.remove('show');
+        elements.editSavesSelect.classList.remove('show');
+        elements.addButton.classList.add('rounded-right-custom');
+        elements.addButton.classList.remove('rounded-0');
+
+        setTimeout(() => {
+            elements.deleteSavesSelect.classList.add('d-none');
+            elements.editSavesSelect.classList.add('d-none');
+        }, 100);
+    }
 }
 
 function toggleEditDeleteButtons() {
-    elements.deleteSavesSelect.classList.toggle('d-none');
-    elements.editSavesSelect.classList.toggle('d-none');
+    if (elements.deleteSavesSelect.classList.contains('d-none')) {
+        elements.deleteSavesSelect.classList.remove('d-none');
+        elements.editSavesSelect.classList.remove('d-none');
+
+        setTimeout(() => {
+            elements.deleteSavesSelect.classList.add('show');
+            elements.editSavesSelect.classList.add('show');
+        }, 10); // Pequeno atraso para permitir que o efeito seja aplicado
+    } else {
+        elements.deleteSavesSelect.classList.remove('show');
+        elements.editSavesSelect.classList.remove('show');
+
+        setTimeout(() => {
+            elements.deleteSavesSelect.classList.add('d-none');
+            elements.editSavesSelect.classList.add('d-none');
+        }, 100);
+    }
+
     elements.addButton.classList.toggle('rounded-0');
     elements.addButton.classList.toggle('rounded-right-custom');
 }
