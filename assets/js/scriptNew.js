@@ -556,6 +556,12 @@ elements.searchInput.addEventListener('keydown', (event) => {
     }
 });
 
+elements.itemNameInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        elements.saveNewItemButton.click();
+    }
+});
+
 elements.searchButton.addEventListener('click', () => {
     if (elements.searchInput.value) {
         elements.savesSelect.selectedIndex = 0;
