@@ -809,8 +809,10 @@ async function searchMusic() {
         const data = await response.json();
         if (data.success) {
             const { lista: titles, links } = data; // destructuring
+            const max = 5;
             if (titles.length > 0) {
-                titles.forEach((title, index) => {
+                const topTitles = titles.slice(0, max);
+                topTitles.forEach((title, index) => {
                     const listItem = document.createElement('li');
                     listItem.className = 'list-group-item';
                     const link = document.createElement('a');
@@ -823,7 +825,9 @@ async function searchMusic() {
             } else {
                 elements.searchResultsList.innerHTML = '<li class="list-group-item">Nenhuma cifra encontrada.</li>';
             }
-        } else { throw new Error(data.message); }
+        } else {
+            throw new Error(data.message);
+        }
     } catch (error) {
         alert(`Erro na busca: ${error.message}`);
         elements.savesList.classList.remove('d-none');
