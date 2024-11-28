@@ -531,8 +531,7 @@ elements.editSavesSelect.addEventListener('click', () => {
     if (elements.savesSelect.selectedIndex !== 0) {
         elements.itemNameInput.value = saveName ? saveName : "";
         $('#itemModal').modal('show');
-        //editarSave(saveName);
-        exibirListaSaves();
+        exibirListaSaves(saveName);
     }
 });
 
@@ -606,6 +605,10 @@ $('#itemModal').on('shown.bs.modal', () => {
 
 $('#searchModal').on('shown.bs.modal', () => {
     elements.searchInput.focus();
+});
+
+$('#alertModal').on('shown.bs.modal', () => {
+    elements.itemNameInput.focus();
 });
 
 function hideEditDeleteButtons() {
@@ -690,28 +693,31 @@ function descobrirTom(texto) {
     return tomProvavel;
 }
 
-function exibirListaSaves() {
+function exibirListaSaves(saveSelected) {
     elements.addButton.classList.add('rounded-right-custom');
     elements.addButton.classList.remove('rounded-0');
     elements.deleteSavesSelect.classList.add('d-none');
     elements.editSavesSelect.classList.add('d-none');
 
-    //if (elements.searchModalLabel.textContent === 'Cifras') {
-        elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Cifra...</option>';
-        elements.savesSelect.style.color = '';
+    elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Cifra...</option>';
+    elements.savesSelect.style.color = '';
 
-        let saves = localStorage.getItem('saves');            
-        if (saves && saves !== '{}') {
-            saves = JSON.parse(saves);
+    let saves = localStorage.getItem('saves');            
+    if (saves && saves !== '{}') {
+        saves = JSON.parse(saves);
 
-            let saveNames = Object.keys(saves).sort();
+        let saveNames = Object.keys(saves).sort();
 
-            saveNames.forEach(function (saveName) {
-                const listItem = criarItemSelect(saveName, saves[saveName]);
-                elements.savesSelect.appendChild(listItem);
-            });
-            }
-    //}
+        saveNames.forEach(function (saveName) {
+            const listItem = criarItemSelect(saveName, saves[saveName]);
+            elements.savesSelect.appendChild(listItem);
+        });
+
+        if (saveSelected && saves[saveSelected]) {
+            elements.savesSelect.value = saveSelected;
+            elements.savesSelect.style.color = 'black';
+        }
+    }
 }
 
 function criarItemSelect(saveName, saveContent) {
@@ -968,7 +974,7 @@ function salvarSave(newSaveName) {
         elements.savesSelect.value = newSaveName;
         elements.searchModalLabel.textContent = newSaveName;
     
-        exibirListaSaves();
+        exibirListaSaves(newSaveName);
     }
 }
 
