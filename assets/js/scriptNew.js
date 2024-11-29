@@ -302,6 +302,7 @@ class CifraPlayer {
     }
 
     adicionarSomAoGrupo(instrumento, nota, oitava = '') {
+        nota = nota.toLowerCase();
         nota = this.getNomeArquivoAudio(nota);
         const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
         if (this.acordes[key]) {
