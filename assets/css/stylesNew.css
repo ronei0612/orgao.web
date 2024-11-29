@@ -202,7 +202,9 @@ body.dark-mode .bpm-control span {
   flex: 1;
 }
 
-#iframeCifra {
+iframe {
+  width: 100%;
+  height: 100%;
   background-color: #fff;
   border-radius: 8px;
   transition: background-color 0.3s;

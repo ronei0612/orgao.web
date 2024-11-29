@@ -385,7 +385,12 @@ const elements = {
     alertModalMessage: document.getElementById('alertModalMessage'),
     cancelButtonAlert: document.getElementById('cancelButtonAlert'),
     simButtonAlert: document.getElementById('simButtonAlert'),
-    okButtonAlert: document.getElementById('okButtonAlert')
+    okButtonAlert: document.getElementById('okButtonAlert'),
+    oracoesEucaristicasLink: document.getElementById('oracoesEucaristicasLink'),
+    missaOrdinariaLink: document.getElementById('missaOrdinariaLink'),
+    liturgiaDiariaLink: document.getElementById('liturgiaDiariaLink'),
+    oracoesLink: document.getElementById('oracoesLink'),
+    liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame')
 };
 
 const cifraPlayer = new CifraPlayer(elements);
@@ -496,6 +501,8 @@ elements.startButton.addEventListener('click', () => {
         mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
         const texto = elements.editTextarea.value;
         elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(texto);
+        elements.iframeCifra.classList.remove('d-none');
+        elements.liturgiaDiariaFrame.classList.add('d-none');
         cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
         
         indiceAcorde = 0;
@@ -563,6 +570,8 @@ elements.savesSelect.addEventListener('change', () => {
     mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
     const texto = elements.editTextarea.value;
     elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(texto);
+    elements.iframeCifra.classList.remove('d-none');
+    elements.liturgiaDiariaFrame.classList.add('d-none');
     cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
     
     indiceAcorde = 0;
@@ -610,6 +619,13 @@ elements.searchButton.addEventListener('click', () => {
         elements.searchModalLabel.textContent = 'Cifras';
         searchMusic();
     }
+});
+
+elements.liturgiaDiariaLink.addEventListener('click', () => {
+    elements.liturgiaDiariaFrame.classList.remove('d-none');
+    elements.iframeCifra.classList.add('d-none');
+    elements.savesSelect.selectedIndex = 0;
+    $('#optionsModal').modal('hide');
 });
 
 elements.notesButton.addEventListener('click', () => {
@@ -963,6 +979,7 @@ const updateSwitchDarkMode = () => {
 const aplicarModoEscuroIframe = () => {
     const iframeDoc = elements.iframeCifra.contentDocument || elements.iframeCifra.contentWindow.document;
     iframeDoc.body.style.color = document.body.classList.contains('dark-mode') ? '#FFFFFF' : '#4F4F4F';
+    elements.liturgiaDiariaFrame.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#e0dcb5' : '#FFFFFF';
 };
 
 function mostrarTextoCifrasCarregado(tom = null, texto = null) {
@@ -1038,6 +1055,8 @@ function salvarSave(newSaveName) {
 
         saveContent = elements.editTextarea.value;
         elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(saveContent);
+        elements.iframeCifra.classList.remove('d-none');
+        elements.liturgiaDiariaFrame.classList.add('d-none');
         cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
         saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
         saves[newSaveName] = saveContent;

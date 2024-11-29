@@ -37,7 +37,8 @@
         </div>
     
         <div class="mb-3 flex-grow-1">
-            <iframe class="w-100 border border-secondary rounded" style="height: 100%;" id="iframeCifra"></iframe>
+            <iframe id="liturgiaDiariaFrame" src="https://liturgiadiaria.edicoescnbb.com.br/"></iframe>
+            <iframe class="w-100 border border-secondary rounded d-none" id="iframeCifra"></iframe>
         </div>
         <div class="d-flex justify-content-center mb-3" id="controlButtons">
             <button class="btn btn-link" id="prevButton">
@@ -69,10 +70,10 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                        <p><a href="#">Orações Eucarísticas</a></p>
-                        <p><a href="#">Ordinário da Missa</a></p>
-                        <p><a href="#">Liturgia Diária</a></p>
-                        <p><a href="#">Orações</a></p>
+                        <p><a href="#" id="oracoesEucaristicasLink">Orações Eucarísticas</a></p>
+                        <p><a href="#" id="missaOrdinariaLink">Ordinário da Missa</a></p>
+                        <p><a href="#" id="liturgiaDiariaLink">Liturgia Diária</a></p>
+                        <p><a href="#" id="oracoesLink">Orações</a></p>
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">× Fechar</button>
