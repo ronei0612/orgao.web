@@ -21,6 +21,7 @@ class CifraPlayer {
         this.tonsMenores = this.tonsMaiores.map(tom => tom + 'm');
         this.acordesSustenidos = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
         this.acordesBemol = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+        this.acordesSustenidosBemol = this.acordesSustenidos.concat(this.acordesBemol);
         this.acordesMap = {
             'B#': 'C',
             'E#': 'F',
@@ -40,19 +41,54 @@ class CifraPlayer {
                 const palavras = linha.split(/\s+/);
                 const espacos = linha.match(/\s+/g) || [];
                 const linhaProcessada = palavras.map((palavra, index) => {
-                    let acorde = palavra;
-                    while (!this.notasAcordes.includes(acorde) && acorde) {
-                        acorde = acorde.slice(0, -1);
-                    }
-                    acorde = acorde.replace('E#', 'F').replace('B#', 'C').replace('Cb', 'B').replace('Fb', 'E');
-                    const elemento = this.notasAcordes.includes(acorde) ? `<b id="cifra${cifraNum++}">${acorde}</b>` : palavra;
-                    return index < palavras.length - 1 && espacos[index] ? elemento + espacos[index] : elemento;
+                    let acorde = this.processarAcorde(palavra, cifraNum);
+                    if (acorde.startsWith('<b')) cifraNum++;
+                    return index < palavras.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
                 }).join('');
                 return linhaProcessada;
             }
             return linha;
         });
-        return `<style>.cifraSelecionada{background-color:#DAA520}</style><pre>${linhasDestacadas.join('\n')}</pre>`;
+    
+        return `
+            <style>
+                .cifraSelecionada {
+                    background-color: #DAA520;
+                }
+                pre {
+                    font-size: 12pt;
+                    font-family: Consolas, 'Courier New', Courier, monospace;
+                }
+            </style>
+            <pre>${linhasDestacadas.join('\n')}</pre>
+        `;
+    }
+    
+    processarAcorde(palavra, cifraNum) {
+        let acorde = palavra;
+        let baixo = '';
+    
+        if (acorde.includes('/')) {
+            [acorde, baixo] = acorde.split('/');
+            baixo = this.getAcorde(baixo);
+    
+            while (!this.notasAcordes.includes(acorde) && acorde) {
+                acorde = acorde.slice(0, -1);
+            }
+            acorde = this.getAcorde(acorde);
+            acorde = this.acordesSustenidosBemol.includes(baixo) ? `${acorde}/${baixo}` : palavra;
+        } else {
+            while (!this.notasAcordes.includes(acorde) && acorde) {
+                acorde = acorde.slice(0, -1);
+            }
+            acorde = this.getAcorde(acorde);
+        }
+    
+        return this.notasAcordes.includes(acorde.split('/')[0]) ? `<b id="cifra${cifraNum}">${acorde}</b>` : palavra;
+    }    
+
+    getAcorde(acorde) {
+        return this.acordesMap[acorde] || acorde;
     }
 
     carregarAcordes() {
@@ -226,28 +262,31 @@ class CifraPlayer {
 
     tocarAcorde(acorde) {
         this.pararAcorde();
-
+    
         if (!this.acordeGroup) {  
             this.acordeGroup = new Pizzicato.Group();
             this.acordeGroup.attack = 0.1;
         }
-
-        const notas = this.notasAcordesJson[acorde];
+    
+        let [notaPrincipal, baixo] = acorde.split('/');
+        const notas = this.notasAcordesJson[notaPrincipal];
         if (!notas) return;
-             
-        this.adicionarSomAoGrupo('orgao', notas[0].replace('#', '_'), 'grave');
-        this.adicionarSomAoGrupo('strings', notas[0].replace('#', '_'), 'grave');
-
+    
+        baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
+    
+        this.adicionarSomAoGrupo('orgao', baixo, 'grave');
+        this.adicionarSomAoGrupo('strings', baixo, 'grave');
+    
         notas.forEach(nota => {
             this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'), 'baixo');
             this.adicionarSomAoGrupo('strings', nota.replace('#', '_'), 'baixo');
-
+    
             if (this.elements.notesButton.classList.contains('pressed')) {
                 this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'));
                 this.adicionarSomAoGrupo('strings', nota.replace('#', '_'));
             }
         });
-
+    
         setTimeout(() => {
             if (!this.parado) {
                 console.log(`Playing: ${acorde}`);
@@ -256,7 +295,7 @@ class CifraPlayer {
                 } catch { }
             }
         }, 60);
-    }
+    }    
 
     getNomeArquivoAudio(nota) {
         return this.acordeMap[nota] || nota;
@@ -607,6 +646,8 @@ $('#itemModal').on('shown.bs.modal', () => {
 
 $('#searchModal').on('shown.bs.modal', () => {
     elements.searchInput.focus();
+    elements.searchResultsList.classList.add('d-none');
+    elements.editTextarea.classList.remove('d-none');
 });
 
 $('#alertModal').on('shown.bs.modal', () => {
@@ -809,8 +850,10 @@ async function searchMusic() {
         const data = await response.json();
         if (data.success) {
             const { lista: titles, links } = data; // destructuring
+            const max = 5;
             if (titles.length > 0) {
-                titles.forEach((title, index) => {
+                const topTitles = titles.slice(0, max);
+                topTitles.forEach((title, index) => {
                     const listItem = document.createElement('li');
                     listItem.className = 'list-group-item';
                     const link = document.createElement('a');
@@ -823,7 +866,9 @@ async function searchMusic() {
             } else {
                 elements.searchResultsList.innerHTML = '<li class="list-group-item">Nenhuma cifra encontrada.</li>';
             }
-        } else { throw new Error(data.message); }
+        } else {
+            throw new Error(data.message);
+        }
     } catch (error) {
         alert(`Erro na busca: ${error.message}`);
         elements.savesList.classList.remove('d-none');
