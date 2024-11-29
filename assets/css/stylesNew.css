@@ -295,6 +295,11 @@ body.dark-mode .list-group-item {
   color: #000;
 }
 
+#menuButton {
+  font-size: 2em;
+  cursor: pointer;
+}
+
 #editTextarea {
   font-size: 12pt;
   font-family: Consolas, 'Courier New', Courier, monospace;
