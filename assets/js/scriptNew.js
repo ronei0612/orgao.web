@@ -391,7 +391,8 @@ const elements = {
     missaOrdinarioLink: document.getElementById('missaOrdinarioLink'),
     liturgiaDiariaLink: document.getElementById('liturgiaDiariaLink'),
     oracoesLink: document.getElementById('oracoesLink'),
-    liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame')
+    liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame'),
+    santamissaFrame: document.getElementById('santamissaFrame')
 };
 
 const cifraPlayer = new CifraPlayer(elements);
@@ -991,7 +992,16 @@ const updateSwitchDarkMode = () => {
 const aplicarModoEscuroIframe = () => {
     const iframeDoc = elements.iframeCifra.contentDocument || elements.iframeCifra.contentWindow.document;
     iframeDoc.body.style.color = document.body.classList.contains('dark-mode') ? '#FFFFFF' : '#4F4F4F';
-    elements.liturgiaDiariaFrame.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#e0dcb5' : '#FFFFFF';
+    elements.liturgiaDiariaFrame.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#e0dcb5' : '#FFFFFF'; //f5f5dc
+    
+    if (document.body.classList.contains('dark-mode')) {
+        elements.santamissaFrame.src = './santamissaDark.html';
+        elements.santamissaFrame.style.backgroundColor = '#101524';
+    }
+    else {
+        elements.santamissaFrame.src = './santamissa.html';
+        elements.santamissaFrame.style.backgroundColor = '#FFFFFF';
+    }
 };
 
 function mostrarTextoCifrasCarregado(tom = null, texto = null) {
