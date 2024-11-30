@@ -995,10 +995,11 @@ const aplicarModoEscuroIframe = () => {
     elements.liturgiaDiariaFrame.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#e0dcb5' : '#FFFFFF'; //f5f5dc
     
     if (document.body.classList.contains('dark-mode')) {
-        elements.santamissaFrame.style.color = '#FFFFFF';
+        elements.santamissaFrame.src = './santamissaDark.html';
         elements.santamissaFrame.style.backgroundColor = '#101524';
-    } else {
-        elements.santamissaFrame.style.color = '#4F4F4F';
+    }
+    else {
+        elements.santamissaFrame.src = './santamissa.html';
         elements.santamissaFrame.style.backgroundColor = '#FFFFFF';
     }
 };
