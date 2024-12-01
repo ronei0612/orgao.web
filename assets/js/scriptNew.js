@@ -46,8 +46,10 @@ class CifraPlayer {
                     return index < palavras.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
                 }).join('');
                 return linhaProcessada;
+                //return `<span>${linhaProcessada}</span>`;
             }
             return linha;
+            //return `<span>${linha}</span>`;
         });
     
         return `
@@ -218,6 +220,32 @@ class CifraPlayer {
             this.avancarCifra();
         }
     }
+
+    // scrollProximaCifra(cifraElement) {
+    //     let offsetVertical = 870; // Deslocamento acima
+    //     let offsetHorizontal = 0; // Deslocamento à direita
+
+    //     if (!cifraElement.previousElementSibling) {
+    //         offsetHorizontal = 20;
+    //         //primeiroDaLinha, ultimoDaLinha
+    //         //, nextElementSibling, previousElementSibling
+    //     } else if (!cifraElement.nextElementSibling) {
+    //         offsetHorizontal = -20;
+    //     }
+    //     const bodyRect = document.body.getBoundingClientRect();
+    //     const elementRect = cifraElement.getBoundingClientRect();
+    //     const elementPositionVertical = elementRect.top - bodyRect.top;
+    //     const elementPositionHorizontal = elementRect.left - bodyRect.left;
+    //     const offsetPositionVertical = elementPositionVertical - offsetVertical;
+    //     const offsetPositionHorizontal = elementPositionHorizontal - offsetHorizontal;
+
+    //     elements.iframeCifra.contentWindow.scrollTo({
+    //     //window.scrollTo({
+    //         top: offsetPositionVertical,
+    //         left: offsetPositionHorizontal,
+    //         behavior: 'smooth'
+    //     });
+    // }
 
     pararReproducao() {
         this.pararAcorde();
