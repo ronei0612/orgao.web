@@ -193,7 +193,7 @@ class CifraPlayer {
                 this.removerClasseCifraSelecionada(frame.contentDocument, e.target);
     
                 e.target.classList.add('cifraSelecionada');
-                e.target.scrollIntoView();
+                e.target.scrollIntoView({behavior: 'smooth'});
     
                 this.tocarCifraManualmente(e.target);
                 parent.focus(); // Mantém o foco fora do iframe para o teclado físico funcionar
@@ -250,7 +250,7 @@ class CifraPlayer {
                 this.tocarAcorde(cifra);
 
                 cifraElem.classList.add('cifraSelecionada');
-                cifraElem.scrollIntoView();
+                cifraElem.scrollIntoView({behavior: 'smooth'});
 
                 this.indiceAcorde++;
             }
