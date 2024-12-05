@@ -45,11 +45,10 @@ class CifraPlayer {
                     if (acorde.startsWith('<b')) cifraNum++;
                     return index < palavras.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
                 }).join('');
-                return linhaProcessada;
-                //return `<span>${linhaProcessada}</span>`;
+                return `<b></b>${linhaProcessada}`;
+                //return `<span><b></b>${linhaProcessada}</span>`;
             }
             return linha;
-            //return `<span>${linha}</span>`;
         });
     
         return `
@@ -64,7 +63,7 @@ class CifraPlayer {
             </style>
             <pre>${linhasDestacadas.join('\n')}</pre>
         `;
-    }
+    }    
     
     processarAcorde(palavra, cifraNum) {
         let acorde = palavra;
@@ -263,7 +262,7 @@ class CifraPlayer {
         this.parado = true;
     }
 
-    avancarCifra() {
+    avancarCifra(inicioLinha) {
         const frameContent = this.elements.iframeCifra.contentDocument;
         const elements_b = frameContent.getElementsByTagName('b');
 
@@ -275,12 +274,20 @@ class CifraPlayer {
             const cifraElem = elements_b[this.indiceAcorde];
             if (cifraElem) {
                 const cifra = cifraElem.innerHTML.trim();
-                this.tocarAcorde(cifra);
+                if (!cifra) {
+                    cifraElem.scrollIntoView({behavior: 'smooth'});
+                    this.indiceAcorde++;
+                    this.avancarCifra(true);
+                }
+                else {
+                    this.tocarAcorde(cifra);
 
-                cifraElem.classList.add('cifraSelecionada');
-                cifraElem.scrollIntoView({behavior: 'smooth'});
+                    cifraElem.classList.add('cifraSelecionada');
+                    if (!inicioLinha)
+                        cifraElem.scrollIntoView({behavior: 'smooth'});
 
-                this.indiceAcorde++;
+                    this.indiceAcorde++;
+                }
             }
         }
         // else {
