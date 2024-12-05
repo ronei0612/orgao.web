@@ -536,7 +536,7 @@ elements.startButton.addEventListener('click', () => {
         elements.santamissaFrame.classList.add('d-none');
         cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
         
-        indiceAcorde = 0;
+        cifraPlayer.indiceAcorde = 0;
         $('#searchModal').modal('hide');
     }
     else {
@@ -606,7 +606,7 @@ elements.savesSelect.addEventListener('change', () => {
     elements.santamissaFrame.classList.add('d-none');
     cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
     
-    indiceAcorde = 0;
+    cifraPlayer.indiceAcorde = 0;
 })
 
 elements.editSavesSelect.addEventListener('click', () => {
