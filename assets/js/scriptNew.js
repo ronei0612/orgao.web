@@ -278,7 +278,15 @@ class CifraPlayer {
             const cifraElem = elements_b[this.indiceAcorde];
             if (cifraElem) {
                 const cifra = cifraElem.innerHTML.trim();
-                if (!cifra) {
+                const proximacifra = cifraElem.nextElementSibling?.innerHTML.trim() ?? '';
+
+                if (cifraElem.nextElementSibling && !proximacifra) {
+                    cifraElem.classList.add('cifraSelecionada');
+                    cifraElem.nextElementSibling.scrollIntoView({behavior: 'smooth'});
+                    this.tocarAcorde(cifra);
+                    this.indiceAcorde++;
+                }
+                else if (!cifra) {
                     cifraElem.scrollIntoView({behavior: 'smooth'});
                     this.indiceAcorde++;
                     this.avancarCifra(true);
@@ -294,9 +302,6 @@ class CifraPlayer {
                 }
             }
         }
-        // else {
-        //     this.pararAcorde();
-        // }
     }
 
     tocarAcorde(acorde) {
