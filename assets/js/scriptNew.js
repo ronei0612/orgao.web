@@ -35,18 +35,22 @@ class CifraPlayer {
     destacarCifras(texto) {
         const linhas = texto.split('\n');
         let cifraNum = 1;
+        const temPalavra = /[a-zA-Z]{3,}/;
     
         const linhasDestacadas = linhas.map(linha => {
-            if (!/[a-zA-Z]{3,}/.test(linha)) {
-                const palavras = linha.split(/\s+/);
+            if (linha && !temPalavra.test(linha)) {
+                const acordes = linha.split(/\s+/);
                 const espacos = linha.match(/\s+/g) || [];
-                const linhaProcessada = palavras.map((palavra, index) => {
+                const linhaProcessada = acordes.map((palavra, index) => {
                     let acorde = this.processarAcorde(palavra, cifraNum);
-                    if (acorde.startsWith('<b')) cifraNum++;
-                    return index < palavras.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
+                    if (acorde.startsWith('<b'))
+                        cifraNum++;
+                    return index < acordes.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
                 }).join('');
-                return `<b></b>${linhaProcessada}`;
-                //return `<span><b></b>${linhaProcessada}</span>`;
+                if (cifraNum > 1)
+                    return `<span><b></b>${linhaProcessada}<b></b></span>`;
+                else                
+                    return `${linhaProcessada}`;
             }
             return linha;
         });
