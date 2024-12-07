@@ -136,7 +136,10 @@ class CifraPlayer {
     }
     
     tocarCifraManualmente(cifraElem) {
-        this.indiceAcorde = parseInt(cifraElem.id.split('cifra')[1]) - 1;
+        const elements_b = this.elements.iframeCifra.contentDocument.getElementsByTagName("b");
+        const cifraid = parseInt(cifraElem.id.split('cifra')[1]);
+        this.indiceAcorde = Array.from(elements_b).findIndex(b => parseInt(b.id.split('cifra')[1]) === cifraid);
+        
         if (!this.parado) {
             this.iniciarReproducao();
         }
