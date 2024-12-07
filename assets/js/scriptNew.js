@@ -150,7 +150,7 @@ class CifraPlayer {
             const novoTom = this.elements.tomSelect.value;
             this.transporCifraNoIframe(novoTom);
             this.tomAtual = novoTom;
-            
+
             const cifra = this.elements.iframeCifra.contentDocument.body.innerHTML;
             salvarSave(this.elements.savesSelect.value, cifra);
             mostrarTextoCifrasCarregado(null, cifra);
@@ -600,14 +600,20 @@ elements.tomSelect.addEventListener('change', () => {
 
 elements.decreaseTom.addEventListener('click', () => {
     if (elements.tomSelect.value) {
-        elements.tomSelect.value = elements.tomSelect.options[elements.tomSelect.selectedIndex - 1].value;
+        let tomIndex = parseInt(elements.tomSelect.selectedIndex);
+        if (tomIndex === 0)
+            tomIndex = 12;
+        elements.tomSelect.value = elements.tomSelect.options[tomIndex - 1].value;
         elements.tomSelect.dispatchEvent(new Event('change'));
     }
 });
 
 elements.increaseTom.addEventListener('click', () => {
     if (elements.tomSelect.value) {
-        elements.tomSelect.value = elements.tomSelect.options[elements.tomSelect.selectedIndex + 1].value;
+        let tomIndex = parseInt(elements.tomSelect.selectedIndex);
+        if (tomIndex === 11)
+            tomIndex = -1;
+        elements.tomSelect.value = elements.tomSelect.options[tomIndex + 1].value;
         elements.tomSelect.dispatchEvent(new Event('change'));
     }
 });
