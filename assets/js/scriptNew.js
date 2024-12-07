@@ -175,11 +175,13 @@ class CifraPlayer {
     
         for (const cifra of cifras) {
             let acorde = cifra.innerText;
-            while (!this.acordesSustenidos.includes(acorde) && !this.acordesBemol.includes(acorde) && acorde) {
-                acorde = this.acordesMap[acorde] || acorde.slice(0, -1);
+            if (acorde) {
+                while (!this.acordesSustenidos.includes(acorde) && !this.acordesBemol.includes(acorde) && acorde) {
+                    acorde = this.acordesMap[acorde] || acorde.slice(0, -1);
+                }
+                const novoAcorde = this.transposeAcorde(acorde, steps);
+                cifra.innerText = cifra.innerText.replace(acorde, novoAcorde);
             }
-            const novoAcorde = this.transposeAcorde(acorde, steps);
-            cifra.innerText = cifra.innerText.replace(acorde, novoAcorde);
         }
     }
     
