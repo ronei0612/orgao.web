@@ -35,17 +35,22 @@ class CifraPlayer {
     destacarCifras(texto) {
         const linhas = texto.split('\n');
         let cifraNum = 1;
+        const temPalavra = /[a-zA-Z]{3,}/;
     
         const linhasDestacadas = linhas.map(linha => {
-            if (!/[a-zA-Z]{3,}/.test(linha)) {
-                const palavras = linha.split(/\s+/);
+            if (linha && !temPalavra.test(linha)) {
+                const acordes = linha.split(/\s+/);
                 const espacos = linha.match(/\s+/g) || [];
-                const linhaProcessada = palavras.map((palavra, index) => {
+                const linhaProcessada = acordes.map((palavra, index) => {
                     let acorde = this.processarAcorde(palavra, cifraNum);
-                    if (acorde.startsWith('<b')) cifraNum++;
-                    return index < palavras.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
+                    if (acorde.startsWith('<b'))
+                        cifraNum++;
+                    return index < acordes.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
                 }).join('');
-                return linhaProcessada;
+                if (cifraNum > 1)
+                    return `<span><b></b>${linhaProcessada}<b></b></span>`;
+                else                
+                    return `${linhaProcessada}`;
             }
             return linha;
         });
@@ -62,7 +67,7 @@ class CifraPlayer {
             </style>
             <pre>${linhasDestacadas.join('\n')}</pre>
         `;
-    }
+    }    
     
     processarAcorde(palavra, cifraNum) {
         let acorde = palavra;
@@ -145,6 +150,10 @@ class CifraPlayer {
             const novoTom = this.elements.tomSelect.value;
             this.transporCifraNoIframe(novoTom);
             this.tomAtual = novoTom;
+            
+            const cifra = this.elements.iframeCifra.contentDocument.body.innerHTML;
+            salvarSave(this.elements.savesSelect.value, cifra);
+            mostrarTextoCifrasCarregado(null, cifra);
 
             if (this.indiceAcorde > 0) {
                 this.indiceAcorde--;
@@ -170,11 +179,13 @@ class CifraPlayer {
     
         for (const cifra of cifras) {
             let acorde = cifra.innerText;
-            while (!this.acordesSustenidos.includes(acorde) && !this.acordesBemol.includes(acorde) && acorde) {
-                acorde = this.acordesMap[acorde] || acorde.slice(0, -1);
+            if (acorde) {
+                while (!this.acordesSustenidos.includes(acorde) && !this.acordesBemol.includes(acorde) && acorde) {
+                    acorde = this.acordesMap[acorde] || acorde.slice(0, -1);
+                }
+                const novoAcorde = this.transposeAcorde(acorde, steps);
+                cifra.innerText = cifra.innerText.replace(acorde, novoAcorde);
             }
-            const novoAcorde = this.transposeAcorde(acorde, steps);
-            cifra.innerText = cifra.innerText.replace(acorde, novoAcorde);
         }
     }
     
@@ -219,6 +230,32 @@ class CifraPlayer {
         }
     }
 
+    // scrollProximaCifra(cifraElement) {
+    //     let offsetVertical = 870; // Deslocamento acima
+    //     let offsetHorizontal = 0; // Deslocamento à direita
+
+    //     if (!cifraElement.previousElementSibling) {
+    //         offsetHorizontal = 20;
+    //         //primeiroDaLinha, ultimoDaLinha
+    //         //, nextElementSibling, previousElementSibling
+    //     } else if (!cifraElement.nextElementSibling) {
+    //         offsetHorizontal = -20;
+    //     }
+    //     const bodyRect = document.body.getBoundingClientRect();
+    //     const elementRect = cifraElement.getBoundingClientRect();
+    //     const elementPositionVertical = elementRect.top - bodyRect.top;
+    //     const elementPositionHorizontal = elementRect.left - bodyRect.left;
+    //     const offsetPositionVertical = elementPositionVertical - offsetVertical;
+    //     const offsetPositionHorizontal = elementPositionHorizontal - offsetHorizontal;
+
+    //     elements.iframeCifra.contentWindow.scrollTo({
+    //     //window.scrollTo({
+    //         top: offsetPositionVertical,
+    //         left: offsetPositionHorizontal,
+    //         behavior: 'smooth'
+    //     });
+    // }
+
     pararReproducao() {
         this.pararAcorde();
         const frameContent = this.elements.iframeCifra.contentDocument;
@@ -235,7 +272,7 @@ class CifraPlayer {
         this.parado = true;
     }
 
-    avancarCifra() {
+    avancarCifra(inicioLinha) {
         const frameContent = this.elements.iframeCifra.contentDocument;
         const elements_b = frameContent.getElementsByTagName('b');
 
@@ -247,17 +284,30 @@ class CifraPlayer {
             const cifraElem = elements_b[this.indiceAcorde];
             if (cifraElem) {
                 const cifra = cifraElem.innerHTML.trim();
-                this.tocarAcorde(cifra);
+                const proximacifra = cifraElem.nextElementSibling?.innerHTML.trim() ?? '';
 
-                cifraElem.classList.add('cifraSelecionada');
-                cifraElem.scrollIntoView({behavior: 'smooth'});
+                if (cifraElem.nextElementSibling && !proximacifra) {
+                    cifraElem.classList.add('cifraSelecionada');
+                    cifraElem.nextElementSibling.scrollIntoView({behavior: 'smooth'});
+                    this.tocarAcorde(cifra);
+                    this.indiceAcorde++;
+                }
+                else if (!cifra) {
+                    cifraElem.scrollIntoView({behavior: 'smooth'});
+                    this.indiceAcorde++;
+                    this.avancarCifra(true);
+                }
+                else {
+                    this.tocarAcorde(cifra);
 
-                this.indiceAcorde++;
+                    cifraElem.classList.add('cifraSelecionada');
+                    if (!inicioLinha)
+                        cifraElem.scrollIntoView({behavior: 'smooth'});
+
+                    this.indiceAcorde++;
+                }
             }
         }
-        // else {
-        //     this.pararAcorde();
-        // }
     }
 
     tocarAcorde(acorde) {
@@ -508,7 +558,7 @@ elements.startButton.addEventListener('click', () => {
         elements.santamissaFrame.classList.add('d-none');
         cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
         
-        indiceAcorde = 0;
+        cifraPlayer.indiceAcorde = 0;
         $('#searchModal').modal('hide');
     }
     else {
@@ -578,7 +628,7 @@ elements.savesSelect.addEventListener('change', () => {
     elements.santamissaFrame.classList.add('d-none');
     cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
     
-    indiceAcorde = 0;
+    cifraPlayer.indiceAcorde = 0;
 })
 
 elements.editSavesSelect.addEventListener('click', () => {
@@ -1010,8 +1060,13 @@ function mostrarTextoCifrasCarregado(tom = null, texto = null) {
     }
 
     if (texto) {
-        const textoSemTags = texto.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
-        elements.editTextarea.value = textoSemTags;
+        //const textoSemTags = texto.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
+        if (texto.includes('<pre>')) {
+            elements.editTextarea.value = texto.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
+        }
+        else {
+            elements.editTextarea.value = texto;
+        }
     }
 }
 
@@ -1041,7 +1096,7 @@ function fullScreen() {
     }
 }
 
-function salvarSave(newSaveName) {
+function salvarSave(newSaveName, saveContent) {
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
 
     if (newSaveName) {
@@ -1056,32 +1111,37 @@ function salvarSave(newSaveName) {
             return;
         }
 
-        let saveContent;
         let selectedOption = elements.savesSelect.options[elements.savesSelect.selectedIndex];
         
-        if (elements.savesSelect.selectedIndex !== 0) {
-            // Edit existing save
-            let oldSaveName = selectedOption.value;
-            saveContent = saves[oldSaveName];
-            delete saves[oldSaveName];
-            selectedOption.textContent = newSaveName;
-            selectedOption.value = newSaveName;
-        } else {
-            // New save
-            let newOption = document.createElement("option");
-            newOption.text = newSaveName;
-            newOption.value = newSaveName;
-            elements.savesSelect.add(newOption);
-            elements.savesSelect.value = newSaveName;
-        }
+        if (!saveContent) {
+            if (elements.savesSelect.selectedIndex !== 0) {
+                // Edit existing save
+                let oldSaveName = selectedOption.value;
+                saveContent = saves[oldSaveName];
+                delete saves[oldSaveName];
+                selectedOption.textContent = newSaveName;
+                selectedOption.value = newSaveName;
+            } else {
+                // New save
+                let newOption = document.createElement("option");
+                newOption.text = newSaveName;
+                newOption.value = newSaveName;
+                elements.savesSelect.add(newOption);
+                elements.savesSelect.value = newSaveName;
+            }
 
-        saveContent = elements.editTextarea.value;
-        elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(saveContent);
-        elements.iframeCifra.classList.remove('d-none');
-        elements.liturgiaDiariaFrame.classList.add('d-none');
-        elements.santamissaFrame.classList.add('d-none');
-        cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
-        saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
+            saveContent = elements.editTextarea.value;
+            elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(saveContent);
+            elements.iframeCifra.classList.remove('d-none');
+            elements.liturgiaDiariaFrame.classList.add('d-none');
+            elements.santamissaFrame.classList.add('d-none');
+            cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
+        }
+        
+        if (saveContent.includes('<pre>')) {
+            saveContent = saveContent.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
+        }
+        //saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
         saves[newSaveName] = saveContent;
         localStorage.setItem('saves', JSON.stringify(saves));
         elements.savesSelect.value = newSaveName;
