@@ -493,6 +493,9 @@ window.onerror = function (message, source, lineno, colno, error) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Zera a barra de rolagem de missa
+    localStorage.setItem('scrollTop', 0);
+
     elements.darkModeToggle.checked = true;
     if (localStorage.getItem('darkMode') === 'true') {
         document.body.classList.add('dark-mode');
@@ -634,6 +637,7 @@ elements.savesSelect.addEventListener('change', () => {
     elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(texto);
     elements.iframeCifra.classList.remove('d-none');
     elements.liturgiaDiariaFrame.classList.add('d-none');
+    localStorage.setItem('scrollTop', elements.santamissaFrame.scrollTop);
     elements.santamissaFrame.classList.add('d-none');
     cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
     
@@ -685,15 +689,20 @@ elements.searchButton.addEventListener('click', () => {
 });
 
 elements.liturgiaDiariaLink.addEventListener('click', () => {
-    elements.liturgiaDiariaFrame.classList.remove('d-none');
+    localStorage.setItem('scrollTop', elements.santamissaFrame.scrollTop);
     elements.santamissaFrame.classList.add('d-none');
     elements.iframeCifra.classList.add('d-none');
+    elements.liturgiaDiariaFrame.classList.remove('d-none');
     elements.savesSelect.selectedIndex = 0;
     $('#optionsModal').modal('hide');
 });
 
 elements.missaOrdinarioLink.addEventListener('click', () => {
     elements.santamissaFrame.classList.remove('d-none');
+    const scrollTop = localStorage.getItem('scrollTop');
+    if (scrollTop) {
+        elements.santamissaFrame.scrollTo(0, parseInt(scrollTop, 10));
+    }
     elements.liturgiaDiariaFrame.classList.add('d-none');
     elements.iframeCifra.classList.add('d-none');
     elements.savesSelect.selectedIndex = 0;
