@@ -200,7 +200,8 @@
             profere a ora&ccedil;&atilde;o Coleta;</p>
     <p class="c6 c2"></p>
     <p class="c3">ao terminar, o povo aclama:</p>
-    <p class="c11 c5">Am&eacute;m.</p>
+    <button type="button" class="btn btn-primary" id="btnLiturgiaDiaria">Ir para Liturgia Diária</button>
+
     <p class="c6 c1"></p>
     <p class="c6 c1"></p>
     <h1 class="c7 c18 c23">Liturgia Eucar&iacute;stica</h1>
@@ -630,6 +631,14 @@
     <p class="c3">Ao terminar, o povo aclama:</p>
     <p class="c11 c5">Am&eacute;m.</p>
     <p class="c6 c1"></p>
+
+<script>
+    const botao = document.getElementById('btnLiturgiaDiaria');
+
+    botao.addEventListener('click', () => {
+        window.parent.postMessage('mostrarLiturgiaDiaria', '*');
+    });
+</script>
 </body>
 
 </html>
