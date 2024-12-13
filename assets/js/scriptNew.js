@@ -505,6 +505,16 @@ document.addEventListener('DOMContentLoaded', () => {
     exibirListaSaves();
 });
 
+// Faz o link Liturgia da Palavra de dentro do iframe LiturgiaDiaria funcionar
+elements.santamissaFrame.addEventListener('load', () => {
+    window.addEventListener('message', (event) => {
+        if (event.data === 'mostrarLiturgiaDiaria') {
+            elements.liturgiaDiariaFrame.classList.remove('d-none');
+            elements.santamissaFrame.classList.add('d-none');
+        }
+    });
+});
+
 elements.addButton.addEventListener('click', function () {
     this.classList.add('pressed');
 
