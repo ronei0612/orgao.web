@@ -73,7 +73,7 @@ class CifraPlayer {
         let acorde = palavra;
         let baixo = '';
     
-        if (acorde.includes('/')) {
+        if (acorde.includes('/') && !acorde.includes('(')) {
             [acorde, baixo] = acorde.split('/');
             baixo = this.getAcorde(baixo);
     
@@ -439,6 +439,7 @@ const elements = {
     alertModalMessage: document.getElementById('alertModalMessage'),
     cancelButtonAlert: document.getElementById('cancelButtonAlert'),
     simButtonAlert: document.getElementById('simButtonAlert'),
+    naoButtonAlert: document.getElementById('naoButtonAlert'),
     okButtonAlert: document.getElementById('okButtonAlert'),
     oracoesEucaristicasLink: document.getElementById('oracoesEucaristicasLink'),
     missaOrdinarioLink: document.getElementById('missaOrdinarioLink'),
@@ -538,24 +539,39 @@ elements.saveNewItemButton.addEventListener("click", () => {
     $('#itemModal').modal('hide');
 });
 
-elements.saveButton.addEventListener('click', function () {
+elements.saveButton.addEventListener('click', () => {
     const saveContent = elements.editTextarea.value;
 
     if (saveContent) {
         let saveName = elements.searchModalLabel.textContent;
         if (saveName) {
-            salvarSave(saveName);
+            let saves = JSON.parse(localStorage.getItem('saves')) || {};
+            if (saves.hasOwnProperty(saveName)) {
+                elements.alertModalMessage.textContent = `Já existe "${saveName}". Deseja sobrescrever?`;
+                elements.alertModalLabel.textContent = 'Atenção!';
+                elements.simButtonAlert.textContent = '✓ Sim';
+                elements.simButtonAlert.classList.remove('d-none');
+                elements.naoButtonAlert.classList.remove('d-none');
+                elements.okButtonAlert.classList.add('d-none');
+                elements.cancelButtonAlert.classList.add('d-none');
 
-            elements.alertModalMessage.textContent = `"${saveName}" salvo com sucesso!`;
-            elements.alertModalLabel.textContent = 'Cifras';
-            elements.simButtonAlert.classList.add('d-none');
-            elements.okButtonAlert.classList.remove('d-none');
-            elements.cancelButtonAlert.classList.add('d-none');
+                $('#alertModal').modal('show');
+            }
+            else {
+                salvarSave(saveName);
 
-            $('#alertModal').modal('show');
+                elements.alertModalMessage.textContent = `"${saveName}" salvo com sucesso!`;
+                elements.alertModalLabel.textContent = 'Música';
+                elements.simButtonAlert.classList.add('d-none');
+                elements.naoButtonAlert.classList.add('d-none');
+                elements.okButtonAlert.classList.remove('d-none');
+                elements.cancelButtonAlert.classList.add('d-none');
+
+                $('#alertModal').modal('show');
+            }
         }
 
-        fullScreen();
+        //fullScreen();
     } else {
         elements.editTextarea.focus();
     }
@@ -689,12 +705,8 @@ elements.itemNameInput.addEventListener('keydown', (event) => {
 });
 
 elements.searchButton.addEventListener('click', () => {
-    if (elements.searchInput.value) {
-        elements.savesSelect.selectedIndex = 0;
-        elements.savesSelect.style.color = '';
-        elements.searchModalLabel.textContent = 'Cifras';
+    if (elements.searchInput.value)
         searchMusic();
-    }
 });
 
 elements.liturgiaDiariaLink.addEventListener('click', () => {
@@ -730,8 +742,18 @@ elements.playButton.addEventListener('click', () => {
 })
 
 elements.simButtonAlert.addEventListener('click', () => {
-    saveName = elements.savesSelect.value;
-    deletarSave(saveName);
+    if (elements.alertModalMessage.textContent.includes('sobrescrever')) {
+        const saveName = elements.searchModalLabel.textContent;
+        salvarSave(saveName);
+    }
+    else {
+        const saveName = elements.savesSelect.value;
+        deletarSave(saveName);
+    }
+});
+
+elements.naoButtonAlert.addEventListener('click', () => {
+    $('#itemModal').modal('show');
 });
 
 document.addEventListener('mousedown', fullScreen);
@@ -751,6 +773,9 @@ $('#itemModal').on('shown.bs.modal', () => {
 });
 
 $('#searchModal').on('shown.bs.modal', () => {
+    if (elements.savesSelect.value !== 'all')
+        elements.searchModalLabel.textContent = elements.savesSelect.value;
+
     elements.searchInput.focus();
     elements.searchResultsList.classList.add('d-none');
     elements.editTextarea.classList.remove('d-none');
@@ -871,7 +896,7 @@ function exibirListaSaves(saveSelected) {
     elements.deleteSavesSelect.classList.add('d-none');
     elements.editSavesSelect.classList.add('d-none');
 
-    elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Cifra...</option>';
+    elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Música...</option>';
     elements.savesSelect.style.color = '';
 
     let saves = localStorage.getItem('saves');            
@@ -925,7 +950,7 @@ function deletarSave(saveName) {
     let saves = JSON.parse(localStorage.getItem('saves') || '{}');
     delete saves[saveName];
     localStorage.setItem('saves', JSON.stringify(saves));
-    elements.searchModalLabel.textContent = 'Cifras';
+    elements.searchModalLabel.textContent = 'Música';
     elements.iframeCifra.contentDocument.body.innerHTML = '';
     elements.tomSelect.innerHTML = '';
 
@@ -953,6 +978,7 @@ async function searchMusic() {
             body: JSON.stringify({ texto: textoPesquisa }),
         });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
         const data = await response.json();
         if (data.success) {
             const { lista: titles, links } = data; // destructuring
@@ -1000,8 +1026,11 @@ async function choseLink(urlLink, text) {
         });
         const data = await response.json();
         if (data.success) {
-            mostrarTextoCifrasCarregado(data.tom, data.message);                    
-            elements.searchModalLabel.textContent = text;
+            mostrarTextoCifrasCarregado(null, data.message);
+
+            if (elements.searchModalLabel.textContent === 'Música') {
+                elements.searchModalLabel.textContent = text.split(' - ')[0];
+            }
             elements.editTextarea.classList.remove('d-none');
             elements.startButton.classList.remove('d-none');
             elements.addButton.classList.remove('d-none');
@@ -1131,11 +1160,15 @@ function salvarSave(newSaveName, saveContent) {
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
 
     if (newSaveName) {
+        newSaveName = newSaveName.trim();
+        newSaveName = newSaveName.charAt(0).toUpperCase() + newSaveName.slice(1).toLowerCase();
+
         if (saves.hasOwnProperty(newSaveName) && elements.searchModalLabel.textContent !== newSaveName) {
             elements.alertModalMessage.textContent = `Já existe esse nome!`;
             elements.alertModalLabel.textContent = 'Atenção!';
             elements.okButtonAlert.classList.remove('d-none');
             elements.simButtonAlert.classList.add('d-none');
+            elements.naoButtonAlert.classList.add('d-none');
             elements.cancelButtonAlert.classList.add('d-none');
 
             $('#alertModal').modal('show');
