@@ -955,7 +955,6 @@ async function searchMusic() {
 
         const data = await response.json();
         if (data.success) {
-            elements.searchModalLabel.textContent = 'Cifras';
             const { lista: titles, links } = data; // destructuring
             const max = 5;
             if (titles.length > 0) {
@@ -1001,8 +1000,11 @@ async function choseLink(urlLink, text) {
         });
         const data = await response.json();
         if (data.success) {
-            mostrarTextoCifrasCarregado(data.tom, data.message);                    
-            elements.searchModalLabel.textContent = text.split(' - ')[0];
+            mostrarTextoCifrasCarregado(null, data.message);
+
+            if (elements.searchModalLabel.textContent === 'Cifras') {
+                elements.searchModalLabel.textContent = text.split(' - ')[0];
+            }
             elements.editTextarea.classList.remove('d-none');
             elements.startButton.classList.remove('d-none');
             elements.addButton.classList.remove('d-none');
