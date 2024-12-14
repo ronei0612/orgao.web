@@ -741,12 +741,12 @@ elements.playButton.addEventListener('click', () => {
 })
 
 elements.simButtonAlert.addEventListener('click', () => {
-    saveName = elements.savesSelect.value;
-
     if (elements.alertModalMessage.textContent.includes('sobrescrever')) {
+        const saveName = elements.searchModalLabel.textContent;
         salvarSave(saveName);
     }
     else {
+        const saveName = elements.savesSelect.value;
         deletarSave(saveName);
     }
 });
