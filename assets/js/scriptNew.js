@@ -545,7 +545,8 @@ elements.saveButton.addEventListener('click', () => {
     if (saveContent) {
         let saveName = elements.searchModalLabel.textContent;
         if (saveName) {
-            if (checkSelectText(elements.savesSelect, saveName)) {
+            let saves = JSON.parse(localStorage.getItem('saves')) || {};
+            if (saves.hasOwnProperty(saveName)) {
                 elements.alertModalMessage.textContent = `Já existe "${saveName}". Deseja sobrescrever?`;
                 elements.alertModalLabel.textContent = 'Atenção!';
                 elements.simButtonAlert.textContent = '✓ Sim';
@@ -783,16 +784,6 @@ $('#searchModal').on('shown.bs.modal', () => {
 $('#alertModal').on('shown.bs.modal', () => {
     elements.itemNameInput.focus();
 });
-
-function checkSelectText(selectElement, text) {
-    const options = selectElement.options;
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].text.includes(text)) {
-        return true;
-      }
-    }
-    return false;
-}
 
 function hideEditDeleteButtons() {
     if (elements.deleteSavesSelect.classList.contains('show')) {
