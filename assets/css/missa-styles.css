@@ -45,7 +45,7 @@
   font-style: normal
 }
 
-.c2 {  
+.default {
   font-weight: 400;
   text-decoration: none;
   vertical-align: baseline;
@@ -54,7 +54,7 @@
   font-style: normal
 }
 
-.c3 {
+.brown {
   color: #9c7b3e;
   font-weight: 400;
   text-decoration: none;
@@ -116,15 +116,16 @@
   font-style: normal
 }
 
-.c11 {
-  
+.bold {
   text-decoration: none;
   vertical-align: baseline;
-  font-style: normal
+  font-style: normal;
+  font-size: 12pt;
+  font-family: "Arial";
+  font-weight: 700
 }
 
-.c10 {
-  
+.c10 {  
   text-decoration: none;
   vertical-align: baseline;
   font-style: italic
@@ -201,7 +202,13 @@
   font-weight: 700
 }
 
-.c6 {
+.breakline {
+  font-weight: 400;
+  text-decoration: none;
+  vertical-align: baseline;
+  font-size: 12pt;
+  font-family: "Arial";
+  font-style: normal;
   height: 11pt
 }
 
@@ -213,7 +220,7 @@
   height: 16pt
 }
 
-.c15 {
+.italic {
   font-style: italic
 }
 
@@ -273,38 +280,37 @@ p {
 
 h1 {
   padding-top: 10pt;
-  
-  font-size: 16pt;
   padding-bottom: 0pt;
-  font-family: "Trebuchet MS";
+  font-family: "Merriweather";
+  font-size: 33pt;
+  font-weight: 700;
   line-height: 1.15;
   page-break-after: avoid;
   orphans: 2;
   widows: 2;
-  text-align: left
+  text-align: center
 }
 
 h2 {
-  padding-top: 10pt;
-  
+  color: #9c7b3e;
+  padding-top: 10pt;  
   font-weight: 700;
-  font-size: 13pt;
+  font-size: 20pt;
   padding-bottom: 0pt;
-  font-family: "Trebuchet MS";
+  font-family: "Merriweather";
   line-height: 1.15;
   page-break-after: avoid;
   orphans: 2;
   widows: 2;
-  text-align: left
+  text-align: center
 }
 
 h3 {
-  padding-top: 8pt;
-  color: #666666;
+  color: #9c7b3e;
   font-weight: 700;
-  font-size: 12pt;
+  font-size: 14pt;
   padding-bottom: 0pt;
-  font-family: "Trebuchet MS";
+  font-family: "Arial";
   line-height: 1.15;
   page-break-after: avoid;
   orphans: 2;
