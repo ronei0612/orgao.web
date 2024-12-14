@@ -1160,6 +1160,9 @@ function salvarSave(newSaveName, saveContent) {
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
 
     if (newSaveName) {
+        newSaveName = newSaveName.trim();
+        newSaveName = newSaveName.charAt(0).toUpperCase() + newSaveName.slice(1).toLowerCase();
+
         if (saves.hasOwnProperty(newSaveName) && elements.searchModalLabel.textContent !== newSaveName) {
             elements.alertModalMessage.textContent = `Já existe esse nome!`;
             elements.alertModalLabel.textContent = 'Atenção!';
