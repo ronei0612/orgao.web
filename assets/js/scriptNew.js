@@ -73,7 +73,7 @@ class CifraPlayer {
         let acorde = palavra;
         let baixo = '';
     
-        if (acorde.includes('/')) {
+        if (acorde.includes('/') && !acorde.includes('(')) {
             [acorde, baixo] = acorde.split('/');
             baixo = this.getAcorde(baixo);
     
