@@ -709,7 +709,7 @@ elements.missaOrdinarioLink.addEventListener('click', () => {
     elements.santamissaFrame.classList.remove('d-none');
     const scrollTop = localStorage.getItem('scrollTop');
     if (scrollTop) {
-        elements.santamissaFrame.scrollTo(0, parseInt(scrollTop, 10));
+        elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
     }
     elements.liturgiaDiariaFrame.classList.add('d-none');
     elements.iframeCifra.classList.add('d-none');
