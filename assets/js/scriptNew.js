@@ -1078,6 +1078,11 @@ const aplicarModoEscuroIframe = () => {
         elements.santamissaFrame.src = './santamissa.html';
         elements.santamissaFrame.style.backgroundColor = '#FFFFFF';
     }
+    
+    const scrollTop = localStorage.getItem('scrollTop');
+    if (scrollTop) {
+        elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
+    }
 };
 
 function mostrarTextoCifrasCarregado(tom = null, texto = null) {
