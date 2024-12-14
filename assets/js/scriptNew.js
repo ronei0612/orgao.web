@@ -708,7 +708,7 @@ elements.liturgiaDiariaLink.addEventListener('click', () => {
 elements.missaOrdinarioLink.addEventListener('click', () => {
     elements.santamissaFrame.classList.remove('d-none');
     const scrollTop = localStorage.getItem('scrollTop');
-    if (scrollTop) {
+    if (scrollTop && !location.origin.includes('file:')) {
         elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
     }
     elements.liturgiaDiariaFrame.classList.add('d-none');
@@ -1080,7 +1080,7 @@ const aplicarModoEscuroIframe = () => {
     }
     
     const scrollTop = localStorage.getItem('scrollTop');
-    if (scrollTop) {
+    if (scrollTop && !location.origin.includes('file:')) {
         elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
     }
 };

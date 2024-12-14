@@ -696,7 +696,13 @@
                         const scrollTop = $(this).scrollTop();
                         if (scrollTop > 0)
                                 localStorage.setItem('scrollTop', scrollTop);
-                })
+                });
+
+                $(window).on('load', function () {
+                        const scrollTop = localStorage.getItem('scrollTop');
+                        if (scrollTop && !location.origin.includes('file:'))
+                                $(window).scrollTop(parseInt(scrollTop));
+                });
         </script>
 </body>
 
