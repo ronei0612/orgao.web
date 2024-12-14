@@ -439,6 +439,7 @@ const elements = {
     alertModalMessage: document.getElementById('alertModalMessage'),
     cancelButtonAlert: document.getElementById('cancelButtonAlert'),
     simButtonAlert: document.getElementById('simButtonAlert'),
+    naoButtonAlert: document.getElementById('naoButtonAlert'),
     okButtonAlert: document.getElementById('okButtonAlert'),
     oracoesEucaristicasLink: document.getElementById('oracoesEucaristicasLink'),
     missaOrdinarioLink: document.getElementById('missaOrdinarioLink'),
@@ -538,24 +539,38 @@ elements.saveNewItemButton.addEventListener("click", () => {
     $('#itemModal').modal('hide');
 });
 
-elements.saveButton.addEventListener('click', function () {
+elements.saveButton.addEventListener('click', () => {
     const saveContent = elements.editTextarea.value;
 
     if (saveContent) {
         let saveName = elements.searchModalLabel.textContent;
         if (saveName) {
-            salvarSave(saveName);
+            if (checkSelectText(elements.savesSelect, saveName)) {
+                elements.alertModalMessage.textContent = `Já existe "${saveName}". Deseja sobrescrever?`;
+                elements.alertModalLabel.textContent = 'Atenção!';
+                elements.simButtonAlert.textContent = '✓ Sim';
+                elements.simButtonAlert.classList.remove('d-none');
+                elements.naoButtonAlert.classList.remove('d-none');
+                elements.okButtonAlert.classList.add('d-none');
+                elements.cancelButtonAlert.classList.add('d-none');
 
-            elements.alertModalMessage.textContent = `"${saveName}" salvo com sucesso!`;
-            elements.alertModalLabel.textContent = 'Cifras';
-            elements.simButtonAlert.classList.add('d-none');
-            elements.okButtonAlert.classList.remove('d-none');
-            elements.cancelButtonAlert.classList.add('d-none');
+                $('#alertModal').modal('show');
+            }
+            else {
+                salvarSave(saveName);
 
-            $('#alertModal').modal('show');
+                elements.alertModalMessage.textContent = `"${saveName}" salvo com sucesso!`;
+                elements.alertModalLabel.textContent = 'Música';
+                elements.simButtonAlert.classList.add('d-none');
+                elements.naoButtonAlert.classList.add('d-none');
+                elements.okButtonAlert.classList.remove('d-none');
+                elements.cancelButtonAlert.classList.add('d-none');
+
+                $('#alertModal').modal('show');
+            }
         }
 
-        fullScreen();
+        //fullScreen();
     } else {
         elements.editTextarea.focus();
     }
@@ -727,7 +742,17 @@ elements.playButton.addEventListener('click', () => {
 
 elements.simButtonAlert.addEventListener('click', () => {
     saveName = elements.savesSelect.value;
-    deletarSave(saveName);
+
+    if (elements.alertModalMessage.textContent.includes('sobrescrever')) {
+        salvarSave(saveName);
+    }
+    else {
+        deletarSave(saveName);
+    }
+});
+
+elements.naoButtonAlert.addEventListener('click', () => {
+    $('#itemModal').modal('show');
 });
 
 document.addEventListener('mousedown', fullScreen);
@@ -758,6 +783,16 @@ $('#searchModal').on('shown.bs.modal', () => {
 $('#alertModal').on('shown.bs.modal', () => {
     elements.itemNameInput.focus();
 });
+
+function checkSelectText(selectElement, text) {
+    const options = selectElement.options;
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].text.includes(text)) {
+        return true;
+      }
+    }
+    return false;
+}
 
 function hideEditDeleteButtons() {
     if (elements.deleteSavesSelect.classList.contains('show')) {
@@ -870,7 +905,7 @@ function exibirListaSaves(saveSelected) {
     elements.deleteSavesSelect.classList.add('d-none');
     elements.editSavesSelect.classList.add('d-none');
 
-    elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Cifra...</option>';
+    elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Música...</option>';
     elements.savesSelect.style.color = '';
 
     let saves = localStorage.getItem('saves');            
@@ -924,7 +959,7 @@ function deletarSave(saveName) {
     let saves = JSON.parse(localStorage.getItem('saves') || '{}');
     delete saves[saveName];
     localStorage.setItem('saves', JSON.stringify(saves));
-    elements.searchModalLabel.textContent = 'Cifras';
+    elements.searchModalLabel.textContent = 'Música';
     elements.iframeCifra.contentDocument.body.innerHTML = '';
     elements.tomSelect.innerHTML = '';
 
@@ -1002,7 +1037,7 @@ async function choseLink(urlLink, text) {
         if (data.success) {
             mostrarTextoCifrasCarregado(null, data.message);
 
-            if (elements.searchModalLabel.textContent === 'Cifras') {
+            if (elements.searchModalLabel.textContent === 'Música') {
                 elements.searchModalLabel.textContent = text.split(' - ')[0];
             }
             elements.editTextarea.classList.remove('d-none');
@@ -1139,6 +1174,7 @@ function salvarSave(newSaveName, saveContent) {
             elements.alertModalLabel.textContent = 'Atenção!';
             elements.okButtonAlert.classList.remove('d-none');
             elements.simButtonAlert.classList.add('d-none');
+            elements.naoButtonAlert.classList.add('d-none');
             elements.cancelButtonAlert.classList.add('d-none');
 
             $('#alertModal').modal('show');
