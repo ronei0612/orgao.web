@@ -689,12 +689,8 @@ elements.itemNameInput.addEventListener('keydown', (event) => {
 });
 
 elements.searchButton.addEventListener('click', () => {
-    if (elements.searchInput.value) {
-        elements.savesSelect.selectedIndex = 0;
-        elements.savesSelect.style.color = '';
-        elements.searchModalLabel.textContent = 'Cifras';
+    if (elements.searchInput.value)
         searchMusic();
-    }
 });
 
 elements.liturgiaDiariaLink.addEventListener('click', () => {
@@ -751,6 +747,9 @@ $('#itemModal').on('shown.bs.modal', () => {
 });
 
 $('#searchModal').on('shown.bs.modal', () => {
+    if (elements.savesSelect.value !== 'all')
+        elements.searchModalLabel.textContent = elements.savesSelect.value;
+
     elements.searchInput.focus();
     elements.searchResultsList.classList.add('d-none');
     elements.editTextarea.classList.remove('d-none');
@@ -953,8 +952,10 @@ async function searchMusic() {
             body: JSON.stringify({ texto: textoPesquisa }),
         });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
         const data = await response.json();
         if (data.success) {
+            elements.searchModalLabel.textContent = 'Cifras';
             const { lista: titles, links } = data; // destructuring
             const max = 5;
             if (titles.length > 0) {
@@ -1001,7 +1002,7 @@ async function choseLink(urlLink, text) {
         const data = await response.json();
         if (data.success) {
             mostrarTextoCifrasCarregado(data.tom, data.message);                    
-            elements.searchModalLabel.textContent = text;
+            elements.searchModalLabel.textContent = text.split(' - ')[0];
             elements.editTextarea.classList.remove('d-none');
             elements.startButton.classList.remove('d-none');
             elements.addButton.classList.remove('d-none');
