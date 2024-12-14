@@ -658,12 +658,18 @@
     <p class="c11 c5">Amém.</p>
     <p class="c6 c1"></p>
 
+        <script src="./assets/js/jquery.min.js"></script>
 <script>
     const botao = document.getElementById('btnLiturgiaDiaria');
 
     botao.addEventListener('click', () => {
         window.parent.postMessage('mostrarLiturgiaDiaria', '*');
     });
+
+                $(window).scroll(function () {
+                        const scrollTop = $(this).scrollTop();
+                        localStorage.setItem('scrollTop', scrollTop);
+                })
 </script>
 </body>
 

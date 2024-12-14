@@ -647,7 +647,6 @@ elements.savesSelect.addEventListener('change', () => {
     elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(texto);
     elements.iframeCifra.classList.remove('d-none');
     elements.liturgiaDiariaFrame.classList.add('d-none');
-    localStorage.setItem('scrollTop', elements.santamissaFrame.scrollTop);
     elements.santamissaFrame.classList.add('d-none');
     cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
     
@@ -699,7 +698,6 @@ elements.searchButton.addEventListener('click', () => {
 });
 
 elements.liturgiaDiariaLink.addEventListener('click', () => {
-    localStorage.setItem('scrollTop', elements.santamissaFrame.scrollTop);
     elements.santamissaFrame.classList.add('d-none');
     elements.iframeCifra.classList.add('d-none');
     elements.liturgiaDiariaFrame.classList.remove('d-none');
