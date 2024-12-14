@@ -72,6 +72,7 @@ class CifraPlayer {
     processarAcorde(palavra, cifraNum) {
         let acorde = palavra;
         let baixo = '';
+        let agudo = '';
     
         if (acorde.includes('/')) {
             [acorde, baixo] = acorde.split('/');
@@ -82,6 +83,14 @@ class CifraPlayer {
             }
             acorde = this.getAcorde(acorde);
             acorde = this.acordesSustenidosBemol.includes(baixo) ? `${acorde}/${baixo}` : palavra;
+        } else if (acorde.includes('(')) {
+            [acorde, agudo] = acorde.split('(');
+            agudo = agudo.replace(')', '');
+    
+            while (!this.notasAcordes.includes(acorde) && acorde) {
+                acorde = acorde.slice(0, -1);
+            }
+            acorde = this.acordesSustenidosBemol.includes(agudo) ? `${acorde}(${agudo})` : palavra;
         } else {
             while (!this.notasAcordes.includes(acorde) && acorde) {
                 acorde = acorde.slice(0, -1);
@@ -89,8 +98,8 @@ class CifraPlayer {
             acorde = this.getAcorde(acorde);
         }
     
-        return this.notasAcordes.includes(acorde.split('/')[0]) ? `<b id="cifra${cifraNum}">${acorde}</b>` : palavra;
-    }    
+        return this.notasAcordes.includes(acorde.split('/')[0].split('(')[0]) ? `<b id="cifra${cifraNum}">${acorde}</b>` : palavra;
+    }
 
     getAcorde(acorde) {
         return this.acordesMap[acorde] || acorde;
@@ -322,6 +331,12 @@ class CifraPlayer {
         }
     
         let [notaPrincipal, baixo] = acorde.split('/');
+        
+        let agudo = acorde.includes('(') ? acorde.split('(')[1].replace(')', '').toLowerCase() : '';
+        if (agudo) {
+            notaPrincipal = acorde.split('(')[0].toLowerCase();
+        }
+    
         const notas = this.notasAcordesJson[notaPrincipal];
         if (!notas) return;
     
@@ -330,15 +345,27 @@ class CifraPlayer {
         this.adicionarSomAoGrupo('orgao', baixo, 'grave');
         this.adicionarSomAoGrupo('strings', baixo, 'grave');
     
-        notas.forEach(nota => {
+        for (const nota of notas) {
             this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'), 'baixo');
             this.adicionarSomAoGrupo('strings', nota.replace('#', '_'), 'baixo');
     
             if (this.elements.notesButton.classList.contains('pressed')) {
-                this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'));
-                this.adicionarSomAoGrupo('strings', nota.replace('#', '_'));
+                if (agudo && nota === agudo) {
+                    this.adicionarSomAoGrupo('orgao', agudo.replace('#', '_'));
+                    this.adicionarSomAoGrupo('strings', agudo.replace('#', '_'));
+                    break;
+                }
+                else {
+                    this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'));
+                    this.adicionarSomAoGrupo('strings', nota.replace('#', '_'));
+                }
             }
-        });
+            else if (agudo && nota === agudo) {
+                this.adicionarSomAoGrupo('orgao', agudo.replace('#', '_'));
+                this.adicionarSomAoGrupo('strings', agudo.replace('#', '_'));
+                break;
+            }
+        }
     
         setTimeout(() => {
             if (!this.parado) {
@@ -348,7 +375,7 @@ class CifraPlayer {
                 } catch { }
             }
         }, 60);
-    }    
+    }
 
     getNomeArquivoAudio(nota) {
         return this.acordeMap[nota] || nota;
@@ -756,6 +783,13 @@ $('#searchModal').on('shown.bs.modal', () => {
     elements.editTextarea.classList.remove('d-none');
 });
 
+$('#searchModal').on('hidden.bs.modal', () => {
+    elements.iframeCifra.contentDocument.scrollIntoView
+    primeiraCifra.scrollIntoView({behavior: 'smooth'});
+    //elements.iframeCifra.contentDocument.body.scrollIntoView({behavior: 'smooth'});
+    elements.editTextarea.classList.add('d-none');
+});
+
 $('#alertModal').on('shown.bs.modal', () => {
     elements.itemNameInput.focus();
 });
@@ -1078,7 +1112,7 @@ const aplicarModoEscuroIframe = () => {
         elements.santamissaFrame.src = './santamissa.html';
         elements.santamissaFrame.style.backgroundColor = '#FFFFFF';
     }
-    
+
     const scrollTop = localStorage.getItem('scrollTop');
     if (scrollTop && !location.origin.includes('file:')) {
         elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
