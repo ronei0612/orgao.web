@@ -1100,12 +1100,15 @@ const aplicarModoEscuroIframe = () => {
     elements.liturgiaDiariaFrame.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#e0dcb5' : '#FFFFFF'; //f5f5dc
     
     if (document.body.classList.contains('dark-mode')) {
-        elements.santamissaFrame.src = './santamissaDark.html';
+        //elements.santamissaFrame.src = './santamissaDark.html';
+        //elements.santamissaFrame.contentDocument.body.style.color = '#000'
         elements.santamissaFrame.style.backgroundColor = '#101524';
+        elements.santamissaFrame.style.color = '#FFFFFF';
     }
     else {
-        elements.santamissaFrame.src = './santamissa.html';
+        //elements.santamissaFrame.src = './santamissa.html';
         elements.santamissaFrame.style.backgroundColor = '#FFFFFF';
+        elements.santamissaFrame.style.color = '#000000';
     }
     
     const scrollTop = localStorage.getItem('scrollTop');
