@@ -1101,10 +1101,14 @@ const aplicarModoEscuroIframe = () => {
     
     if (document.body.classList.contains('dark-mode')) {
         elements.santamissaFrame.style.backgroundColor = '#101524';
+
+        if (!location.origin.includes('file:'))
         elements.santamissaFrame.contentDocument.body.style.color = '#FFFFFF';
     }
     else {
         elements.santamissaFrame.style.backgroundColor = '#FFFFFF';
+
+        if (!location.origin.includes('file:'))
         elements.santamissaFrame.contentDocument.body.style.color = '#000000';
     }
     
