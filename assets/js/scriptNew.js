@@ -423,6 +423,7 @@ const elements = {
     bpmValue: document.getElementById('bpmValue'),
     iframeCifra: document.getElementById('iframeCifra'),
     santamissaFrame: document.getElementById('santamissaFrame'),
+    oracoesFrame: document.getElementById('oracoesFrame'),
     prevButton: document.getElementById('prevButton'),
     nextButton: document.getElementById('nextButton'),
     darkModeToggle: document.getElementById('darkModeToggle'),
@@ -710,6 +711,7 @@ elements.searchButton.addEventListener('click', () => {
 });
 
 elements.liturgiaDiariaLink.addEventListener('click', () => {
+    elements.oracoesFrame.classList.add('d-none');
     elements.santamissaFrame.classList.add('d-none');
     elements.iframeCifra.classList.add('d-none');
     elements.liturgiaDiariaFrame.classList.remove('d-none');
@@ -717,12 +719,24 @@ elements.liturgiaDiariaLink.addEventListener('click', () => {
     $('#optionsModal').modal('hide');
 });
 
+elements.oracoesLink.addEventListener('click', () => {
+    elements.oracoesFrame.classList.remove('d-none');
+    elements.santamissaFrame.classList.add('d-none');
+    elements.iframeCifra.classList.add('d-none');
+    elements.liturgiaDiariaFrame.classList.add('d-none');
+    elements.savesSelect.selectedIndex = 0;
+    $('#optionsModal').modal('hide');
+});
+
 elements.missaOrdinarioLink.addEventListener('click', () => {
     elements.santamissaFrame.classList.remove('d-none');
+
     const scrollTop = localStorage.getItem('scrollTop');
     if (scrollTop && !location.origin.includes('file:')) {
         elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
     }
+
+    elements.oracoesFrame.classList.add('d-none');
     elements.liturgiaDiariaFrame.classList.add('d-none');
     elements.iframeCifra.classList.add('d-none');
     elements.savesSelect.selectedIndex = 0;
@@ -1100,14 +1114,20 @@ const aplicarModoEscuroIframe = () => {
     elements.liturgiaDiariaFrame.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#e0dcb5' : '#FFFFFF'; //f5f5dc
     
     if (document.body.classList.contains('dark-mode')) {
-        //elements.santamissaFrame.src = './santamissaDark.html';
-        elements.santamissaFrame.style.backgroundColor = '#101524';
-        elements.santamissaFrame.contentDocument.body.style.color = '#FFFFFF';
+        if (!location.origin.includes('file:')) {
+            elements.santamissaFrame.style.backgroundColor = '#101524';
+            elements.oracoesFrame.style.backgroundColor = '#101524';
+            elements.santamissaFrame.contentDocument.body.style.color = '#FFFFFF';
+            elements.oracoesFrame.contentDocument.body.style.color = '#FFFFFF';
+        }
     }
     else {
-        //elements.santamissaFrame.src = './santamissa.html';
-        elements.santamissaFrame.style.backgroundColor = '#FFFFFF';
-        elements.santamissaFrame.contentDocument.body.style.color = '#000000';
+        if (!location.origin.includes('file:')) {
+            elements.santamissaFrame.style.backgroundColor = '#FFFFFF';
+            elements.oracoesFrame.style.backgroundColor = '#FFFFFF';
+            elements.santamissaFrame.contentDocument.body.style.color = '#000000';
+            elements.oracoesFrame.contentDocument.body.style.color = '#000000';
+        }
     }
     
     const scrollTop = localStorage.getItem('scrollTop');
