@@ -37,10 +37,10 @@
   font-weight: 400;
   text-decoration: none;
   vertical-align: baseline;
-  font-size: 12pt;
+  font-size: 13pt;
   font-family: "Arial";
   font-style: normal;
-  height: 11pt
+  height: 12pt
 }
 
 p {
@@ -51,7 +51,7 @@ p {
   widows: 2;
   text-align: left;
   margin: 0;
-  font-size: 12pt;
+  font-size: 13pt;
   font-family: "Arial"
 }
 
@@ -85,7 +85,7 @@ h2 {
 h3 {
   color: #9c7b3e;
   font-weight: 700;
-  font-size: 14pt;
+  font-size: 16pt;
   padding-bottom: 0pt;
   font-family: "Arial";
   line-height: 1.15;
