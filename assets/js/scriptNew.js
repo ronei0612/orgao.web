@@ -513,6 +513,7 @@ elements.santamissaFrame.addEventListener('load', () => {
         if (event.data === 'mostrarLiturgiaDiaria') {
             elements.liturgiaDiariaFrame.classList.remove('d-none');
             elements.santamissaFrame.classList.add('d-none');
+            elements.oracoesFrame.classList.add('d-none');
         }
     });
 });
@@ -589,6 +590,7 @@ elements.startButton.addEventListener('click', () => {
         elements.iframeCifra.classList.remove('d-none');
         elements.liturgiaDiariaFrame.classList.add('d-none');
         elements.santamissaFrame.classList.add('d-none');
+        elements.oracoesFrame.classList.add('d-none');
         cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
         
         cifraPlayer.indiceAcorde = 0;
@@ -665,6 +667,7 @@ elements.savesSelect.addEventListener('change', () => {
     elements.iframeCifra.classList.remove('d-none');
     elements.liturgiaDiariaFrame.classList.add('d-none');
     elements.santamissaFrame.classList.add('d-none');
+    elements.oracoesFrame.classList.add('d-none');
     cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
     
     cifraPlayer.indiceAcorde = 0;
@@ -975,10 +978,8 @@ async function searchMusic() {
     elements.editTextarea.classList.add('d-none');
     elements.searchIcon.classList.add('d-none');
     elements.spinner.classList.remove('d-none');
-    elements.savesList.classList.add('d-none');
     elements.saveButton.classList.add('d-none');
     elements.startButton.classList.add('d-none');
-    elements.addButton.classList.add('d-none');
     elements.searchResultsList.classList.remove('d-none');
     elements.searchResultsList.innerHTML = '';
     elements.searchButton.disabled = true;
@@ -1221,6 +1222,7 @@ function salvarSave(newSaveName, saveContent) {
             elements.iframeCifra.classList.remove('d-none');
             elements.liturgiaDiariaFrame.classList.add('d-none');
             elements.santamissaFrame.classList.add('d-none');
+            elements.oracoesFrame.classList.add('d-none');
             cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
         }
         
