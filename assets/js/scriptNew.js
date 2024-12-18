@@ -155,7 +155,7 @@ class CifraPlayer {
             this.tomAtual = novoTom;
 
             const cifra = this.elements.iframeCifra.contentDocument.body.innerHTML;
-            salvarSave(this.elements.savesSelect.value, cifra);
+            //salvarSave(this.elements.savesSelect.value, cifra);
             mostrarTextoCifrasCarregado(null, cifra);
 
             if (this.indiceAcorde > 0) {
