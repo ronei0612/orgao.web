@@ -359,7 +359,6 @@ class CifraPlayer {
         nota = this.getNomeArquivoAudio(nota);
         const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
         if (this.acordes[key]) {
-		this.acordes[key].volume = 0.1;
             this.acordeGroup.addSound(this.acordes[key]);
         }
     }
