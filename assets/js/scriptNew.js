@@ -329,15 +329,18 @@ class CifraPlayer {
         baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
     
         this.adicionarSomAoGrupo('orgao', baixo, 'grave');
-        this.adicionarSomAoGrupo('strings', baixo, 'grave', 0.5);
+        if (!this.elements.notesButton.classList.contains('notaSolo'))
+            this.adicionarSomAoGrupo('strings', baixo, 'grave', 0.5);
     
         notas.forEach(nota => {
             this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'), 'baixo');
-            this.adicionarSomAoGrupo('strings', nota.replace('#', '_'), 'baixo', 0.5);
+            if (!this.elements.notesButton.classList.contains('notaSolo'))
+                this.adicionarSomAoGrupo('strings', nota.replace('#', '_'), 'baixo', 0.5);
     
             if (this.elements.notesButton.classList.contains('pressed')) {
                 this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'));
-                this.adicionarSomAoGrupo('strings', nota.replace('#', '_'));
+                if (!this.elements.notesButton.classList.contains('notaSolo'))
+                    this.adicionarSomAoGrupo('strings', nota.replace('#', '_'));
             }
         });
     
@@ -493,6 +496,10 @@ const camposHarmonicos = {
     'Abm': ['Abm', 'Cb', 'Dbm', 'Ebm', 'Fb', 'Gb'],
     'A#m': ['A#m', 'D', 'E#m', 'F#m', 'G', 'A']
 };
+
+const holdTime = 1000;
+var held = false;
+var timer;
 
 window.onerror = function (message, source, lineno, colno, error) {
 	alert("Erro!\n" + message + '\nArquivo: ' + source + '\nLinha: ' + lineno + '\nPosicao: ' + colno);
@@ -775,6 +782,32 @@ elements.simButtonAlert.addEventListener('click', () => {
 
 elements.naoButtonAlert.addEventListener('click', () => {
     $('#itemModal').modal('show');
+});
+
+elements.notesButton.addEventListener('mousedown', function() {
+    held = false;
+    timer = setTimeout(function() {
+        held = true;
+        const icon = notesButton.querySelector('i');
+        icon.classList.remove('bi-music-note-beamed');
+        icon.classList.add('bi-music-note');
+        elements.notesButton.classList.remove('pressed');
+        elements.notesButton.classList.add('notaSolo');
+    }, holdTime);
+});
+
+elements.notesButton.addEventListener('mouseup', function() {
+    clearTimeout(timer);
+    if (!held) {
+        var icon = notesButton.querySelector('i');
+        icon.classList.remove('bi-music-note');
+        icon.classList.add('bi-music-note-beamed');
+        elements.notesButton.classList.remove('notaSolo');
+    }
+});
+
+elements.notesButton.addEventListener('mouseleave', function() {
+    clearTimeout(timer);
 });
 
 document.addEventListener('mousedown', fullScreen);
@@ -1075,7 +1108,7 @@ const togglePressedState = (event) => {
     if (action === 'notes') {
         if (elements.notesButton.classList.contains('pressed')) {
             elements.notesButton.classList.remove('pressed');
-        } else {
+        } else if (!elements.notesButton.classList.contains('notaSolo')) {
             elements.notesButton.classList.add('pressed');
         }
     } else {
