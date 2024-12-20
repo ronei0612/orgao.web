@@ -36,9 +36,10 @@ class CifraPlayer {
         const linhas = texto.split('\n');
         let cifraNum = 1;
         const temPalavra = /[a-zA-Z]{3,}/;
+        const temColchetes = /\[.*?\]/;
     
         const linhasDestacadas = linhas.map(linha => {
-            if (linha && !temPalavra.test(linha)) {
+            if (linha && (!temPalavra.test(linha) || temColchetes.test(linha))) {
                 const acordes = linha.split(/\s+/);
                 const espacos = linha.match(/\s+/g) || [];
                 const linhaProcessada = acordes.map((palavra, index) => {
