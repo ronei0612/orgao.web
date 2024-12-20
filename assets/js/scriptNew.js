@@ -328,11 +328,11 @@ class CifraPlayer {
         baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
     
         this.adicionarSomAoGrupo('orgao', baixo, 'grave');
-        this.adicionarSomAoGrupo('strings', baixo, 'grave');
+        this.adicionarSomAoGrupo('strings', baixo, 'grave', 0.5);
     
         notas.forEach(nota => {
             this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'), 'baixo');
-            this.adicionarSomAoGrupo('strings', nota.replace('#', '_'), 'baixo');
+            this.adicionarSomAoGrupo('strings', nota.replace('#', '_'), 'baixo', 0.5);
     
             if (this.elements.notesButton.classList.contains('pressed')) {
                 this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'));
@@ -354,11 +354,14 @@ class CifraPlayer {
         return this.acordeMap[nota] || nota;
     }
 
-    adicionarSomAoGrupo(instrumento, nota, oitava = '') {
+    adicionarSomAoGrupo(instrumento, nota, oitava = '', volume) {
         nota = nota.toLowerCase();
         nota = this.getNomeArquivoAudio(nota);
         const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
         if (this.acordes[key]) {
+            if (volume) {
+                this.acordes[key].volume = volume;
+            }
             this.acordeGroup.addSound(this.acordes[key]);
         }
     }
