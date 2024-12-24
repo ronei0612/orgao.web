@@ -269,6 +269,12 @@ class CifraPlayer {
             elemento.classList.remove('cifraSelecionada');
         });
 
+        
+        const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
+        acordeButtons.forEach(acordeButton => {
+            acordeButton.classList.remove('pressed');
+        });
+
         if (this.indiceAcorde > 0) {
             this.indiceAcorde--;
         }
@@ -460,7 +466,9 @@ const elements = {
     acorde3: document.getElementById('acorde3'),
     acorde4: document.getElementById('acorde4'),
     acorde5: document.getElementById('acorde5'),
-    acorde6: document.getElementById('acorde6')
+    acorde6: document.getElementById('acorde6'),
+    acorde7: document.getElementById('acorde7'),
+    acorde8: document.getElementById('acorde8')
 };
 
 const cifraPlayer = new CifraPlayer(elements);
@@ -1119,10 +1127,7 @@ const togglePressedState = (event) => {
         }
     } else {        
         if (action === 'acorde') {
-            const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
-            acordeButtons.forEach(acordeButton => {
-                acordeButton.classList.remove('pressed');
-            });
+            cifraPlayer.pararReproducao();
             cifraPlayer.parado = false;
             cifraPlayer.tocarAcorde(button.value);
         }
@@ -1300,4 +1305,6 @@ function salvarSave(newSaveName, saveContent) {
     elements.acorde4.addEventListener(event, togglePressedState);
     elements.acorde5.addEventListener(event, togglePressedState);
     elements.acorde6.addEventListener(event, togglePressedState);
+    elements.acorde7.addEventListener(event, togglePressedState);
+    elements.acorde8.addEventListener(event, togglePressedState);
 });
