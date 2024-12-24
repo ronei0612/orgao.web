@@ -1123,12 +1123,13 @@ const togglePressedState = (event) => {
             acordeButtons.forEach(acordeButton => {
                 acordeButton.classList.remove('pressed');
             });
+            cifraPlayer.parado = false;
             cifraPlayer.tocarAcorde(button.value);
         }
         button.classList.remove('pressed');
         setTimeout(() => button.classList.add('pressed'), 100);
 
-        if (action === 'play') {
+        if (action === 'play' || action === 'acorde') {
             setTimeout(() => button.classList.add('pulse'), 100);
             elements.stopButton.classList.remove('pulse');
             elements.stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
