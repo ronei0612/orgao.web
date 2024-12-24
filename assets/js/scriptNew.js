@@ -1117,7 +1117,14 @@ const togglePressedState = (event) => {
         } else if (!elements.notesButton.classList.contains('notaSolo')) {
             elements.notesButton.classList.add('pressed');
         }
-    } else {
+    } else {        
+        if (action === 'acorde') {
+            const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
+            acordeButtons.forEach(acordeButton => {
+                acordeButton.classList.remove('pressed');
+            });
+            cifraPlayer.tocarAcorde(button.value);
+        }
         button.classList.remove('pressed');
         setTimeout(() => button.classList.add('pressed'), 100);
 
@@ -1126,12 +1133,6 @@ const togglePressedState = (event) => {
             elements.stopButton.classList.remove('pulse');
             elements.stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
             elements.playButton.classList.remove('pulse');
-        } else if (action === 'acorde') {
-            const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
-            acordeButtons.forEach(acordeButton => {
-                acordeButton.classList.remove('pressed');
-            });
-            button.classList.add('pressed');
         } else {
             if (action === 'stop' && elements.stopButton.innerHTML.includes('bi-search')) {
                 $('#searchModal').modal('show');
