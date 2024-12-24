@@ -269,6 +269,12 @@ class CifraPlayer {
             elemento.classList.remove('cifraSelecionada');
         });
 
+        
+        const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
+        acordeButtons.forEach(acordeButton => {
+            acordeButton.classList.remove('pressed');
+        });
+
         if (this.indiceAcorde > 0) {
             this.indiceAcorde--;
         }
@@ -454,7 +460,17 @@ const elements = {
     liturgiaDiariaLink: document.getElementById('liturgiaDiariaLink'),
     oracoesLink: document.getElementById('oracoesLink'),
     liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame'),
-    santamissaFrame: document.getElementById('santamissaFrame')
+    santamissaFrame: document.getElementById('santamissaFrame'),
+    acorde1: document.getElementById('acorde1'),
+    acorde2: document.getElementById('acorde2'),
+    acorde3: document.getElementById('acorde3'),
+    acorde4: document.getElementById('acorde4'),
+    acorde5: document.getElementById('acorde5'),
+    acorde6: document.getElementById('acorde6'),
+    acorde7: document.getElementById('acorde7'),
+    acorde8: document.getElementById('acorde8'),
+    acorde9: document.getElementById('acorde9'),
+    acorde10: document.getElementById('acorde10')
 };
 
 const cifraPlayer = new CifraPlayer(elements);
@@ -594,6 +610,7 @@ elements.darkModeToggle.addEventListener('change', toggleDarkMode);
 
 elements.startButton.addEventListener('click', () => {
     if (elements.editTextarea.value) {
+        toggleButtons();
         const tom = descobrirTom(elements.editTextarea.value);
         mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
         const texto = elements.editTextarea.value;
@@ -665,6 +682,7 @@ elements.increaseTom.addEventListener('click', () => {
 });
 
 elements.savesSelect.addEventListener('change', () => {
+    toggleButtons();
     const selectItem = elements.savesSelect.value;
     const saves = JSON.parse(localStorage.getItem('saves'));
     elements.editTextarea.value = saves[selectItem];
@@ -1111,11 +1129,16 @@ const togglePressedState = (event) => {
         } else if (!elements.notesButton.classList.contains('notaSolo')) {
             elements.notesButton.classList.add('pressed');
         }
-    } else {
+    } else {        
+        if (action === 'acorde') {
+            cifraPlayer.pararReproducao();
+            cifraPlayer.parado = false;
+            cifraPlayer.tocarAcorde(button.value);
+        }
         button.classList.remove('pressed');
         setTimeout(() => button.classList.add('pressed'), 100);
 
-        if (action === 'play') {
+        if (action === 'play' || action === 'acorde') {
             setTimeout(() => button.classList.add('pulse'), 100);
             elements.stopButton.classList.remove('pulse');
             elements.stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
@@ -1276,8 +1299,35 @@ function salvarSave(newSaveName, saveContent) {
     }
 }
 
+function toggleButtons() {
+    elements.playButton.classList.toggle('d-none');
+    elements.notesButton.classList.toggle('d-none');
+    elements.nextButton.classList.toggle('d-none');
+    elements.prevButton.classList.toggle('d-none');
+    elements.acorde1.classList.toggle('d-none');
+    elements.acorde2.classList.toggle('d-none');
+    elements.acorde3.classList.toggle('d-none');
+    elements.acorde4.classList.toggle('d-none');
+    elements.acorde5.classList.toggle('d-none');
+    elements.acorde6.classList.toggle('d-none');
+    elements.acorde7.classList.toggle('d-none');
+    elements.acorde8.classList.toggle('d-none');
+    elements.acorde9.classList.toggle('d-none');
+    elements.acorde10.classList.toggle('d-none');
+}
+
 ['mousedown'].forEach(event => {
     elements.playButton.addEventListener(event, togglePressedState);
     elements.notesButton.addEventListener(event, togglePressedState);
     elements.stopButton.addEventListener(event, togglePressedState);
+    elements.acorde1.addEventListener(event, togglePressedState);
+    elements.acorde2.addEventListener(event, togglePressedState);
+    elements.acorde3.addEventListener(event, togglePressedState);
+    elements.acorde4.addEventListener(event, togglePressedState);
+    elements.acorde5.addEventListener(event, togglePressedState);
+    elements.acorde6.addEventListener(event, togglePressedState);
+    elements.acorde7.addEventListener(event, togglePressedState);
+    elements.acorde8.addEventListener(event, togglePressedState);
+    elements.acorde9.addEventListener(event, togglePressedState);
+    elements.acorde10.addEventListener(event, togglePressedState);
 });
