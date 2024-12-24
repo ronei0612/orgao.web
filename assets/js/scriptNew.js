@@ -454,7 +454,13 @@ const elements = {
     liturgiaDiariaLink: document.getElementById('liturgiaDiariaLink'),
     oracoesLink: document.getElementById('oracoesLink'),
     liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame'),
-    santamissaFrame: document.getElementById('santamissaFrame')
+    santamissaFrame: document.getElementById('santamissaFrame'),
+    acorde1: document.getElementById('acorde1'),
+    acorde2: document.getElementById('acorde2'),
+    acorde3: document.getElementById('acorde3'),
+    acorde4: document.getElementById('acorde4'),
+    acorde5: document.getElementById('acorde5'),
+    acorde6: document.getElementById('acorde6')
 };
 
 const cifraPlayer = new CifraPlayer(elements);
@@ -1120,6 +1126,12 @@ const togglePressedState = (event) => {
             elements.stopButton.classList.remove('pulse');
             elements.stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
             elements.playButton.classList.remove('pulse');
+        } else if (action === 'acorde') {
+            const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
+            acordeButtons.forEach(acordeButton => {
+                acordeButton.classList.remove('pressed');
+            });
+            button.classList.add('pressed');
         } else {
             if (action === 'stop' && elements.stopButton.innerHTML.includes('bi-search')) {
                 $('#searchModal').modal('show');
@@ -1280,4 +1292,10 @@ function salvarSave(newSaveName, saveContent) {
     elements.playButton.addEventListener(event, togglePressedState);
     elements.notesButton.addEventListener(event, togglePressedState);
     elements.stopButton.addEventListener(event, togglePressedState);
+    elements.acorde1.addEventListener(event, togglePressedState);
+    elements.acorde2.addEventListener(event, togglePressedState);
+    elements.acorde3.addEventListener(event, togglePressedState);
+    elements.acorde4.addEventListener(event, togglePressedState);
+    elements.acorde5.addEventListener(event, togglePressedState);
+    elements.acorde6.addEventListener(event, togglePressedState);
 });

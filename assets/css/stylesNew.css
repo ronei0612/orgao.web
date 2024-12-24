@@ -60,15 +60,17 @@ body.dark-mode .modal-content {
   margin-right: 8px;
 }
 
+.btn-custom[data-action="acorde"] {
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #9988B4;
+}
+
 .btn-custom {
   border-radius: 50%;
   color: white;
   width: 55px;
   height: 55px;
-  /* font-size: 24px; */
-  font-size: 18px;
-  font-weight: bold;
-  /*  */
   border: none;
   transition: background-color .3s, box-shadow .3s;
   outline: 0;
@@ -76,13 +78,14 @@ body.dark-mode .modal-content {
   margin: 8px;
 }
 
-.btn-custom[data-action="play"] {
-  background-color: #9988B4;
-}
-
-.btn-custom[data-action="play"].pressed {
+.btn-custom.pressed {
   background-color: #8A2BE2;
   box-shadow: 0 0 10px #8A2BE2;
+}
+
+.btn-custom[data-action="play"] {
+  background-color: #9988B4;
+  font-size: 24px;
 }
 
 .btn-custom[data-action="play"].pulse {
@@ -91,20 +94,12 @@ body.dark-mode .modal-content {
 
 .btn-custom[data-action="notes"] {
   background-color: #9988B4;
-}
-
-.btn-custom[data-action="notes"].pressed {
-  background-color: #8A2BE2;
-  box-shadow: 0 0 10px #8A2BE2;
+  font-size: 24px;
 }
 
 .btn-custom[data-action="stop"] {
   background-color: tomato;
-}
-
-.btn-custom[data-action="stop"].pressed {
-  background-color: #ff4500;
-  box-shadow: 0 0 10px #ff4500;
+  font-size: 24px;
 }
 
 .btn-custom:focus {
