@@ -170,6 +170,24 @@ class CifraPlayer {
         }
     }
 
+    transporTom() {
+        const novoTom = this.elements.tomSelect.value;
+        const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
+        const steps = this.tonsMaiores.indexOf(novoTom) - this.tonsMaiores.indexOf(this.tomAtual);
+
+        acordeButtons.forEach(acordeButton => {
+            const novoAcorde = this.transposeAcorde(acordeButton.value, steps);
+            acordeButton.value = novoAcorde;
+            acordeButton.innerHTML = novoAcorde;
+        });
+
+        this.tomAtual = novoTom;
+
+        if (this.indiceAcorde > 0) {
+            this.indiceAcorde--;
+        }
+    }
+
     transporCifraNoIframe(novoTom) {
         let tons;
         if (this.tonsMaiores.includes(novoTom)) {
@@ -657,7 +675,12 @@ elements.nextButton.addEventListener('click', () => {
 
 elements.tomSelect.addEventListener('change', () => {
     if (elements.tomSelect.value) {
-        cifraPlayer.transposeCifra();
+        if (elements.acorde1.classList.contains('d-none')) {
+            cifraPlayer.transposeCifra();
+        }
+        else {
+            cifraPlayer.transporTom();
+        }
     }
 });
 
@@ -682,24 +705,34 @@ elements.increaseTom.addEventListener('click', () => {
 });
 
 elements.savesSelect.addEventListener('change', () => {
-    toggleButtons();
     const selectItem = elements.savesSelect.value;
-    const saves = JSON.parse(localStorage.getItem('saves'));
-    elements.editTextarea.value = saves[selectItem];
-    elements.searchModalLabel.textContent = selectItem;
-    elements.savesSelect.style.color = 'black';
+    if (selectItem) {
+        if (elements.playButton.classList.contains('d-none')) {
+            toggleButtons();
+        }
+        const saves = JSON.parse(localStorage.getItem('saves'));
+        elements.editTextarea.value = saves[selectItem];
+        elements.searchModalLabel.textContent = selectItem;
+        elements.savesSelect.style.color = 'black';
 
-    const tom = descobrirTom(elements.editTextarea.value);
-    mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
-    const texto = elements.editTextarea.value;
-    elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(texto);
-    elements.iframeCifra.classList.remove('d-none');
-    elements.liturgiaDiariaFrame.classList.add('d-none');
-    elements.santamissaFrame.classList.add('d-none');
-    elements.oracoesFrame.classList.add('d-none');
-    cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
-    
-    cifraPlayer.indiceAcorde = 0;
+        const tom = descobrirTom(elements.editTextarea.value);
+        mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
+        const texto = elements.editTextarea.value;
+        elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(texto);
+        elements.iframeCifra.classList.remove('d-none');
+        elements.liturgiaDiariaFrame.classList.add('d-none');
+        elements.santamissaFrame.classList.add('d-none');
+        elements.oracoesFrame.classList.add('d-none');
+        cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
+        
+        cifraPlayer.indiceAcorde = 0;
+    }
+    else {
+        if (elements.acorde1.classList.contains('d-none')) {
+            toggleButtons();
+        }
+        elements.savesSelect.selectedIndex = 0;
+    }
 })
 
 elements.editSavesSelect.addEventListener('click', () => {
@@ -845,7 +878,7 @@ $('#itemModal').on('shown.bs.modal', () => {
 });
 
 $('#searchModal').on('shown.bs.modal', () => {
-    if (elements.savesSelect.value !== 'all')
+    if (elements.savesSelect.value !== '')
         elements.searchModalLabel.textContent = elements.savesSelect.value;
 
     elements.searchInput.focus();
@@ -968,7 +1001,20 @@ function exibirListaSaves(saveSelected) {
     elements.deleteSavesSelect.classList.add('d-none');
     elements.editSavesSelect.classList.add('d-none');
 
-    elements.savesSelect.innerHTML = '<option selected disabled hidden value="all">Selecione uma Música...</option>';
+    elements.savesSelect.innerHTML = '';
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.text = 'Selecione uma Música...';
+    defaultOption.selected = true;
+    defaultOption.hidden = true;
+    elements.savesSelect.appendChild(defaultOption);
+
+    const emptyOption = document.createElement('option');
+    emptyOption.value = '';
+    emptyOption.text = '';
+    elements.savesSelect.appendChild(emptyOption);
+
     elements.savesSelect.style.color = '';
 
     let saves = localStorage.getItem('saves');            
