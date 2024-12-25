@@ -176,7 +176,10 @@ class CifraPlayer {
         const steps = this.tonsMaiores.indexOf(novoTom) - this.tonsMaiores.indexOf(this.tomAtual);
 
         acordeButtons.forEach(acordeButton => {
-            const novoAcorde = this.transposeAcorde(acordeButton.value, steps);
+            const antesAcorde = acordeButton.value;
+            const antesAcordeSoNota = antesAcorde.replace('m', '');
+            let novoAcorde = this.transposeAcorde(antesAcordeSoNota, steps);
+            novoAcorde = antesAcorde.replace(antesAcordeSoNota, novoAcorde);
             acordeButton.value = novoAcorde;
             acordeButton.innerHTML = novoAcorde;
         });
