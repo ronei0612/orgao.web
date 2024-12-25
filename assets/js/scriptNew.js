@@ -170,6 +170,24 @@ class CifraPlayer {
         }
     }
 
+    transporTom() {
+        const novoTom = this.elements.tomSelect.value;
+        const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
+        const steps = this.tonsMaiores.indexOf(novoTom) - this.tonsMaiores.indexOf(this.tomAtual);
+
+        acordeButtons.forEach(acordeButton => {
+            const novoAcorde = this.transposeAcorde(acordeButton.value, steps);
+            acordeButton.value = novoAcorde;
+            acordeButton.innerHTML = novoAcorde;
+        });
+
+        this.tomAtual = novoTom;
+
+        if (this.indiceAcorde > 0) {
+            this.indiceAcorde--;
+        }
+    }
+
     transporCifraNoIframe(novoTom) {
         let tons;
         if (this.tonsMaiores.includes(novoTom)) {
@@ -657,7 +675,12 @@ elements.nextButton.addEventListener('click', () => {
 
 elements.tomSelect.addEventListener('change', () => {
     if (elements.tomSelect.value) {
-        cifraPlayer.transposeCifra();
+        if (elements.acorde1.classList.contains('d-none')) {
+            cifraPlayer.transposeCifra();
+        }
+        else {
+            cifraPlayer.transporTom();
+        }
     }
 });
 
