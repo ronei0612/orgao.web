@@ -631,7 +631,7 @@ elements.darkModeToggle.addEventListener('change', toggleDarkMode);
 
 elements.startButton.addEventListener('click', () => {
     if (elements.editTextarea.value) {
-        toggleButtons();
+        mostrarBotoesCifras();
         const tom = descobrirTom(elements.editTextarea.value);
         mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
         const texto = elements.editTextarea.value;
@@ -676,13 +676,21 @@ elements.nextButton.addEventListener('click', () => {
     }
 });
 
-elements.tomSelect.addEventListener('change', () => {
+elements.tomSelect.addEventListener('change', (event) => {
     if (elements.tomSelect.value) {
         if (elements.acorde1.classList.contains('d-none')) {
             cifraPlayer.transposeCifra();
         }
         else {
             cifraPlayer.transporTom();
+            debugger;
+            if (!cifraPlayer.parado) {
+                const button = event.currentTarget;
+                cifraPlayer.pararReproducao();
+                cifraPlayer.parado = false;
+                cifraPlayer.tocarAcorde(button.value);
+                button.classList.add('pressed');
+            }
         }
     }
 });
@@ -710,9 +718,7 @@ elements.increaseTom.addEventListener('click', () => {
 elements.savesSelect.addEventListener('change', () => {
     const selectItem = elements.savesSelect.value;
     if (selectItem) {
-        if (elements.playButton.classList.contains('d-none')) {
-            toggleButtons();
-        }
+        mostrarBotoesCifras();
         const saves = JSON.parse(localStorage.getItem('saves'));
         elements.editTextarea.value = saves[selectItem];
         elements.searchModalLabel.textContent = selectItem;
@@ -731,9 +737,7 @@ elements.savesSelect.addEventListener('change', () => {
         cifraPlayer.indiceAcorde = 0;
     }
     else {
-        if (elements.acorde1.classList.contains('d-none')) {
-            toggleButtons();
-        }
+        mostrarBotoesAcordes();
         elements.savesSelect.selectedIndex = 0;
     }
 })
@@ -1348,21 +1352,38 @@ function salvarSave(newSaveName, saveContent) {
     }
 }
 
-function toggleButtons() {
-    elements.playButton.classList.toggle('d-none');
-    elements.notesButton.classList.toggle('d-none');
-    elements.nextButton.classList.toggle('d-none');
-    elements.prevButton.classList.toggle('d-none');
-    elements.acorde1.classList.toggle('d-none');
-    elements.acorde2.classList.toggle('d-none');
-    elements.acorde3.classList.toggle('d-none');
-    elements.acorde4.classList.toggle('d-none');
-    elements.acorde5.classList.toggle('d-none');
-    elements.acorde6.classList.toggle('d-none');
-    elements.acorde7.classList.toggle('d-none');
-    elements.acorde8.classList.toggle('d-none');
-    elements.acorde9.classList.toggle('d-none');
-    elements.acorde10.classList.toggle('d-none');
+function mostrarBotoesCifras() {
+    elements.playButton.classList.remove('d-none');
+    elements.notesButton.classList.remove('d-none');
+    elements.nextButton.classList.remove('d-none');
+    elements.prevButton.classList.remove('d-none');
+    elements.acorde1.classList.add('d-none');
+    elements.acorde2.classList.add('d-none');
+    elements.acorde3.classList.add('d-none');
+    elements.acorde4.classList.add('d-none');
+    elements.acorde5.classList.add('d-none');
+    elements.acorde6.classList.add('d-none');
+    elements.acorde7.classList.add('d-none');
+    elements.acorde8.classList.add('d-none');
+    elements.acorde9.classList.add('d-none');
+    elements.acorde10.classList.add('d-none');
+}
+
+function mostrarBotoesAcordes() {
+    elements.playButton.classList.add('d-none');
+    elements.notesButton.classList.add('d-none');
+    elements.nextButton.classList.add('d-none');
+    elements.prevButton.classList.add('d-none');
+    elements.acorde1.classList.remove('d-none');
+    elements.acorde2.classList.remove('d-none');
+    elements.acorde3.classList.remove('d-none');
+    elements.acorde4.classList.remove('d-none');
+    elements.acorde5.classList.remove('d-none');
+    elements.acorde6.classList.remove('d-none');
+    elements.acorde7.classList.remove('d-none');
+    elements.acorde8.classList.remove('d-none');
+    elements.acorde9.classList.remove('d-none');
+    elements.acorde10.classList.remove('d-none');
 }
 
 ['mousedown'].forEach(event => {
