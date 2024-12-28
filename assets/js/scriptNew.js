@@ -491,7 +491,9 @@ const elements = {
     acorde7: document.getElementById('acorde7'),
     acorde8: document.getElementById('acorde8'),
     acorde9: document.getElementById('acorde9'),
-    acorde10: document.getElementById('acorde10')
+    acorde10: document.getElementById('acorde10'),
+    borderRight: document.getElementById('borderRight'),
+    borderLeft: document.getElementById('borderLeft')
 };
 
 const cifraPlayer = new CifraPlayer(elements);
@@ -1354,7 +1356,6 @@ function salvarSave(newSaveName, saveContent) {
 
 function mostrarBotoesCifras() {
     elements.playButton.classList.remove('d-none');
-    elements.notesButton.classList.remove('d-none');
     elements.nextButton.classList.remove('d-none');
     elements.prevButton.classList.remove('d-none');
     elements.acorde1.classList.add('d-none');
@@ -1365,13 +1366,14 @@ function mostrarBotoesCifras() {
     elements.acorde6.classList.add('d-none');
     elements.acorde7.classList.add('d-none');
     elements.acorde8.classList.add('d-none');
-    elements.acorde9.classList.add('d-none');
-    elements.acorde10.classList.add('d-none');
+    elements.borderLeft.classList.add('d-none');
+    elements.borderRight.classList.add('d-none');
+    //elements.acorde9.classList.add('d-none');
+    //elements.acorde10.classList.add('d-none');
 }
 
 function mostrarBotoesAcordes() {
     elements.playButton.classList.add('d-none');
-    elements.notesButton.classList.add('d-none');
     elements.nextButton.classList.add('d-none');
     elements.prevButton.classList.add('d-none');
     elements.acorde1.classList.remove('d-none');
@@ -1382,8 +1384,10 @@ function mostrarBotoesAcordes() {
     elements.acorde6.classList.remove('d-none');
     elements.acorde7.classList.remove('d-none');
     elements.acorde8.classList.remove('d-none');
-    elements.acorde9.classList.remove('d-none');
-    elements.acorde10.classList.remove('d-none');
+    elements.borderLeft.classList.remove('d-none');
+    elements.borderRight.classList.remove('d-none');
+    //elements.acorde9.classList.remove('d-none');
+    //elements.acorde10.classList.remove('d-none');
 }
 
 ['mousedown'].forEach(event => {
