@@ -93,8 +93,11 @@ class CifraPlayer {
         //textoSemSpans = `${conteudoStyle}<pre>${textoSemSpans}</pre>`;
         //textoSemSpans = `${tempElement.innerHTML}<style>${conteudoStyle}</style><pre>${textoSemSpans}</pre>`;
         //textoSemSpans = `${tempElement.innerHTML}${conteudoStyle}${textoSemSpans}`;
+
+        const final = tempElement.innerHTML.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
+        .replace("font-size: 12pt;", "font-size: 14pt;");
         
-        this.elements.iframeCifra.contentDocument.body.innerHTML = tempElement.innerHTML;
+        this.elements.iframeCifra.contentDocument.body.innerHTML = final;
     }
     
     processarAcorde(palavra, cifraNum) {
