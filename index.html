@@ -56,25 +56,30 @@
             <iframe class="w-100 border border-secondary rounded" id="iframeCifra"></iframe>
         </div>
 
-        <div class="d-flex justify-content-center" id="controlButtons">
+        <div class="d-flex justify-content-center align-items-center" id="controlButtons">
             <button class="btn btn-link d-none" id="prevButton">
                 <i class="bi bi-chevron-compact-left" style="font-size: larger;"></i>
             </button>
             <button class="btn-custom btn-icons mx-2 d-none" data-action="play" id="playButton"><i class="bi bi-play-fill"></i></button>
-
-            <button class="btn-custom mx-1" data-action="acorde" id="acorde9" value="A#">A#</button>
+        
+            <button class="btn-custom mx-1 d-none" data-action="acorde" id="acorde9" value="A#">A#</button>
             <button class="btn-custom mx-1" data-action="acorde" id="acorde7" value="A">A</button>
 
+            <div class="border-left mx-2" id="borderLeft" style="height: 70%"></div>
+        
             <button class="btn-custom btn-icons pressed pulse mx-2" data-action="stop" id="stopButton"><i class="bi bi-search"></i></button>
-            <button class="btn-custom btn-icons mx-2 d-none" data-action="notes" id="notesButton"><i class="bi bi-music-note-beamed"></i></button>
-
+            <button class="btn-custom btn-icons mx-2" data-action="notes" id="notesButton"><i class="bi bi-music-note-beamed"></i></button>
+        
+            <div class="border-left mx-2" id="borderRight" style="height: 70%"></div>
+        
             <button class="btn-custom mx-1" data-action="acorde" id="acorde8" value="E">E</button>
-            <button class="btn-custom mx-1" data-action="acorde" id="acorde10" value="D">D</button>
-
+            <button class="btn-custom mx-1 d-none" data-action="acorde" id="acorde10" value="D">D</button>
+        
             <button class="btn btn-link d-none" id="nextButton">
                 <i class="bi bi-chevron-compact-right" style="font-size: larger;"></i>
             </button>
         </div>
+                        
 
         <div class="d-flex justify-content-center" id="acordesButtons">
             <button class="btn-custom mx-1" data-action="acorde" id="acorde1" value="C">C</button>
