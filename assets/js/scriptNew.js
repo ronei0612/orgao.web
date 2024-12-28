@@ -851,19 +851,20 @@ elements.naoButtonAlert.addEventListener('click', () => {
     $('#itemModal').modal('show');
 });
 
-elements.notesButton.addEventListener('mousedown', function() {
+function handleInteractionStart() {
     held = false;
-    timer = setTimeout(function() {
+    timer = setTimeout(() => {
         held = true;
-        const icon = notesButton.querySelector('i');
+        const icon = elements.notesButton.querySelector('i');
         icon.classList.remove('bi-music-note-beamed');
         icon.classList.add('bi-music-note');
         elements.notesButton.classList.remove('pressed');
         elements.notesButton.classList.add('notaSolo');
+        cifraPlayer.tocarAcorde(cifraPlayer.acordeTocando);
     }, holdTime);
-});
+}
 
-elements.notesButton.addEventListener('mouseup', function() {
+function handleInteractionEnd() {    
     clearTimeout(timer);
     if (!held) {
         var icon = notesButton.querySelector('i');
@@ -871,11 +872,7 @@ elements.notesButton.addEventListener('mouseup', function() {
         icon.classList.add('bi-music-note-beamed');
         elements.notesButton.classList.remove('notaSolo');
     }
-});
-
-elements.notesButton.addEventListener('mouseleave', function() {
-    clearTimeout(timer);
-});
+}
 
 document.addEventListener('mousedown', fullScreen);
 
@@ -1415,3 +1412,11 @@ function mostrarBotoesAcordes() {
     elements.acorde10.addEventListener(event, togglePressedState);
     elements.acorde11.addEventListener(event, togglePressedState);
 });
+
+elements.notesButton.addEventListener('mousedown', handleInteractionStart);
+elements.notesButton.addEventListener('touchstart', handleInteractionStart);
+
+elements.notesButton.addEventListener('mouseup', handleInteractionEnd);
+elements.notesButton.addEventListener('mouseleave', handleInteractionEnd);
+elements.notesButton.addEventListener('touchend', handleInteractionEnd);
+elements.notesButton.addEventListener('touchcancel', handleInteractionEnd);
