@@ -860,7 +860,6 @@ function handleInteractionStart() {
         icon.classList.add('bi-music-note');
         elements.notesButton.classList.remove('pressed');
         elements.notesButton.classList.add('notaSolo');
-        cifraPlayer.tocarAcorde(cifraPlayer.acordeTocando);
     }, holdTime);
 }
 
