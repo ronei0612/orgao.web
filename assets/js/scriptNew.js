@@ -744,6 +744,7 @@ elements.savesSelect.addEventListener('change', () => {
     else {
         mostrarBotoesAcordes();
         elements.savesSelect.selectedIndex = 0;
+        elements.iframeCifra.contentDocument.body.innerHTML = '';
     }
 })
 
