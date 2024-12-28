@@ -495,6 +495,7 @@ const elements = {
     acorde8: document.getElementById('acorde8'),
     acorde9: document.getElementById('acorde9'),
     acorde10: document.getElementById('acorde10'),
+    acorde11: document.getElementById('acorde11'),
     borderRight: document.getElementById('borderRight'),
     borderLeft: document.getElementById('borderLeft')
 };
@@ -1371,10 +1372,11 @@ function mostrarBotoesCifras() {
     elements.acorde6.classList.add('d-none');
     elements.acorde7.classList.add('d-none');
     elements.acorde8.classList.add('d-none');
-    elements.borderLeft.classList.add('d-none');
-    elements.borderRight.classList.add('d-none');
-    //elements.acorde9.classList.add('d-none');
-    //elements.acorde10.classList.add('d-none');
+    elements.acorde9.classList.add('d-none');
+    elements.acorde10.classList.add('d-none');
+    elements.acorde11.classList.add('d-none');
+    // elements.borderLeft.classList.add('d-none');
+    // elements.borderRight.classList.add('d-none');
 }
 
 function mostrarBotoesAcordes() {
@@ -1389,10 +1391,11 @@ function mostrarBotoesAcordes() {
     elements.acorde6.classList.remove('d-none');
     elements.acorde7.classList.remove('d-none');
     elements.acorde8.classList.remove('d-none');
-    elements.borderLeft.classList.remove('d-none');
-    elements.borderRight.classList.remove('d-none');
-    //elements.acorde9.classList.remove('d-none');
-    //elements.acorde10.classList.remove('d-none');
+    elements.acorde9.classList.remove('d-none');
+    elements.acorde10.classList.remove('d-none');
+    elements.acorde11.classList.remove('d-none');
+    // elements.borderLeft.classList.remove('d-none');
+    // elements.borderRight.classList.remove('d-none');
 }
 
 ['mousedown'].forEach(event => {
@@ -1409,4 +1412,5 @@ function mostrarBotoesAcordes() {
     elements.acorde8.addEventListener(event, togglePressedState);
     elements.acorde9.addEventListener(event, togglePressedState);
     elements.acorde10.addEventListener(event, togglePressedState);
+    elements.acorde11.addEventListener(event, togglePressedState);
 });

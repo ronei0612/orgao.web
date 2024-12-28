@@ -60,12 +60,6 @@ body.dark-mode .modal-content {
   margin-right: 8px;
 }
 
-.btn-custom[data-action="acorde"] {
-  font-size: 18px;
-  font-weight: bold;
-  background-color: #9988B4;
-}
-
 .btn-custom {
   border-radius: 50%;
   color: white;
@@ -78,9 +72,24 @@ body.dark-mode .modal-content {
   margin: 8px;
 }
 
-.btn-custom.pressed {
+.btn-custom[data-action="acorde"] {
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #9988B4;
+}
+
+.btn-custom[data-action="acorde"].pressed {
   background-color: #8A2BE2;
   box-shadow: 0 0 10px #8A2BE2;
+}
+
+.btn-custom[data-action="acorde"].btn-acordeSecundario {
+  background-color: #998FA1;
+}
+
+.btn-custom[data-action="acorde"].btn-acordeSecundario.pressed {
+  background-color: #6A5ACD;/*4B0082*/
+  box-shadow: 0 0 10px #6A5ACD;
 }
 
 .btn-custom[data-action="play"] {
