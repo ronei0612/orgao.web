@@ -72,8 +72,8 @@ class CifraPlayer {
     }
 
     removeCifras(musica) {
-        const regex = /\n\s*<span>/g;
-        musica = musica.replace(regex, '<span>');
+        // const regex = /\n\s*<span>/g;
+        // musica = musica.replace(regex, '<span>');
     
         const tempElement = document.createElement('div');
         tempElement.innerHTML = musica;
@@ -87,13 +87,15 @@ class CifraPlayer {
         const spans = tempElement.querySelectorAll('span');
         spans.forEach(span => span.remove());
     
-        let textoSemSpans = preElement ? preElement.textContent || preElement.innerText || "" : "";
-        textoSemSpans = `${tempElement.innerHTML}<style>${conteudoStyle}</style><pre>${textoSemSpans}</pre>`;
+        //let textoSemSpans = preElement ? preElement.textContent || preElement.innerText || "" : "";
+        // textoSemSpans = `<html><head>${conteudoStyle}</head><body><pre>${textoSemSpans}</pre></body></html>`;
+
+        //textoSemSpans = `${conteudoStyle}<pre>${textoSemSpans}</pre>`;
+        //textoSemSpans = `${tempElement.innerHTML}<style>${conteudoStyle}</style><pre>${textoSemSpans}</pre>`;
+        //textoSemSpans = `${tempElement.innerHTML}${conteudoStyle}${textoSemSpans}`;
         
-        this.elements.iframeCifra.contentDocument.body.innerHTML = textoSemSpans;
+        this.elements.iframeCifra.contentDocument.body.innerHTML = tempElement.innerHTML;
     }
-    
-    
     
     processarAcorde(palavra, cifraNum) {
         let acorde = palavra;
