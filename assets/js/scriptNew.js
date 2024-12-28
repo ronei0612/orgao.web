@@ -864,14 +864,8 @@ function handleInteractionStart() {
     }, holdTime);
 }
 
-function handleInteractionEnd() {    
+function handleInteractionEnd() {
     clearTimeout(timer);
-    if (!held) {
-        var icon = notesButton.querySelector('i');
-        icon.classList.remove('bi-music-note');
-        icon.classList.add('bi-music-note-beamed');
-        elements.notesButton.classList.remove('notaSolo');
-    }
 }
 
 document.addEventListener('mousedown', fullScreen);
@@ -1182,8 +1176,14 @@ const togglePressedState = (event) => {
     const button = event.currentTarget;
     const action = button.dataset.action;
 
-    if (action === 'notes') {
-        if (elements.notesButton.classList.contains('pressed')) {
+    if (action === 'notes') {        
+        var icon = notesButton.querySelector('i');
+        if (!held && icon.classList.contains('bi-music-note')) {
+            icon.classList.remove('bi-music-note');
+            icon.classList.add('bi-music-note-beamed');
+            elements.notesButton.classList.remove('notaSolo');
+        }
+        else if (elements.notesButton.classList.contains('pressed')) {
             elements.notesButton.classList.remove('pressed');
         } else if (!elements.notesButton.classList.contains('notaSolo')) {
             elements.notesButton.classList.add('pressed');
@@ -1396,6 +1396,14 @@ function mostrarBotoesAcordes() {
     // elements.borderRight.classList.remove('d-none');
 }
 
+elements.notesButton.addEventListener('mousedown', handleInteractionStart);
+elements.notesButton.addEventListener('touchstart', handleInteractionStart);
+
+elements.notesButton.addEventListener('mouseup', handleInteractionEnd);
+elements.notesButton.addEventListener('mouseleave', handleInteractionEnd);
+elements.notesButton.addEventListener('touchend', handleInteractionEnd);
+elements.notesButton.addEventListener('touchcancel', handleInteractionEnd);
+
 ['mousedown'].forEach(event => {
     elements.playButton.addEventListener(event, togglePressedState);
     elements.notesButton.addEventListener(event, togglePressedState);
@@ -1412,11 +1420,3 @@ function mostrarBotoesAcordes() {
     elements.acorde10.addEventListener(event, togglePressedState);
     elements.acorde11.addEventListener(event, togglePressedState);
 });
-
-elements.notesButton.addEventListener('mousedown', handleInteractionStart);
-elements.notesButton.addEventListener('touchstart', handleInteractionStart);
-
-elements.notesButton.addEventListener('mouseup', handleInteractionEnd);
-elements.notesButton.addEventListener('mouseleave', handleInteractionEnd);
-elements.notesButton.addEventListener('touchend', handleInteractionEnd);
-elements.notesButton.addEventListener('touchcancel', handleInteractionEnd);
