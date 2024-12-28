@@ -88,6 +88,11 @@ body.dark-mode .modal-content {
   font-size: 24px;
 }
 
+.btn-custom[data-action="play"].pressed {
+  background-color: #8A2BE2;
+  box-shadow: 0 0 10px #8A2BE2;
+}
+
 .btn-custom[data-action="play"].pulse {
   box-shadow: 0 0 20px 5px rgba(138, 43, 226, .7);
 }
@@ -97,9 +102,19 @@ body.dark-mode .modal-content {
   font-size: 24px;
 }
 
+.btn-custom[data-action="notes"].pressed {
+  background-color: #8A2BE2;
+  box-shadow: 0 0 10px #8A2BE2;
+}
+
 .btn-custom[data-action="stop"] {
   background-color: tomato;
   font-size: 24px;
+}
+
+.btn-custom[data-action="stop"].pressed {
+  background-color: #ff4500;
+  box-shadow: 0 0 10px #ff4500;
 }
 
 .btn-custom:focus {
