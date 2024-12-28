@@ -95,7 +95,7 @@ class CifraPlayer {
         //textoSemSpans = `${tempElement.innerHTML}${conteudoStyle}${textoSemSpans}`;
 
         const final = tempElement.innerHTML.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
-        .replace("font-size: 12pt;", "font-size: 14pt;");
+        .replace("font-size: 12pt;", "font-size: 15pt;");
         
         this.elements.iframeCifra.contentDocument.body.innerHTML = final;
     }
