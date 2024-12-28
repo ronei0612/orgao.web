@@ -15,43 +15,43 @@
     <div class="container d-flex flex-column vh-100" id="container">
         <div class="d-sm-flex mb-2">
             <div class="d-flex">
-            <i class="bi bi-list" id="menuButton" data-toggle="modal" data-target="#optionsModal"></i>
-                <div class="d-flex justify-content-center align-items-center" style="width: 100%;">
-                <button class="btn btn-dark-cyan mx-1" id="decreaseTom"><i class="bi bi-dash-lg"></i></button>
-                <select class="form-control mx-1 w-auto" id="tomSelect">
+                <i class="bi bi-list" id="menuButton" data-toggle="modal" data-target="#optionsModal"></i>
+                <div class="d-flex justify-content-center align-items-center flex-grow-1">
+                    <button class="btn btn-dark-cyan mx-1" id="decreaseTom"><i class="bi bi-dash-lg"></i></button>
+                    <select class="form-control mx-1 w-auto" id="tomSelect">
                         <option value="">Letra</option>
                         <option value="C" selected>C</option>
-                    <option value="C#">C#</option>
-                    <option value="D">D</option>
-                    <option value="D#">D#</option>
-                    <option value="E">E</option>
-                    <option value="F">F</option>
-                    <option value="F#">F#</option>
-                    <option value="G">G</option>
-                    <option value="G#">G#</option>
-                    <option value="A">A</option>
-                    <option value="A#">A#</option>
-                    <option value="B">B</option>
-                </select>
-                <button class="btn btn-dark-cyan mx-1" id="increaseTom"><i class="bi bi-plus-lg"></i></button>
-            </div>
-        </div>
-            <div class="mx-2"></div>
-            <div class="d-flex" style="width: 100%;">
-                <div class="d-flex align-items-center justify-content-between" style="width: 100%;">
-            <select class="form-control rounded-left-custom" id="savesSelect"></select>
-            <button class="btn btn-control-custom btn-add rounded-right" id="addButton">
-                <i class="bi bi-plus-square"></i>
-            </button>
-            <button class="btn btn-control-custom btn-success rounded-0 fade d-none" id="editSavesSelect">
-                <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-danger rounded-right-custom fade d-none" id="deleteSavesSelect">
-                <i class="bi bi-trash"></i>
-            </button>
+                        <option value="C#">C#</option>
+                        <option value="D">D</option>
+                        <option value="D#">D#</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
+                        <option value="F#">F#</option>
+                        <option value="G">G</option>
+                        <option value="G#">G#</option>
+                        <option value="A">A</option>
+                        <option value="A#">A#</option>
+                        <option value="B">B</option>
+                    </select>
+                    <button class="btn btn-dark-cyan mx-1" id="increaseTom"><i class="bi bi-plus-lg"></i></button>
                 </div>
             </div>
-        </div>
+            <div class="mx-2"></div>
+            <div class="d-flex flex-grow-1">
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <select class="form-control rounded-left-custom" id="savesSelect"></select>
+                    <button class="btn btn-control-custom btn-add rounded-right" id="addButton">
+                        <i class="bi bi-plus-square"></i>
+                    </button>
+                    <button class="btn btn-control-custom btn-success rounded-0 fade d-none" id="editSavesSelect">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-danger rounded-right-custom fade d-none" id="deleteSavesSelect">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>        
     
         <div class="mb-2 flex-grow-1">
             <iframe class="w-100 border border-secondary rounded d-none" id="liturgiaDiariaFrame" src="https://liturgiadiaria.edicoescnbb.com.br/"></iframe>
