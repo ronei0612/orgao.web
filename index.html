@@ -13,12 +13,14 @@
 
 <body>
     <div class="container d-flex flex-column vh-100" id="container">
-        <div class="top-control d-flex justify-content-between align-items-center mb-2 mt-2">
+        <div class="d-sm-flex">
+            <div class="d-flex">
             <i class="bi bi-list" id="menuButton" data-toggle="modal" data-target="#optionsModal"></i>
-            <div class="d-flex justify-content-center align-items-center">
+                <div class="d-flex justify-content-center align-items-center" style="width: 100%;">
                 <button class="btn btn-dark-cyan mx-1" id="decreaseTom"><i class="bi bi-dash-lg"></i></button>
                 <select class="form-control mx-1 w-auto" id="tomSelect">
-                    <option value="C">C</option>
+                        <option value="">Letra</option>
+                        <option value="C" selected>C</option>
                     <option value="C#">C#</option>
                     <option value="D">D</option>
                     <option value="D#">D#</option>
@@ -33,10 +35,10 @@
                 </select>
                 <button class="btn btn-dark-cyan mx-1" id="increaseTom"><i class="bi bi-plus-lg"></i></button>
             </div>
-            <div></div>
         </div>
-        
-        <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="mx-2"></div>
+            <div class="d-flex" style="width: 100%;">
+                <div class="d-flex align-items-center justify-content-between" style="width: 100%;">
             <select class="form-control rounded-left-custom" id="savesSelect"></select>
             <button class="btn btn-control-custom btn-add rounded-right" id="addButton">
                 <i class="bi bi-plus-square"></i>
@@ -47,6 +49,8 @@
             <button class="btn btn-danger rounded-right-custom fade d-none" id="deleteSavesSelect">
                 <i class="bi bi-trash"></i>
             </button>
+                </div>
+            </div>
         </div>
     
         <div class="mb-2 flex-grow-1">
