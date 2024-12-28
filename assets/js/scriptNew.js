@@ -206,11 +206,24 @@ class CifraPlayer {
         for (const cifra of cifras) {
             let acorde = cifra.innerText;
             if (acorde) {
-                while (!this.acordesSustenidos.includes(acorde) && !this.acordesBemol.includes(acorde) && acorde) {
-                    acorde = this.acordesMap[acorde] || acorde.slice(0, -1);
+                const partes = acorde.split('/');
+                let acordePrincipal = partes[0];
+                let acordeBaixo = partes[1];
+    
+                while (!this.acordesSustenidos.includes(acordePrincipal) && !this.acordesBemol.includes(acordePrincipal) && acordePrincipal) {
+                    acordePrincipal = this.acordesMap[acordePrincipal] || acordePrincipal.slice(0, -1);
                 }
-                const novoAcorde = this.transposeAcorde(acorde, steps);
-                cifra.innerText = cifra.innerText.replace(acorde, novoAcorde);
+    
+                const novoAcordePrincipal = this.transposeAcorde(acordePrincipal, steps);
+                if (acordeBaixo) {
+                    while (!this.acordesSustenidos.includes(acordeBaixo) && !this.acordesBemol.includes(acordeBaixo) && acordeBaixo) {
+                        acordeBaixo = this.acordesMap[acordeBaixo] || acordeBaixo.slice(0, -1);
+                    }
+                    const novoAcordeBaixo = this.transposeAcorde(acordeBaixo, steps);
+                    cifra.innerText = `${novoAcordePrincipal}/${novoAcordeBaixo}`;
+                } else {
+                    cifra.innerText = novoAcordePrincipal;
+                }
             }
         }
     }
@@ -220,7 +233,7 @@ class CifraPlayer {
         let index = tons.indexOf(acorde);
         let novoIndex = (index + steps + tons.length) % tons.length;
         return tons[novoIndex];
-    }
+    }    
 
     addEventCifrasIframe(frame) {
         const elements = frame.contentDocument.getElementsByTagName("b");
