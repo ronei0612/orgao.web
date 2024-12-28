@@ -69,7 +69,24 @@ class CifraPlayer {
             </style>
             <pre>${linhasDestacadas.join('\n')}</pre>
         `;
-    }    
+    }
+
+    removeCifras(musica) {
+        const regex = /\n.*<span>/g;
+        musica = musica.replace(regex, '<span>');
+
+        const html = musica.split('<pre>')[0];
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = musica.split('<pre>')[1].split('</pre>')[0];
+    
+        //const cifras = tempElement.querySelectorAll('b[id^="cifra"]');
+        const spans = tempElement.querySelectorAll('span');
+        spans.forEach(span => {span.remove();});
+    
+        let textoSemSpans = tempElement.textContent || tempElement.innerText || "";
+        textoSemSpans = html + '<pre>' + textoSemSpans + '</pre></body></html>';
+        this.elements.iframeCifra.contentDocument.body.innerHTML = textoSemSpans;
+    }
     
     processarAcorde(palavra, cifraNum) {
         let acorde = palavra;
@@ -122,7 +139,7 @@ class CifraPlayer {
     }
 
     preencherSelect(tom) {
-        this.elements.tomSelect.innerHTML = '';
+        this.elements.tomSelect.innerHTML = '<option value="">Letra</option>';
     
         const tons = this.tonsMaiores.includes(tom) ? this.tonsMaiores : this.tonsMenores.includes(tom) ? this.tonsMenores : [];
     
@@ -145,9 +162,6 @@ class CifraPlayer {
         if (!this.parado && this.acordeTocando) {
             this.iniciarReproducao();
         }
-        // } else {
-        //     this.tocarAcorde(cifraElem.innerHTML.trim());
-        // }
     }
 
     transposeCifra() {
@@ -157,7 +171,6 @@ class CifraPlayer {
             this.tomAtual = novoTom;
 
             const cifra = this.elements.iframeCifra.contentDocument.body.innerHTML;
-            //salvarSave(this.elements.savesSelect.value, cifra);
             mostrarTextoCifrasCarregado(null, cifra);
 
             if (this.indiceAcorde > 0) {
@@ -268,32 +281,6 @@ class CifraPlayer {
             this.avancarCifra();
         }
     }
-
-    // scrollProximaCifra(cifraElement) {
-    //     let offsetVertical = 870; // Deslocamento acima
-    //     let offsetHorizontal = 0; // Deslocamento à direita
-
-    //     if (!cifraElement.previousElementSibling) {
-    //         offsetHorizontal = 20;
-    //         //primeiroDaLinha, ultimoDaLinha
-    //         //, nextElementSibling, previousElementSibling
-    //     } else if (!cifraElement.nextElementSibling) {
-    //         offsetHorizontal = -20;
-    //     }
-    //     const bodyRect = document.body.getBoundingClientRect();
-    //     const elementRect = cifraElement.getBoundingClientRect();
-    //     const elementPositionVertical = elementRect.top - bodyRect.top;
-    //     const elementPositionHorizontal = elementRect.left - bodyRect.left;
-    //     const offsetPositionVertical = elementPositionVertical - offsetVertical;
-    //     const offsetPositionHorizontal = elementPositionHorizontal - offsetHorizontal;
-
-    //     elements.iframeCifra.contentWindow.scrollTo({
-    //     //window.scrollTo({
-    //         top: offsetPositionVertical,
-    //         left: offsetPositionHorizontal,
-    //         behavior: 'smooth'
-    //     });
-    // }
 
     pararReproducao() {
         this.pararAcorde();
@@ -448,8 +435,6 @@ class CifraPlayer {
             // ... (lógica para ajustar a velocidade com Pizzicato) ...
         }
     }
-
-    // ... outros métodos
 }
 
 
@@ -710,6 +695,8 @@ elements.tomSelect.addEventListener('change', (event) => {
                 button.classList.add('pressed');
             }
         }
+    } else {
+        cifraPlayer.removeCifras(elements.iframeCifra.contentDocument.body.innerHTML);
     }
 });
 
@@ -1089,7 +1076,7 @@ function deletarSave(saveName) {
     localStorage.setItem('saves', JSON.stringify(saves));
     elements.searchModalLabel.textContent = 'Música';
     elements.iframeCifra.contentDocument.body.innerHTML = '';
-    elements.tomSelect.innerHTML = '';
+    elements.tomSelect.innerHTML = '<option value="">Letra</option>';
 
     exibirListaSaves();
 }
