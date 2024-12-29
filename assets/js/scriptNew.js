@@ -233,22 +233,22 @@ class CifraPlayer {
             if (acorde) {
                 const partes = acorde.split('/');
                 let acordePrincipal = partes[0];
-                let acordeBaixo = partes[1];
-    
                 while (!this.acordesSustenidos.includes(acordePrincipal) && !this.acordesBemol.includes(acordePrincipal) && acordePrincipal) {
                     acordePrincipal = this.acordesMap[acordePrincipal] || acordePrincipal.slice(0, -1);
                 }
-    
-                const novoAcordePrincipal = this.transposeAcorde(acordePrincipal, steps);
-                if (acordeBaixo) {
+                let novoTomAcorde = this.transposeAcorde(acordePrincipal, steps);
+                let novoAcorde = partes[0].replace(acordePrincipal, novoTomAcorde);
+
+                if (partes[1]) {
+                    let acordeBaixo = partes[1];
                     while (!this.acordesSustenidos.includes(acordeBaixo) && !this.acordesBemol.includes(acordeBaixo) && acordeBaixo) {
                         acordeBaixo = this.acordesMap[acordeBaixo] || acordeBaixo.slice(0, -1);
                     }
-                    const novoAcordeBaixo = this.transposeAcorde(acordeBaixo, steps);
-                    cifra.innerText = `${novoAcordePrincipal}/${novoAcordeBaixo}`;
-                } else {
-                    cifra.innerText = novoAcordePrincipal;
+                    novoTomAcorde = this.transposeAcorde(acordeBaixo, steps);
+                    novoAcorde = `${novoAcorde}/${partes[1].replace(acordeBaixo, novoTomAcorde)}`;
                 }
+                
+                cifra.innerText = cifra.innerText.replace(acorde, novoAcorde);
             }
         }
     }
