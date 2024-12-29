@@ -78,11 +78,11 @@ class CifraPlayer {
         const tempElement = document.createElement('div');
         tempElement.innerHTML = musica;
     
-        const styleElement = tempElement.querySelector('style');
-        const conteudoStyle = styleElement ? styleElement.outerHTML : '';
+        // const styleElement = tempElement.querySelector('style');
+        // const conteudoStyle = styleElement ? styleElement.outerHTML : '';
     
-        const preElement = tempElement.querySelector('pre');
-        const conteudoPre = preElement ? preElement.innerHTML : '';
+        // const preElement = tempElement.querySelector('pre');
+        // const conteudoPre = preElement ? preElement.innerHTML : '';
     
         const spans = tempElement.querySelectorAll('span');
         spans.forEach(span => span.remove());
