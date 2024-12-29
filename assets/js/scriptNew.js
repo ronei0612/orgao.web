@@ -78,11 +78,11 @@ class CifraPlayer {
         const tempElement = document.createElement('div');
         tempElement.innerHTML = musica;
     
-        const styleElement = tempElement.querySelector('style');
-        const conteudoStyle = styleElement ? styleElement.outerHTML : '';
+        // const styleElement = tempElement.querySelector('style');
+        // const conteudoStyle = styleElement ? styleElement.outerHTML : '';
     
-        const preElement = tempElement.querySelector('pre');
-        const conteudoPre = preElement ? preElement.innerHTML : '';
+        // const preElement = tempElement.querySelector('pre');
+        // const conteudoPre = preElement ? preElement.innerHTML : '';
     
         const spans = tempElement.querySelectorAll('span');
         spans.forEach(span => span.remove());
@@ -95,7 +95,7 @@ class CifraPlayer {
         //textoSemSpans = `${tempElement.innerHTML}${conteudoStyle}${textoSemSpans}`;
 
         const final = tempElement.innerHTML.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
-        .replace("font-size: 12pt;", "font-size: 14pt;");
+        .replace("font-size: 12pt;", "font-size: 15pt;");
         
         this.elements.iframeCifra.contentDocument.body.innerHTML = final;
     }
@@ -233,22 +233,22 @@ class CifraPlayer {
             if (acorde) {
                 const partes = acorde.split('/');
                 let acordePrincipal = partes[0];
-                let acordeBaixo = partes[1];
-    
                 while (!this.acordesSustenidos.includes(acordePrincipal) && !this.acordesBemol.includes(acordePrincipal) && acordePrincipal) {
                     acordePrincipal = this.acordesMap[acordePrincipal] || acordePrincipal.slice(0, -1);
                 }
-    
-                const novoAcordePrincipal = this.transposeAcorde(acordePrincipal, steps);
-                if (acordeBaixo) {
+                let novoTomAcorde = this.transposeAcorde(acordePrincipal, steps);
+                let novoAcorde = partes[0].replace(acordePrincipal, novoTomAcorde);
+
+                if (partes[1]) {
+                    let acordeBaixo = partes[1];
                     while (!this.acordesSustenidos.includes(acordeBaixo) && !this.acordesBemol.includes(acordeBaixo) && acordeBaixo) {
                         acordeBaixo = this.acordesMap[acordeBaixo] || acordeBaixo.slice(0, -1);
                     }
-                    const novoAcordeBaixo = this.transposeAcorde(acordeBaixo, steps);
-                    cifra.innerText = `${novoAcordePrincipal}/${novoAcordeBaixo}`;
-                } else {
-                    cifra.innerText = novoAcordePrincipal;
+                    novoTomAcorde = this.transposeAcorde(acordeBaixo, steps);
+                    novoAcorde = `${novoAcorde}/${partes[1].replace(acordeBaixo, novoTomAcorde)}`;
                 }
+                
+                cifra.innerText = cifra.innerText.replace(acorde, novoAcorde);
             }
         }
     }
@@ -715,8 +715,8 @@ elements.tomSelect.addEventListener('change', (event) => {
 elements.decreaseTom.addEventListener('click', () => {
     if (elements.tomSelect.value) {
         let tomIndex = parseInt(elements.tomSelect.selectedIndex);
-        if (tomIndex === 0)
-            tomIndex = 12;
+        if (tomIndex === 1)
+            tomIndex = 13;
         elements.tomSelect.value = elements.tomSelect.options[tomIndex - 1].value;
         elements.tomSelect.dispatchEvent(new Event('change'));
     }
@@ -725,8 +725,8 @@ elements.decreaseTom.addEventListener('click', () => {
 elements.increaseTom.addEventListener('click', () => {
     if (elements.tomSelect.value) {
         let tomIndex = parseInt(elements.tomSelect.selectedIndex);
-        if (tomIndex === 11)
-            tomIndex = -1;
+        if (tomIndex === 12)
+            tomIndex = 0;
         elements.tomSelect.value = elements.tomSelect.options[tomIndex + 1].value;
         elements.tomSelect.dispatchEvent(new Event('change'));
     }
@@ -852,6 +852,7 @@ elements.simButtonAlert.addEventListener('click', () => {
     if (elements.alertModalMessage.textContent.includes('sobrescrever')) {
         const saveName = elements.searchModalLabel.textContent;
         salvarSave(saveName);
+        elements.startButton.dispatchEvent(new Event('click'));
     }
     else {
         const saveName = elements.savesSelect.value;
@@ -949,7 +950,7 @@ function descobrirTom(texto) {
     const somenteCifras = texto.match(/[A-G][#b]?m?/g);
 
     if (!somenteCifras) {
-        return 'C';
+        return '';
     }
 
     const acordesOrdenados = [...somenteCifras].sort();
@@ -1270,6 +1271,9 @@ const aplicarModoEscuroIframe = () => {
 function mostrarTextoCifrasCarregado(tom = null, texto = null) {
     if (tom) {
         cifraPlayer.preencherSelect(tom);
+    }
+    else {
+        elements.tomSelect.innerHTML = '<option value="">Letra</option>';
     }
 
     if (texto) {
