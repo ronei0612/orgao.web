@@ -33,42 +33,58 @@ class CifraPlayer {
         this.carregarAcordes();
     }
 
-    destacarCifras(texto) {
-        const linhas = texto.split('\n');
-        let cifraNum = 1;
-        const temPalavra = /[a-zA-Z]{3,}/;
-        const temColchetes = /\[.*?\]/;
-    
-        const linhasDestacadas = linhas.map(linha => {
-            if (linha && (!temPalavra.test(linha) || temColchetes.test(linha))) {
-                const acordes = linha.split(/\s+/);
-                const espacos = linha.match(/\s+/g) || [];
-                const linhaProcessada = acordes.map((palavra, index) => {
-                    let acorde = this.processarAcorde(palavra, cifraNum);
-                    if (acorde.startsWith('<b'))
-                        cifraNum++;
-                    return index < acordes.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
-                }).join('');
-                if (cifraNum > 1)
-                    return `<span><b></b>${linhaProcessada}<b></b></span>`;
-                else                
-                    return `${linhaProcessada}`;
-            }
-            return linha;
-        });
-    
-        return `
-            <style>
-                .cifraSelecionada {
-                    background-color: #DAA520;
+    destacarCifras(tom, texto) {
+        if (!tom) {
+            return `
+                <style>
+                    .cifraSelecionada {
+                        background-color: #DAA520;
+                    }
+                    pre {
+                        font-size: 15pt;
+                        font-family: 'Roboto', sans-serif;
+                    }
+                </style>
+                <pre>${texto}</pre>
+            `;
+        }
+        else {
+            const linhas = texto.split('\n');
+            let cifraNum = 1;
+            const temPalavra = /[a-zA-Z]{3,}/;
+            const temColchetes = /\[.*?\]/;
+        
+            const linhasDestacadas = linhas.map(linha => {
+                if (linha && (!temPalavra.test(linha) || temColchetes.test(linha))) {
+                    const acordes = linha.split(/\s+/);
+                    const espacos = linha.match(/\s+/g) || [];
+                    const linhaProcessada = acordes.map((palavra, index) => {
+                        let acorde = this.processarAcorde(palavra, cifraNum);
+                        if (acorde.startsWith('<b'))
+                            cifraNum++;
+                        return index < acordes.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
+                    }).join('');
+                    if (cifraNum > 1)
+                        return `<span><b></b>${linhaProcessada}<b></b></span>`;
+                    else                
+                        return `${linhaProcessada}`;
                 }
-                pre {
-                    font-size: 12pt;
-                    font-family: Consolas, 'Courier New', Courier, monospace;
-                }
-            </style>
-            <pre>${linhasDestacadas.join('\n')}</pre>
-        `;
+                return linha;
+            });
+        
+            return `
+                <style>
+                    .cifraSelecionada {
+                        background-color: #DAA520;
+                    }
+                    pre {
+                        font-size: 12pt;
+                        font-family: Consolas, 'Courier New', Courier, monospace;
+                    }
+                </style>
+                <pre>${linhasDestacadas.join('\n')}</pre>
+            `;
+        }
     }
 
     removeCifras(musica) {
@@ -651,7 +667,7 @@ elements.startButton.addEventListener('click', () => {
         const tom = descobrirTom(elements.editTextarea.value);
         mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
         const texto = elements.editTextarea.value;
-        elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(texto);
+        elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(tom, texto);
         elements.iframeCifra.classList.remove('d-none');
         elements.liturgiaDiariaFrame.classList.add('d-none');
         elements.santamissaFrame.classList.add('d-none');
@@ -744,7 +760,7 @@ elements.savesSelect.addEventListener('change', () => {
         const tom = descobrirTom(elements.editTextarea.value);
         mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
         const texto = elements.editTextarea.value;
-        elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(texto);
+        elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(tom, texto);
         elements.iframeCifra.classList.remove('d-none');
         elements.liturgiaDiariaFrame.classList.add('d-none');
         elements.santamissaFrame.classList.add('d-none');
@@ -1351,8 +1367,9 @@ function salvarSave(newSaveName, saveContent) {
                 elements.savesSelect.value = newSaveName;
             }
 
-            saveContent = elements.editTextarea.value;
-            elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(saveContent);
+            saveContent = elements.editTextarea.value;            
+            const tom = descobrirTom(saveContent);
+            elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(tom, saveContent);
             elements.iframeCifra.classList.remove('d-none');
             elements.liturgiaDiariaFrame.classList.add('d-none');
             elements.santamissaFrame.classList.add('d-none');
