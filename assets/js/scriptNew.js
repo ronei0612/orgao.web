@@ -950,7 +950,7 @@ function descobrirTom(texto) {
     const somenteCifras = texto.match(/[A-G][#b]?m?/g);
 
     if (!somenteCifras) {
-        return 'C';
+        return '';
     }
 
     const acordesOrdenados = [...somenteCifras].sort();
@@ -1271,6 +1271,9 @@ const aplicarModoEscuroIframe = () => {
 function mostrarTextoCifrasCarregado(tom = null, texto = null) {
     if (tom) {
         cifraPlayer.preencherSelect(tom);
+    }
+    else {
+        elements.tomSelect.innerHTML = '<option value="">Letra</option>';
     }
 
     if (texto) {
