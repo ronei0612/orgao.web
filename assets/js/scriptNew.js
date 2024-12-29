@@ -852,6 +852,7 @@ elements.simButtonAlert.addEventListener('click', () => {
     if (elements.alertModalMessage.textContent.includes('sobrescrever')) {
         const saveName = elements.searchModalLabel.textContent;
         salvarSave(saveName);
+        elements.startButton.dispatchEvent(new Event('click'));
     }
     else {
         const saveName = elements.savesSelect.value;
