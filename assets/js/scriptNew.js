@@ -715,8 +715,8 @@ elements.tomSelect.addEventListener('change', (event) => {
 elements.decreaseTom.addEventListener('click', () => {
     if (elements.tomSelect.value) {
         let tomIndex = parseInt(elements.tomSelect.selectedIndex);
-        if (tomIndex === 0)
-            tomIndex = 12;
+        if (tomIndex === 1)
+            tomIndex = 13;
         elements.tomSelect.value = elements.tomSelect.options[tomIndex - 1].value;
         elements.tomSelect.dispatchEvent(new Event('change'));
     }
@@ -725,8 +725,8 @@ elements.decreaseTom.addEventListener('click', () => {
 elements.increaseTom.addEventListener('click', () => {
     if (elements.tomSelect.value) {
         let tomIndex = parseInt(elements.tomSelect.selectedIndex);
-        if (tomIndex === 11)
-            tomIndex = -1;
+        if (tomIndex === 12)
+            tomIndex = 0;
         elements.tomSelect.value = elements.tomSelect.options[tomIndex + 1].value;
         elements.tomSelect.dispatchEvent(new Event('change'));
     }
