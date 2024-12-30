@@ -963,7 +963,7 @@ function toggleEditDeleteButtons() {
 }
 
 function descobrirTom(texto) {
-    const somenteCifras = texto.match(/[A-G][#b]?m?/g);
+    const somenteCifras = texto.match(/\b[A-G][#b]?m?\b/g);
 
     if (!somenteCifras) {
         return '';
