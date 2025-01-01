@@ -78,10 +78,13 @@ class CifraPlayer {
     
         const spans = tempElement.querySelectorAll('span');
         spans.forEach(span => span.remove());
-
-        const final = tempElement.innerHTML.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
-        .replace("font-size: 12pt;", "font-size: 15pt;");
-        
+    
+        let final = tempElement.innerHTML.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
+            .replace("font-size: 12pt;", "font-size: 15pt;");
+    
+        //final = final.replace(/(\r\n|\n|\r){2,}/g, '$1');
+        final = final.replace(/(\n\n)/g, '\n');
+    
         this.elements.iframeCifra.contentDocument.body.innerHTML = final;
     }
     
