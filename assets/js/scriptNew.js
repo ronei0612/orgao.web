@@ -641,6 +641,8 @@ elements.startButton.addEventListener('click', () => {
         const tom = descobrirTom(musicaCifrada);
         mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
+        if (!tom)
+            elements.tomSelect.dispatchEvent(new Event('change'));
         elements.iframeCifra.classList.remove('d-none');
         elements.liturgiaDiariaFrame.classList.add('d-none');
         elements.santamissaFrame.classList.add('d-none');
@@ -732,8 +734,10 @@ elements.savesSelect.addEventListener('change', () => {
         const texto = elements.editTextarea.value;
         const musicaCifrada = cifraPlayer.destacarCifras(texto);
         const tom = descobrirTom(musicaCifrada);
-        mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
+        mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
+        if (!tom)
+            elements.tomSelect.dispatchEvent(new Event('change'));
         elements.iframeCifra.classList.remove('d-none');
         elements.liturgiaDiariaFrame.classList.add('d-none');
         elements.santamissaFrame.classList.add('d-none');
@@ -1353,8 +1357,11 @@ function salvarSave(newSaveName, saveContent) {
             }
 
             saveContent = elements.editTextarea.value;
+            
+            const musicaCifrada = cifraPlayer.destacarCifras(saveContent);        
+            const tom = descobrirTom(musicaCifrada);
+            mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
             elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(tom, saveContent);
-            const tom = descobrirTom(saveContent);
             elements.iframeCifra.classList.remove('d-none');
             elements.liturgiaDiariaFrame.classList.add('d-none');
             elements.santamissaFrame.classList.add('d-none');
