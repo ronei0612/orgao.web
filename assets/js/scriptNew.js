@@ -199,7 +199,7 @@ class CifraPlayer {
             this.tomAtual = novoTom;
 
             const cifra = this.elements.iframeCifra.contentDocument.body.innerHTML;
-            mostrarTextoCifrasCarregado(null, cifra);
+            mostrarTextoCifrasCarregado(novoTom, cifra);
 
             if (this.indiceAcorde > 0) {
                 this.indiceAcorde--;
