@@ -216,6 +216,8 @@ class CifraPlayer {
         const novoTom = this.elements.tomSelect.value;
         const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
         const steps = this.tonsMaiores.indexOf(novoTom) - this.tonsMaiores.indexOf(this.tomAtual);
+        
+        localStorage.setItem('tomAcordes', novoTom);
 
         acordeButtons.forEach(acordeButton => {
             const antesAcorde = acordeButton.value;
@@ -577,6 +579,7 @@ window.onerror = function (message, source, lineno, colno, error) {
 document.addEventListener('DOMContentLoaded', () => {
     // Zera a barra de rolagem de missa
     localStorage.setItem('scrollTop', 0);
+    localStorage.setItem('tomAcordes', '');
 
     elements.darkModeToggle.checked = true;
     if (localStorage.getItem('darkMode') === 'true') {
@@ -773,6 +776,10 @@ elements.savesSelect.addEventListener('change', () => {
         mostrarBotoesAcordes();
         elements.savesSelect.selectedIndex = 0;
         elements.iframeCifra.contentDocument.body.innerHTML = '';
+        const tom = localStorage.getItem('tomAcordes');
+        if (tom) {
+            cifraPlayer.preencherSelect(tom);
+        }
     }
 })
 
