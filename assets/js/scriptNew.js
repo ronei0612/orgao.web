@@ -590,6 +590,7 @@ elements.addButton.addEventListener('click', function () {
 });
 
 elements.saveNewItemButton.addEventListener("click", () => {
+    elements.savesSelect.selectedIndex = 0;
     let newSaveName = elements.itemNameInput.value;
     if (newSaveName === '') return;
     salvarSave(newSaveName);
@@ -604,8 +605,8 @@ elements.saveButton.addEventListener('click', () => {
         if (saveName) {
             let saves = JSON.parse(localStorage.getItem('saves')) || {};
             if (saves.hasOwnProperty(saveName)) {
-                elements.alertModalMessage.textContent = `Já existe "${saveName}". Deseja sobrescrever?`;
-                elements.alertModalLabel.textContent = 'Atenção!';
+                elements.alertModalMessage.textContent = `Atenção! Já existe "${saveName}". Deseja sobrescrever?`;
+                elements.alertModalLabel.textContent = `Salvar "${saveName}"`;
                 elements.simButtonAlert.textContent = '✓ Sim';
                 elements.simButtonAlert.classList.remove('d-none');
                 elements.naoButtonAlert.classList.remove('d-none');
@@ -849,7 +850,7 @@ elements.playButton.addEventListener('click', () => {
 })
 
 elements.simButtonAlert.addEventListener('click', () => {
-    if (elements.alertModalMessage.textContent.includes('sobrescrever')) {
+    if (elements.alertModalMessage.textContent.toLowerCase().includes('sobrescrever')) {
         const saveName = elements.searchModalLabel.textContent;
         salvarSave(saveName);
         elements.startButton.dispatchEvent(new Event('click'));
@@ -1326,9 +1327,11 @@ function salvarSave(newSaveName, saveContent) {
 
     if (newSaveName) {
         newSaveName = newSaveName.trim();
-        newSaveName = newSaveName.charAt(0).toUpperCase() + newSaveName.slice(1).toLowerCase();
+        //newSaveName = newSaveName.charAt(0).toUpperCase() + newSaveName.slice(1).toLowerCase();        
+        let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
+        //saves.hasOwnProperty(newSaveName)
 
-        if (saves.hasOwnProperty(newSaveName) && elements.searchModalLabel.textContent !== newSaveName) {
+        if (temSaveName && elements.searchModalLabel.textContent !== newSaveName) {
             elements.alertModalMessage.textContent = `Já existe esse nome!`;
             elements.alertModalLabel.textContent = 'Atenção!';
             elements.okButtonAlert.classList.remove('d-none');
