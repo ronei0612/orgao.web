@@ -1,74 +1,39 @@
-<!-- coloque o savesSelectContainer ao lado de topControl -->
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        /* Media query for smaller screens (mobile) */
-        @media (max-width: 899px) {
-            #container {
-                max-width: 100%;
-            }
+    <title>Pesquisa em Arquivo de Texto</title>
+    <script>
+        function pesquisar() {
+            var termo = document.getElementById('inputPesquisa').value.toLowerCase();
+            var request = new XMLHttpRequest();
+            request.open('GET', 'https://roneicostasoares.com.br/orgao.web/files/musicas.json', true);
+            request.onreadystatechange = function () {
+                if (request.readyState === 4 && request.status === 200) {
+                    var musicas = JSON.parse(request.responseText);
+                    var resultado = musicas.filter(musica => 
+                        musica.Título.toLowerCase().includes(termo) ||
+                        musica.Letra.toLowerCase().includes(termo)
+                    );
+                    if (resultado.length > 0) {
+                        var mensagem = 'Música(s) encontrada(s):\n\n';
+                        resultado.forEach(musica => {
+                            mensagem += 'Título: ' + musica.Título + '\n';
+                            mensagem += 'Artista: ' + musica.Artista + '\n';
+                        });
+                        alert(mensagem);
+                    } else {
+                        alert('Termo não encontrado.');
+                    }
+                }
+            };
+            request.send();
         }
-
-        /* Media query for larger screens (desktop) */
-        @media (min-width: 900px) {
-            #container {
-                max-width: 600px;
-            }
-        }
-    </style>
+    </script>
 </head>
 <body>
-    <div class="container d-flex flex-column vh-100" id="container">
-        <div class="top-control d-flex justify-content-between align-items-center mb-2 mt-2" id="topControl">
-            <i class="bi bi-list" id="menuButton" data-toggle="modal" data-target="#optionsModal"></i>
-            <div class="d-flex justify-content-center align-items-center">
-                <button class="btn btn-dark-cyan mx-1" id="decreaseTom"><i class="bi bi-dash-lg"></i></button>
-                <select class="form-control mx-1 w-auto" id="tomSelect">
-                    <option value="C">C</option>
-                    <option value="C#">C#</option>
-                    <option value="D">D</option>
-                    <option value="D#">D#</option>
-                    <option value="E">E</option>
-                    <option value="F">F</option>
-                    <option value="F#">F#</option>
-                    <option value="G">G</option>
-                    <option value="G#">G#</option>
-                    <option value="A">A</option>
-                    <option value="A#">A#</option>
-                    <option value="B">B</option>
-                </select>
-                <button class="btn btn-dark-cyan mx-1" id="increaseTom"><i class="bi bi-plus-lg"></i></button>
-            </div>
-            <div></div>
-        </div>
-        
-        <div class="d-flex align-items-center justify-content-between mb-2" id="savesSelectContainer">
-            <select class="form-control rounded-left-custom" id="savesSelect"></select>
-            <button class="btn btn-control-custom btn-add rounded-right" id="addButton">
-                <i class="bi bi-plus-square"></i>
-            </button>
-            <button class="btn btn-control-custom btn-success rounded-0 fade d-none" id="editSavesSelect">
-                <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-danger rounded-right-custom fade d-none" id="deleteSavesSelect">
-                <i class="bi bi-trash"></i>
-            </button>
-        </div>
-    
-        <div class="mb-2 flex-grow-1">
-            <iframe class="w-100 border border-secondary rounded d-none" id="liturgiaDiariaFrame" src="https://liturgiadiaria.edicoescnbb.com.br/"></iframe>
-            <iframe class="w-100 border border-secondary rounded d-none" id="santamissaFrame" src="./santamissa.html"></iframe>
-            <iframe class="w-100 border border-secondary rounded d-none" id="oracoesFrame" src="./oracoes.html"></iframe>
-            <iframe class="w-100 border border-secondary rounded" id="iframeCifra"></iframe>
-        </div>
-    </div>
+    <h1>Pesquisa em Arquivo de Texto</h1>
+    <input type="text" id="inputPesquisa" placeholder="Digite o termo de pesquisa">
+    <button onclick="pesquisar()">Pesquisar</button>
 </body>
 </html>
