@@ -37,7 +37,7 @@ class CifraPlayer {
     destacarCifras(texto) {
         const linhas = texto.split('\n');
         let cifraNum = 1;
-        const temPalavra = /[a-zA-Z]{3,}/;
+        const temPalavra = /[a-zA-Z]{4,}/;
         const temColchetes = /\[.*?\]/;
     
         const linhasDestacadas = linhas.map(linha => {
