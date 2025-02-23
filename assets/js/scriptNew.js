@@ -362,17 +362,17 @@ class CifraPlayer {
     
         this.adicionarSomAoGrupo('orgao', baixo, 'grave');
         if (!this.elements.notesButton.classList.contains('notaSolo'))
-            this.adicionarSomAoGrupo('strings', baixo, 'grave', 0.5);
+            this.adicionarSomAoGrupo('strings', baixo, 'grave', 0.4);
     
         notas.forEach(nota => {
             this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'), 'baixo');
             if (!this.elements.notesButton.classList.contains('notaSolo'))
-                this.adicionarSomAoGrupo('strings', nota.replace('#', '_'), 'baixo', 0.5);
+                this.adicionarSomAoGrupo('strings', nota.replace('#', '_'), 'baixo', 0.4);
     
             if (this.elements.notesButton.classList.contains('pressed')) {
                 this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'));
                 if (!this.elements.notesButton.classList.contains('notaSolo'))
-                    this.adicionarSomAoGrupo('strings', nota.replace('#', '_'));
+                    this.adicionarSomAoGrupo('strings', nota.replace('#', '_', 0.8));
             }
         });
     
