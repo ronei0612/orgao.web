@@ -836,9 +836,10 @@ elements.missaOrdinarioLink.addEventListener('click', () => {
 
 elements.notesButton.addEventListener('click', () => {
     cifraPlayer.alternarNotas();
-    if (!elements.acorde1.classList.contains('d-none')) {
-        cifraPlayer.tocarAcorde(cifraPlayer.acordeTocando);
-    }                
+    // quando pressionar botão das notas, não tocar o acorde denovo
+    // if (!elements.acorde1.classList.contains('d-none')) {
+    //     cifraPlayer.tocarAcorde(cifraPlayer.acordeTocando);
+    // }
 });
 
 elements.stopButton.addEventListener('mousedown', () => {
@@ -1197,7 +1198,9 @@ const togglePressedState = (event) => {
     const button = event.currentTarget;
     const action = button.dataset.action;
 
-    if (action === 'notes') {        
+    console.log(action);
+
+    if (action === 'notes') {
         var icon = notesButton.querySelector('i');
         if (!held && icon.classList.contains('bi-music-note')) {
             icon.classList.remove('bi-music-note');
@@ -1205,7 +1208,12 @@ const togglePressedState = (event) => {
             elements.notesButton.classList.remove('notaSolo');
         }
         else if (elements.notesButton.classList.contains('pressed')) {
+            // adiciona essas linhas para ao clicar no botão notas, ter o comportamento das 3 ações
+            //elements.notesButton.classList.remove('pressed');
+            icon.classList.remove('bi-music-note-beamed');
+            icon.classList.add('bi-music-note');
             elements.notesButton.classList.remove('pressed');
+            elements.notesButton.classList.add('notaSolo');
         } else if (!elements.notesButton.classList.contains('notaSolo')) {
             elements.notesButton.classList.add('pressed');
         }
@@ -1426,13 +1434,14 @@ function mostrarBotoesAcordes() {
     // elements.borderRight.classList.remove('d-none');
 }
 
-elements.notesButton.addEventListener('mousedown', handleInteractionStart);
-elements.notesButton.addEventListener('touchstart', handleInteractionStart);
+//comentado para não funcionar mais o segurar do notes
+// elements.notesButton.addEventListener('mousedown', handleInteractionStart);
+// elements.notesButton.addEventListener('touchstart', handleInteractionStart);
 
-elements.notesButton.addEventListener('mouseup', handleInteractionEnd);
-elements.notesButton.addEventListener('mouseleave', handleInteractionEnd);
-elements.notesButton.addEventListener('touchend', handleInteractionEnd);
-elements.notesButton.addEventListener('touchcancel', handleInteractionEnd);
+// elements.notesButton.addEventListener('mouseup', handleInteractionEnd);
+// elements.notesButton.addEventListener('mouseleave', handleInteractionEnd);
+// elements.notesButton.addEventListener('touchend', handleInteractionEnd);
+// elements.notesButton.addEventListener('touchcancel', handleInteractionEnd);
 
 ['mousedown'].forEach(event => {
     elements.playButton.addEventListener(event, togglePressedState);
