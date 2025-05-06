@@ -848,7 +848,8 @@ elements.missaOrdinarioLink.addEventListener('click', () => {
 });
 
 elements.notesButton.addEventListener('click', () => {
-    cifraPlayer.alternarNotas();
+    //cifraPlayer.alternarNotas();
+    
     // quando pressionar botão das notas, não tocar o acorde denovo
     // if (!elements.acorde1.classList.contains('d-none')) {
     //     cifraPlayer.tocarAcorde(cifraPlayer.acordeTocando);
