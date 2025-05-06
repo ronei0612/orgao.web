@@ -355,3 +355,9 @@ input:checked+.slider:before {
   height: 100%;
   overflow-y: auto;
 }
+
+.naoSelecionarTexto {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
