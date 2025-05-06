@@ -848,7 +848,8 @@ elements.missaOrdinarioLink.addEventListener('click', () => {
 });
 
 elements.notesButton.addEventListener('click', () => {
-    cifraPlayer.alternarNotas();
+    //cifraPlayer.alternarNotas();
+    
     // quando pressionar botão das notas, não tocar o acorde denovo
     // if (!elements.acorde1.classList.contains('d-none')) {
     //     cifraPlayer.tocarAcorde(cifraPlayer.acordeTocando);
@@ -1210,8 +1211,6 @@ async function choseLink(urlLink, text) {
 const togglePressedState = (event) => {
     const button = event.currentTarget;
     const action = button.dataset.action;
-
-    console.log(action);
 
     if (action === 'notes') {
         var icon = notesButton.querySelector('i');
