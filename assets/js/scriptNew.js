@@ -1211,8 +1211,6 @@ const togglePressedState = (event) => {
     const button = event.currentTarget;
     const action = button.dataset.action;
 
-    console.log(action);
-
     if (action === 'notes') {
         var icon = notesButton.querySelector('i');
         if (!held && icon.classList.contains('bi-music-note')) {
