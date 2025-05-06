@@ -67,6 +67,19 @@ class CifraPlayer {
                     font-size: 12pt;
                     font-family: Consolas, 'Courier New', Courier, monospace;
                 }
+                body {
+                    -webkit-user-select: none; /* Safari */
+                    -moz-user-select: none; /* Firefox */
+                    -ms-user-select: none; /* Internet Explorer/Edge */
+                    user-select: none; /* Padrão */
+                    -webkit-touch-callout: none; /* Safari */
+                    -webkit-user-drag: none; /* Safari */
+                    -khtml-user-drag: none; /* Konqueror HTML */
+                    -khtml-user-select: none; /* Konqueror HTML */
+                    -moz-user-drag: none; /* Firefox */
+                    -ms-user-drag: none; /* Internet Explorer/Edge */
+                    -o-user-drag: none; /* Opera */
+                }
             </style>
             <pre>${linhasDestacadas.join('\n')}</pre>
         `;
