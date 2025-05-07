@@ -385,7 +385,7 @@ class CifraPlayer {
             if (this.elements.notesButton.classList.contains('pressed')) {
                 this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'));
                 if (!this.elements.notesButton.classList.contains('notaSolo'))
-                    this.adicionarSomAoGrupo('strings', nota.replace('#', '_', 0.8));
+                    this.adicionarSomAoGrupo('strings', nota.replace('#', '_', 0.1));
             }
         });
     
