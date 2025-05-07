@@ -45,9 +45,9 @@ class CifraPlayer {
             //if (linha && (this.notasAcordes.includes(linha))) {// || !temColchetes.test(linha))) {
             if (linha) {
                 const acordes = linha.trim().split(/\s+/);                
-                const ehLinhaDeAcordeUnico = acordes.length === 1 && this.notasAcordes.includes(acordes[0]);
-                const ehLinhaDeAcordesConsecutivos = acordes.length >= 2 && this.notasAcordes.includes(acordes[0]) && this.notasAcordes.includes(acordes[1]);
-                const linhDeColcheteseAcordes = temColchetes.test(linha) && acordes.length >= 2 && this.notasAcordes.includes(acordes[1]);
+                const ehLinhaDeAcordeUnico = acordes.length === 1 && this.notasAcordes.includes(acordes[0].split('/')[0]);
+                const ehLinhaDeAcordesConsecutivos = acordes.length >= 2 && this.notasAcordes.includes(acordes[0].split('/')[0]) && this.notasAcordes.includes(acordes[1].split('/')[0]);
+                const linhDeColcheteseAcordes = temColchetes.test(linha) && acordes.length >= 2 && this.notasAcordes.includes(acordes[1].split('/')[0]);
 
                 if (ehLinhaDeAcordeUnico || ehLinhaDeAcordesConsecutivos || linhDeColcheteseAcordes) {
                     const espacos = linha.match(/\s+/g) || [];
