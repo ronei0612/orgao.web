@@ -847,14 +847,14 @@ elements.missaOrdinarioLink.addEventListener('click', () => {
     $('#optionsModal').modal('hide');
 });
 
-elements.notesButton.addEventListener('click', () => {
+//elements.notesButton.addEventListener('click', () => {
     //cifraPlayer.alternarNotas();
     
     // quando pressionar botão das notas, não tocar o acorde denovo
     // if (!elements.acorde1.classList.contains('d-none')) {
     //     cifraPlayer.tocarAcorde(cifraPlayer.acordeTocando);
     // }
-});
+//});
 
 elements.stopButton.addEventListener('mousedown', () => {
     cifraPlayer.pararReproducao();
