@@ -41,19 +41,27 @@ class CifraPlayer {
         const temColchetes = /\[.*?\]/;
     
         const linhasDestacadas = linhas.map(linha => {
-            if (linha && (!temPalavra.test(linha) || temColchetes.test(linha))) {
-                const acordes = linha.split(/\s+/);
-                const espacos = linha.match(/\s+/g) || [];
-                const linhaProcessada = acordes.map((palavra, index) => {
-                    let acorde = this.processarAcorde(palavra, cifraNum);
-                    if (acorde.startsWith('<b'))
-                        cifraNum++;
-                    return index < acordes.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
-                }).join('');
-                if (cifraNum > 1)
-                    return `<span><b></b>${linhaProcessada}<b></b></span>`;
-                else                
-                    return `${linhaProcessada}`;
+            //if (linha && ((!temLetrasNaoCifra.test(linha) && !temPalavra.test(linha)) || temColchetes.test(linha))) {
+            //if (linha && (this.notasAcordes.includes(linha))) {// || !temColchetes.test(linha))) {
+            if (linha) {
+                const acordes = linha.trim().split(/\s+/);                
+                const ehLinhaDeAcordeUnico = acordes.length === 1 && this.notasAcordes.includes(acordes[0]);
+                const ehLinhaDeAcordesConsecutivos = acordes.length >= 2 && this.notasAcordes.includes(acordes[0]) && this.notasAcordes.includes(acordes[1]);
+                const linhDeColcheteseAcordes = temColchetes.test(linha) && acordes.length >= 2 && this.notasAcordes.includes(acordes[1]);
+
+                if (ehLinhaDeAcordeUnico || ehLinhaDeAcordesConsecutivos || linhDeColcheteseAcordes) {
+                    const espacos = linha.match(/\s+/g) || [];
+                    const linhaProcessada = acordes.map((palavra, index) => {
+                        let acorde = this.processarAcorde(palavra, cifraNum);
+                        if (acorde.startsWith('<b'))
+                            cifraNum++;
+                        return index < acordes.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
+                    }).join('');
+                    if (cifraNum > 1)
+                        return `<span><b></b>${linhaProcessada}<b></b></span>`;
+                    else                
+                        return `${linhaProcessada}`;
+                }
             }
             return linha;
         });
