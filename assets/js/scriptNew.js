@@ -41,7 +41,8 @@ class CifraPlayer {
         const temColchetes = /\[.*?\]/;
     
         const linhasDestacadas = linhas.map(linha => {
-            if (linha && (!temPalavra.test(linha) || temColchetes.test(linha))) {
+            //if (linha && (!temPalavra.test(linha) || temColchetes.test(linha))) {
+            if (linha && (this.notasAcordes.includes(linha))) {// || !temColchetes.test(linha))) {
                 const acordes = linha.split(/\s+/);
                 const espacos = linha.match(/\s+/g) || [];
                 const linhaProcessada = acordes.map((palavra, index) => {
