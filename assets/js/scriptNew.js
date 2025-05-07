@@ -383,7 +383,7 @@ class CifraPlayer {
                 this.adicionarSomAoGrupo('strings', nota.replace('#', '_'), 'baixo', 0.4);
     
             if (this.elements.notesButton.classList.contains('pressed')) {
-                this.adicionarSomAoGrupo('orgao', nota.replace('#', '_', 0.5));
+                this.adicionarSomAoGrupo('orgao', nota.replace('#', '_', 0.6));
                 if (!this.elements.notesButton.classList.contains('notaSolo'))
                     this.adicionarSomAoGrupo('strings', nota.replace('#', '_', 0.4));
             }
