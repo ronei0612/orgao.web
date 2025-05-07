@@ -570,6 +570,10 @@ window.onerror = function (message, source, lineno, colno, error) {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    // acorda a api
+    fetch('https://apinode-h4wt.onrender.com/')
+        .then(response => response.json())
+
     // Zera a barra de rolagem de missa
     localStorage.setItem('scrollTop', 0);
     localStorage.setItem('tomAcordes', '');
