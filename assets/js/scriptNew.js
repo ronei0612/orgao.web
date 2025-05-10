@@ -791,7 +791,6 @@ elements.editSavesSelect.addEventListener('click', () => {
     if (elements.savesSelect.selectedIndex !== 0) {
         elements.itemNameInput.value = saveName ? saveName : "";
         $('#itemModal').modal('show');
-        exibirListaSaves(saveName);
     }
 });
 
