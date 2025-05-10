@@ -1082,7 +1082,7 @@ function exibirListaSaves(saveSelected) {
             elements.savesSelect.appendChild(listItem);
         });
 
-        if (saveSelected && saves[saveSelected]) {
+        if (saveSelected) {
             elements.savesSelect.value = saveSelected;
             elements.savesSelect.style.color = 'black';
         }
