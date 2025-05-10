@@ -496,6 +496,7 @@ const elements = {
     itemNameInput: document.getElementById('itemNameInput'),
     alertModalLabel: document.getElementById('alertModalLabel'),
     alertModalMessage: document.getElementById('alertModalMessage'),
+    itemModalLabel: document.getElementById('itemModalLabel'),
     cancelButtonAlert: document.getElementById('cancelButtonAlert'),
     simButtonAlert: document.getElementById('simButtonAlert'),
     naoButtonAlert: document.getElementById('naoButtonAlert'),
@@ -789,6 +790,7 @@ elements.savesSelect.addEventListener('change', () => {
 elements.editSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
     if (elements.savesSelect.selectedIndex !== 0) {
+        itemModalLabel.innerText = "Editar - " + saveName;
         elements.itemNameInput.value = saveName ? saveName : "";
         $('#itemModal').modal('show');
     }
@@ -1353,7 +1355,7 @@ function fullScreen() {
     }
 }
 
-function salvarSave(newSaveName, saveContent) {
+function salvarSave(newSaveName) {
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
 
     if (newSaveName) {
@@ -1375,27 +1377,26 @@ function salvarSave(newSaveName, saveContent) {
         }
 
         let selectedOption = elements.savesSelect.options[elements.savesSelect.selectedIndex];
-        
-        if (!saveContent) {
-            if (elements.savesSelect.selectedIndex !== 0) {
-                // Edit existing save
-                let oldSaveName = selectedOption.value;
-                saveContent = saves[oldSaveName];
-                delete saves[oldSaveName];
-                selectedOption.textContent = newSaveName;
-                selectedOption.value = newSaveName;
-            } else {
-                // New save
-                let newOption = document.createElement("option");
-                newOption.text = newSaveName;
-                newOption.value = newSaveName;
-                elements.savesSelect.add(newOption);
-                elements.savesSelect.value = newSaveName;
-            }
+        let titulo = itemModalLabel.innerText;
 
-            saveContent = elements.editTextarea.value;
-            
-            const musicaCifrada = cifraPlayer.destacarCifras(saveContent);        
+        if (titulo.includes("Editar - ")) {
+            var oldSaveName = titulo.split(' - ')[1];
+            var saveContent = saves[oldSaveName];
+            saves[newSaveName] = saveContent;
+            delete saves[oldSaveName];
+            selectedOption.textContent = newSaveName;
+            selectedOption.value = newSaveName;
+            localStorage.setItem('saves', JSON.stringify(saves));
+        } else {
+            let newOption = document.createElement("option");
+            newOption.text = newSaveName;
+            newOption.value = newSaveName;
+            elements.savesSelect.add(newOption);
+            elements.savesSelect.value = newSaveName;
+
+            var saveContent = elements.editTextarea.value;
+
+            const musicaCifrada = cifraPlayer.destacarCifras(saveContent);
             const tom = descobrirTom(musicaCifrada);
             mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
             elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(tom, saveContent);
@@ -1404,17 +1405,17 @@ function salvarSave(newSaveName, saveContent) {
             elements.santamissaFrame.classList.add('d-none');
             elements.oracoesFrame.classList.add('d-none');
             cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
+
+            if (saveContent.includes('<pre>')) {
+                saveContent = saveContent.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
+            }
+            //saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
+            saves[newSaveName] = saveContent;
+            localStorage.setItem('saves', JSON.stringify(saves));
+            elements.savesSelect.value = newSaveName;
+            elements.searchModalLabel.textContent = newSaveName;
         }
-        
-        if (saveContent.includes('<pre>')) {
-            saveContent = saveContent.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
-        }
-        //saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
-        saves[newSaveName] = saveContent;
-        localStorage.setItem('saves', JSON.stringify(saves));
-        elements.savesSelect.value = newSaveName;
-        elements.searchModalLabel.textContent = newSaveName;
-    
+
         exibirListaSaves(newSaveName);
     }
 }
