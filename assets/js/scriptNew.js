@@ -599,22 +599,6 @@ elements.santamissaFrame.addEventListener('load', () => {
     });
 });
 
-elements.addButton.addEventListener('click', function () {
-    this.classList.add('pressed');
-
-    setTimeout(() => {
-        this.classList.remove('pressed');
-    }, 100);
-
-    if (!elements.deleteSavesSelect.classList.contains('d-none')) {
-        elements.itemNameInput.value = "";
-        elements.savesSelect.selectedIndex = 0;
-        $('#itemModal').modal('show');
-    }
-
-    toggleEditDeleteButtons();
-});
-
 elements.saveNewItemButton.addEventListener("click", () => {
     elements.savesSelect.selectedIndex = 0;
     let newSaveName = elements.itemNameInput.value;
@@ -629,9 +613,15 @@ elements.saveButton.addEventListener('click', () => {
     if (saveContent) {
         let saveName = elements.searchModalLabel.textContent;
         if (saveName) {
+            if (saveName === "Música") {
+                itemModalLabel.innerText = "Novo";
+                $('#itemModal').modal('show');
+                return;
+            }
             let saves = JSON.parse(localStorage.getItem('saves')) || {};
             if (saves.hasOwnProperty(saveName)) {
-                elements.alertModalMessage.textContent = `Atenção! Já existe "${saveName}". Deseja sobrescrever?`;
+                elements.alertModalMessage.textContent = `Salvar "${saveName}"?`;
+                //elements.alertModalMessage.textContent = `Atenção! Já existe "${saveName}". Deseja sobrescrever?`;
                 elements.alertModalLabel.textContent = `Salvar "${saveName}"`;
                 elements.simButtonAlert.textContent = '✓ Sim';
                 elements.simButtonAlert.classList.remove('d-none');
@@ -785,7 +775,24 @@ elements.savesSelect.addEventListener('change', () => {
             cifraPlayer.preencherSelect(tom);
         }
     }
-})
+});
+
+elements.addButton.addEventListener('click', function () {
+    this.classList.add('pressed');
+
+    setTimeout(() => {
+        this.classList.remove('pressed');
+    }, 100);
+
+    if (!elements.deleteSavesSelect.classList.contains('d-none')) {
+        itemModalLabel.innerText = "Novo";
+        elements.itemNameInput.value = "";
+        elements.savesSelect.selectedIndex = 0;
+        $('#itemModal').modal('show');
+    }
+
+    toggleEditDeleteButtons();
+});
 
 elements.editSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
@@ -1416,6 +1423,7 @@ function salvarSave(newSaveName) {
             elements.searchModalLabel.textContent = newSaveName;
         }
 
+        $('#searchModal').modal('hide');
         exibirListaSaves(newSaveName);
     }
 }
