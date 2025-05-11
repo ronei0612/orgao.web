@@ -885,7 +885,7 @@ elements.playButton.addEventListener('click', () => {
 })
 
 elements.simButtonAlert.addEventListener('click', () => {
-    if (elements.alertModalMessage.textContent.toLowerCase().includes('sobrescrever')) {
+    if (elements.alertModalMessage.textContent.toLowerCase().includes('?')) {
         const saveName = elements.searchModalLabel.textContent;
         salvarSave(saveName);
         elements.startButton.dispatchEvent(new Event('click'));
@@ -936,6 +936,7 @@ $('#searchModal').on('shown.bs.modal', () => {
     if (elements.savesSelect.value !== '')
         elements.searchModalLabel.textContent = elements.savesSelect.value;
 
+    elements.editTextarea.value = elements.iframeCifra.contentDocument.body.innerText;
     elements.searchInput.focus();
     elements.searchResultsList.classList.add('d-none');
     elements.editTextarea.classList.remove('d-none');
@@ -1080,7 +1081,7 @@ function exibirListaSaves(saveSelected) {
 
     elements.savesSelect.style.color = '';
 
-    let saves = localStorage.getItem('saves');            
+    let saves = localStorage.getItem('saves');
     if (saves && saves !== '{}') {
         saves = JSON.parse(saves);
 
