@@ -885,7 +885,7 @@ elements.playButton.addEventListener('click', () => {
 })
 
 elements.simButtonAlert.addEventListener('click', () => {
-    if (elements.alertModalMessage.textContent.toLowerCase().includes('sobrescrever')) {
+    if (elements.alertModalMessage.textContent.toLowerCase().includes('?')) {
         const saveName = elements.searchModalLabel.textContent;
         salvarSave(saveName);
         elements.startButton.dispatchEvent(new Event('click'));
