@@ -1389,12 +1389,14 @@ function salvarSave(newSaveName) {
 
         if (titulo.includes("Editar - ")) {
             var oldSaveName = titulo.split(' - ')[1];
+            if (oldSaveName !== newSaveName) {
             var saveContent = saves[oldSaveName];
             saves[newSaveName] = saveContent;
             delete saves[oldSaveName];
             selectedOption.textContent = newSaveName;
             selectedOption.value = newSaveName;
             localStorage.setItem('saves', JSON.stringify(saves));
+            }
         } else {
             let newOption = document.createElement("option");
             newOption.text = newSaveName;
