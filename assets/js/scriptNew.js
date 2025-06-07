@@ -547,6 +547,34 @@ class UIController {
         }
     }
 
+    atualizarBotoesNavegacao(direcao) {
+        if (direcao === 'esquerda') {
+            this.elements.nextButton.classList.remove('d-none');
+            if (this.elements.controlButtons.classList.contains('justify-content-center')) {
+                this.elements.controlButtons.classList.remove('justify-content-center');
+                this.elements.controlButtons.classList.add('justify-content-left');
+                this.elements.prevButton.classList.add('d-none');
+            } else if (this.elements.controlButtons.classList.contains('justify-content-end')) {
+                this.elements.controlButtons.classList.remove('justify-content-end');
+                this.elements.controlButtons.classList.add('justify-content-center');
+            }
+        } else if (direcao === 'direita') {
+            this.elements.prevButton.classList.remove('d-none');
+            if (this.elements.controlButtons.classList.contains('justify-content-center')) {
+                this.elements.controlButtons.classList.remove('justify-content-center');
+                this.elements.controlButtons.classList.add('justify-content-end');
+                this.elements.nextButton.classList.add('d-none');
+            } else if (this.elements.controlButtons.classList.contains('justify-content-left')) {
+                this.elements.controlButtons.classList.remove('justify-content-left');
+                this.elements.controlButtons.classList.add('justify-content-center');
+            }
+        } else if (direcao === 'centralizado') {
+            this.elements.controlButtons.classList.add('justify-content-center');
+            this.elements.prevButton.classList.remove('d-none');
+            this.elements.nextButton.classList.remove('d-none');
+        }
+    }
+
     criarItemSelect(saveName, saveContent) {
         const option = document.createElement('option');
 
@@ -872,29 +900,11 @@ elements.startButton.addEventListener('click', () => {
 });
 
 elements.prevButton.addEventListener('click', () => {
-    elements.nextButton.classList.remove('d-none');
-    if (elements.controlButtons.classList.contains('justify-content-center')) {
-        elements.controlButtons.classList.remove('justify-content-center');
-        elements.controlButtons.classList.add('justify-content-left');
-        elements.prevButton.classList.add('d-none');
-    }
-    else if (elements.controlButtons.classList.contains('justify-content-end')) {
-        elements.controlButtons.classList.remove('justify-content-end');
-        elements.controlButtons.classList.add('justify-content-center');
-    }
+    uiController.atualizarBotoesNavegacao('esquerda');
 });
 
 elements.nextButton.addEventListener('click', () => {
-    elements.prevButton.classList.remove('d-none');
-    if (elements.controlButtons.classList.contains('justify-content-center')) {
-        elements.controlButtons.classList.remove('justify-content-center');
-        elements.controlButtons.classList.add('justify-content-end');
-        elements.nextButton.classList.add('d-none');
-    }
-    else if (elements.controlButtons.classList.contains('justify-content-left')) {
-        elements.controlButtons.classList.remove('justify-content-left');
-        elements.controlButtons.classList.add('justify-content-center');
-    }
+    uiController.atualizarBotoesNavegacao('direita');
 });
 
 elements.tomSelect.addEventListener('change', (event) => {
@@ -962,6 +972,7 @@ elements.savesSelect.addEventListener('change', () => {
         cifraPlayer.indiceAcorde = 0;
     }
     else {
+        uiController.atualizarBotoesNavegacao('centralizado');
         uiController.mostrarBotoesAcordes();
         elements.savesSelect.selectedIndex = 0;
         elements.iframeCifra.contentDocument.body.innerHTML = '';
