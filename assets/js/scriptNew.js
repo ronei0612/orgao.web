@@ -476,6 +476,7 @@ class UIController {
         this.elements.playButton.classList.add('d-none');
         this.elements.nextButton.classList.add('d-none');
         this.elements.prevButton.classList.add('d-none');
+        this.atualizarBotoesNavegacao('centralizado');
         this.exibirBotoesAcordes();
     }
 
@@ -972,7 +973,6 @@ elements.savesSelect.addEventListener('change', () => {
         cifraPlayer.indiceAcorde = 0;
     }
     else {
-        uiController.atualizarBotoesNavegacao('centralizado');
         uiController.mostrarBotoesAcordes();
         elements.savesSelect.selectedIndex = 0;
         elements.iframeCifra.contentDocument.body.innerHTML = '';
