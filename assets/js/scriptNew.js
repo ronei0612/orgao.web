@@ -940,6 +940,7 @@ elements.increaseTom.addEventListener('click', () => {
 elements.savesSelect.addEventListener('change', () => {
     const selectItem = elements.savesSelect.value;
     if (selectItem) {
+        localStorage.setItem('tomAcordes', elements.tomSelect.value);
         uiController.mostrarBotoesCifras();
         const saves = JSON.parse(localStorage.getItem('saves'));
         elements.editTextarea.value = saves[selectItem];
@@ -964,10 +965,10 @@ elements.savesSelect.addEventListener('change', () => {
         uiController.mostrarBotoesAcordes();
         elements.savesSelect.selectedIndex = 0;
         elements.iframeCifra.contentDocument.body.innerHTML = '';
-        const tom = localStorage.getItem('tomAcordes');
-        if (tom) {
-            cifraPlayer.preencherSelect(tom);
-        }
+
+        const tomAcordes = localStorage.getItem('tomAcordes') || '';
+        uiController.mostrarTextoCifrasCarregado(tomAcordes, elements.editTextarea.value);
+        cifraPlayer.preencherSelect(tomAcordes);
     }
 });
 
