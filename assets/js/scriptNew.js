@@ -93,7 +93,7 @@ class CifraPlayer {
         `;
     }
 
-    removeCifras(musica) {    
+    removeCifras(musica) {
         const tempElement = document.createElement('div');
         tempElement.innerHTML = musica;
     
@@ -104,7 +104,7 @@ class CifraPlayer {
             .replace("font-size: 12pt;", "font-size: 15pt;");
     
         //final = final.replace(/(\r\n|\n|\r){2,}/g, '$1');
-        final = final.replace(/(\n\n)/g, '\n');
+        //final = final.replace(/(\n\n)/g, '\n');
     
         this.elements.iframeCifra.contentDocument.body.innerHTML = final;
     }
@@ -650,7 +650,11 @@ class UIController {
             cifraPlayer.preencherSelect(tom);
         }
         else {
-            uiController.ocultarBotoesTom();
+            uiController.ocultarBotoesTom();            
+            let textoLetra = this.elements.iframeCifra.contentDocument.body.innerHTML;
+            textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
+                .replace("font-size: 12pt;", "font-size: 15pt;");
+            this.elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
         }
 
         if (texto) {
@@ -946,6 +950,12 @@ elements.startButton.addEventListener('click', () => {
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
         if (tom !== '')
             elements.tomSelect.dispatchEvent(new Event('change'));
+        else {
+            let textoLetra = elements.iframeCifra.contentDocument.body.innerHTML;
+            textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
+                .replace("font-size: 12pt;", "font-size: 15pt;");
+            elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
+        }
         elements.iframeCifra.classList.remove('d-none');
         elements.liturgiaDiariaFrame.classList.add('d-none');
         elements.santamissaFrame.classList.add('d-none');
