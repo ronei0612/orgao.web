@@ -28,7 +28,12 @@ class CifraPlayer {
             'B#': 'C',
             'E#': 'F',
             'Cb': 'B',
-            'Fb': 'E'
+            'Fb': 'E',
+            'Bb': 'A#',
+            'Db': 'C#',
+            'Eb': 'D#',
+            'Gb': 'F#',
+            'Ab': 'G#'
         };
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
         this.carregarAcordes();
