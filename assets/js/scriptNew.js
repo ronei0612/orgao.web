@@ -720,6 +720,10 @@ class UIController {
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
 
         this.mostrarBotoesAcordes();
+        
+        const tomAcordes = localStorage.getItem('tomAcordes') || '';
+        uiController.mostrarTextoCifrasCarregado(tomAcordes, elements.editTextarea.value);
+        cifraPlayer.preencherSelect(tomAcordes);
 
         // Exibe o frame selecionado
         if (frameId) {
@@ -1086,7 +1090,7 @@ elements.increaseTom.addEventListener('click', () => {
 elements.savesSelect.addEventListener('change', () => {
     const selectItem = elements.savesSelect.value;
     if (selectItem) {
-        localStorage.setItem('tomAcordes', elements.tomSelect.value);
+        const tomAntes = elements.tomSelect.value;
         const saves = JSON.parse(localStorage.getItem('saves'));
         elements.editTextarea.value = saves[selectItem];
         elements.searchModalLabel.textContent = selectItem;
@@ -1098,6 +1102,7 @@ elements.savesSelect.addEventListener('change', () => {
         uiController.mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
 
         if (tom !== '') {
+            localStorage.setItem('tomAcordes', tomAntes);
             uiController.mostrarBotoesCifras();
             elements.tomSelect.dispatchEvent(new Event('change'));
         }
