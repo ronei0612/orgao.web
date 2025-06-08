@@ -369,6 +369,7 @@ class CifraPlayer {
     tocarAcorde(acorde) {
         this.pararAcorde();
         this.acordeTocando = acorde;
+        uiController.desabilitarSelectSaves();
     
         if (!this.acordeGroup) {  
             this.acordeGroup = new Pizzicato.Group();
@@ -424,6 +425,7 @@ class CifraPlayer {
     }
 
     pararAcorde() {
+        uiController.habilitarSelectSaves();
         if (this.acordeGroup) {
             this.acordeGroup.stop();
 
@@ -516,6 +518,16 @@ class UIController {
     exibirBotoesTom() {
         this.elements.tomContainer.classList.remove('d-none');
         this.elements.tomContainer.classList.add('d-flex');
+    }
+
+    desabilitarSelectSaves() {
+        this.elements.savesSelect.disabled = true;
+        this.elements.addButton.disabled = true;
+    }
+
+    habilitarSelectSaves() {
+        this.elements.savesSelect.disabled = false;
+        this.elements.addButton.disabled = false;
     }
 
     exibirListaSaves(saveSelected) {

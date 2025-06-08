@@ -2,6 +2,15 @@
   color: black;
 }
 
+#savesSelect:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#addButton:disabled {
+  cursor: not-allowed;
+}
+
 .rounded-left-custom {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
