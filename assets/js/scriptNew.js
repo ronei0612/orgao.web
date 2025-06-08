@@ -52,7 +52,7 @@ class CifraPlayer {
                 if (ehLinhaDeAcordeUnico || ehLinhaDeAcordesConsecutivos || linhDeColcheteseAcordes) {
                     const espacos = linha.match(/\s+/g) || [];
                     const linhaProcessada = acordes.map((palavra, index) => {
-                        let acorde = this.processarAcorde(palavra, cifraNum);
+                        let acorde = this.processarAcordev2(palavra, cifraNum);
                         if (acorde.startsWith('<b'))
                             cifraNum++;
                         return index < acordes.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
@@ -134,7 +134,41 @@ class CifraPlayer {
         }
     
         return this.notasAcordes.includes(acorde.split('/')[0]) ? `<b id="cifra${cifraNum}">${acorde}</b>` : palavra;
-    }    
+    }
+    
+    processarAcordev2(palavra, cifraNum) {
+        let acorde = palavra;
+        let baixo = '';
+
+        if (acorde.includes('/') && !acorde.includes('(')) {
+            [acorde, baixo] = acorde.split('/');
+            baixo = this.getAcorde(baixo); // Padroniza o nome do baixo (ex: 'Db' para 'C#')
+
+            // 1. Obter as notas do acorde
+            let notasDoAcorde = this.notasAcordesJson[acorde];
+
+            // 2. Validar se o acorde existe
+            if (!notasDoAcorde) {
+                return palavra; // Acorde inválido, retornar a palavra original
+            }
+
+            // 3. Validar se o baixo existe e pertence ao acorde
+            if (!this.notasAcordesJson.hasOwnProperty(baixo) && !notasDoAcorde.includes(baixo)) {
+                return palavra; // Baixo inválido, retornar a palavra original
+            }
+
+            // 4. Se chegou até aqui, a inversão é válida
+            acorde = this.getAcorde(acorde);
+            acorde = `${acorde}/${baixo}`; // Monta a cifra com a inversão
+        } else {
+            while (!this.notasAcordes.includes(acorde) && acorde) {
+                acorde = acorde.slice(0, -1);
+            }
+            acorde = this.getAcorde(acorde);
+        }
+
+        return this.notasAcordes.includes(acorde.split('/')[0]) ? `<b id="cifra${cifraNum}">${acorde}</b>` : palavra;
+    }
 
     getAcorde(acorde) {
         return this.acordesMap[acorde] || acorde;
@@ -1030,7 +1064,7 @@ elements.tomSelect.addEventListener('change', (event) => {
             }
         }
     } else {
-        cifraPlayer.removeCifras(elements.iframeCifra.contentDocument.body.innerHTML);
+        cifraPlayer.removeCifras(elements.iframeCifra.contentDocument.body.innerHTML);        
         uiController.mostrarBotoesAcordes();
         uiController.ocultarBotoesTom();
     }
