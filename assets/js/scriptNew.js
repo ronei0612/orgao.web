@@ -369,6 +369,7 @@ class CifraPlayer {
     tocarAcorde(acorde) {
         this.pararAcorde();
         this.acordeTocando = acorde;
+        uiController.desabilitarSelectSaves();
     
         if (!this.acordeGroup) {  
             this.acordeGroup = new Pizzicato.Group();
@@ -424,6 +425,7 @@ class CifraPlayer {
     }
 
     pararAcorde() {
+        uiController.habilitarSelectSaves();
         if (this.acordeGroup) {
             this.acordeGroup.stop();
 
@@ -518,6 +520,16 @@ class UIController {
         this.elements.tomContainer.classList.add('d-flex');
     }
 
+    desabilitarSelectSaves() {
+        this.elements.savesSelect.disabled = true;
+        this.elements.addButton.disabled = true;
+    }
+
+    habilitarSelectSaves() {
+        this.elements.savesSelect.disabled = false;
+        this.elements.addButton.disabled = false;
+    }
+
     exibirListaSaves(saveSelected) {
         this.elements.addButton.classList.add('rounded-right-custom');
         this.elements.addButton.classList.remove('rounded-0');
@@ -594,6 +606,41 @@ class UIController {
 
         this.elements.savesSelect.appendChild(option);
         return option;
+    }
+
+    mostrarInterfaceDePesquisa() {
+        this.elements.editTextarea.classList.add('d-none');
+        this.elements.searchIcon.classList.add('d-none');
+        this.elements.spinner.classList.remove('d-none');
+        this.elements.saveButton.classList.add('d-none');
+        this.elements.startButton.classList.add('d-none');
+        this.elements.searchButton.disabled = true;
+    }
+
+    ocultarInterfaceDePesquisa() {
+        this.elements.searchIcon.classList.remove('d-none');
+        this.elements.spinner.classList.add('d-none');
+        this.elements.searchResultsList.classList.remove('d-none');
+        this.elements.searchButton.disabled = false;
+    }
+
+    prepararInterfaceParaDownload() {
+        this.elements.searchButton.disabled = true;
+        this.elements.spinner.classList.remove('d-none');
+        this.elements.searchIcon.classList.add('d-none');
+        this.elements.searchResultsList.innerHTML = '';
+    }
+
+    exibirBotoesSalvarTocar() {
+        this.elements.searchButton.disabled = false;
+        this.elements.spinner.classList.add('d-none');
+        this.elements.searchIcon.classList.remove('d-none');
+        this.elements.searchResultsList.classList.add('d-none');
+        
+        this.elements.startButton.classList.remove('d-none');
+        this.elements.saveButton.classList.remove('d-none');
+        this.elements.addButton.classList.remove('d-none');
+        this.elements.editTextarea.classList.remove('d-none');
     }
 
     mostrarTextoCifrasCarregado(tom = null, texto = null) {
@@ -1155,8 +1202,7 @@ $('#searchModal').on('shown.bs.modal', () => {
 
     elements.editTextarea.value = elements.iframeCifra.contentDocument.body.innerText;
     elements.searchInput.focus();
-    elements.searchResultsList.classList.add('d-none');
-    elements.editTextarea.classList.remove('d-none');
+    uiController.exibirBotoesSalvarTocar();
 });
 
 $('#alertModal').on('shown.bs.modal', () => {
@@ -1256,14 +1302,7 @@ function deletarSave(saveName) {
 }
 
 async function searchMusic() {
-    elements.editTextarea.classList.add('d-none');
-    elements.searchIcon.classList.add('d-none');
-    elements.spinner.classList.remove('d-none');
-    elements.saveButton.classList.add('d-none');
-    elements.startButton.classList.add('d-none');
-    elements.searchResultsList.classList.remove('d-none');
-    elements.searchResultsList.innerHTML = '';
-    elements.searchButton.disabled = true;
+    uiController.mostrarInterfaceDePesquisa();
 
     const textoPesquisa = elements.searchInput.value;
 
@@ -1302,17 +1341,12 @@ async function searchMusic() {
         elements.savesList.classList.remove('d-none');
         elements.searchResultsList.classList.add('d-none');
     } finally {
-        elements.searchButton.disabled = false;
-        elements.spinner.classList.add('d-none');
-        elements.searchIcon.classList.remove('d-none');
+        uiController.ocultarInterfaceDePesquisa();
     }
 }
 
 async function choseLink(urlLink, text) {
-    elements.searchButton.disabled = true;
-    elements.spinner.classList.remove('d-none');
-    elements.searchIcon.classList.add('d-none');
-    elements.searchResultsList.innerHTML = '';
+    uiController.prepararInterfaceParaDownload();
 
     try {
         const response = await fetch('https://apinode-h4wt.onrender.com/downloadsite', {
@@ -1327,10 +1361,7 @@ async function choseLink(urlLink, text) {
             if (elements.searchModalLabel.textContent === 'Música') {
                 elements.searchModalLabel.textContent = text.split(' - ')[0];
             }
-            elements.editTextarea.classList.remove('d-none');
-            elements.startButton.classList.remove('d-none');
-            elements.addButton.classList.remove('d-none');
-            elements.saveButton.classList.remove('d-none');
+            uiController.exibirBotoesSalvarTocar();
         } else {
             alert(data.message);
         }
@@ -1338,10 +1369,7 @@ async function choseLink(urlLink, text) {
         console.error('Error fetching data:', error);
         alert('Erro ao baixar a cifra. Tente novamente mais tarde.');
     } finally {
-        elements.searchButton.disabled = false;
-        elements.spinner.classList.add('d-none');
-        elements.searchIcon.classList.remove('d-none');
-        elements.searchResultsList.classList.add('d-none');
+        uiController.exibirBotoesSalvarTocar();
     }
 }
 
