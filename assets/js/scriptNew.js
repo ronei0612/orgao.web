@@ -192,7 +192,7 @@ class CifraPlayer {
             this.tomAtual = novoTom;
 
             const cifra = this.elements.iframeCifra.contentDocument.body.innerHTML;
-            mostrarTextoCifrasCarregado(novoTom, cifra);
+            uiController.mostrarTextoCifrasCarregado(novoTom, cifra);
 
             if (this.indiceAcorde > 0) {
                 this.indiceAcorde--;
@@ -460,6 +460,246 @@ class CifraPlayer {
     }
 }
 
+class UIController {
+    constructor(elements) {
+        this.elements = elements;
+    }
+
+    mostrarBotoesCifras() {
+        this.elements.playButton.classList.remove('d-none');
+        this.elements.nextButton.classList.remove('d-none');
+        this.elements.prevButton.classList.remove('d-none');
+        this.esconderBotoesAcordes();
+    }
+
+    mostrarBotoesAcordes() {
+        this.elements.playButton.classList.add('d-none');
+        this.elements.nextButton.classList.add('d-none');
+        this.elements.prevButton.classList.add('d-none');
+        this.atualizarBotoesNavegacao('centralizado');
+        this.exibirBotoesAcordes();
+    }
+
+    esconderBotoesAcordes() {
+        this.elements.acorde1.classList.add('d-none');
+        this.elements.acorde2.classList.add('d-none');
+        this.elements.acorde3.classList.add('d-none');
+        this.elements.acorde4.classList.add('d-none');
+        this.elements.acorde5.classList.add('d-none');
+        this.elements.acorde6.classList.add('d-none');
+        this.elements.acorde7.classList.add('d-none');
+        this.elements.acorde8.classList.add('d-none');
+        this.elements.acorde9.classList.add('d-none');
+        this.elements.acorde10.classList.add('d-none');
+        this.elements.acorde11.classList.add('d-none');
+    }
+
+    exibirBotoesAcordes() {
+        this.elements.acorde1.classList.remove('d-none');
+        this.elements.acorde2.classList.remove('d-none');
+        this.elements.acorde3.classList.remove('d-none');
+        this.elements.acorde4.classList.remove('d-none');
+        this.elements.acorde5.classList.remove('d-none');
+        this.elements.acorde6.classList.remove('d-none');
+        this.elements.acorde7.classList.remove('d-none');
+        this.elements.acorde8.classList.remove('d-none');
+        this.elements.acorde9.classList.remove('d-none');
+        this.elements.acorde10.classList.remove('d-none');
+        this.elements.acorde11.classList.remove('d-none');
+    }
+
+    ocultarBotoesTom() {
+        this.elements.tomContainer.classList.remove('d-flex');
+        this.elements.tomContainer.classList.add('d-none');
+    }
+
+    exibirBotoesTom() {
+        this.elements.tomContainer.classList.remove('d-none');
+        this.elements.tomContainer.classList.add('d-flex');
+    }
+
+    exibirListaSaves(saveSelected) {
+        this.elements.addButton.classList.add('rounded-right-custom');
+        this.elements.addButton.classList.remove('rounded-0');
+        this.elements.deleteSavesSelect.classList.add('d-none');
+        this.elements.editSavesSelect.classList.add('d-none');
+
+        this.elements.savesSelect.innerHTML = '';
+
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.text = 'Selecione uma Música...';
+        defaultOption.selected = true;
+        defaultOption.hidden = true;
+        this.elements.savesSelect.appendChild(defaultOption);
+
+        const emptyOption = document.createElement('option');
+        emptyOption.value = '';
+        emptyOption.text = '';
+        this.elements.savesSelect.appendChild(emptyOption);
+
+        this.elements.savesSelect.style.color = '';
+
+        let saves = localStorage.getItem('saves');
+        if (saves && saves !== '{}') {
+            saves = JSON.parse(saves);
+
+            let saveNames = Object.keys(saves).sort();
+
+            saveNames.forEach(saveName => {
+                const listItem = this.criarItemSelect(saveName, saves[saveName]);
+                this.elements.savesSelect.appendChild(listItem);
+            });
+
+            if (saveSelected) {
+                this.elements.savesSelect.value = saveSelected;
+                this.elements.savesSelect.style.color = 'black';
+            }
+        }
+    }
+
+    atualizarBotoesNavegacao(direcao) {
+        if (direcao === 'esquerda') {
+            this.elements.nextButton.classList.remove('d-none');
+            if (this.elements.controlButtons.classList.contains('justify-content-center')) {
+                this.elements.controlButtons.classList.remove('justify-content-center');
+                this.elements.controlButtons.classList.add('justify-content-left');
+                this.elements.prevButton.classList.add('d-none');
+            } else if (this.elements.controlButtons.classList.contains('justify-content-end')) {
+                this.elements.controlButtons.classList.remove('justify-content-end');
+                this.elements.controlButtons.classList.add('justify-content-center');
+            }
+        } else if (direcao === 'direita') {
+            this.elements.prevButton.classList.remove('d-none');
+            if (this.elements.controlButtons.classList.contains('justify-content-center')) {
+                this.elements.controlButtons.classList.remove('justify-content-center');
+                this.elements.controlButtons.classList.add('justify-content-end');
+                this.elements.nextButton.classList.add('d-none');
+            } else if (this.elements.controlButtons.classList.contains('justify-content-left')) {
+                this.elements.controlButtons.classList.remove('justify-content-left');
+                this.elements.controlButtons.classList.add('justify-content-center');
+            }
+        } else if (direcao === 'centralizado') {
+            this.elements.controlButtons.classList.add('justify-content-center');
+            this.elements.prevButton.classList.remove('d-none');
+            this.elements.nextButton.classList.remove('d-none');
+        }
+    }
+
+    criarItemSelect(saveName, saveContent) {
+        const option = document.createElement('option');
+
+        option.value = saveName;
+        option.textContent = saveName;
+
+        this.elements.savesSelect.appendChild(option);
+        return option;
+    }
+
+    mostrarTextoCifrasCarregado(tom = null, texto = null) {
+        if (tom) {
+            uiController.exibirBotoesTom();
+            cifraPlayer.preencherSelect(tom);
+        }
+        else {
+            uiController.ocultarBotoesTom();
+        }
+
+        if (texto) {
+            if (texto.includes('<pre>')) {
+                this.elements.editTextarea.value = texto.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
+            }
+            else {
+                this.elements.editTextarea.value = texto;
+            }
+        }
+    }
+
+    hideEditDeleteButtons() {
+        if (this.elements.deleteSavesSelect.classList.contains('show')) {
+            this.elements.deleteSavesSelect.classList.remove('show');
+            this.elements.editSavesSelect.classList.remove('show');
+            this.elements.addButton.classList.add('rounded-right-custom');
+            this.elements.addButton.classList.remove('rounded-0');
+
+            setTimeout(() => {
+                this.elements.deleteSavesSelect.classList.add('d-none');
+                this.elements.editSavesSelect.classList.add('d-none');
+            }, 100);
+        }
+    }
+
+    toggleEditDeleteButtons() {
+        if (this.elements.deleteSavesSelect.classList.contains('d-none')) {
+            this.elements.deleteSavesSelect.classList.remove('d-none');
+            this.elements.editSavesSelect.classList.remove('d-none');
+
+            setTimeout(() => {
+                this.elements.deleteSavesSelect.classList.add('show');
+                this.elements.editSavesSelect.classList.add('show');
+            }, 10); // Pequeno atraso para permitir que o efeito seja aplicado
+        } else {
+            this.elements.deleteSavesSelect.classList.remove('show');
+            this.elements.editSavesSelect.classList.remove('show');
+
+            setTimeout(() => {
+                this.elements.deleteSavesSelect.classList.add('d-none');
+                this.elements.editSavesSelect.classList.add('d-none');
+            }, 100);
+        }
+
+        this.elements.addButton.classList.toggle('rounded-0');
+        this.elements.addButton.classList.toggle('rounded-right-custom');
+    }
+
+    exibirMensagemAlerta(mensagem, titulo) {
+        this.elements.alertModalMessage.textContent = mensagem;
+        this.elements.alertModalLabel.textContent = titulo;
+        $('#alertModal').modal('show');
+    }
+}
+
+
+class StorageManager {
+    constructor() { }
+
+    getSaves() {
+        try {
+            const savesString = localStorage.getItem('saves');
+            return savesString ? JSON.parse(savesString) : {};
+        } catch (error) {
+            console.error("Erro ao ler saves do localStorage:", error);
+            return {}; // Retorna um objeto vazio em caso de erro
+        }
+    }
+
+    save(nome, conteudo) {
+        const saves = this.getSaves();
+        saves[nome] = conteudo;
+        localStorage.setItem('saves', JSON.stringify(saves));
+    }
+
+    delete(nome) {
+        const saves = this.getSaves();
+        delete saves[nome];
+        localStorage.setItem('saves', JSON.stringify(saves));
+    }
+
+    editarNome(oldName, newName) {
+        const saves = this.getSaves();
+        if (saves.hasOwnProperty(oldName)) {
+            const content = saves[oldName];
+            delete saves[oldName];
+            saves[newName] = content;
+            localStorage.setItem('saves', JSON.stringify(saves));
+            return true;
+        } else {
+            console.warn(`editarNomeSaveLocalStorage: Save com o nome "${oldName}" não encontrado.`);
+            return false;
+        }
+    }
+}
+
 
 const elements = {
     controlButtons: document.getElementById('controlButtons'),
@@ -492,6 +732,7 @@ const elements = {
     tomSelect: document.getElementById('tomSelect'),
     decreaseTom: document.getElementById('decreaseTom'),
     increaseTom: document.getElementById('increaseTom'),
+    tomContainer: document.getElementById('tomContainer'),
     pulseRange: document.getElementById('pulseRange'),
     itemNameInput: document.getElementById('itemNameInput'),
     alertModalLabel: document.getElementById('alertModalLabel'),
@@ -523,6 +764,7 @@ const elements = {
 };
 
 const cifraPlayer = new CifraPlayer(elements);
+const uiController = new UIController(elements);
 
 const camposHarmonicos = {
     // Campos harmônicos maiores
@@ -585,7 +827,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSwitchDarkMode();
         aplicarModoEscuroIframe();
     }
-    exibirListaSaves();
+    uiController.exibirListaSaves();
 });
 
 // Faz o link Liturgia da Palavra de dentro do iframe LiturgiaDiaria funcionar
@@ -620,22 +862,17 @@ elements.saveButton.addEventListener('click', () => {
             }
             let saves = JSON.parse(localStorage.getItem('saves')) || {};
             if (saves.hasOwnProperty(saveName)) {
-                elements.alertModalMessage.textContent = `Salvar "${saveName}"?`;
-                //elements.alertModalMessage.textContent = `Atenção! Já existe "${saveName}". Deseja sobrescrever?`;
-                elements.alertModalLabel.textContent = `Salvar "${saveName}"`;
+                uiController.exibirMensagemAlerta(`Salvar "${saveName}"?`, `Salvar "${saveName}"`);
                 elements.simButtonAlert.textContent = '✓ Sim';
                 elements.simButtonAlert.classList.remove('d-none');
                 elements.naoButtonAlert.classList.remove('d-none');
                 elements.okButtonAlert.classList.add('d-none');
                 elements.cancelButtonAlert.classList.add('d-none');
-
-                $('#alertModal').modal('show');
             }
             else {
                 salvarSave(saveName);
 
-                elements.alertModalMessage.textContent = `"${saveName}" salvo com sucesso!`;
-                elements.alertModalLabel.textContent = 'Música';
+                uiController.exibirMensagemAlerta(`"${saveName}" salvo com sucesso!`, 'Música');
                 elements.simButtonAlert.classList.add('d-none');
                 elements.naoButtonAlert.classList.add('d-none');
                 elements.okButtonAlert.classList.remove('d-none');
@@ -644,8 +881,6 @@ elements.saveButton.addEventListener('click', () => {
                 $('#alertModal').modal('show');
             }
         }
-
-        //fullScreen();
     } else {
         elements.editTextarea.focus();
     }
@@ -655,11 +890,11 @@ elements.darkModeToggle.addEventListener('change', toggleDarkMode);
 
 elements.startButton.addEventListener('click', () => {
     if (elements.editTextarea.value) {
-        mostrarBotoesCifras();
+        uiController.mostrarBotoesCifras();
         const texto = elements.editTextarea.value;
         const musicaCifrada = cifraPlayer.destacarCifras(texto);        
         const tom = descobrirTom(musicaCifrada);
-        mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
+        uiController.mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
         if (!tom)
             elements.tomSelect.dispatchEvent(new Event('change'));
@@ -678,33 +913,15 @@ elements.startButton.addEventListener('click', () => {
 });
 
 elements.prevButton.addEventListener('click', () => {
-    elements.nextButton.classList.remove('d-none');
-    if (elements.controlButtons.classList.contains('justify-content-center')) {
-        elements.controlButtons.classList.remove('justify-content-center');
-        elements.controlButtons.classList.add('justify-content-left');
-        elements.prevButton.classList.add('d-none');
-    }
-    else if (elements.controlButtons.classList.contains('justify-content-end')) {
-        elements.controlButtons.classList.remove('justify-content-end');
-        elements.controlButtons.classList.add('justify-content-center');
-    }
+    uiController.atualizarBotoesNavegacao('esquerda');
 });
 
 elements.nextButton.addEventListener('click', () => {
-    elements.prevButton.classList.remove('d-none');
-    if (elements.controlButtons.classList.contains('justify-content-center')) {
-        elements.controlButtons.classList.remove('justify-content-center');
-        elements.controlButtons.classList.add('justify-content-end');
-        elements.nextButton.classList.add('d-none');
-    }
-    else if (elements.controlButtons.classList.contains('justify-content-left')) {
-        elements.controlButtons.classList.remove('justify-content-left');
-        elements.controlButtons.classList.add('justify-content-center');
-    }
+    uiController.atualizarBotoesNavegacao('direita');
 });
 
 elements.tomSelect.addEventListener('change', (event) => {
-    if (elements.tomSelect.value) { // Selecionado Letra
+    if (elements.tomSelect.value && !elements.tomContainer.classList.contains('d-none')) { // Selecionado Letra
         if (elements.acorde1.classList.contains('d-none')) {
             cifraPlayer.transposeCifra();
         }
@@ -746,7 +963,8 @@ elements.increaseTom.addEventListener('click', () => {
 elements.savesSelect.addEventListener('change', () => {
     const selectItem = elements.savesSelect.value;
     if (selectItem) {
-        mostrarBotoesCifras();
+        localStorage.setItem('tomAcordes', elements.tomSelect.value);
+        uiController.mostrarBotoesCifras();
         const saves = JSON.parse(localStorage.getItem('saves'));
         elements.editTextarea.value = saves[selectItem];
         elements.searchModalLabel.textContent = selectItem;
@@ -755,7 +973,7 @@ elements.savesSelect.addEventListener('change', () => {
         const musicaCifrada = cifraPlayer.destacarCifras(texto);
         const tom = descobrirTom(musicaCifrada);
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
-        mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
+        uiController.mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
         if (!tom)
             elements.tomSelect.dispatchEvent(new Event('change'));
         elements.iframeCifra.classList.remove('d-none');
@@ -767,13 +985,13 @@ elements.savesSelect.addEventListener('change', () => {
         cifraPlayer.indiceAcorde = 0;
     }
     else {
-        mostrarBotoesAcordes();
+        uiController.mostrarBotoesAcordes();
         elements.savesSelect.selectedIndex = 0;
         elements.iframeCifra.contentDocument.body.innerHTML = '';
-        const tom = localStorage.getItem('tomAcordes');
-        if (tom) {
-            cifraPlayer.preencherSelect(tom);
-        }
+
+        const tomAcordes = localStorage.getItem('tomAcordes') || '';
+        uiController.mostrarTextoCifrasCarregado(tomAcordes, elements.editTextarea.value);
+        cifraPlayer.preencherSelect(tomAcordes);
     }
 });
 
@@ -791,7 +1009,7 @@ elements.addButton.addEventListener('click', function () {
         $('#itemModal').modal('show');
     }
 
-    toggleEditDeleteButtons();
+    uiController.toggleEditDeleteButtons();
 });
 
 elements.editSavesSelect.addEventListener('click', () => {
@@ -806,8 +1024,7 @@ elements.editSavesSelect.addEventListener('click', () => {
 elements.deleteSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
     if (elements.savesSelect.selectedIndex !== 0) {
-        elements.alertModalMessage.textContent = `Deseja excluir "${saveName}"?`;
-        elements.alertModalLabel.textContent = 'Atenção!';
+        uiController.exibirMensagemAlerta(`Deseja excluir "${saveName}"?`, 'Atenção!');
         elements.simButtonAlert.textContent = '✓ Sim';
         elements.simButtonAlert.classList.remove('d-none');
         elements.okButtonAlert.classList.add('d-none');
@@ -924,7 +1141,7 @@ document.addEventListener('click', (event) => {
         !elements.editSavesSelect.contains(event.target) &&
         !elements.savesSelect.contains(event.target)
     ) {
-        hideEditDeleteButtons();
+        uiController.hideEditDeleteButtons();
     }
 });
 
@@ -945,43 +1162,6 @@ $('#searchModal').on('shown.bs.modal', () => {
 $('#alertModal').on('shown.bs.modal', () => {
     elements.itemNameInput.focus();
 });
-
-function hideEditDeleteButtons() {
-    if (elements.deleteSavesSelect.classList.contains('show')) {
-        elements.deleteSavesSelect.classList.remove('show');
-        elements.editSavesSelect.classList.remove('show');
-        elements.addButton.classList.add('rounded-right-custom');
-        elements.addButton.classList.remove('rounded-0');
-
-        setTimeout(() => {
-            elements.deleteSavesSelect.classList.add('d-none');
-            elements.editSavesSelect.classList.add('d-none');
-        }, 100);
-    }
-}
-
-function toggleEditDeleteButtons() {
-    if (elements.deleteSavesSelect.classList.contains('d-none')) {
-        elements.deleteSavesSelect.classList.remove('d-none');
-        elements.editSavesSelect.classList.remove('d-none');
-
-        setTimeout(() => {
-            elements.deleteSavesSelect.classList.add('show');
-            elements.editSavesSelect.classList.add('show');
-        }, 10); // Pequeno atraso para permitir que o efeito seja aplicado
-    } else {
-        elements.deleteSavesSelect.classList.remove('show');
-        elements.editSavesSelect.classList.remove('show');
-
-        setTimeout(() => {
-            elements.deleteSavesSelect.classList.add('d-none');
-            elements.editSavesSelect.classList.add('d-none');
-        }, 100);
-    }
-
-    elements.addButton.classList.toggle('rounded-0');
-    elements.addButton.classList.toggle('rounded-right-custom');
-}
 
 function descobrirTom(textoHtml) {
     const tempDiv = document.createElement('div');
@@ -1059,70 +1239,6 @@ function descobrirTom(textoHtml) {
     return tomProvavel;
 }
 
-function exibirListaSaves(saveSelected) {
-    elements.addButton.classList.add('rounded-right-custom');
-    elements.addButton.classList.remove('rounded-0');
-    elements.deleteSavesSelect.classList.add('d-none');
-    elements.editSavesSelect.classList.add('d-none');
-
-    elements.savesSelect.innerHTML = '';
-
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.text = 'Selecione uma Música...';
-    defaultOption.selected = true;
-    defaultOption.hidden = true;
-    elements.savesSelect.appendChild(defaultOption);
-
-    const emptyOption = document.createElement('option');
-    emptyOption.value = '';
-    emptyOption.text = '';
-    elements.savesSelect.appendChild(emptyOption);
-
-    elements.savesSelect.style.color = '';
-
-    let saves = localStorage.getItem('saves');
-    if (saves && saves !== '{}') {
-        saves = JSON.parse(saves);
-
-        let saveNames = Object.keys(saves).sort();
-
-        saveNames.forEach(function (saveName) {
-            const listItem = criarItemSelect(saveName, saves[saveName]);
-            elements.savesSelect.appendChild(listItem);
-        });
-
-        if (saveSelected) {
-            elements.savesSelect.value = saveSelected;
-            elements.savesSelect.style.color = 'black';
-        }
-    }
-}
-
-function criarItemSelect(saveName, saveContent) {
-    const option = document.createElement('option');
-
-    option.value = saveName;
-    option.textContent = saveName;
-
-    // Important: Check if the option already exists to avoid duplicates
-    const existingOption = elements.savesSelect.querySelector(`option[value="${saveName}"]`);
-    if (!existingOption) {
-        elements.savesSelect.appendChild(option);
-    }
-
-    // Optionally, add an event listener for the select option
-    option.addEventListener('click', () => {
-        //Handle what happens when the option is selected
-        //You would likely want to load the saveContent into editTextarea
-        //Example, but adjust this to your needs.
-        elements.editTextarea.value = saveContent;
-        elements.searchModalLabel.textContent = saveName; //Update modal label
-    });
-
-    return option;
-}
-
 function desselecionarTodos() {
     const allItems = document.querySelectorAll('.list-group-item');
     allItems.forEach(item => item.classList.remove('selected'));
@@ -1136,7 +1252,7 @@ function deletarSave(saveName) {
     elements.iframeCifra.contentDocument.body.innerHTML = '';
     elements.tomSelect.innerHTML = '<option value="">Letra</option>';
 
-    exibirListaSaves();
+    uiController.exibirListaSaves();
 }
 
 async function searchMusic() {
@@ -1206,7 +1322,7 @@ async function choseLink(urlLink, text) {
         });
         const data = await response.json();
         if (data.success) {
-            mostrarTextoCifrasCarregado(null, data.message);
+            uiController.mostrarTextoCifrasCarregado(null, data.message);
 
             if (elements.searchModalLabel.textContent === 'Música') {
                 elements.searchModalLabel.textContent = text.split(' - ')[0];
@@ -1318,25 +1434,6 @@ const aplicarModoEscuroIframe = () => {
     }
 };
 
-function mostrarTextoCifrasCarregado(tom = null, texto = null) {
-    if (tom) {
-        cifraPlayer.preencherSelect(tom);
-    }
-    else {
-        elements.tomSelect.innerHTML = '<option value="">Letra</option>';
-    }
-
-    if (texto) {
-        //const textoSemTags = texto.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
-        if (texto.includes('<pre>')) {
-            elements.editTextarea.value = texto.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
-        }
-        else {
-            elements.editTextarea.value = texto;
-        }
-    }
-}
-
 function isMobileDevice() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
@@ -1373,8 +1470,7 @@ function salvarSave(newSaveName) {
         //saves.hasOwnProperty(newSaveName)
 
         if (temSaveName && elements.searchModalLabel.textContent !== newSaveName) {
-            elements.alertModalMessage.textContent = `Já existe esse nome!`;
-            elements.alertModalLabel.textContent = 'Atenção!';
+            uiController.exibirMensagemAlerta(`Já existe esse nome!`, 'Atenção!');
             elements.okButtonAlert.classList.remove('d-none');
             elements.simButtonAlert.classList.add('d-none');
             elements.naoButtonAlert.classList.add('d-none');
@@ -1389,12 +1485,14 @@ function salvarSave(newSaveName) {
 
         if (titulo.includes("Editar - ")) {
             var oldSaveName = titulo.split(' - ')[1];
-            var saveContent = saves[oldSaveName];
-            saves[newSaveName] = saveContent;
-            delete saves[oldSaveName];
-            selectedOption.textContent = newSaveName;
-            selectedOption.value = newSaveName;
-            localStorage.setItem('saves', JSON.stringify(saves));
+            if (oldSaveName !== newSaveName) {
+                var saveContent = saves[oldSaveName];
+                saves[newSaveName] = saveContent;
+                delete saves[oldSaveName];
+                selectedOption.textContent = newSaveName;
+                selectedOption.value = newSaveName;
+                localStorage.setItem('saves', JSON.stringify(saves));
+            }
         } else {
             let newOption = document.createElement("option");
             newOption.text = newSaveName;
@@ -1406,7 +1504,7 @@ function salvarSave(newSaveName) {
 
             const musicaCifrada = cifraPlayer.destacarCifras(saveContent);
             const tom = descobrirTom(musicaCifrada);
-            mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
+            uiController.mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
             elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(tom, saveContent);
             elements.iframeCifra.classList.remove('d-none');
             elements.liturgiaDiariaFrame.classList.add('d-none');
@@ -1425,56 +1523,9 @@ function salvarSave(newSaveName) {
         }
 
         $('#searchModal').modal('hide');
-        exibirListaSaves(newSaveName);
+        uiController.exibirListaSaves(newSaveName);
     }
 }
-
-function mostrarBotoesCifras() {
-    elements.playButton.classList.remove('d-none');
-    elements.nextButton.classList.remove('d-none');
-    elements.prevButton.classList.remove('d-none');
-    elements.acorde1.classList.add('d-none');
-    elements.acorde2.classList.add('d-none');
-    elements.acorde3.classList.add('d-none');
-    elements.acorde4.classList.add('d-none');
-    elements.acorde5.classList.add('d-none');
-    elements.acorde6.classList.add('d-none');
-    elements.acorde7.classList.add('d-none');
-    elements.acorde8.classList.add('d-none');
-    elements.acorde9.classList.add('d-none');
-    elements.acorde10.classList.add('d-none');
-    elements.acorde11.classList.add('d-none');
-    // elements.borderLeft.classList.add('d-none');
-    // elements.borderRight.classList.add('d-none');
-}
-
-function mostrarBotoesAcordes() {
-    elements.playButton.classList.add('d-none');
-    elements.nextButton.classList.add('d-none');
-    elements.prevButton.classList.add('d-none');
-    elements.acorde1.classList.remove('d-none');
-    elements.acorde2.classList.remove('d-none');
-    elements.acorde3.classList.remove('d-none');
-    elements.acorde4.classList.remove('d-none');
-    elements.acorde5.classList.remove('d-none');
-    elements.acorde6.classList.remove('d-none');
-    elements.acorde7.classList.remove('d-none');
-    elements.acorde8.classList.remove('d-none');
-    elements.acorde9.classList.remove('d-none');
-    elements.acorde10.classList.remove('d-none');
-    elements.acorde11.classList.remove('d-none');
-    // elements.borderLeft.classList.remove('d-none');
-    // elements.borderRight.classList.remove('d-none');
-}
-
-//comentado para não funcionar mais o segurar do notes
-// elements.notesButton.addEventListener('mousedown', handleInteractionStart);
-// elements.notesButton.addEventListener('touchstart', handleInteractionStart);
-
-// elements.notesButton.addEventListener('mouseup', handleInteractionEnd);
-// elements.notesButton.addEventListener('mouseleave', handleInteractionEnd);
-// elements.notesButton.addEventListener('touchend', handleInteractionEnd);
-// elements.notesButton.addEventListener('touchcancel', handleInteractionEnd);
 
 ['mousedown'].forEach(event => {
     elements.playButton.addEventListener(event, togglePressedState);
