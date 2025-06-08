@@ -1026,7 +1026,6 @@ elements.savesSelect.addEventListener('change', () => {
     const selectItem = elements.savesSelect.value;
     if (selectItem) {
         localStorage.setItem('tomAcordes', elements.tomSelect.value);
-        uiController.mostrarBotoesCifras();
         const saves = JSON.parse(localStorage.getItem('saves'));
         elements.editTextarea.value = saves[selectItem];
         elements.searchModalLabel.textContent = selectItem;
@@ -1036,8 +1035,14 @@ elements.savesSelect.addEventListener('change', () => {
         const tom = descobrirTom(musicaCifrada);
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
         uiController.mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
-        if (tom !== '')
+
+        if (tom !== '') {
+            uiController.mostrarBotoesCifras();
             elements.tomSelect.dispatchEvent(new Event('change'));
+        }
+        else {            
+            uiController.mostrarBotoesAcordes();
+        }
         elements.iframeCifra.classList.remove('d-none');
         elements.liturgiaDiariaFrame.classList.add('d-none');
         elements.santamissaFrame.classList.add('d-none');
