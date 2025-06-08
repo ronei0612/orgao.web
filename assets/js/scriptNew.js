@@ -508,6 +508,16 @@ class UIController {
         this.elements.acorde11.classList.remove('d-none');
     }
 
+    ocultarBotoesTom() {
+        this.elements.tomContainer.classList.remove('d-flex');
+        this.elements.tomContainer.classList.add('d-none');
+    }
+
+    exibirBotoesTom() {
+        this.elements.tomContainer.classList.remove('d-none');
+        this.elements.tomContainer.classList.add('d-flex');
+    }
+
     exibirListaSaves(saveSelected) {
         this.elements.addButton.classList.add('rounded-right-custom');
         this.elements.addButton.classList.remove('rounded-0');
@@ -588,10 +598,11 @@ class UIController {
 
     mostrarTextoCifrasCarregado(tom = null, texto = null) {
         if (tom) {
+            uiController.exibirBotoesTom();
             cifraPlayer.preencherSelect(tom);
         }
         else {
-            this.elements.tomSelect.innerHTML = '<option value="">Letra</option>';
+            uiController.ocultarBotoesTom();
         }
 
         if (texto) {
@@ -721,6 +732,7 @@ const elements = {
     tomSelect: document.getElementById('tomSelect'),
     decreaseTom: document.getElementById('decreaseTom'),
     increaseTom: document.getElementById('increaseTom'),
+    tomContainer: document.getElementById('tomContainer'),
     pulseRange: document.getElementById('pulseRange'),
     itemNameInput: document.getElementById('itemNameInput'),
     alertModalLabel: document.getElementById('alertModalLabel'),
@@ -909,7 +921,7 @@ elements.nextButton.addEventListener('click', () => {
 });
 
 elements.tomSelect.addEventListener('change', (event) => {
-    if (elements.tomSelect.value) { // Selecionado Letra
+    if (elements.tomSelect.value && !elements.tomContainer.classList.contains('d-none')) { // Selecionado Letra
         if (elements.acorde1.classList.contains('d-none')) {
             cifraPlayer.transposeCifra();
         }
