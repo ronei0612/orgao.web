@@ -511,6 +511,7 @@ class UIController {
     }
 
     ocultarBotoesTom() {
+        this.elements.tomSelect.innerHTML = '<option value="">Letra</option>';
         this.elements.tomContainer.classList.remove('d-flex');
         this.elements.tomContainer.classList.add('d-none');
     }
@@ -943,7 +944,7 @@ elements.startButton.addEventListener('click', () => {
         const tom = descobrirTom(musicaCifrada);
         uiController.mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
-        if (!tom)
+        if (tom !== '')
             elements.tomSelect.dispatchEvent(new Event('change'));
         elements.iframeCifra.classList.remove('d-none');
         elements.liturgiaDiariaFrame.classList.add('d-none');
@@ -968,7 +969,7 @@ elements.nextButton.addEventListener('click', () => {
 });
 
 elements.tomSelect.addEventListener('change', (event) => {
-    if (elements.tomSelect.value && !elements.tomContainer.classList.contains('d-none')) { // Selecionado Letra
+    if (elements.tomSelect.value) {// && !elements.tomContainer.classList.contains('d-none')) { // Selecionado Letra
         if (elements.acorde1.classList.contains('d-none')) {
             cifraPlayer.transposeCifra();
         }
@@ -1021,7 +1022,7 @@ elements.savesSelect.addEventListener('change', () => {
         const tom = descobrirTom(musicaCifrada);
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
         uiController.mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
-        if (!tom)
+        if (tom !== '')
             elements.tomSelect.dispatchEvent(new Event('change'));
         elements.iframeCifra.classList.remove('d-none');
         elements.liturgiaDiariaFrame.classList.add('d-none');
