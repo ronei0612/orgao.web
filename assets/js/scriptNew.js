@@ -479,10 +479,10 @@ class UIController {
     }
 
     mostrarBotoesAcordes() {
+        this.atualizarBotoesNavegacao('centralizado');
         this.elements.playButton.classList.add('d-none');
         this.elements.nextButton.classList.add('d-none');
         this.elements.prevButton.classList.add('d-none');
-        this.atualizarBotoesNavegacao('centralizado');
         this.exibirBotoesAcordes();
     }
 
@@ -683,6 +683,38 @@ class UIController {
                 this.elements.editSavesSelect.classList.add('d-none');
             }, 100);
         }
+    }
+
+    exibirFrame(frameId) {
+        // Oculta todos os frames
+        this.elements.oracoesFrame.classList.add('d-none');
+        this.elements.santamissaFrame.classList.add('d-none');
+        this.elements.iframeCifra.classList.add('d-none');
+        this.elements.liturgiaDiariaFrame.classList.add('d-none');
+
+        this.mostrarBotoesAcordes();
+
+        // Exibe o frame selecionado
+        if (frameId) {
+            const frame = this.elements[frameId];
+            if (frame) {
+                frame.classList.remove('d-none');
+
+                // Lógica específica para o santamissaFrame
+                if (frameId === 'santamissaFrame') {
+                    const scrollTop = localStorage.getItem('scrollTop');
+                    if (scrollTop && !location.origin.includes('file:')) {
+                        frame.contentWindow.scrollTo(0, parseInt(scrollTop));
+                    }
+                }
+            }
+        }
+
+        // Reseta a seleção do savesSelect
+        this.elements.savesSelect.selectedIndex = 0;
+
+        // Fecha o modal de opções
+        $('#optionsModal').modal('hide');
     }
 
     toggleEditDeleteButtons() {
@@ -999,6 +1031,8 @@ elements.tomSelect.addEventListener('change', (event) => {
         }
     } else {
         cifraPlayer.removeCifras(elements.iframeCifra.contentDocument.body.innerHTML);
+        uiController.mostrarBotoesAcordes();
+        uiController.ocultarBotoesTom();
     }
 });
 
@@ -1119,36 +1153,15 @@ elements.searchButton.addEventListener('click', () => {
 });
 
 elements.liturgiaDiariaLink.addEventListener('click', () => {
-    elements.oracoesFrame.classList.add('d-none');
-    elements.santamissaFrame.classList.add('d-none');
-    elements.iframeCifra.classList.add('d-none');
-    elements.liturgiaDiariaFrame.classList.remove('d-none');
-    elements.savesSelect.selectedIndex = 0;
-    $('#optionsModal').modal('hide');
+    uiController.exibirFrame('liturgiaDiariaFrame');
 });
 
 elements.oracoesLink.addEventListener('click', () => {
-    elements.oracoesFrame.classList.remove('d-none');
-    elements.santamissaFrame.classList.add('d-none');
-    elements.iframeCifra.classList.add('d-none');
-    elements.liturgiaDiariaFrame.classList.add('d-none');
-    elements.savesSelect.selectedIndex = 0;
-    $('#optionsModal').modal('hide');
+    uiController.exibirFrame('oracoesFrame');
 });
 
 elements.missaOrdinarioLink.addEventListener('click', () => {
-    elements.santamissaFrame.classList.remove('d-none');
-
-    const scrollTop = localStorage.getItem('scrollTop');
-    if (scrollTop && !location.origin.includes('file:')) {
-        elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
-    }
-
-    elements.oracoesFrame.classList.add('d-none');
-    elements.liturgiaDiariaFrame.classList.add('d-none');
-    elements.iframeCifra.classList.add('d-none');
-    elements.savesSelect.selectedIndex = 0;
-    $('#optionsModal').modal('hide');
+    uiController.exibirFrame('santamissaFrame');
 });
 
 elements.notesButton.addEventListener('click', () => {
