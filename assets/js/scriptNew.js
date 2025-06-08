@@ -93,20 +93,24 @@ class CifraPlayer {
         `;
     }
 
-    removeCifras(musica) {    
-        const tempElement = document.createElement('div');
-        tempElement.innerHTML = musica;
-    
-        const spans = tempElement.querySelectorAll('span');
-        spans.forEach(span => span.remove());
-    
-        let final = tempElement.innerHTML.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
-            .replace("font-size: 12pt;", "font-size: 15pt;");
-    
-        //final = final.replace(/(\r\n|\n|\r){2,}/g, '$1');
-        final = final.replace(/(\n\n)/g, '\n');
-    
-        this.elements.iframeCifra.contentDocument.body.innerHTML = final;
+    removeCifras(musica) {
+        let linhasFinal = [];
+        const conteudoPre = musica.split('<pre>')[1]?.split('</pre>')[0];
+
+        if (conteudoPre) {
+            let linhas = conteudoPre.split('\n');
+
+            linhas.forEach(linha => {
+                if (!linha.includes('span'))
+                    linhasFinal.push(linha);
+            });
+        }
+
+        let final = linhasFinal.join('\n');
+
+        this.elements.iframeCifra.contentDocument.body.innerText = final;
+        this.elements.iframeCifra.contentDocument.body.style.fontSize = '15pt';
+        this.elements.iframeCifra.contentDocument.body.style.fontFamily = "'Roboto', sans-serif";
     }
     
     processarAcorde(palavra, cifraNum) {
@@ -650,7 +654,11 @@ class UIController {
             cifraPlayer.preencherSelect(tom);
         }
         else {
-            uiController.ocultarBotoesTom();
+            uiController.ocultarBotoesTom();            
+            let textoLetra = this.elements.iframeCifra.contentDocument.body.innerHTML;
+            textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
+                .replace("font-size: 12pt;", "font-size: 15pt;");
+            this.elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
         }
 
         if (texto) {
@@ -946,6 +954,12 @@ elements.startButton.addEventListener('click', () => {
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
         if (tom !== '')
             elements.tomSelect.dispatchEvent(new Event('change'));
+        else {
+            let textoLetra = elements.iframeCifra.contentDocument.body.innerHTML;
+            textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
+                .replace("font-size: 12pt;", "font-size: 15pt;");
+            elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
+        }
         elements.iframeCifra.classList.remove('d-none');
         elements.liturgiaDiariaFrame.classList.add('d-none');
         elements.santamissaFrame.classList.add('d-none');
