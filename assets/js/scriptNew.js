@@ -499,6 +499,7 @@ class UIController {
     }
 
     mostrarBotoesCifras() {
+        this.elements.notesButton.classList.remove('d-none');
         this.elements.playButton.classList.remove('d-none');
         this.elements.nextButton.classList.remove('d-none');
         this.elements.prevButton.classList.remove('d-none');
@@ -507,6 +508,8 @@ class UIController {
 
     mostrarBotoesAcordes() {
         this.atualizarBotoesNavegacao('centralizado');
+        this.exibirBotoesTom();
+        this.elements.notesButton.classList.remove('d-none');
         this.elements.playButton.classList.add('d-none');
         this.elements.nextButton.classList.add('d-none');
         this.elements.prevButton.classList.add('d-none');
@@ -602,6 +605,13 @@ class UIController {
         }
     }
 
+    esconderBotoesPlay() {
+        this.elements.notesButton.classList.add('d-none');
+        this.elements.playButton.classList.add('d-none');
+        this.elements.prevButton.classList.add('d-none');
+        this.elements.nextButton.classList.add('d-none');
+    }
+
     atualizarBotoesNavegacao(direcao) {
         if (direcao === 'esquerda') {
             this.elements.nextButton.classList.remove('d-none');
@@ -681,7 +691,7 @@ class UIController {
             cifraPlayer.preencherSelect(tom);
         }
         else {
-            uiController.ocultarBotoesTom();            
+            uiController.ocultarBotoesTom();
             let textoLetra = this.elements.iframeCifra.contentDocument.body.innerHTML;
             textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
                 .replace("font-size: 12pt;", "font-size: 15pt;");
@@ -713,25 +723,23 @@ class UIController {
     }
 
     exibirFrame(frameId) {
-        // Oculta todos os frames
         this.elements.oracoesFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.iframeCifra.classList.add('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
 
+        this.exibirBotoesTom();
         this.mostrarBotoesAcordes();
         
         const tomAcordes = localStorage.getItem('tomAcordes') || '';
         uiController.mostrarTextoCifrasCarregado(tomAcordes, elements.editTextarea.value);
         cifraPlayer.preencherSelect(tomAcordes);
 
-        // Exibe o frame selecionado
         if (frameId) {
             const frame = this.elements[frameId];
             if (frame) {
                 frame.classList.remove('d-none');
 
-                // Lógica específica para o santamissaFrame
                 if (frameId === 'santamissaFrame') {
                     const scrollTop = localStorage.getItem('scrollTop');
                     if (scrollTop && !location.origin.includes('file:')) {
@@ -741,10 +749,7 @@ class UIController {
             }
         }
 
-        // Reseta a seleção do savesSelect
         this.elements.savesSelect.selectedIndex = 0;
-
-        // Fecha o modal de opções
         $('#optionsModal').modal('hide');
     }
 
@@ -1106,8 +1111,10 @@ elements.savesSelect.addEventListener('change', () => {
             uiController.mostrarBotoesCifras();
             elements.tomSelect.dispatchEvent(new Event('change'));
         }
-        else {            
-            uiController.mostrarBotoesAcordes();
+        else {
+            //uiController.mostrarBotoesAcordes();            
+            uiController.esconderBotoesAcordes();
+            uiController.esconderBotoesPlay();
         }
         elements.iframeCifra.classList.remove('d-none');
         elements.liturgiaDiariaFrame.classList.add('d-none');
