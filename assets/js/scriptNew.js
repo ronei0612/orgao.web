@@ -237,8 +237,6 @@ class CifraPlayer {
         const novoTom = this.elements.tomSelect.value;
         const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
         const steps = this.tonsMaiores.indexOf(novoTom) - this.tonsMaiores.indexOf(this.tomAtual);
-        
-        localStorage.setItem('tomAcordes', novoTom);
 
         acordeButtons.forEach(acordeButton => {
             const antesAcorde = acordeButton.value;
@@ -506,16 +504,6 @@ class UIController {
         this.esconderBotoesAcordes();
     }
 
-    exibirBotoesAcordes() {
-        this.atualizarBotoesNavegacao('centralizado');
-        this.exibirBotoesTom();
-        this.elements.notesButton.classList.remove('d-none');
-        this.elements.playButton.classList.add('d-none');
-        this.elements.nextButton.classList.add('d-none');
-        this.elements.prevButton.classList.add('d-none');
-        this.exibirBotoesAcordes();
-    }
-
     esconderBotoesAcordes() {
         this.elements.acorde1.classList.add('d-none');
         this.elements.acorde2.classList.add('d-none');
@@ -531,6 +519,13 @@ class UIController {
     }
 
     exibirBotoesAcordes() {
+        this.atualizarBotoesNavegacao('centralizado');
+        this.exibirBotoesTom();
+        this.elements.notesButton.classList.remove('d-none');
+        this.elements.playButton.classList.add('d-none');
+        this.elements.nextButton.classList.add('d-none');
+        this.elements.prevButton.classList.add('d-none');
+
         this.elements.acorde1.classList.remove('d-none');
         this.elements.acorde2.classList.remove('d-none');
         this.elements.acorde3.classList.remove('d-none');
@@ -542,6 +537,31 @@ class UIController {
         this.elements.acorde9.classList.remove('d-none');
         this.elements.acorde10.classList.remove('d-none');
         this.elements.acorde11.classList.remove('d-none');
+        
+        cifraPlayer.preencherSelect('C');
+        
+        this.elements.acorde1.value = 'C';
+        this.elements.acorde1.textContent = 'C';
+        this.elements.acorde2.value = 'Am';
+        this.elements.acorde2.textContent = 'Am';
+        this.elements.acorde3.value = 'F';
+        this.elements.acorde3.textContent = 'F';
+        this.elements.acorde4.value = 'Dm';
+        this.elements.acorde4.textContent = 'Dm';
+        this.elements.acorde5.value = 'G';
+        this.elements.acorde5.textContent = 'G';
+        this.elements.acorde6.value = 'Em';
+        this.elements.acorde6.textContent = 'Em';
+        this.elements.acorde7.value = 'A';
+        this.elements.acorde7.textContent = 'A';
+        this.elements.acorde8.value = 'E';
+        this.elements.acorde8.textContent = 'E';
+        this.elements.acorde9.value = 'Bb';
+        this.elements.acorde9.textContent = 'Bb';
+        this.elements.acorde10.value = 'D';
+        this.elements.acorde10.textContent = 'D';
+        this.elements.acorde11.value = 'B°';
+        this.elements.acorde11.textContent = 'B°';
     }
 
     esconderBotoesTom() {
@@ -728,12 +748,12 @@ class UIController {
         this.elements.iframeCifra.classList.add('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
 
-        this.exibirBotoesTom();
         this.exibirBotoesAcordes();
         
-        const tomAcordes = localStorage.getItem('tomAcordes') || '';
-        uiController.exibirTextoCifrasCarregado(tomAcordes, elements.editTextarea.value);
-        cifraPlayer.preencherSelect(tomAcordes);
+        uiController.exibirTextoCifrasCarregado('C', elements.editTextarea.value);
+        cifraPlayer.preencherSelect('C');
+
+        this.exibirBotoesTom();
 
         if (frameId) {
             const frame = this.elements[frameId];
@@ -943,7 +963,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Zera a barra de rolagem de missa
     localStorage.setItem('scrollTop', 0);
-    localStorage.setItem('tomAcordes', '');
 
     elements.darkModeToggle.checked = true;
     if (localStorage.getItem('darkMode') === 'true') {
@@ -1094,8 +1113,8 @@ elements.increaseTom.addEventListener('click', () => {
 
 elements.savesSelect.addEventListener('change', () => {
     const selectItem = elements.savesSelect.value;
+
     if (selectItem) {
-        const tomAntes = elements.tomSelect.value;
         const saves = JSON.parse(localStorage.getItem('saves'));
         elements.editTextarea.value = saves[selectItem];
         elements.searchModalLabel.textContent = selectItem;
@@ -1107,7 +1126,6 @@ elements.savesSelect.addEventListener('change', () => {
         uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
 
         if (tom !== '') {
-            localStorage.setItem('tomAcordes', tomAntes);
             uiController.exibirBotoesCifras();
             elements.tomSelect.dispatchEvent(new Event('change'));
         }
@@ -1125,13 +1143,10 @@ elements.savesSelect.addEventListener('change', () => {
         cifraPlayer.indiceAcorde = 0;
     }
     else {
+        uiController.exibirBotoesTom();
         uiController.exibirBotoesAcordes();
         elements.savesSelect.selectedIndex = 0;
         elements.iframeCifra.contentDocument.body.innerHTML = '';
-
-        const tomAcordes = localStorage.getItem('tomAcordes') || '';
-        uiController.exibirTextoCifrasCarregado(tomAcordes, elements.editTextarea.value);
-        cifraPlayer.preencherSelect(tomAcordes);
     }
 });
 
