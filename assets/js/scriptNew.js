@@ -220,7 +220,7 @@ class CifraPlayer {
             this.tomAtual = novoTom;
 
             const cifra = this.elements.iframeCifra.contentDocument.body.innerHTML;
-            uiController.mostrarTextoCifrasCarregado(novoTom, cifra);
+            uiController.exibirTextoCifrasCarregado(novoTom, cifra);
 
             if (this.indiceAcorde > 0) {
                 this.indiceAcorde--;
@@ -498,7 +498,7 @@ class UIController {
         this.elements = elements;
     }
 
-    mostrarBotoesCifras() {
+    exibirBotoesCifras() {
         this.elements.notesButton.classList.remove('d-none');
         this.elements.playButton.classList.remove('d-none');
         this.elements.nextButton.classList.remove('d-none');
@@ -506,7 +506,7 @@ class UIController {
         this.esconderBotoesAcordes();
     }
 
-    mostrarBotoesAcordes() {
+    exibirBotoesAcordes() {
         this.atualizarBotoesNavegacao('centralizado');
         this.exibirBotoesTom();
         this.elements.notesButton.classList.remove('d-none');
@@ -544,7 +544,7 @@ class UIController {
         this.elements.acorde11.classList.remove('d-none');
     }
 
-    ocultarBotoesTom() {
+    esconderBotoesTom() {
         this.elements.tomSelect.innerHTML = '<option value="">Letra</option>';
         this.elements.tomContainer.classList.remove('d-flex');
         this.elements.tomContainer.classList.add('d-none');
@@ -650,7 +650,7 @@ class UIController {
         return option;
     }
 
-    mostrarInterfaceDePesquisa() {
+    exibirInterfaceDePesquisa() {
         this.elements.editTextarea.classList.add('d-none');
         this.elements.searchIcon.classList.add('d-none');
         this.elements.spinner.classList.remove('d-none');
@@ -659,7 +659,7 @@ class UIController {
         this.elements.searchButton.disabled = true;
     }
 
-    ocultarInterfaceDePesquisa() {
+    esconderInterfaceDePesquisa() {
         this.elements.searchIcon.classList.remove('d-none');
         this.elements.spinner.classList.add('d-none');
         this.elements.searchResultsList.classList.remove('d-none');
@@ -685,13 +685,13 @@ class UIController {
         this.elements.editTextarea.classList.remove('d-none');
     }
 
-    mostrarTextoCifrasCarregado(tom = null, texto = null) {
+    exibirTextoCifrasCarregado(tom = null, texto = null) {
         if (tom) {
             uiController.exibirBotoesTom();
             cifraPlayer.preencherSelect(tom);
         }
         else {
-            uiController.ocultarBotoesTom();
+            uiController.esconderBotoesTom();
             let textoLetra = this.elements.iframeCifra.contentDocument.body.innerHTML;
             textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
                 .replace("font-size: 12pt;", "font-size: 15pt;");
@@ -708,7 +708,7 @@ class UIController {
         }
     }
 
-    hideEditDeleteButtons() {
+    esconderEditDeleteButtons() {
         if (this.elements.deleteSavesSelect.classList.contains('show')) {
             this.elements.deleteSavesSelect.classList.remove('show');
             this.elements.editSavesSelect.classList.remove('show');
@@ -729,10 +729,10 @@ class UIController {
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
 
         this.exibirBotoesTom();
-        this.mostrarBotoesAcordes();
+        this.exibirBotoesAcordes();
         
         const tomAcordes = localStorage.getItem('tomAcordes') || '';
-        uiController.mostrarTextoCifrasCarregado(tomAcordes, elements.editTextarea.value);
+        uiController.exibirTextoCifrasCarregado(tomAcordes, elements.editTextarea.value);
         cifraPlayer.preencherSelect(tomAcordes);
 
         if (frameId) {
@@ -1014,11 +1014,11 @@ elements.darkModeToggle.addEventListener('change', toggleDarkMode);
 
 elements.startButton.addEventListener('click', () => {
     if (elements.editTextarea.value) {
-        uiController.mostrarBotoesCifras();
+        uiController.exibirBotoesCifras();
         const texto = elements.editTextarea.value;
         const musicaCifrada = cifraPlayer.destacarCifras(texto);        
         const tom = descobrirTom(musicaCifrada);
-        uiController.mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
+        uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
         if (tom !== '')
             elements.tomSelect.dispatchEvent(new Event('change'));
@@ -1067,8 +1067,8 @@ elements.tomSelect.addEventListener('change', (event) => {
         }
     } else {
         cifraPlayer.removeCifras(elements.iframeCifra.contentDocument.body.innerHTML);        
-        uiController.mostrarBotoesAcordes();
-        uiController.ocultarBotoesTom();
+        uiController.exibirBotoesAcordes();
+        uiController.esconderBotoesTom();
     }
 });
 
@@ -1104,15 +1104,15 @@ elements.savesSelect.addEventListener('change', () => {
         const musicaCifrada = cifraPlayer.destacarCifras(texto);
         const tom = descobrirTom(musicaCifrada);
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
-        uiController.mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
+        uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
 
         if (tom !== '') {
             localStorage.setItem('tomAcordes', tomAntes);
-            uiController.mostrarBotoesCifras();
+            uiController.exibirBotoesCifras();
             elements.tomSelect.dispatchEvent(new Event('change'));
         }
         else {
-            //uiController.mostrarBotoesAcordes();            
+            //uiController.exibirBotoesAcordes();            
             uiController.esconderBotoesAcordes();
             uiController.esconderBotoesPlay();
         }
@@ -1125,12 +1125,12 @@ elements.savesSelect.addEventListener('change', () => {
         cifraPlayer.indiceAcorde = 0;
     }
     else {
-        uiController.mostrarBotoesAcordes();
+        uiController.exibirBotoesAcordes();
         elements.savesSelect.selectedIndex = 0;
         elements.iframeCifra.contentDocument.body.innerHTML = '';
 
         const tomAcordes = localStorage.getItem('tomAcordes') || '';
-        uiController.mostrarTextoCifrasCarregado(tomAcordes, elements.editTextarea.value);
+        uiController.exibirTextoCifrasCarregado(tomAcordes, elements.editTextarea.value);
         cifraPlayer.preencherSelect(tomAcordes);
     }
 });
@@ -1260,7 +1260,7 @@ document.addEventListener('click', (event) => {
         !elements.editSavesSelect.contains(event.target) &&
         !elements.savesSelect.contains(event.target)
     ) {
-        uiController.hideEditDeleteButtons();
+        uiController.esconderEditDeleteButtons();
     }
 });
 
@@ -1374,7 +1374,7 @@ function deletarSave(saveName) {
 }
 
 async function searchMusic() {
-    uiController.mostrarInterfaceDePesquisa();
+    uiController.exibirInterfaceDePesquisa();
 
     const textoPesquisa = elements.searchInput.value;
 
@@ -1413,7 +1413,7 @@ async function searchMusic() {
         elements.savesList.classList.remove('d-none');
         elements.searchResultsList.classList.add('d-none');
     } finally {
-        uiController.ocultarInterfaceDePesquisa();
+        uiController.esconderInterfaceDePesquisa();
     }
 }
 
@@ -1428,7 +1428,7 @@ async function choseLink(urlLink, text) {
         });
         const data = await response.json();
         if (data.success) {
-            uiController.mostrarTextoCifrasCarregado(null, data.message);
+            uiController.exibirTextoCifrasCarregado(null, data.message);
 
             if (elements.searchModalLabel.textContent === 'Música') {
                 elements.searchModalLabel.textContent = text.split(' - ')[0];
@@ -1604,7 +1604,7 @@ function salvarSave(newSaveName) {
 
             const musicaCifrada = cifraPlayer.destacarCifras(saveContent);
             const tom = descobrirTom(musicaCifrada);
-            uiController.mostrarTextoCifrasCarregado(tom, elements.editTextarea.value);
+            uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
             elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(tom, saveContent);
             elements.iframeCifra.classList.remove('d-none');
             elements.liturgiaDiariaFrame.classList.add('d-none');
