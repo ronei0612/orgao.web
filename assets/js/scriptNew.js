@@ -18,8 +18,8 @@ class CifraPlayer {
             'b#': 'b_'
         };
         this.acordes = {};
-        //this.tonsMaiores = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-        this.tonsMaiores = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
+        this.tonsMaiores = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        //this.tonsMaiores = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
         this.tonsMenores = this.tonsMaiores.map(tom => tom + 'm');
         this.acordesSustenidos = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
         this.acordesBemol = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
@@ -53,7 +53,7 @@ class CifraPlayer {
         this.carregarAcordes();
     }
 
-    destacarCifras(texto) {
+    destacarCifras(texto, tom) {
         const linhas = texto.split('\n');
         let cifraNum = 1;
         const temPalavra = /[a-zA-Z]{4,}/;
@@ -71,7 +71,7 @@ class CifraPlayer {
                 if (ehLinhaDeAcordeUnico || ehLinhaDeAcordesConsecutivos || linhDeColcheteseAcordes) {
                     const espacos = linha.match(/\s+/g) || [];
                     const linhaProcessada = acordes.map((palavra, index) => {
-                        let acorde = this.processarAcorde(palavra, cifraNum);
+                        let acorde = this.processarAcorde(palavra, cifraNum, tom);
                         if (acorde.startsWith('<b'))
                             cifraNum++;
                         return index < acordes.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
@@ -132,24 +132,24 @@ class CifraPlayer {
         this.elements.iframeCifra.contentDocument.body.style.fontFamily = "'Roboto', sans-serif";
     }
     
-    processarAcorde(palavra, cifraNum) {
+    processarAcorde(palavra, cifraNum, tom) {
         let acorde = palavra;
         let baixo = '';
     
         if (acorde.includes('/') && !acorde.includes('(')) {
             [acorde, baixo] = acorde.split('/');
-            //baixo = this.getAcorde(baixo);
+            baixo = this.getAcorde(baixo, tom);
     
             while (!this.notasAcordes.includes(acorde) && acorde) {
                 acorde = acorde.slice(0, -1);
             }
-            //acorde = this.getAcorde(acorde);
+            acorde = this.getAcorde(acorde, tom);
             acorde = this.acordesSustenidosBemol.includes(baixo) ? `${acorde}/${baixo}` : palavra;
         } else {
             while (!this.notasAcordes.includes(acorde) && acorde) {
                 acorde = acorde.slice(0, -1);
             }
-            //acorde = this.getAcorde(acorde);
+            acorde = this.getAcorde(acorde, tom);
         }
     
         return this.notasAcordes.includes(acorde.split('/')[0]) ? `<b id="cifra${cifraNum}">${acorde}</b>` : palavra;
@@ -158,7 +158,7 @@ class CifraPlayer {
     getAcorde(acorde, tom) {
         if (tom === 'C#' || tom === 'D' || tom === 'E' || tom === 'F#' || tom === 'G' || tom === 'A' || tom === 'B')
             return this.acordesSustenidoMap[acorde] || acorde;
-        else if (tom === 'C' || tom === 'Eb' || tom === 'F' || tom === 'Ab' || tom === 'Bb')
+        else if (tom === 'C' || tom === 'D#' || tom === 'Eb' || tom === 'F' || tom === 'G#' || tom === 'Ab' || tom === 'A#' || tom === 'Bb')
             return this.acordesBemolMap[acorde] || acorde;
         else
             return this.acordesMap[acorde] || acorde;
@@ -1035,13 +1035,14 @@ elements.startButton.addEventListener('click', () => {
     if (elements.editTextarea.value) {
         uiController.exibirBotoesCifras();
         const texto = elements.editTextarea.value;
-        const musicaCifrada = cifraPlayer.destacarCifras(texto);        
-        const tom = descobrirTom(musicaCifrada);
+        let musicaCifrada = cifraPlayer.destacarCifras(texto);
+        const tom = descobrirTom(musicaCifrada);        
+        musicaCifrada = cifraPlayer.destacarCifras(texto, tom);
         uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
-        if (tom !== '')
+        if (!tom)
             elements.tomSelect.dispatchEvent(new Event('change'));
-        else {
+        if (tom === '') {
             let textoLetra = elements.iframeCifra.contentDocument.body.innerHTML;
             textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
                 .replace("font-size: 12pt;", "font-size: 15pt;");
