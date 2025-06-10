@@ -1039,9 +1039,9 @@ elements.startButton.addEventListener('click', () => {
         const tom = descobrirTom(musicaCifrada);
         uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
-        if (tom !== '')
+        if (!tom)
             elements.tomSelect.dispatchEvent(new Event('change'));
-        else {
+        if (tom === '') {
             let textoLetra = elements.iframeCifra.contentDocument.body.innerHTML;
             textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
                 .replace("font-size: 12pt;", "font-size: 15pt;");
