@@ -364,3 +364,65 @@ input:checked+.slider:before {
   height: 100%;
   overflow-y: auto;
 }
+
+#savesSelect {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Padrão */
+    -webkit-touch-callout: none; /* Safari */
+    -webkit-user-drag: none; /* Safari */
+    -khtml-user-drag: none; /* Konqueror HTML */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-drag: none; /* Firefox */
+    -ms-user-drag: none; /* Internet Explorer/Edge */
+    -o-user-drag: none; /* Opera */
+}
+
+.btn-custom[data-action="acorde"]#acorde1 {
+  background-color: #008B8B;
+}
+.btn-custom[data-action="acorde"]#acorde2 {
+  background-color: #008B8B;
+}
+
+.btn-custom[data-action="acorde"]#acorde3 {
+  background-color: #F08080;
+}
+.btn-custom[data-action="acorde"]#acorde4 {
+  background-color: #F08080;
+}
+
+.btn-custom[data-action="acorde"]#acorde5 {
+  background-color: #BDB76B;
+}
+.btn-custom[data-action="acorde"]#acorde6 {
+  background-color: #BDB76B;
+}
+
+.btn-custom[data-action="acorde"]#acorde1.pressed {
+  background-color: #006666;
+  box-shadow: 0 0 10px #006666;
+}
+.btn-custom[data-action="acorde"]#acorde2.pressed {
+  background-color: #006666;
+  box-shadow: 0 0 10px #006666;
+}
+
+.btn-custom[data-action="acorde"]#acorde3.pressed {
+  background-color: #D96060;
+  box-shadow: 0 0 10px #D96060;
+}
+.btn-custom[data-action="acorde"]#acorde4.pressed {
+  background-color: #D96060;
+  box-shadow: 0 0 10px #D96060;
+}
+
+.btn-custom[data-action="acorde"]#acorde5.pressed {
+  background-color: #8B8000;
+  box-shadow: 0 0 10px #8B8000;
+}
+.btn-custom[data-action="acorde"]#acorde6.pressed {
+  background-color: #8B8000;
+  box-shadow: 0 0 10px #8B8000;
+}

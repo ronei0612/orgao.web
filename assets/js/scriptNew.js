@@ -423,13 +423,12 @@ class CifraPlayer {
             if (this.elements.notesButton.classList.contains('pressed')) {
                 this.adicionarSomAoGrupo('orgao', nota.replace('#', '_', 0.5));
                 if (!this.elements.notesButton.classList.contains('notaSolo'))
-                    this.adicionarSomAoGrupo('strings', nota.replace('#', '_', 0.9));
+                    this.adicionarSomAoGrupo('strings', nota.replace('#', '_'));
             }
         });
     
         setTimeout(() => {
             if (!this.parado && this.acordeTocando) {
-                //console.log(`Playing: ${acorde}`);
                 try {
                     this.acordeGroup.play();
                 } catch { }
