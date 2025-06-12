@@ -406,8 +406,12 @@ class CifraPlayer {
         }
     
         let [notaPrincipal, baixo] = acorde.split('/');
-        const notas = this.notasAcordesJson[notaPrincipal];
+        let notas = this.notasAcordesJson[notaPrincipal];
         if (!notas) return;
+
+	if (baixo && notas.includes(baixo.toLowerCase())) {
+            notas = this.inversaoDeAcorde(notas, baixo.toLowerCase());
+	}
     
         baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
     
@@ -487,6 +491,13 @@ class CifraPlayer {
             // Ajusta a velocidade de reprodução do acorde atual (se houver)
             // ... (lógica para ajustar a velocidade com Pizzicato) ...
         }
+    }
+
+    inversaoDeAcorde(acorde, baixo) {
+        const index = acorde.indexOf(baixo);
+        if (index === -1) return acorde;
+        
+        return acorde.slice(index).concat(acorde.slice(0, index));
     }
 }
 
