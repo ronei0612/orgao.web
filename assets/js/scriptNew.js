@@ -409,9 +409,9 @@ class CifraPlayer {
         let notas = this.notasAcordesJson[notaPrincipal];
         if (!notas) return;
 
-	if (baixo && notas.includes(baixo.toLowerCase())) {
-            notas = this.inversaoDeAcorde(notas, baixo.toLowerCase());
-	}
+	//if (baixo && notas.includes(baixo.toLowerCase())) {
+            //notas = this.inversaoDeAcorde(notas, baixo.toLowerCase());
+	//}
     
         baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
     
