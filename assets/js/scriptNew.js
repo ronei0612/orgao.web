@@ -53,6 +53,38 @@ class CifraPlayer {
         this.carregarAcordes();
     }
 
+    // destacarCifras(texto, tom) {
+    //     const linhas = texto.split('\n');
+    //     let cifraNum = 1;
+    //     const temPalavra = /[a-zA-Z]{4,}/;
+    //     const temColchetes = /\[.*?\]/;
+    
+    //     const linhasDestacadas = linhas.map(linha => {
+    //         //if (linha && ((!temLetrasNaoCifra.test(linha) && !temPalavra.test(linha)) || temColchetes.test(linha))) {
+    //         //if (linha && (this.notasAcordes.includes(linha))) {// || !temColchetes.test(linha))) {
+    //         if (linha) {
+    //             const acordes = linha.trim().split(/\s+/);                
+    //             const ehLinhaDeAcordeUnico = acordes.length === 1 && this.notasAcordes.includes(acordes[0].split('/')[0]);
+    //             const ehLinhaDeAcordesConsecutivos = acordes.length >= 2 && this.notasAcordes.includes(acordes[0].split('/')[0]) && this.notasAcordes.includes(acordes[1].split('/')[0]);
+    //             const linhDeColcheteseAcordes = temColchetes.test(linha) && acordes.length >= 2 && this.notasAcordes.includes(acordes[1].split('/')[0]);
+
+    //             if (ehLinhaDeAcordeUnico || ehLinhaDeAcordesConsecutivos || linhDeColcheteseAcordes) {
+    //                 const espacos = linha.match(/\s+/g) || [];
+    //                 const linhaProcessada = acordes.map((palavra, index) => {
+    //                     let acorde = this.processarAcorde(palavra, cifraNum, tom);
+    //                     if (acorde.startsWith('<b'))
+    //                         cifraNum++;
+    //                     return index < acordes.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
+    //                 }).join('');
+    //                 if (cifraNum > 1)
+    //                     return `<span><b></b>${linhaProcessada}<b></b></span>`;
+    //                 else                
+    //                     return `${linhaProcessada}`;
+    //             }
+    //         }
+    //         return linha;
+    //     });
+
     destacarCifras(texto, tom) {
         const linhas = texto.split('\n');
         let cifraNum = 1;
@@ -60,21 +92,22 @@ class CifraPlayer {
         const temColchetes = /\[.*?\]/;
     
         const linhasDestacadas = linhas.map(linha => {
-            //if (linha && ((!temLetrasNaoCifra.test(linha) && !temPalavra.test(linha)) || temColchetes.test(linha))) {
-            //if (linha && (this.notasAcordes.includes(linha))) {// || !temColchetes.test(linha))) {
             if (linha) {
-                const acordes = linha.trim().split(/\s+/);                
-                const ehLinhaDeAcordeUnico = acordes.length === 1 && this.notasAcordes.includes(acordes[0].split('/')[0]);
-                const ehLinhaDeAcordesConsecutivos = acordes.length >= 2 && this.notasAcordes.includes(acordes[0].split('/')[0]) && this.notasAcordes.includes(acordes[1].split('/')[0]);
-                const linhDeColcheteseAcordes = temColchetes.test(linha) && acordes.length >= 2 && this.notasAcordes.includes(acordes[1].split('/')[0]);
+                const partes = linha.match(/(\S+|\s+)/g) || [];
+                const acordes = partes.filter(p => p.trim() && this.notasAcordes.includes(p.trim().split('/')[0]));
+                const ehLinhaDeAcordeUnico = acordes.length === 1;
+                const ehLinhaDeAcordesConsecutivos = acordes.length >= 2;
+                const linhDeColcheteseAcordes = temColchetes.test(linha) && acordes.length >= 2;
 
                 if (ehLinhaDeAcordeUnico || ehLinhaDeAcordesConsecutivos || linhDeColcheteseAcordes) {
-                    const espacos = linha.match(/\s+/g) || [];
-                    const linhaProcessada = acordes.map((palavra, index) => {
-                        let acorde = this.processarAcorde(palavra, cifraNum, tom);
-                        if (acorde.startsWith('<b'))
-                            cifraNum++;
-                        return index < acordes.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
+                    const linhaProcessada = partes.map(parte => {
+                        const palavra = parte.trim();
+                        if (palavra && this.notasAcordes.includes(palavra.split('/')[0])) {
+                            let acorde = this.processarAcorde(palavra, cifraNum, tom);
+                            if (acorde.startsWith('<b')) cifraNum++;
+                            return acorde;
+                        }
+                        return parte; // Mantém espaços e outros caracteres
                     }).join('');
                     if (cifraNum > 1)
                         return `<span><b></b>${linhaProcessada}<b></b></span>`;
