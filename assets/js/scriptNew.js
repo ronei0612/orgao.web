@@ -93,21 +93,21 @@ class CifraPlayer {
     
         const linhasDestacadas = linhas.map(linha => {
             if (linha) {
-                const partes = linha.match(/(\S+|\s+)/g) || [];
-                const acordes = partes.filter(p => p.trim() && this.notasAcordes.includes(p.trim().split('/')[0]));
+                const acordes_espacos = linha.match(/(\S+|\s+)/g) || [];
+                const acordes = acordes_espacos.filter(p => p.trim() && this.notasAcordes.includes(p.trim().split('(')[0].split('/')[0]));
                 const ehLinhaDeAcordeUnico = acordes.length === 1;
                 const ehLinhaDeAcordesConsecutivos = acordes.length >= 2;
                 const linhDeColcheteseAcordes = temColchetes.test(linha) && acordes.length >= 2;
 
                 if (ehLinhaDeAcordeUnico || ehLinhaDeAcordesConsecutivos || linhDeColcheteseAcordes) {
-                    const linhaProcessada = partes.map(parte => {
-                        const palavra = parte.trim();
-                        if (palavra && this.notasAcordes.includes(palavra.split('/')[0])) {
+                    const linhaProcessada = acordes_espacos.map(acorde_espaco => {
+                        const palavra = acorde_espaco.trim();
+                        if (palavra && this.notasAcordes.includes(palavra.split('(')[0].split('/')[0])) {
                             let acorde = this.processarAcorde(palavra, cifraNum, tom);
                             if (acorde.startsWith('<b')) cifraNum++;
                             return acorde;
                         }
-                        return parte; // Mantém espaços e outros caracteres
+                        return acorde_espaco;
                     }).join('');
                     if (cifraNum > 1)
                         return `<span><b></b>${linhaProcessada}<b></b></span>`;
