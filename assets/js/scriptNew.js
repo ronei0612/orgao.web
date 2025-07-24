@@ -69,12 +69,18 @@ class CifraPlayer {
                 const linhDeColcheteseAcordes = temColchetes.test(linha) && acordes.length >= 2 && this.notasAcordes.includes(acordes[1].split('/')[0]);
 
                 if (ehLinhaDeAcordeUnico || ehLinhaDeAcordesConsecutivos || linhDeColcheteseAcordes) {
-                    const espacos = linha.match(/\s+/g) || [];
+                    let espacos = [''];
+                    if (linha.startsWith(' ')) {
+                        espacos = linha.match(/\s+/g);
+                    } else {
+                        espacos = espacos.concat(linha.match(/\s+/g) || []);
+                    }
                     const linhaProcessada = acordes.map((palavra, index) => {
                             let acorde = this.processarAcorde(palavra, cifraNum, tom);
                         if (acorde.startsWith('<b'))
                             cifraNum++;
-                        return index < acordes.length - 1 && espacos[index] ? acorde + espacos[index] : acorde;
+
+                        return espacos[index] + acorde;
                     }).join('');
                     if (cifraNum > 1)
                         return `<span><b></b>${linhaProcessada}<b></b></span>`;
