@@ -63,10 +63,12 @@ class CifraPlayer {
             //if (linha && ((!temLetrasNaoCifra.test(linha) && !temPalavra.test(linha)) || temColchetes.test(linha))) {
             //if (linha && (this.notasAcordes.includes(linha))) {// || !temColchetes.test(linha))) {
             if (linha) {
-                const acordes = linha.trim().split(/\s+/);                
-                const ehLinhaDeAcordeUnico = acordes.length === 1 && this.notasAcordes.includes(acordes[0].split('/')[0]);
-                const ehLinhaDeAcordesConsecutivos = acordes.length >= 2 && this.notasAcordes.includes(acordes[0].split('/')[0]) && this.notasAcordes.includes(acordes[1].split('/')[0]);
-                const linhDeColcheteseAcordes = temColchetes.test(linha) && acordes.length >= 2 && this.notasAcordes.includes(acordes[1].split('/')[0]);
+                const acordes = linha.trim().split(/\s+/);
+                const primeiroAcordePuro = acordes[0].split('(')[0].split('/')[0];
+                const segundoAcordePuro = acordes[1]?.split('(')[0].split('/')[0];
+                const ehLinhaDeAcordeUnico = acordes.length === 1 && this.notasAcordes.includes(primeiroAcordePuro);
+                const ehLinhaDeAcordesConsecutivos = acordes.length >= 2 && this.notasAcordes.includes(primeiroAcordePuro) && this.notasAcordes.includes(segundoAcordePuro);
+                const linhDeColcheteseAcordes = temColchetes.test(linha) && acordes.length >= 2 && this.notasAcordes.includes(segundoAcordePuro);
 
                 if (ehLinhaDeAcordeUnico || ehLinhaDeAcordesConsecutivos || linhDeColcheteseAcordes) {
                     let espacos = [''];
@@ -76,7 +78,7 @@ class CifraPlayer {
                         espacos = espacos.concat(linha.match(/\s+/g) || []);
                     }
                     const linhaProcessada = acordes.map((palavra, index) => {
-                            let acorde = this.processarAcorde(palavra, cifraNum, tom);
+                        let acorde = this.processarAcorde(palavra, cifraNum, tom);
                         if (acorde.startsWith('<b'))
                             cifraNum++;
 
