@@ -707,7 +707,7 @@ class UIController {
         this.elements.spinner.classList.add('d-none');
     }
 
-    prepararInterfaceParaDownload() {
+    limparResultados() {
         this.elements.searchButton.disabled = true;
         this.elements.spinner.classList.remove('d-none');
         this.elements.searchIcon.classList.add('d-none');
@@ -1395,6 +1395,7 @@ function deletarSave(saveName) {
 }
 
 async function searchMusic() {
+    uiController.limparResultados();
     uiController.exibirInterfaceDePesquisa();
 
     const textoPesquisa = elements.searchInput.value;
@@ -1469,7 +1470,7 @@ async function searchMusic() {
 }
 
 async function choseCifraLocal(id) {
-    uiController.prepararInterfaceParaDownload();
+    uiController.limparResultados();
 
     var cifra = todasAsCifras.filter(cifra =>
         cifra.id == id
@@ -1481,7 +1482,7 @@ async function choseCifraLocal(id) {
 }
 
 async function choseLink(urlLink, text) {
-    uiController.prepararInterfaceParaDownload();
+    uiController.limparResultados();
 
     try {
         const response = await fetch('https://apinode-h4wt.onrender.com/downloadsite', {
