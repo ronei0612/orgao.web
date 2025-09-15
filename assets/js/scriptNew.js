@@ -698,10 +698,13 @@ class UIController {
     }
 
     esconderInterfaceDePesquisa() {
-        this.elements.searchIcon.classList.remove('d-none');
-        this.elements.spinner.classList.add('d-none');
         this.elements.searchResultsList.classList.remove('d-none');
         this.elements.searchButton.disabled = false;
+    }
+
+    pararspinnerloading() {
+        this.elements.searchIcon.classList.remove('d-none');
+        this.elements.spinner.classList.add('d-none');
     }
 
     prepararInterfaceParaDownload() {
@@ -1396,12 +1399,28 @@ async function searchMusic() {
 
     const textoPesquisa = elements.searchInput.value;
 
-    const cifrasFiltradas = todasAsCifras.filter(cifra =>
+    var cifrasEncontradas = todasAsCifras.filter(cifra =>
         cifra.titulo.toLowerCase().includes(textoPesquisa) ||
         cifra.artista.toLowerCase().includes(textoPesquisa)
     );
 
-    alert(cifrasFiltradas.titulo + ' - ' + cifrasFiltradas.artista);
+    if (cifrasEncontradas.length > 0) {
+        const max = 3;
+        const topTitles = cifrasEncontradas.slice(0, max);
+            topTitles.forEach((cifra, index) => {
+                const title = cifra.titulo + ' - ' + cifra.artista;
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item';
+                const link = document.createElement('a');
+                link.href = '#';
+                    link.onclick = () => choseCifraLocal(cifra.id);
+                    link.textContent = title;
+                    listItem.appendChild(link);
+                    elements.searchResultsList.appendChild(listItem);
+                });
+
+        uiController.esconderInterfaceDePesquisa();
+    }
 
     try {
         const response = await fetch('https://apinode-h4wt.onrender.com/pesquisar', {
@@ -1414,8 +1433,8 @@ async function searchMusic() {
         const data = await response.json();
         if (data.success) {
             const { lista: titles, links } = data; // destructuring
-            const max = 5;
             if (titles.length > 0) {
+                const max = 3;
                 const topTitles = titles.slice(0, max);
                 topTitles.forEach((title, index) => {
                     const listItem = document.createElement('li');
@@ -1439,7 +1458,20 @@ async function searchMusic() {
         elements.searchResultsList.classList.add('d-none');
     } finally {
         uiController.esconderInterfaceDePesquisa();
+        uiController.pararspinnerloading();
     }
+}
+
+async function choseCifraLocal(id) {
+    uiController.prepararInterfaceParaDownload();
+
+    var cifra = todasAsCifras.filter(cifra =>
+        cifra.id == id
+    );
+
+    uiController.exibirTextoCifrasCarregado(null, data.message);
+
+    uiController.exibirBotoesSalvarTocar();
 }
 
 async function choseLink(urlLink, text) {
