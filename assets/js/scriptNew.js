@@ -1405,6 +1405,7 @@ async function searchMusic() {
         cifra.titulo.toLowerCase().includes(textoPesquisa) ||
         cifra.artista.toLowerCase().includes(textoPesquisa)
     );
+    alert(cifrasEncontradas.length);
 
     if (cifrasEncontradas.length > 0) {
         const max = 3;
