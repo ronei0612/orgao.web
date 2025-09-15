@@ -1710,7 +1710,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log('Service Worker registrado com sucesso:', registration.scope);
                 })
                 .catch(registrationError => {
-                    alert('Falha ao registrar o Service Worker: ' + registrationError);
                     console.log('Falha ao registrar o Service Worker:', registrationError);
                 });
         });
@@ -1719,6 +1718,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('./cifras.json')
         .then(response => {
             if (!response.ok) {
+                alert('Não foi possível carregar o arquivo de cifras local.');
                 throw new Error('Não foi possível carregar o arquivo de cifras local.');
             }
             return response.json();

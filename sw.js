@@ -30,7 +30,6 @@ self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                alert('Cache aberto. Adicionando arquivos essenciais para modo offline.');
                 console.log('Cache aberto. Adicionando arquivos essenciais para modo offline.');
                 return cache.addAll(urlsToCache);
             })
