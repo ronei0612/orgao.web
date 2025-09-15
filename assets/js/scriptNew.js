@@ -970,6 +970,7 @@ const camposHarmonicos = {
     'A#m': ['A#m', 'D', 'E#m', 'F#m', 'G', 'A']
 };
 
+const version = 1;
 const holdTime = 1000;
 var held = false;
 var timer;
@@ -1223,21 +1224,7 @@ elements.oracoesLink.addEventListener('click', () => {
 });
 
 elements.aboutLink.addEventListener('click', () => {
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-        // Envia mensagem para o SW pedindo a versão
-        navigator.serviceWorker.controller.postMessage({ type: 'GET_VERSION' });
-
-        // Aguarda a resposta do SW
-        const handler = function (event) {
-            if (event.data && event.data.type === 'CACHE_NAME') {
-                alert('Projeto de Ronei Costa Soares, versão do SW: ' + event.data.version);
-                navigator.serviceWorker.removeEventListener('message', handler);
-            }
-        };
-        navigator.serviceWorker.addEventListener('message', handler);
-    } else {
-        alert('Projeto de Ronei Costa Soares (Service Worker não carregado)');
-    }
+    alert('Projeto de Ronei Costa Soares. version: ' + version);
 });
 
 elements.missaOrdinarioLink.addEventListener('click', () => {
