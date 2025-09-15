@@ -1706,9 +1706,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js')
                 .then(registration => {
+                    alert('Service Worker registrado com sucesso:');
                     console.log('Service Worker registrado com sucesso:', registration.scope);
                 })
                 .catch(registrationError => {
+                    alert('Falha ao registrar o Service Worker: ' + registrationError);
                     console.log('Falha ao registrar o Service Worker:', registrationError);
                 });
         });
