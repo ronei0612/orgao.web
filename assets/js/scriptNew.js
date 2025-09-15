@@ -911,6 +911,7 @@ const elements = {
     missaOrdinarioLink: document.getElementById('missaOrdinarioLink'),
     liturgiaDiariaLink: document.getElementById('liturgiaDiariaLink'),
     oracoesLink: document.getElementById('oracoesLink'),
+    aboutLink: document.getElementById('about'),
     liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame'),
     santamissaFrame: document.getElementById('santamissaFrame'),
     acorde1: document.getElementById('acorde1'),
@@ -1219,6 +1220,24 @@ elements.liturgiaDiariaLink.addEventListener('click', () => {
 
 elements.oracoesLink.addEventListener('click', () => {
     uiController.exibirFrame('oracoesFrame');
+});
+
+elements.aboutLink.addEventListener('click', () => {
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        // Envia mensagem para o SW pedindo a versão
+        navigator.serviceWorker.controller.postMessage({ type: 'GET_VERSION' });
+
+        // Aguarda a resposta do SW
+        const handler = function (event) {
+            if (event.data && event.data.type === 'CACHE_NAME') {
+                alert('Projeto de Ronei Costa Soares, versão do SW: ' + event.data.version);
+                navigator.serviceWorker.removeEventListener('message', handler);
+            }
+        };
+        navigator.serviceWorker.addEventListener('message', handler);
+    } else {
+        alert('Projeto de Ronei Costa Soares (Service Worker não carregado)');
+    }
 });
 
 elements.missaOrdinarioLink.addEventListener('click', () => {

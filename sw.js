@@ -1,6 +1,6 @@
 // Define um nome e uma versão para o cache.
 // Mudar a versão (ex: v2) no futuro forçará a atualização de todos os arquivos.
-const CACHE_NAME = 'orgao-web-cache-v3';
+const CACHE_NAME = '1';
 
 // Lista de todos os arquivos que seu site precisa para funcionar offline.
 // Eu analisei seu index.html e listei todos os recursos essenciais.
@@ -67,4 +67,10 @@ self.addEventListener('fetch', event => {
             }
         )
     );
+});
+
+self.addEventListener('message', event => {
+    if (event.data && event.data.type === 'GET_VERSION') {
+        event.source.postMessage({ type: 'CACHE_NAME', version: CACHE_NAME });
+    }
 });
