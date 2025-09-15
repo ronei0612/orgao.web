@@ -1406,10 +1406,12 @@ async function searchMusic() {
         cifra.artista.toLowerCase().includes(textoPesquisa)
     );
 
+    alert(cifrasEncontradas.length);
+
     if (cifrasEncontradas.length > 0) {
         const max = 3;
         const topTitles = cifrasEncontradas.slice(0, max);
-            topTitles.forEach((cifra, index) => {
+            topTitles.forEach((cifra) => {
                 const title = cifra.titulo + ' - ' + cifra.artista;
                 const listItem = document.createElement('li');
                 listItem.className = 'list-group-item';
