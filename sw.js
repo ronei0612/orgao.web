@@ -38,6 +38,7 @@ self.addEventListener('install', event => {
 
 // Se o nome do cache não for o cache atual, ele será deletado.
 self.addEventListener('activate', event => {
+    console.log('activate');
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
