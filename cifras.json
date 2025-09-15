@@ -1,15 +1,18 @@
 [
   {
+    "id": 0,
     "artista": "Padre Zezinho",
     "titulo": "Oração Pela Família",
     "cifra": "[A]Que nenhuma família comece em qualquer de repente\n[E]Que nenhuma família se abrigue debaixo da ponte\n[F#m]Que ninguém interfira no lar e na vida dos dois\n[D]Que ninguém os obrigue a viver sem nenhum horizonte..."
   },
   {
+    "id": 2,
     "artista": "Anjos de Resgate",
     "titulo": "Amigos Pela Fé",
     "cifra": "[G]Quem me dará um ombro amigo\n[D/F#]\nQuando eu precisar?\n[Em]E se eu cair, se eu vacilar,\n[C]Quem vai me levantar?\n[G]Sou eu, quem vai ouvir você\n[D/F#]\nQuando o mundo não puder te entender..."
   },
   {
+    "id": 2,
     "artista": "Eliana Ribeiro",
     "titulo": "Força e Vitória",
     "cifra": "[D]Todo joelho se dobrará\n[A/C#]\nE toda língua proclamará\n[Bm]Que Jesus Cristo é o Senhor\n[G]Nada poderá me abalar\n[D]Nada poderá me derrotar..."
