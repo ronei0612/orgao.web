@@ -1677,3 +1677,140 @@ function salvarSave(newSaveName) {
     elements.acorde10.addEventListener(event, togglePressedState);
     elements.acorde11.addEventListener(event, togglePressedState);
 });
+
+// =======================================================================
+// INÍCIO DO CÓDIGO DE BUSCA LOCAL E SERVICE WORKER (Adicionar ao final de scriptNew.js)
+// =======================================================================
+
+// A lógica será adicionada dentro do seu listener 'DOMContentLoaded' existente
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- REGISTRO DO SERVICE WORKER ---
+    // Este código garante que o Service Worker seja instalado e ativado.
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('Service Worker registrado com sucesso:', registration.scope);
+                })
+                .catch(registrationError => {
+                    console.log('Falha ao registrar o Service Worker:', registrationError);
+                });
+        });
+    }
+
+    // --- LÓGICA DE BUSCA NO ARQUIVO JSON LOCAL ---
+
+    // 1. As referências dos elementos já estão na sua constante 'elements'.
+    //    Vamos apenas usá-las diretamente.
+    const localSearchInput = elements.searchInput; // Usando a barra de pesquisa que você indicou
+    const localSearchButton = document.getElementById('searchButton'); // O botão dentro do seu modal
+    const localSearchResultsList = elements.searchResultsList;
+    const localEditTextarea = elements.editTextarea;
+    const localStartButton = elements.startButton;
+
+    let todasAsCifras = [];
+    let buscaLocalAtiva = true; // Flag para alternar entre busca local e online
+
+    // 2. Carrega o arquivo de cifras local
+    fetch('./cifras.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Não foi possível carregar o arquivo de cifras local.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            todasAsCifras = data;
+            console.log(`${todasAsCifras.length} cifras locais carregadas.`);
+            // Altera o placeholder para indicar que a busca local está pronta
+            localSearchInput.placeholder = "Pesquisar nas cifras salvas...";
+        })
+        .catch(error => {
+            console.error(error);
+            localSearchInput.placeholder = "Erro ao carregar cifras locais.";
+        });
+
+    // 3. Modifica o evento de clique do seu botão de busca
+    //    Esta função decidirá se faz a busca local ou a sua busca online original.
+    const handleSearchClick = () => {
+        // Se a busca começar com "cifraclub:", por exemplo, faz a busca online.
+        // Caso contrário, faz a busca local.
+        if (localSearchInput.value.toLowerCase().startsWith('cifraclub:')) {
+            // Remove o prefixo antes de chamar sua função original
+            localSearchInput.value = localSearchInput.value.substring(10).trim();
+            // A sua função original 'searchMusic()' será chamada
+            searchMusic();
+        } else {
+            realizarBuscaLocal();
+        }
+    };
+
+    localSearchButton.addEventListener('click', handleSearchClick);
+    localSearchInput.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+            handleSearchClick();
+        }
+    });
+
+    // 4. Função para a busca local
+    function realizarBuscaLocal() {
+        const termoBusca = localSearchInput.value.toLowerCase().trim();
+        
+        // Esconde a sua lista de saves para mostrar os resultados da busca local
+        if(elements.savesList) elements.savesList.classList.add('d-none');
+        
+        if (termoBusca.length === 0) {
+            localSearchResultsList.innerHTML = '';
+            localSearchResultsList.classList.add('d-none');
+            return;
+        }
+
+        const cifrasFiltradas = todasAsCifras.filter(cifra =>
+            cifra.titulo.toLowerCase().includes(termoBusca) ||
+            cifra.artista.toLowerCase().includes(termoBusca)
+        );
+
+        exibirResultadosLocais(cifrasFiltradas);
+    }
+
+    // 5. Função para exibir os resultados da busca local na sua lista
+    function exibirResultadosLocais(cifras) {
+        localSearchResultsList.innerHTML = ''; // Limpa resultados anteriores
+        localSearchResultsList.classList.remove('d-none'); // Torna a lista visível
+
+        if (cifras.length === 0) {
+            const item = document.createElement('li');
+            item.className = 'list-group-item';
+            item.textContent = 'Nenhuma cifra local encontrada.';
+            localSearchResultsList.appendChild(item);
+            return;
+        }
+
+        cifras.forEach(cifra => {
+            const item = document.createElement('a');
+            item.href = "#";
+            item.className = 'list-group-item list-group-item-action';
+            item.innerHTML = `<strong>${cifra.titulo}</strong><br><small>${cifra.artista}</small>`;
+            
+            item.addEventListener('click', (event) => {
+                event.preventDefault();
+                
+                // Preenche a área de texto, esconde os resultados e atualiza a UI
+                localEditTextarea.value = cifra.cifra;
+                localSearchResultsList.classList.add('d-none');
+                elements.searchModalLabel.textContent = cifra.titulo;
+                localSearchInput.value = ''; // Limpa a barra de pesquisa
+
+                // Habilita o botão "Tocar" para o usuário prosseguir
+                localStartButton.disabled = false;
+            });
+            
+            localSearchResultsList.appendChild(item);
+        });
+    }
+});
+
+// =======================================================================
+// FIM DO CÓDIGO ADICIONAL
+// =======================================================================
