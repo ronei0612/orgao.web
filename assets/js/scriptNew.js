@@ -973,6 +973,7 @@ const holdTime = 1000;
 var held = false;
 var timer;
 var todasAsCifras = [];
+var musicaEscolhida = false;
 
 window.onerror = function (message, source, lineno, colno, error) {
 	alert("Erro!\n" + message + '\nArquivo: ' + source + '\nLinha: ' + lineno + '\nPosicao: ' + colno);
@@ -1395,6 +1396,7 @@ function deletarSave(saveName) {
 }
 
 async function searchMusic() {
+    musicaEscolhida = false;
     uiController.limparResultados();
     uiController.exibirInterfaceDePesquisa();
 
@@ -1434,6 +1436,9 @@ async function searchMusic() {
 
         const data = await response.json();
         if (data.success) {
+            if (musicaEscolhida)
+                return;
+
             const { lista: titles, links } = data; // destructuring
             titlesCifraClub = titles;
             if (titles.length > 0) {
@@ -1468,15 +1473,34 @@ async function searchMusic() {
 }
 
 async function choseCifraLocal(id) {
+    musicaEscolhida = true;
     uiController.limparResultados();
 
-    var cifra = todasAsCifras.filter(cifra =>
-        cifra.id == id
-    );
+    const musica = todasAsCifras.find(c => c.id === id);
+    if (!musica) {
+        alert('Cifra não encontrada.');
+        return;
+    }
 
-    uiController.exibirTextoCifrasCarregado(null, data.message);
+    debugger;
 
+    const texto = musica.cifra;
+    const titulo = musica.titulo;
+
+    let musicaCifrada = cifraPlayer.destacarCifras(texto);
+    const tom = descobrirTom(musicaCifrada);
+    musicaCifrada = cifraPlayer.destacarCifras(texto, tom);
+
+    elements.editTextarea.value = texto;
+    elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
+    elements.searchModalLabel.textContent = titulo;
+
+    uiController.exibirTextoCifrasCarregado(tom, texto);
     uiController.exibirBotoesSalvarTocar();
+
+    cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
+
+    cifraPlayer.indiceAcorde = 0;
 }
 
 async function choseLink(urlLink, text) {
