@@ -36,6 +36,22 @@ self.addEventListener('install', event => {
     );
 });
 
+// Se o nome do cache não for o cache atual, ele será deletado.
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Cache antigo encontrado. Deletando:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+});
+
 // Evento de Fetch: Intercepta todas as requisições da página.
 self.addEventListener('fetch', event => {
     event.respondWith(
