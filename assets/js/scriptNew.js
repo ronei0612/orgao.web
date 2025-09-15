@@ -1406,8 +1406,6 @@ async function searchMusic() {
         cifra.artista.toLowerCase().includes(textoPesquisa)
     );
 
-    alert(cifrasEncontradas.length);
-
     if (cifrasEncontradas.length > 0) {
         const max = 3;
         const topTitles = cifrasEncontradas.slice(0, max);
@@ -1722,7 +1720,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    fetch('./cifras.json')
+    var cifrasLocal = './cifras.json';
+    if (location.origin.includes('file:')) {
+        cifrasLocal = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
+    }
+
+    fetch(cifrasLocal)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Não foi possível carregar o arquivo de cifras local.');
