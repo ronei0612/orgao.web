@@ -1399,14 +1399,12 @@ async function searchMusic() {
 
     const textoPesquisa = elements.searchInput.value;
     var titlesCifraClub = [];
-    alert(todasAsCifras.length);
+    alert(todasAsCifras[0].titulo);
 
     var cifrasEncontradas = todasAsCifras.filter(cifra =>
         cifra.titulo.toLowerCase().includes(textoPesquisa) ||
         cifra.artista.toLowerCase().includes(textoPesquisa)
     );
-
-    alert(cifrasEncontradas.length);
 
     if (cifrasEncontradas.length > 0) {
         const max = 3;
@@ -1722,7 +1720,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    fetch('./cifras.json')
+    var cifrasLocal = './cifras.json';
+    if (location.origin.includes('file:')) {
+        cifrasLocal = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
+    }
+
+    fetch(cifrasLocal)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Não foi possível carregar o arquivo de cifras local.');
