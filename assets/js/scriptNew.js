@@ -1482,8 +1482,6 @@ async function choseCifraLocal(id) {
         return;
     }
 
-    debugger;
-
     const texto = musica.cifra;
     const titulo = musica.titulo;
 
