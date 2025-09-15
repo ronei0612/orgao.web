@@ -1599,16 +1599,18 @@ const aplicarModoEscuroIframe = () => {
         if (!location.origin.includes('file:')) {
             elements.santamissaFrame.style.backgroundColor = '#101524';
             elements.oracoesFrame.style.backgroundColor = '#101524';
-            elements.santamissaFrame.contentDocument.body.style.color = '#FFFFFF'; //aqui está dando erro elements.santamissaFrame.contentDocument está null
             elements.oracoesFrame.contentDocument.body.style.color = '#FFFFFF';
+            if (elements.santamissaFrame.contentDocument)
+                elements.santamissaFrame.contentDocument.body.style.color = '#FFFFFF';
         }
     }
     else {
         if (!location.origin.includes('file:')) {
             elements.santamissaFrame.style.backgroundColor = '#FFFFFF';
             elements.oracoesFrame.style.backgroundColor = '#FFFFFF';
-            elements.santamissaFrame.contentDocument.body.style.color = '#000000';
             elements.oracoesFrame.contentDocument.body.style.color = '#000000';
+            if (elements.santamissaFrame.contentDocument)
+                elements.santamissaFrame.contentDocument.body.style.color = '#000000';
         }
     }
     
