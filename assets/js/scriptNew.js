@@ -1402,8 +1402,8 @@ async function searchMusic() {
     alert(todasAsCifras[0].titulo);
 
     var cifrasEncontradas = todasAsCifras.filter(cifra =>
-        cifra.titulo.toLowerCase().includes(textoPesquisa) ||
-        cifra.artista.toLowerCase().includes(textoPesquisa)
+        cifra.titulo.toLowerCase().includes(textoPesquisa.toLowerCase()) ||
+        cifra.artista.toLowerCase().includes(textoPesquisa.toLowerCase())
     );
     alert(cifrasEncontradas.length);
 
