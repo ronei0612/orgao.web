@@ -1398,6 +1398,8 @@ async function searchMusic() {
     uiController.exibirInterfaceDePesquisa();
 
     const textoPesquisa = elements.searchInput.value;
+    var titlesCifraClub = [];
+    alert(todasAsCifras.length);
 
     var cifrasEncontradas = todasAsCifras.filter(cifra =>
         cifra.titulo.toLowerCase().includes(textoPesquisa) ||
@@ -1433,6 +1435,7 @@ async function searchMusic() {
         const data = await response.json();
         if (data.success) {
             const { lista: titles, links } = data; // destructuring
+            titlesCifraClub = titles;
             if (titles.length > 0) {
                 const max = 3;
                 const topTitles = titles.slice(0, max);
@@ -1446,8 +1449,6 @@ async function searchMusic() {
                     listItem.appendChild(link);
                     elements.searchResultsList.appendChild(listItem);
                 });
-            } else {
-                elements.searchResultsList.innerHTML = '<li class="list-group-item">Nenhuma cifra encontrada.</li>';
             }
         } else {
             throw new Error(data.message);
@@ -1459,6 +1460,10 @@ async function searchMusic() {
     } finally {
         uiController.esconderInterfaceDePesquisa();
         uiController.pararspinnerloading();
+    }
+
+    if (cifrasEncontradas.length == 0 && titlesCifraClub == 0) {
+        elements.searchResultsList.innerHTML = '<li class="list-group-item">Nenhuma cifra encontrada.</li>';
     }
 }
 
@@ -1718,14 +1723,12 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('./cifras.json')
         .then(response => {
             if (!response.ok) {
-                alert('Não foi possível carregar o arquivo de cifras local.');
                 throw new Error('Não foi possível carregar o arquivo de cifras local.');
             }
             return response.json();
         })
         .then(data => {
             todasAsCifras = data;
-            alert('cifras locais carregadas com sucesso.');
             console.log(`${todasAsCifras.length} cifras locais carregadas com sucesso.`);
         })
         .catch(error => {
