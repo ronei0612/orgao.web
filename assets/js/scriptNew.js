@@ -1399,7 +1399,7 @@ async function searchMusic() {
 
     const textoPesquisa = elements.searchInput.value;
     var titlesCifraClub = [];
-    alert(todasAsCifras.length);
+    alert(todasAsCifras[0].titulo);
 
     var cifrasEncontradas = todasAsCifras.filter(cifra =>
         cifra.titulo.toLowerCase().includes(textoPesquisa) ||
