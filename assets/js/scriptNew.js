@@ -1725,12 +1725,11 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(data => {
             todasAsCifras = data;
+            alert('cifras locais carregadas com sucesso.');
             console.log(`${todasAsCifras.length} cifras locais carregadas com sucesso.`);
-            elements.searchInput.placeholder = "Pesquisar cifras locais...";
         })
         .catch(error => {
             console.error(error);
-            elements.searchInput.placeholder = "Erro ao carregar cifras.";
         });
 
     // acorda a api
