@@ -707,7 +707,7 @@ class UIController {
         this.elements.spinner.classList.add('d-none');
     }
 
-    prepararInterfaceParaDownload() {
+    limparResultados() {
         this.elements.searchButton.disabled = true;
         this.elements.spinner.classList.remove('d-none');
         this.elements.searchIcon.classList.add('d-none');
@@ -1395,6 +1395,7 @@ function deletarSave(saveName) {
 }
 
 async function searchMusic() {
+    uiController.limparResultados();
     uiController.exibirInterfaceDePesquisa();
 
     const textoPesquisa = elements.searchInput.value;
@@ -1402,9 +1403,10 @@ async function searchMusic() {
     alert(todasAsCifras[0].titulo);
 
     var cifrasEncontradas = todasAsCifras.filter(cifra =>
-        cifra.titulo.toLowerCase().includes(textoPesquisa) ||
-        cifra.artista.toLowerCase().includes(textoPesquisa)
+        cifra.titulo.toLowerCase().includes(textoPesquisa.toLowerCase()) ||
+        cifra.artista.toLowerCase().includes(textoPesquisa.toLowerCase())
     );
+    alert(cifrasEncontradas.length);
 
     if (cifrasEncontradas.length > 0) {
         const max = 3;
@@ -1468,7 +1470,7 @@ async function searchMusic() {
 }
 
 async function choseCifraLocal(id) {
-    uiController.prepararInterfaceParaDownload();
+    uiController.limparResultados();
 
     var cifra = todasAsCifras.filter(cifra =>
         cifra.id == id
@@ -1480,7 +1482,7 @@ async function choseCifraLocal(id) {
 }
 
 async function choseLink(urlLink, text) {
-    uiController.prepararInterfaceParaDownload();
+    uiController.limparResultados();
 
     try {
         const response = await fetch('https://apinode-h4wt.onrender.com/downloadsite', {
@@ -1711,7 +1713,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
                 .then(registration => {
-                    alert('Service Worker registrado com sucesso:');
                     console.log('Service Worker registrado com sucesso:', registration.scope);
                 })
                 .catch(registrationError => {
