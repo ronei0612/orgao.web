@@ -1400,13 +1400,11 @@ async function searchMusic() {
 
     const textoPesquisa = elements.searchInput.value;
     var titlesCifraClub = [];
-    alert(todasAsCifras[0].titulo);
 
     var cifrasEncontradas = todasAsCifras.filter(cifra =>
         cifra.titulo.toLowerCase().includes(textoPesquisa.toLowerCase()) ||
         cifra.artista.toLowerCase().includes(textoPesquisa.toLowerCase())
     );
-    alert(cifrasEncontradas.length);
 
     if (cifrasEncontradas.length > 0) {
         const max = 3;
@@ -1579,7 +1577,7 @@ const aplicarModoEscuroIframe = () => {
         if (!location.origin.includes('file:')) {
             elements.santamissaFrame.style.backgroundColor = '#101524';
             elements.oracoesFrame.style.backgroundColor = '#101524';
-            elements.santamissaFrame.contentDocument.body.style.color = '#FFFFFF';
+            elements.santamissaFrame.contentDocument.body.style.color = '#FFFFFF'; //aqui está dando erro elements.santamissaFrame.contentDocument está null
             elements.oracoesFrame.contentDocument.body.style.color = '#FFFFFF';
         }
     }
