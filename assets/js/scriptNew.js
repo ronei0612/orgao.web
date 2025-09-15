@@ -1397,8 +1397,8 @@ async function searchMusic() {
     const textoPesquisa = elements.searchInput.value;
 
     const cifrasFiltradas = todasAsCifras.filter(cifra =>
-        cifra.titulo.toLowerCase().includes(termoBusca) ||
-        cifra.artista.toLowerCase().includes(termoBusca)
+        cifra.titulo.toLowerCase().includes(textoPesquisa) ||
+        cifra.artista.toLowerCase().includes(textoPesquisa)
     );
 
     alert(cifrasFiltradas.titulo + ' - ' + cifrasFiltradas.artista);
