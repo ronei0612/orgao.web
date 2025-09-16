@@ -1,20 +1,32 @@
 [
   {
     "id": 0,
-    "artista": "Padre Zezinho",
-    "titulo": "Oração Pela Família",
-    "cifra": "[A]Que nenhuma família comece em qualquer de repente\n[E]Que nenhuma família se abrigue debaixo da ponte\n[F#m]Que ninguém interfira no lar e na vida dos dois\n[D]Que ninguém os obrigue a viver sem nenhum horizonte..."
+    "artista": "Borda da mata",
+    "titulo": "ENTRADA Novena Padroeira",
+    "cifra": "1.Vem, ó Mãe, caminhar com teus filhos\nVem, Senhora, levar-nos a Jesus\n\nAcolhe-nos, Maria, em tua casa\nAcolhe-nos, ó Mãe, em teu amor\nEm ti o Senhor se alegra,\npor ti o Senhor se doou\n\n2.Unidos aqui pra louvarmos o Senhor\nCom toda a Igreja bendizer teu criador\n\nAcolhe-nos, Maria, em tua casa\nAcolhe-nos, ó Mãe, em teu amor\nEm ti o Senhor se alegra,\npor ti o Senhor se doou\n\n3.Recebe teus filhos que vêm pra te saudar\nProtege-nos, Maria, e dá-nos tua paz\n\nAcolhe-nos, Maria, em tua casa\nAcolhe-nos, ó Mãe, em teu amor\nEm ti o Senhor se alegra,\npor ti o Senhor se doou"
+  },
+  {
+    "id": 1,
+    "artista": "Borda da mata",
+    "titulo": "ACLAMAÇÃO Novena Padroeira",
+    "cifra": "Aleluia Aleluia Aleluia (2x)\n\nVirgem Mãe do Carmo\nque as palavras do teu Filho\ntoquem nosso coração"
   },
   {
     "id": 2,
-    "artista": "Anjos de Resgate",
-    "titulo": "Amigos Pela Fé",
-    "cifra": "[G]Quem me dará um ombro amigo\n[D/F#]\nQuando eu precisar?\n[Em]E se eu cair, se eu vacilar,\n[C]Quem vai me levantar?\n[G]Sou eu, quem vai ouvir você\n[D/F#]\nQuando o mundo não puder te entender..."
+    "artista": "Borda da mata",
+    "titulo": "OFERTÓRIO Novena Padroeira",
+    "cifra": "1.Oferecemos os nossos dons,\napresenta-os, ó Mãe, ao Senhor\nPara o altar trazemos a vida,\nofereça-a, ó Mãe, ao Pai\n\nColoca-nos no coração do teu Filho,\nneste altar que recebe o pão,\nneste altar que recebe o vinho (2x)\n\n2.Oferecemos nosso coração,\napresenta-o, ó Mãe, ao Senhor\nnas tuas mãos as lutas e dores\nofereça-as ó Mãe ao Pai\n\nColoca-nos no coração do teu Filho,\nneste altar que recebe o pão,\nneste altar que recebe o vinho (2x)\n\n3.Oferecemos todo trabalho,\napresenta-os, ó Mãe, ao Senhor\nOs frutos da terra e da videira,\nofereça-os, ó Mãe, ao Pai\n\nColoca-nos no coração do teu Filho,\nneste altar que recebe o pão,\nneste altar que recebe o vinho (2x)\n\n4.Oferecemos o nosso ser,\napresenta-o, ó Mãe, ao Senhor\nNo altar todo nosso sacrifício,\nofereça-os, ó Mãe, ao Pai\n\nColoca-nos no coração do teu Filho,\nneste altar que recebe o pão,\nneste altar que recebe o vinho (2x)"
   },
   {
-    "id": 2,
-    "artista": "Eliana Ribeiro",
-    "titulo": "Força e Vitória",
-    "cifra": "[D]Todo joelho se dobrará\n[A/C#]\nE toda língua proclamará\n[Bm]Que Jesus Cristo é o Senhor\n[G]Nada poderá me abalar\n[D]Nada poderá me derrotar..."
+    "id": 3,
+    "artista": "Borda da mata",
+    "titulo": "COMUNHÃO Novena Padroeira",
+    "cifra": "1.Rejubila, ó Mãe, filha de Sião,\nteu Senhor contigo está\nTu, Maria, deste vida,\nrealizaste tua missão\n\nNeste Pão, toda alegria\nNeste Vinho, toda vida para nós\nDeus escondido, Deus feito pão só para nós\n\n2.A nossa missão, dar Jesus ao irmão,\npartilhar o coração, na verdade,\num dia transformado vai estar\n\nNeste Pão, toda alegria\nNeste Vinho, toda vida para nós\nDeus escondido, Deus feito pão só para nós\n\n3.Este alimento, força e sustento,\nvem estar na Eucaristia\nÉ Jesus que se dá, por amor,\nnos ensina a nos amar\n\nNeste Pão, toda alegria\nNeste Vinho, toda vida para nós\nDeus escondido, Deus feito pão só para nós\n\n4.Vem pra iluminar, a dor cancelar,\nnos dar a sua paz\nO amor transformar a dor\ne redimir todos os seus\n\nNeste Pão, toda alegria\nNeste Vinho, toda vida para nós\nDeus escondido, Deus feito pão só para nós\n\n5.Nele o Pão, a união é realização,\né nossa salvação,\na Santa Eucaristia\n\nNeste Pão, toda alegria\nNeste Vinho, toda vida para nós\nDeus escondido, Deus feito pão só para nós\n\n6.Esta comunhão gera salvação,\né certeza de vida e paz\nEsta refeição, é vida e missão,\né Jesus que vem nos dar\n\nNeste Pão, toda alegria\nNeste Vinho, toda vida para nós\nDeus escondido, Deus feito pão só para nós\n\n7.Glória a Deus, o Pai, no mais alto céu,\ne a nós também\nÉ vida e missão, o nosso Senhor,\ne neste está Jesus\n\nNeste Pão, toda alegria\nNeste Vinho, toda vida para nós\nDeus escondido, Deus feito pão só para nós"
+  },
+  {
+    "id": 4,
+    "artista": "Borda da mata",
+    "titulo": "FINAL Novena Padroeira",
+    "cifra": "1.Oh, Maria, Virgem do Carmo,\nsois de nós todos a fina flor\nSois Mãe, sois a Rainha, sois a irmã\nPor isso eu estou disposto a vos amar,\na vos amar e a vos servir no irmão\n\nAbençoai esta terra, este povo,\nesta vossa cidade (2x)\n\n2.Oh, Maria, Virgem do Carmo,\neu me consagro todo a vós\nSois Mãe, sois a Rainha, sois a Irmã\nPor isso eu estou seguro de todo mal,\ncom minha Mãe eu sou feliz, mui feliz\n\nAbençoai esta terra, este povo,\nesta vossa cidade (2x)"
   }
 ]
