@@ -834,7 +834,7 @@ class LocalStorageManager {
             return savesString ? JSON.parse(savesString) : {};
         } catch (error) {
             console.error("Erro ao ler saves do localStorage:", error);
-            return {}; // Retorna um objeto vazio em caso de erro
+            return {};
         }
     }
 
@@ -913,6 +913,7 @@ const elements = {
     oracoesLink: document.getElementById('oracoesLink'),
     aboutLink: document.getElementById('about'),
     downloadSavesLink: document.getElementById('downloadSavesLink'),
+    uploadSavesLink: document.getElementById('uploadSavesLink'),
     liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame'),
     santamissaFrame: document.getElementById('santamissaFrame'),
     acorde1: document.getElementById('acorde1'),
@@ -1233,6 +1234,10 @@ elements.downloadSavesLink.addEventListener('click', () => {
     downloadSaves();
 });
 
+elements.uploadSavesLink.addEventListener('click', () => {
+    uploadSaves();
+});
+
 elements.missaOrdinarioLink.addEventListener('click', () => {
     uiController.exibirFrame('santamissaFrame');
 });
@@ -1247,6 +1252,7 @@ elements.notesButton.addEventListener('click', () => {
 });
 
 elements.stopButton.addEventListener('mousedown', () => {
+    uiController.esconderEditDeleteButtons();
     cifraPlayer.pararReproducao();
 });
 
@@ -1634,6 +1640,51 @@ const aplicarModoEscuroIframe = () => {
 
 function isMobileDevice() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function uploadSaves() {
+    let input = document.getElementById('uploadSavesInput');
+    if (!input) {
+        input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'application/json';
+        input.style.display = 'none';
+        input.id = 'uploadSavesInput';
+        document.body.appendChild(input);
+    }
+
+    input.value = ''; // Permite selecionar o mesmo arquivo novamente
+
+    input.onchange = function (event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                const importedSaves = JSON.parse(e.target.result);
+
+                if (typeof importedSaves !== 'object' || Array.isArray(importedSaves)) {
+                    alert('Arquivo inválido!');
+                    return;
+                }
+
+                // Mescla com os saves existentes (ou substitui, se preferir)
+                const currentSaves = JSON.parse(localStorage.getItem('saves') || '{}');
+                const mergedSaves = { ...currentSaves, ...importedSaves };
+                localStorage.setItem('saves', JSON.stringify(mergedSaves));
+
+                // Atualiza a interface
+                uiController.exibirListaSaves();
+                alert('Importado com sucesso!');
+            } catch (err) {
+                alert('Erro: ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+    };
+
+    input.click();
 }
 
 function downloadSaves() {
