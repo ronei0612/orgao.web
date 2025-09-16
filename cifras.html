@@ -5,10 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Editar Cifras.json</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body.dark-mode {
+            background-color: #181a1b !important;
+            color: #f8f9fa !important;
+        }
+
+        .dark-mode .card {
+            background-color: #23272b;
+            color: #f8f9fa;
+            border-color: #343a40;
+        }
+
+        .dark-mode .form-control,
+        .dark-mode .form-label {
+            background-color: #23272b;
+            color: #f8f9fa;
+            border-color: #343a40;
+        }
+
+        .dark-mode .btn-primary {
+            background-color: #375a7f;
+            border-color: #375a7f;
+        }
+
+        .dark-mode .btn-success {
+            background-color: #00bc8c;
+            border-color: #00bc8c;
+        }
+
+        .dark-mode .btn-danger {
+            background-color: #e74c3c;
+            border-color: #e74c3c;
+        }
+    </style>
 </head>
 <body class="bg-light">
     <div class="container py-4">
-        <h1 class="mb-4 text-center">Editar Cifras.json</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-center flex-grow-1 mb-0">Editar Cifras.json</h1>
+            <button id="darkmode-btn" class="btn btn-outline-secondary ms-3" title="Alternar modo escuro">
+                <span id="darkmode-icon" class="bi bi-moon"></span> Modo Escuro
+            </button>
+        </div>
         <div id="cifras-container"></div>
         <div class="text-center mt-3">
             <div class="d-inline-flex gap-2">
@@ -17,6 +56,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap Icons CDN for moon/sun icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <script>
         let cifras = [];
@@ -46,27 +88,27 @@
                 const div = document.createElement('div');
                 div.className = 'card mb-3 shadow-sm';
                 div.innerHTML = `
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <!-- ID oculto no editor, mas mantido no objeto -->
-                                    <div class="col-md-5">
-                                        <label class="form-label">Artista</label>
-                                        <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${idx}" data-field="artista">
-                                    </div>
-                                    <div class="col-md-7">
-                                        <label class="form-label">Título</label>
-                                        <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${idx}" data-field="titulo">
-                                    </div>
-                                    <div class="col-12 mt-2">
-                                        <label class="form-label">Música</label>
-                                        <textarea class="form-control" rows="4" data-idx="${idx}" data-field="cifra">${item.cifra || ''}</textarea>
-                                    </div>
-                                    <div class="col-12 mt-3 text-end">
-                                        <button class="btn btn-danger btn-sm" onclick="deleteCifra(${idx})">Excluir</button>
+                                <div class="card-body">
+                                    <div class="row g-3">
+                                        <!-- ID oculto no editor, mas mantido no objeto -->
+                                        <div class="col-md-5">
+                                            <label class="form-label">Artista</label>
+                                            <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${idx}" data-field="artista">
+                                        </div>
+                                        <div class="col-md-7">
+                                            <label class="form-label">Título</label>
+                                            <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${idx}" data-field="titulo">
+                                        </div>
+                                        <div class="col-12 mt-2">
+                                            <label class="form-label">Música</label>
+                                            <textarea class="form-control" rows="4" data-idx="${idx}" data-field="cifra">${item.cifra || ''}</textarea>
+                                        </div>
+                                        <div class="col-12 mt-3 text-end">
+                                            <button class="btn btn-danger btn-sm" onclick="deleteCifra(${idx})">Excluir</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        `;
+                            `;
                 container.appendChild(div);
             });
         }
@@ -119,6 +161,30 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
+
+        // Modo escuro
+        const darkBtn = document.getElementById('darkmode-btn');
+        const darkIcon = document.getElementById('darkmode-icon');
+        function setDarkMode(on) {
+            if (on) {
+                document.body.classList.add('dark-mode');
+                darkIcon.classList.remove('bi-moon');
+                darkIcon.classList.add('bi-sun');
+                darkBtn.innerHTML = '<span id="darkmode-icon" class="bi bi-sun"></span> Modo Claro';
+                localStorage.setItem('darkmode', 'on');
+            } else {
+                document.body.classList.remove('dark-mode');
+                darkIcon.classList.remove('bi-sun');
+                darkIcon.classList.add('bi-moon');
+                darkBtn.innerHTML = '<span id="darkmode-icon" class="bi bi-moon"></span> Modo Escuro';
+                localStorage.setItem('darkmode', 'off');
+            }
+        }
+        darkBtn.addEventListener('click', function () {
+            setDarkMode(!document.body.classList.contains('dark-mode'));
+        });
+        // Aplica preferência ao carregar
+        if (localStorage.getItem('darkmode') === 'on') setDarkMode(true);
 
         // Inicializa a página
         loadCifras();
