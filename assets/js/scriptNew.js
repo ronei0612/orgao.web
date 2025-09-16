@@ -688,6 +688,21 @@ class UIController {
         return option;
     }
 
+    resetarOkAlert() {
+        this.elements.okButtonAlert.classList.remove('d-none');
+        this.elements.simButtonAlert.classList.add('d-none');
+        this.elements.naoButtonAlert.classList.add('d-none');
+        this.elements.cancelButtonAlert.classList.add('d-none');
+    }
+
+    resetarSimNaoAlert(simText = '✓ Sim') {
+        this.elements.simButtonAlert.textContent = simText;
+        this.elements.simButtonAlert.classList.remove('d-none');
+        this.elements.naoButtonAlert.classList.remove('d-none');
+        this.elements.okButtonAlert.classList.add('d-none');
+        this.elements.cancelButtonAlert.classList.add('d-none');
+    }
+
     exibirInterfaceDePesquisa() {
         this.elements.editTextarea.classList.add('d-none');
         this.elements.searchIcon.classList.add('d-none');
@@ -724,6 +739,13 @@ class UIController {
         this.elements.saveButton.classList.remove('d-none');
         this.elements.addButton.classList.remove('d-none');
         this.elements.editTextarea.classList.remove('d-none');
+    }
+
+    exibirIframeCifra() {
+        this.elements.iframeCifra.classList.remove('d-none');
+        this.elements.liturgiaDiariaFrame.classList.add('d-none');
+        this.elements.santamissaFrame.classList.add('d-none');
+        this.elements.oracoesFrame.classList.add('d-none');
     }
 
     exibirTextoCifrasCarregado(tom = null, texto = null) {
@@ -1018,20 +1040,13 @@ elements.saveButton.addEventListener('click', () => {
             let saves = JSON.parse(localStorage.getItem('saves')) || {};
             if (saves.hasOwnProperty(saveName)) {
                 uiController.exibirMensagemAlerta(`Salvar "${saveName}"?`, `Salvar "${saveName}"`);
-                elements.simButtonAlert.textContent = '✓ Sim';
-                elements.simButtonAlert.classList.remove('d-none');
-                elements.naoButtonAlert.classList.remove('d-none');
-                elements.okButtonAlert.classList.add('d-none');
-                elements.cancelButtonAlert.classList.add('d-none');
+                uiController.resetarSimNaoAlert();
             }
             else {
                 salvarSave(saveName);
 
                 uiController.exibirMensagemAlerta(`"${saveName}" salvo com sucesso!`, 'Música');
-                elements.simButtonAlert.classList.add('d-none');
-                elements.naoButtonAlert.classList.add('d-none');
-                elements.okButtonAlert.classList.remove('d-none');
-                elements.cancelButtonAlert.classList.add('d-none');
+                uiController.resetarOkAlert();
 
                 $('#alertModal').modal('show');
             }
@@ -1060,10 +1075,7 @@ elements.startButton.addEventListener('click', () => {
                 .replace("font-size: 12pt;", "font-size: 15pt;");
             elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
         }
-        elements.iframeCifra.classList.remove('d-none');
-        elements.liturgiaDiariaFrame.classList.add('d-none');
-        elements.santamissaFrame.classList.add('d-none');
-        elements.oracoesFrame.classList.add('d-none');
+        uiController.exibirIframeCifra();
         cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
         
         cifraPlayer.indiceAcorde = 0;
@@ -1147,10 +1159,7 @@ elements.savesSelect.addEventListener('change', () => {
             uiController.esconderBotoesAcordes();
             uiController.esconderBotoesPlay();
         }
-        elements.iframeCifra.classList.remove('d-none');
-        elements.liturgiaDiariaFrame.classList.add('d-none');
-        elements.santamissaFrame.classList.add('d-none');
-        elements.oracoesFrame.classList.add('d-none');
+        uiController.exibirIframeCifra();
         cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
         
         cifraPlayer.indiceAcorde = 0;
@@ -1192,11 +1201,8 @@ elements.editSavesSelect.addEventListener('click', () => {
 elements.deleteSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
     if (elements.savesSelect.selectedIndex !== 0) {
-        uiController.exibirMensagemAlerta(`Deseja excluir "${saveName}"?`, 'Atenção!');
-        elements.simButtonAlert.textContent = '✓ Sim';
-        elements.simButtonAlert.classList.remove('d-none');
-        elements.okButtonAlert.classList.add('d-none');
-        elements.cancelButtonAlert.classList.remove('d-none');
+        uiController.exibirMensagemAlerta(`Deseja excluir "${saveName}"?`, 'Deletar!');
+        uiController.resetarSimNaoAlert();
 
         $('#alertModal').modal('show');
     }
@@ -1749,10 +1755,7 @@ function salvarSave(newSaveName) {
 
         if (temSaveName && elements.searchModalLabel.textContent !== newSaveName) {
             uiController.exibirMensagemAlerta(`Já existe esse nome!`, 'Atenção!');
-            elements.okButtonAlert.classList.remove('d-none');
-            elements.simButtonAlert.classList.add('d-none');
-            elements.naoButtonAlert.classList.add('d-none');
-            elements.cancelButtonAlert.classList.add('d-none');
+            uiController.resetarOkAlert();
 
             $('#alertModal').modal('show');
             return;
@@ -1771,6 +1774,14 @@ function salvarSave(newSaveName) {
                 selectedOption.value = newSaveName;
                 localStorage.setItem('saves', JSON.stringify(saves));
             }
+        } else if (alertModalLabel.innerText === "Deletar!") {
+            const saveName = elements.savesSelect.value;
+            if (saveName) {
+                deletarSave(saveName);
+                elements.iframeCifra.contentDocument.body.innerHTML = '';
+                $('#searchModal').modal('hide');
+                $('#alertModal').modal('hide');
+            }
         } else {
             let newOption = document.createElement("option");
             newOption.text = newSaveName;
@@ -1783,11 +1794,8 @@ function salvarSave(newSaveName) {
             const musicaCifrada = cifraPlayer.destacarCifras(saveContent);
             const tom = descobrirTom(musicaCifrada);
             uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
-            elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(tom, saveContent);
-            elements.iframeCifra.classList.remove('d-none');
-            elements.liturgiaDiariaFrame.classList.add('d-none');
-            elements.santamissaFrame.classList.add('d-none');
-            elements.oracoesFrame.classList.add('d-none');
+            elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(saveContent, tom);
+            uiController.exibirIframeCifra();
             cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
 
             if (saveContent.includes('<pre>')) {
