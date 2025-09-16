@@ -636,7 +636,7 @@ class UIController {
                 this.elements.savesSelect.appendChild(listItem);
             });
 
-            if (saveSelected) {
+            if (saveSelected && saveNames.includes(saveSelected)) {
                 this.elements.savesSelect.value = saveSelected;
                 this.elements.savesSelect.style.color = 'black';
             }
@@ -688,6 +688,21 @@ class UIController {
         return option;
     }
 
+    resetarOkAlert() {
+        this.elements.okButtonAlert.classList.remove('d-none');
+        this.elements.simButtonAlert.classList.add('d-none');
+        this.elements.naoButtonAlert.classList.add('d-none');
+        this.elements.cancelButtonAlert.classList.add('d-none');
+    }
+
+    resetarSimNaoAlert(simText = '✓ Sim') {
+        this.elements.simButtonAlert.textContent = simText;
+        this.elements.simButtonAlert.classList.remove('d-none');
+        this.elements.naoButtonAlert.classList.remove('d-none');
+        this.elements.okButtonAlert.classList.add('d-none');
+        this.elements.cancelButtonAlert.classList.add('d-none');
+    }
+
     exibirInterfaceDePesquisa() {
         this.elements.editTextarea.classList.add('d-none');
         this.elements.searchIcon.classList.add('d-none');
@@ -724,6 +739,13 @@ class UIController {
         this.elements.saveButton.classList.remove('d-none');
         this.elements.addButton.classList.remove('d-none');
         this.elements.editTextarea.classList.remove('d-none');
+    }
+
+    exibirIframeCifra() {
+        this.elements.iframeCifra.classList.remove('d-none');
+        this.elements.liturgiaDiariaFrame.classList.add('d-none');
+        this.elements.santamissaFrame.classList.add('d-none');
+        this.elements.oracoesFrame.classList.add('d-none');
     }
 
     exibirTextoCifrasCarregado(tom = null, texto = null) {
@@ -825,7 +847,7 @@ class UIController {
 }
 
 
-class StorageManager {
+class LocalStorageManager {
     constructor() { }
 
     getSaves() {
@@ -834,7 +856,7 @@ class StorageManager {
             return savesString ? JSON.parse(savesString) : {};
         } catch (error) {
             console.error("Erro ao ler saves do localStorage:", error);
-            return {}; // Retorna um objeto vazio em caso de erro
+            return {};
         }
     }
 
@@ -877,6 +899,7 @@ const elements = {
     notesButton: document.getElementById('notesButton'),
     stopButton: document.getElementById('stopButton'),
     searchButton: document.getElementById('searchButton'),
+    clearButton: document.getElementById('clearButton'),
     searchInput: document.getElementById('searchInput'),
     spinner: document.querySelector('.spinner-border'),
     searchIcon: document.getElementById('searchIcon'),
@@ -912,6 +935,8 @@ const elements = {
     liturgiaDiariaLink: document.getElementById('liturgiaDiariaLink'),
     oracoesLink: document.getElementById('oracoesLink'),
     aboutLink: document.getElementById('about'),
+    downloadSavesLink: document.getElementById('downloadSavesLink'),
+    uploadSavesLink: document.getElementById('uploadSavesLink'),
     liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame'),
     santamissaFrame: document.getElementById('santamissaFrame'),
     acorde1: document.getElementById('acorde1'),
@@ -931,6 +956,7 @@ const elements = {
 
 const cifraPlayer = new CifraPlayer(elements);
 const uiController = new UIController(elements);
+const localStorageManager = new LocalStorageManager();
 
 const camposHarmonicos = {
     // Campos harmônicos maiores
@@ -1014,20 +1040,13 @@ elements.saveButton.addEventListener('click', () => {
             let saves = JSON.parse(localStorage.getItem('saves')) || {};
             if (saves.hasOwnProperty(saveName)) {
                 uiController.exibirMensagemAlerta(`Salvar "${saveName}"?`, `Salvar "${saveName}"`);
-                elements.simButtonAlert.textContent = '✓ Sim';
-                elements.simButtonAlert.classList.remove('d-none');
-                elements.naoButtonAlert.classList.remove('d-none');
-                elements.okButtonAlert.classList.add('d-none');
-                elements.cancelButtonAlert.classList.add('d-none');
+                uiController.resetarSimNaoAlert();
             }
             else {
                 salvarSave(saveName);
 
                 uiController.exibirMensagemAlerta(`"${saveName}" salvo com sucesso!`, 'Música');
-                elements.simButtonAlert.classList.add('d-none');
-                elements.naoButtonAlert.classList.add('d-none');
-                elements.okButtonAlert.classList.remove('d-none');
-                elements.cancelButtonAlert.classList.add('d-none');
+                uiController.resetarOkAlert();
 
                 $('#alertModal').modal('show');
             }
@@ -1056,10 +1075,7 @@ elements.startButton.addEventListener('click', () => {
                 .replace("font-size: 12pt;", "font-size: 15pt;");
             elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
         }
-        elements.iframeCifra.classList.remove('d-none');
-        elements.liturgiaDiariaFrame.classList.add('d-none');
-        elements.santamissaFrame.classList.add('d-none');
-        elements.oracoesFrame.classList.add('d-none');
+        uiController.exibirIframeCifra();
         cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
         
         cifraPlayer.indiceAcorde = 0;
@@ -1094,7 +1110,7 @@ elements.tomSelect.addEventListener('change', (event) => {
             }
         }
     } else {
-        cifraPlayer.removeCifras(elements.iframeCifra.contentDocument.body.innerHTML);        
+        cifraPlayer.removeCifras(elements.iframeCifra.contentDocument.body.innerHTML);
         uiController.exibirBotoesAcordes();
         uiController.esconderBotoesTom();
     }
@@ -1143,10 +1159,7 @@ elements.savesSelect.addEventListener('change', () => {
             uiController.esconderBotoesAcordes();
             uiController.esconderBotoesPlay();
         }
-        elements.iframeCifra.classList.remove('d-none');
-        elements.liturgiaDiariaFrame.classList.add('d-none');
-        elements.santamissaFrame.classList.add('d-none');
-        elements.oracoesFrame.classList.add('d-none');
+        uiController.exibirIframeCifra();
         cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
         
         cifraPlayer.indiceAcorde = 0;
@@ -1188,11 +1201,8 @@ elements.editSavesSelect.addEventListener('click', () => {
 elements.deleteSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
     if (elements.savesSelect.selectedIndex !== 0) {
-        uiController.exibirMensagemAlerta(`Deseja excluir "${saveName}"?`, 'Atenção!');
-        elements.simButtonAlert.textContent = '✓ Sim';
-        elements.simButtonAlert.classList.remove('d-none');
-        elements.okButtonAlert.classList.add('d-none');
-        elements.cancelButtonAlert.classList.remove('d-none');
+        uiController.exibirMensagemAlerta(`Deseja excluir "${saveName}"?`, 'Deletar!');
+        uiController.resetarSimNaoAlert();
 
         $('#alertModal').modal('show');
     }
@@ -1215,6 +1225,11 @@ elements.searchButton.addEventListener('click', () => {
         searchMusic();
 });
 
+elements.clearButton.addEventListener('click', () => {
+    elements.searchInput.value = '';
+    elements.searchInput.focus();
+});
+
 elements.liturgiaDiariaLink.addEventListener('click', () => {
     uiController.exibirFrame('liturgiaDiariaFrame');
 });
@@ -1225,6 +1240,14 @@ elements.oracoesLink.addEventListener('click', () => {
 
 elements.aboutLink.addEventListener('click', () => {
     alert('Projeto de Ronei Costa Soares. version: ' + version);
+});
+
+elements.downloadSavesLink.addEventListener('click', () => {
+    downloadSaves();
+});
+
+elements.uploadSavesLink.addEventListener('click', () => {
+    uploadSaves();
 });
 
 elements.missaOrdinarioLink.addEventListener('click', () => {
@@ -1241,6 +1264,7 @@ elements.notesButton.addEventListener('click', () => {
 });
 
 elements.stopButton.addEventListener('mousedown', () => {
+    uiController.esconderEditDeleteButtons();
     cifraPlayer.pararReproducao();
 });
 
@@ -1249,14 +1273,15 @@ elements.playButton.addEventListener('click', () => {
 })
 
 elements.simButtonAlert.addEventListener('click', () => {
-    if (elements.alertModalMessage.textContent.toLowerCase().includes('?')) {
-        const saveName = elements.searchModalLabel.textContent;
-        salvarSave(saveName);
-        elements.startButton.dispatchEvent(new Event('click'));
-    }
-    else {
+    if (elements.alertModalLabel.textContent === 'Deletar!') {
         const saveName = elements.savesSelect.value;
         deletarSave(saveName);
+    }
+    else {
+        const saveName = elements.searchModalLabel.textContent;
+        salvarSave(saveName);
+        if (elements.savesSelect.value === saveName) //verificação se for item deletado
+            elements.startButton.dispatchEvent(new Event('click'));
     }
 });
 
@@ -1630,6 +1655,74 @@ function isMobileDevice() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
+function uploadSaves() {
+    let input = document.getElementById('uploadSavesInput');
+    if (!input) {
+        input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'application/json';
+        input.style.display = 'none';
+        input.id = 'uploadSavesInput';
+        document.body.appendChild(input);
+    }
+
+    input.value = ''; // Permite selecionar o mesmo arquivo novamente
+
+    input.onchange = function (event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            try {
+                const importedSaves = JSON.parse(e.target.result);
+
+                if (typeof importedSaves !== 'object' || Array.isArray(importedSaves)) {
+                    alert('Arquivo inválido!');
+                    return;
+                }
+
+                // Mescla com os saves existentes (ou substitui, se preferir)
+                const currentSaves = JSON.parse(localStorage.getItem('saves') || '{}');
+                const mergedSaves = { ...currentSaves, ...importedSaves };
+                localStorage.setItem('saves', JSON.stringify(mergedSaves));
+
+                // Atualiza a interface
+                uiController.exibirListaSaves();
+                alert('Importado com sucesso!');
+            } catch (err) {
+                alert('Erro: ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+    };
+
+    input.click();
+}
+
+function downloadSaves() {
+    const saves = localStorageManager.getSaves();
+    const nomeDoArquivo = 'repertorio-orgao-web.json';
+
+    if (Object.keys(saves).length === 0) {
+        return;
+    }
+
+    const dataString = JSON.stringify(saves, null, 2);
+    const blob = new Blob([dataString], { type: 'application/json' });
+
+    // Cria um link temporário para gerar url em memória e simula um click no link
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = nomeDoArquivo;
+    document.body.appendChild(link);
+    link.click();
+
+    // limpeza
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+}
+
 function fullScreen() {
     if (isMobileDevice()) {
         if (!document.fullscreenElement &&    // Opera 12.1, Firefox, Chrome, Edge, Safari
@@ -1663,10 +1756,7 @@ function salvarSave(newSaveName) {
 
         if (temSaveName && elements.searchModalLabel.textContent !== newSaveName) {
             uiController.exibirMensagemAlerta(`Já existe esse nome!`, 'Atenção!');
-            elements.okButtonAlert.classList.remove('d-none');
-            elements.simButtonAlert.classList.add('d-none');
-            elements.naoButtonAlert.classList.add('d-none');
-            elements.cancelButtonAlert.classList.add('d-none');
+            uiController.resetarOkAlert();
 
             $('#alertModal').modal('show');
             return;
@@ -1685,6 +1775,13 @@ function salvarSave(newSaveName) {
                 selectedOption.value = newSaveName;
                 localStorage.setItem('saves', JSON.stringify(saves));
             }
+        } else if (alertModalLabel.innerText === "Deletar!") {
+            const saveName = elements.savesSelect.value;
+            if (saveName) {
+                deletarSave(saveName);
+                $('#searchModal').modal('hide');
+                $('#alertModal').modal('hide');
+            }
         } else {
             let newOption = document.createElement("option");
             newOption.text = newSaveName;
@@ -1697,11 +1794,8 @@ function salvarSave(newSaveName) {
             const musicaCifrada = cifraPlayer.destacarCifras(saveContent);
             const tom = descobrirTom(musicaCifrada);
             uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
-            elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(tom, saveContent);
-            elements.iframeCifra.classList.remove('d-none');
-            elements.liturgiaDiariaFrame.classList.add('d-none');
-            elements.santamissaFrame.classList.add('d-none');
-            elements.oracoesFrame.classList.add('d-none');
+            elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(saveContent, tom);
+            uiController.exibirIframeCifra();
             cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
 
             if (saveContent.includes('<pre>')) {
