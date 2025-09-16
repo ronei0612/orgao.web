@@ -24,10 +24,10 @@
             border-color: #343a40;
         }
 
-        .dark-mode .form-control::placeholder {
-            color: #b0b3b8 !important;
-            opacity: 1;
-        }
+            .dark-mode .form-control::placeholder {
+                color: #b0b3b8 !important;
+                opacity: 1;
+            }
 
         .dark-mode .btn-primary {
             background-color: #375a7f;
@@ -131,26 +131,26 @@
                 const div = document.createElement('div');
                 div.className = 'card mb-3 shadow-sm';
                 div.innerHTML = `
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-5 form-group">
-                                    <label class="form-label">Artista</label>
-                                    <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${cifras.indexOf(item)}" data-field="artista">
-                                </div>
-                                <div class="col-md-7 form-group">
-                                    <label class="form-label">Título</label>
-                                    <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${cifras.indexOf(item)}" data-field="titulo">
-                                </div>
-                                <div class="col-12 mt-2 form-group">
-                                    <label class="form-label">Música</label>
-                                    <textarea class="form-control" rows="4" data-idx="${cifras.indexOf(item)}" data-field="cifra">${item.cifra || ''}</textarea>
-                                </div>
-                                <div class="col-12 mt-3 text-end">
-                                    <button class="btn btn-danger btn-sm" onclick="deleteCifra(${cifras.indexOf(item)})">Excluir</button>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-7 form-group">
+                                        <label class="form-label">Título</label>
+                                        <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${cifras.indexOf(item)}" data-field="titulo">
+                                    </div>
+                                    <div class="col-md-5 form-group">
+                                        <label class="form-label">Artista</label>
+                                        <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${cifras.indexOf(item)}" data-field="artista">
+                                    </div>
+                                    <div class="col-12 mt-2 form-group">
+                                        <label class="form-label">Música</label>
+                                        <textarea class="form-control" rows="4" data-idx="${cifras.indexOf(item)}" data-field="cifra">${item.cifra || ''}</textarea>
+                                    </div>
+                                    <div class="col-12 mt-3 text-end">
+                                        <button class="btn btn-danger btn-sm" onclick="deleteCifra(${cifras.indexOf(item)})">Excluir</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `;
                 container.appendChild(div);
             });
         }
