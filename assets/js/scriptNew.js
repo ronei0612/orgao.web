@@ -1844,6 +1844,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     var cifrasLocal = './cifras.json';
+	cifrasLocal = 'https://raw.githubusercontent.com/ronei0612/orgao.web/main/cifras.json';
     if (location.origin.includes('file:')) {
         cifrasLocal = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
     }
