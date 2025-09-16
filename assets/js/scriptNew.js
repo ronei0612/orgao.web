@@ -877,6 +877,7 @@ const elements = {
     notesButton: document.getElementById('notesButton'),
     stopButton: document.getElementById('stopButton'),
     searchButton: document.getElementById('searchButton'),
+    clearButton: document.getElementById('clearButton'),
     searchInput: document.getElementById('searchInput'),
     spinner: document.querySelector('.spinner-border'),
     searchIcon: document.getElementById('searchIcon'),
@@ -1216,6 +1217,11 @@ elements.itemNameInput.addEventListener('keydown', (event) => {
 elements.searchButton.addEventListener('click', () => {
     if (elements.searchInput.value)
         searchMusic();
+});
+
+elements.clearButton.addEventListener('click', () => {
+    elements.searchInput.value = '';
+    elements.searchInput.focus();
 });
 
 elements.liturgiaDiariaLink.addEventListener('click', () => {
