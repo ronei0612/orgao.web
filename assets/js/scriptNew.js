@@ -1440,7 +1440,7 @@ async function searchMusic() {
     );
 
     if (cifrasEncontradas.length > 0) {
-        const max = 3;
+        const max = 4;
         const topTitles = cifrasEncontradas.slice(0, max);
             topTitles.forEach((cifra) => {
                 const title = cifra.titulo + ' - ' + cifra.artista;
@@ -1473,7 +1473,7 @@ async function searchMusic() {
             const { lista: titles, links } = data; // destructuring
             titlesCifraClub = titles;
             if (titles.length > 0) {
-                const max = 3;
+                const max = 4;
                 const topTitles = titles.slice(0, max);
                 topTitles.forEach((title, index) => {
                     const listItem = document.createElement('li');
@@ -1516,23 +1516,15 @@ async function choseCifraLocal(id) {
     const texto = musica.cifra;
     const titulo = musica.titulo;
 
-    let musicaCifrada = cifraPlayer.destacarCifras(texto);
-    const tom = descobrirTom(musicaCifrada);
-    musicaCifrada = cifraPlayer.destacarCifras(texto, tom);
+    uiController.exibirTextoCifrasCarregado(null, texto);
 
-    elements.editTextarea.value = texto;
-    elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
-    elements.searchModalLabel.textContent = titulo;
-
-    uiController.exibirTextoCifrasCarregado(tom, texto);
+    if (elements.searchModalLabel.textContent === 'Música') {
+        elements.searchModalLabel.textContent = titulo.split(' - ')[0];
+    }
     uiController.exibirBotoesSalvarTocar();
-
-    cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
-
-    cifraPlayer.indiceAcorde = 0;
 }
 
-async function choseLink(urlLink, text) {
+async function choseLink(urlLink, titulo) {
     uiController.limparResultados();
 
     try {
@@ -1546,7 +1538,7 @@ async function choseLink(urlLink, text) {
             uiController.exibirTextoCifrasCarregado(null, data.message);
 
             if (elements.searchModalLabel.textContent === 'Música') {
-                elements.searchModalLabel.textContent = text.split(' - ')[0];
+                elements.searchModalLabel.textContent = titulo.split(' - ')[0];
             }
             uiController.exibirBotoesSalvarTocar();
         } else {
