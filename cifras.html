@@ -24,6 +24,11 @@
             border-color: #343a40;
         }
 
+        .dark-mode .form-control::placeholder {
+            color: #b0b3b8 !important;
+            opacity: 1;
+        }
+
         .dark-mode .btn-primary {
             background-color: #375a7f;
             border-color: #375a7f;
@@ -38,6 +43,30 @@
             background-color: #e74c3c;
             border-color: #e74c3c;
         }
+
+        /* MELHORIA VISUAL PARA LABELS */
+        .form-label {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 0.25rem;
+            letter-spacing: 0.5px;
+        }
+
+        .dark-mode .form-label {
+            color: #b0b3b8;
+        }
+        /* Espaço extra entre label e input/textarea */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        /* Borda mais destacada nos inputs */
+        .form-control, textarea.form-control {
+            border-width: 2px;
+        }
+        /* Espaço extra entre cards */
+        .card {
+            margin-bottom: 1.5rem;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -47,6 +76,9 @@
             <button id="darkmode-btn" class="btn btn-outline-secondary ms-3" title="Alternar modo escuro">
                 <span id="darkmode-icon" class="bi bi-moon"></span> Modo Escuro
             </button>
+        </div>
+        <div class="mb-4">
+            <input id="search-bar" type="text" class="form-control" placeholder="Pesquisar">
         </div>
         <div id="cifras-container"></div>
         <div class="text-center mt-3">
@@ -63,6 +95,7 @@
     <script>
         let cifras = [];
         let url = './cifras.json';
+        let searchTerm = '';
 
         if (location.origin.includes('file:')) {
             url = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
@@ -84,31 +117,40 @@
         function renderCifras() {
             const container = document.getElementById('cifras-container');
             container.innerHTML = '';
-            cifras.forEach((item, idx) => {
+            // Filtra as cifras conforme o termo de busca
+            const filtered = cifras.filter(item => {
+                if (!searchTerm) return true;
+                const termo = searchTerm.toLowerCase();
+                return (
+                    (item.artista && item.artista.toLowerCase().includes(termo)) ||
+                    (item.titulo && item.titulo.toLowerCase().includes(termo)) ||
+                    (item.cifra && item.cifra.toLowerCase().includes(termo))
+                );
+            });
+            filtered.forEach((item, idx) => {
                 const div = document.createElement('div');
                 div.className = 'card mb-3 shadow-sm';
                 div.innerHTML = `
-                                <div class="card-body">
-                                    <div class="row g-3">
-                                        <!-- ID oculto no editor, mas mantido no objeto -->
-                                        <div class="col-md-5">
-                                            <label class="form-label">Artista</label>
-                                            <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${idx}" data-field="artista">
-                                        </div>
-                                        <div class="col-md-7">
-                                            <label class="form-label">Título</label>
-                                            <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${idx}" data-field="titulo">
-                                        </div>
-                                        <div class="col-12 mt-2">
-                                            <label class="form-label">Música</label>
-                                            <textarea class="form-control" rows="4" data-idx="${idx}" data-field="cifra">${item.cifra || ''}</textarea>
-                                        </div>
-                                        <div class="col-12 mt-3 text-end">
-                                            <button class="btn btn-danger btn-sm" onclick="deleteCifra(${idx})">Excluir</button>
-                                        </div>
-                                    </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-5 form-group">
+                                    <label class="form-label">Artista</label>
+                                    <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${cifras.indexOf(item)}" data-field="artista">
                                 </div>
-                            `;
+                                <div class="col-md-7 form-group">
+                                    <label class="form-label">Título</label>
+                                    <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${cifras.indexOf(item)}" data-field="titulo">
+                                </div>
+                                <div class="col-12 mt-2 form-group">
+                                    <label class="form-label">Música</label>
+                                    <textarea class="form-control" rows="4" data-idx="${cifras.indexOf(item)}" data-field="cifra">${item.cifra || ''}</textarea>
+                                </div>
+                                <div class="col-12 mt-3 text-end">
+                                    <button class="btn btn-danger btn-sm" onclick="deleteCifra(${cifras.indexOf(item)})">Excluir</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 container.appendChild(div);
             });
         }
@@ -136,6 +178,13 @@
 
         // Atualiza array ao editar campos
         document.addEventListener('input', function (e) {
+            // Pesquisa
+            if (e.target.id === 'search-bar') {
+                searchTerm = e.target.value;
+                renderCifras();
+                return;
+            }
+            // Edição dos campos
             const idx = e.target.getAttribute('data-idx');
             const field = e.target.getAttribute('data-field');
             if (idx !== null && field) {
