@@ -94,12 +94,8 @@
 
     <script>
         let cifras = [];
-        let url = './cifras.json';
+        let url = 'https://raw.githubusercontent.com/ronei0612/orgao.web/main/cifras.json';
         let searchTerm = '';
-
-        if (location.origin.includes('file:')) {
-            url = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
-        }
 
         // Carrega o JSON do servidor ao iniciar
         async function loadCifras() {
