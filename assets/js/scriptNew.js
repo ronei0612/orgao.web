@@ -1273,15 +1273,15 @@ elements.playButton.addEventListener('click', () => {
 })
 
 elements.simButtonAlert.addEventListener('click', () => {
-    if (elements.alertModalMessage.textContent.toLowerCase().includes('?')) {
+    if (elements.alertModalLabel.textContent === 'Deletar!') {
+        const saveName = elements.savesSelect.value;
+        deletarSave(saveName);
+    }
+    else {
         const saveName = elements.searchModalLabel.textContent;
         salvarSave(saveName);
         if (elements.savesSelect.value === saveName) //verificação se for item deletado
             elements.startButton.dispatchEvent(new Event('click'));
-    }
-    else {
-        const saveName = elements.savesSelect.value;
-        deletarSave(saveName);
     }
 });
 
