@@ -636,7 +636,7 @@ class UIController {
                 this.elements.savesSelect.appendChild(listItem);
             });
 
-            if (saveSelected) {
+            if (saveSelected && saveNames.includes(saveSelected)) {
                 this.elements.savesSelect.value = saveSelected;
                 this.elements.savesSelect.style.color = 'black';
             }
@@ -1110,7 +1110,7 @@ elements.tomSelect.addEventListener('change', (event) => {
             }
         }
     } else {
-        cifraPlayer.removeCifras(elements.iframeCifra.contentDocument.body.innerHTML);        
+        cifraPlayer.removeCifras(elements.iframeCifra.contentDocument.body.innerHTML);
         uiController.exibirBotoesAcordes();
         uiController.esconderBotoesTom();
     }
@@ -1276,7 +1276,8 @@ elements.simButtonAlert.addEventListener('click', () => {
     if (elements.alertModalMessage.textContent.toLowerCase().includes('?')) {
         const saveName = elements.searchModalLabel.textContent;
         salvarSave(saveName);
-        elements.startButton.dispatchEvent(new Event('click'));
+        if (elements.savesSelect.value === saveName) //verificação se for item deletado
+            elements.startButton.dispatchEvent(new Event('click'));
     }
     else {
         const saveName = elements.savesSelect.value;
@@ -1778,7 +1779,6 @@ function salvarSave(newSaveName) {
             const saveName = elements.savesSelect.value;
             if (saveName) {
                 deletarSave(saveName);
-                elements.iframeCifra.contentDocument.body.innerHTML = '';
                 $('#searchModal').modal('hide');
                 $('#alertModal').modal('hide');
             }
