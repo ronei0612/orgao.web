@@ -825,7 +825,7 @@ class UIController {
 }
 
 
-class StorageManager {
+class LocalStorageManager {
     constructor() { }
 
     getSaves() {
@@ -912,6 +912,7 @@ const elements = {
     liturgiaDiariaLink: document.getElementById('liturgiaDiariaLink'),
     oracoesLink: document.getElementById('oracoesLink'),
     aboutLink: document.getElementById('about'),
+    downloadSavesLink: document.getElementById('downloadSavesLink'),
     liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame'),
     santamissaFrame: document.getElementById('santamissaFrame'),
     acorde1: document.getElementById('acorde1'),
@@ -931,6 +932,7 @@ const elements = {
 
 const cifraPlayer = new CifraPlayer(elements);
 const uiController = new UIController(elements);
+const localStorageManager = new LocalStorageManager();
 
 const camposHarmonicos = {
     // Campos harmônicos maiores
@@ -1225,6 +1227,10 @@ elements.oracoesLink.addEventListener('click', () => {
 
 elements.aboutLink.addEventListener('click', () => {
     alert('Projeto de Ronei Costa Soares. version: ' + version);
+});
+
+elements.downloadSavesLink.addEventListener('click', () => {
+    downloadSaves();
 });
 
 elements.missaOrdinarioLink.addEventListener('click', () => {
@@ -1628,6 +1634,29 @@ const aplicarModoEscuroIframe = () => {
 
 function isMobileDevice() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function downloadSaves() {
+    const saves = localStorageManager.getSaves();
+    const nomeDoArquivo = 'repertorio-orgao-web.json';
+
+    if (Object.keys(saves).length === 0) {
+        return;
+    }
+
+    const dataString = JSON.stringify(saves, null, 2);
+    const blob = new Blob([dataString], { type: 'application/json' });
+
+    // Cria um link temporário para gerar url em memória e simula um click no link
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = nomeDoArquivo;
+    document.body.appendChild(link);
+    link.click();
+
+    // limpeza
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
 }
 
 function fullScreen() {
