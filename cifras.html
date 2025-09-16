@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editar Cifras.json</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <h1 class="mb-4 text-center">Editar Cifras.json</h1>
+        <div id="cifras-container"></div>
+        <div class="text-center mt-3">
+            <div class="d-inline-flex gap-2">
+                <button id="add-btn" class="btn btn-success">Adicionar Item</button>
+                <button id="download-btn" class="btn btn-primary">Baixar Arquivo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cifras = [];
+        let url = './cifras.json';
+
+        if (location.origin.includes('file:')) {
+            url = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
+        }
+
+        // Carrega o JSON do servidor ao iniciar
+        async function loadCifras() {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Erro ao carregar cifras.json');
+                cifras = await response.json();
+            } catch (e) {
+                alert('Erro ao carregar cifras.json remoto. Usando dados locais.');
+                cifras = [];
+            }
+            renderCifras();
+        }
+
+        function renderCifras() {
+            const container = document.getElementById('cifras-container');
+            container.innerHTML = '';
+            cifras.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = 'card mb-3 shadow-sm';
+                div.innerHTML = `
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <!-- ID oculto no editor, mas mantido no objeto -->
+                                    <div class="col-md-5">
+                                        <label class="form-label">Artista</label>
+                                        <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${idx}" data-field="artista">
+                                    </div>
+                                    <div class="col-md-7">
+                                        <label class="form-label">Título</label>
+                                        <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${idx}" data-field="titulo">
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <label class="form-label">Música</label>
+                                        <textarea class="form-control" rows="4" data-idx="${idx}" data-field="cifra">${item.cifra || ''}</textarea>
+                                    </div>
+                                    <div class="col-12 mt-3 text-end">
+                                        <button class="btn btn-danger btn-sm" onclick="deleteCifra(${idx})">Excluir</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                container.appendChild(div);
+            });
+        }
+
+        // Excluir item
+        function deleteCifra(idx) {
+            if (confirm('Tem certeza que deseja excluir este item?')) {
+                cifras.splice(idx, 1);
+                renderCifras();
+            }
+        }
+
+        // Adicionar novo item
+        document.getElementById('add-btn').addEventListener('click', function () {
+            // Gera novo id único
+            let maxId = cifras.length > 0 ? Math.max(...cifras.map(c => c.id)) : 0;
+            cifras.push({
+                id: maxId + 1,
+                artista: '',
+                titulo: '',
+                cifra: ''
+            });
+            renderCifras();
+        });
+
+        // Atualiza array ao editar campos
+        document.addEventListener('input', function (e) {
+            const idx = e.target.getAttribute('data-idx');
+            const field = e.target.getAttribute('data-field');
+            if (idx !== null && field) {
+                if (e.target.type === 'number') {
+                    cifras[idx][field] = parseInt(e.target.value, 10);
+                } else {
+                    cifras[idx][field] = e.target.value;
+                }
+            }
+        });
+
+        // Download do JSON editado
+        document.getElementById('download-btn').addEventListener('click', function () {
+            const json = JSON.stringify(cifras, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cifras.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Inicializa a página
+        loadCifras();
+
+        // Torna deleteCifra global para funcionar no onclick
+        window.deleteCifra = deleteCifra;
+    </script>
+</body>
+</html>
