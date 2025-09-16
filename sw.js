@@ -1,6 +1,6 @@
 // Define um nome e uma versão para o cache.
 // Mudar a versão (ex: v2) no futuro forçará a atualização de todos os arquivos.
-const CACHE_NAME = '1.0';
+const CACHE_NAME = '1.1';
 
 // Lista de todos os arquivos que seu site precisa para funcionar offline.
 // Eu analisei seu index.html e listei todos os recursos essenciais.
