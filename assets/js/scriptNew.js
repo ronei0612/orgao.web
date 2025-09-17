@@ -1434,14 +1434,15 @@ async function searchMusic() {
     const textoPesquisa = elements.searchInput.value;
     var titlesCifraClub = [];
 
-    var cifrasEncontradas = todasAsCifras.filter(cifra =>
-        cifra.titulo.toLowerCase().includes(textoPesquisa.toLowerCase()) ||
-        cifra.artista.toLowerCase().includes(textoPesquisa.toLowerCase())
+    var musicasLocais = todasAsCifras.filter(musica =>
+        musica.titulo.toLowerCase().includes(textoPesquisa.toLowerCase()) ||
+        musica.artista.toLowerCase().includes(textoPesquisa.toLowerCase()) ||
+        musica.cifra.toLowerCase().includes(textoPesquisa.toLowerCase())
     );
 
-    if (cifrasEncontradas.length > 0) {
+    if (musicasLocais.length > 0) {
         const max = 4;
-        const topTitles = cifrasEncontradas.slice(0, max);
+        const topTitles = musicasLocais.slice(0, max);
             topTitles.forEach((cifra) => {
                 const title = cifra.titulo + ' - ' + cifra.artista;
                 const listItem = document.createElement('li');
@@ -1498,7 +1499,7 @@ async function searchMusic() {
         uiController.pararspinnerloading();
     }
 
-    if (cifrasEncontradas.length == 0 && titlesCifraClub == 0) {
+    if (musicasLocais.length == 0 && titlesCifraClub == 0) {
         elements.searchResultsList.innerHTML = '<li class="list-group-item">Nenhuma cifra encontrada.</li>';
     }
 }
