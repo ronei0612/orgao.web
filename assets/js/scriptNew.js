@@ -1435,9 +1435,9 @@ async function searchMusic() {
     var titlesCifraClub = [];
 
     var musicasLocais = todasAsCifras.filter(musica =>
-        musica.titulo.toLowerCase().includes(textoPesquisa.toLowerCase()) ||
-        musica.artista.toLowerCase().includes(textoPesquisa.toLowerCase()) ||
-        musica.cifra.toLowerCase().includes(textoPesquisa.toLowerCase())
+        musica.titulo.toLowerCase().includes(textoPesquisa.toLowerCase().trim()) ||
+        musica.artista.toLowerCase().includes(textoPesquisa.toLowerCase().trim()) ||
+        musica.cifra.toLowerCase().includes(textoPesquisa.toLowerCase().trim())
     );
 
     if (musicasLocais.length > 0) {
