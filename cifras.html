@@ -44,7 +44,6 @@
             border-color: #e74c3c;
         }
 
-        /* MELHORIA VISUAL PARA LABELS */
         .form-label {
             font-weight: bold;
             color: #495057;
@@ -55,15 +54,15 @@
         .dark-mode .form-label {
             color: #b0b3b8;
         }
-        /* Espaço extra entre label e input/textarea */
+
         .form-group {
             margin-bottom: 1rem;
         }
-        /* Borda mais destacada nos inputs */
+
         .form-control, textarea.form-control {
             border-width: 2px;
         }
-        /* Espaço extra entre cards */
+
         .card {
             margin-bottom: 1.5rem;
         }
@@ -84,6 +83,7 @@
         <div class="text-center mt-3">
             <div class="d-inline-flex gap-2">
                 <button id="add-btn" class="btn btn-success">Adicionar Item</button>
+                <button id="save-btn" class="btn btn-warning">Salvar</button>
                 <button id="download-btn" class="btn btn-primary">Baixar Arquivo</button>
             </div>
         </div>
@@ -96,16 +96,46 @@
         let cifras = [];
         let url = 'https://raw.githubusercontent.com/ronei0612/orgao.web/main/cifras.json';
         let searchTerm = '';
+        const LOCAL_KEY = 'cifras_local';
 
-        // Carrega o JSON do servidor ao iniciar
+        // Salva no localStorage
+        function saveLocalCifras() {
+            localStorage.setItem(LOCAL_KEY, JSON.stringify(cifras));
+        }
+
+        // Carrega do localStorage
+        function loadLocalCifras() {
+            const local = localStorage.getItem(LOCAL_KEY);
+            if (local) {
+                try {
+                    return JSON.parse(local);
+                } catch {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        // Carrega o JSON do servidor ao iniciar, compara com local
         async function loadCifras() {
+            let remoteCifras = [];
             try {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Erro ao carregar cifras.json');
-                cifras = await response.json();
+                remoteCifras = await response.json();
             } catch (e) {
                 alert('Erro ao carregar cifras.json remoto. Usando dados locais.');
-                cifras = [];
+                remoteCifras = [];
+            }
+
+            const localCifras = loadLocalCifras();
+
+            // Se existe local e é diferente do remoto, mantém o local
+            if (localCifras && JSON.stringify(localCifras) !== JSON.stringify(remoteCifras)) {
+                cifras = localCifras;
+            } else {
+                cifras = remoteCifras;
+                saveLocalCifras();
             }
             renderCifras();
         }
@@ -113,7 +143,6 @@
         function renderCifras() {
             const container = document.getElementById('cifras-container');
             container.innerHTML = '';
-            // Filtra as cifras conforme o termo de busca
             const filtered = cifras.filter(item => {
                 if (!searchTerm) return true;
                 const termo = searchTerm.toLowerCase();
@@ -127,26 +156,26 @@
                 const div = document.createElement('div');
                 div.className = 'card mb-3 shadow-sm';
                 div.innerHTML = `
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-7 form-group">
-                                        <label class="form-label">Título</label>
-                                        <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${cifras.indexOf(item)}" data-field="titulo">
-                                    </div>
-                                    <div class="col-md-5 form-group">
-                                        <label class="form-label">Artista</label>
-                                        <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${cifras.indexOf(item)}" data-field="artista">
-                                    </div>
-                                    <div class="col-12 mt-2 form-group">
-                                        <label class="form-label">Música</label>
-                                        <textarea class="form-control" rows="4" data-idx="${cifras.indexOf(item)}" data-field="cifra">${item.cifra || ''}</textarea>
-                                    </div>
-                                    <div class="col-12 mt-3 text-end">
-                                        <button class="btn btn-danger btn-sm" onclick="deleteCifra(${cifras.indexOf(item)})">Excluir</button>
-                                    </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-7 form-group">
+                                    <label class="form-label">Título</label>
+                                    <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${cifras.indexOf(item)}" data-field="titulo">
+                                </div>
+                                <div class="col-md-5 form-group">
+                                    <label class="form-label">Artista</label>
+                                    <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${cifras.indexOf(item)}" data-field="artista">
+                                </div>
+                                <div class="col-12 mt-2 form-group">
+                                    <label class="form-label">Música</label>
+                                    <textarea class="form-control" rows="4" data-idx="${cifras.indexOf(item)}" data-field="cifra">${item.cifra || ''}</textarea>
+                                </div>
+                                <div class="col-12 mt-3 text-end">
+                                    <button class="btn btn-danger btn-sm" onclick="deleteCifra(${cifras.indexOf(item)})">Excluir</button>
                                 </div>
                             </div>
-                        `;
+                        </div>
+                    `;
                 container.appendChild(div);
             });
         }
@@ -155,13 +184,13 @@
         function deleteCifra(idx) {
             if (confirm('Tem certeza que deseja excluir este item?')) {
                 cifras.splice(idx, 1);
+                saveLocalCifras();
                 renderCifras();
             }
         }
 
         // Adicionar novo item
         document.getElementById('add-btn').addEventListener('click', function () {
-            // Gera novo id único
             let maxId = cifras.length > 0 ? Math.max(...cifras.map(c => c.id)) : 0;
             cifras.push({
                 id: maxId + 1,
@@ -169,18 +198,17 @@
                 titulo: '',
                 cifra: ''
             });
+            saveLocalCifras();
             renderCifras();
         });
 
         // Atualiza array ao editar campos
         document.addEventListener('input', function (e) {
-            // Pesquisa
             if (e.target.id === 'search-bar') {
                 searchTerm = e.target.value;
                 renderCifras();
                 return;
             }
-            // Edição dos campos
             const idx = e.target.getAttribute('data-idx');
             const field = e.target.getAttribute('data-field');
             if (idx !== null && field) {
@@ -189,7 +217,14 @@
                 } else {
                     cifras[idx][field] = e.target.value;
                 }
+                saveLocalCifras();
             }
+        });
+
+        // Botão Salvar: salva no localStorage e avisa
+        document.getElementById('save-btn').addEventListener('click', function () {
+            saveLocalCifras();
+            alert('Arquivo salvo localmente no navegador!');
         });
 
         // Download do JSON editado
@@ -228,7 +263,6 @@
         darkBtn.addEventListener('click', function () {
             setDarkMode(!document.body.classList.contains('dark-mode'));
         });
-        // Aplica preferência ao carregar
         if (localStorage.getItem('darkmode') === 'on') setDarkMode(true);
 
         // Inicializa a página
