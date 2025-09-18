@@ -1426,6 +1426,10 @@ function deletarSave(saveName) {
     uiController.exibirListaSaves();
 }
 
+function removerAcentos(str) {
+    return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
+}
+
 async function searchMusic() {
     musicaEscolhida = false;
     uiController.limparResultados();
@@ -1434,10 +1438,11 @@ async function searchMusic() {
     const textoPesquisa = elements.searchInput.value;
     var titlesCifraClub = [];
 
+    const termo = removerAcentos(textoPesquisa.toLowerCase().trim());
     var musicasLocais = todasAsCifras.filter(musica =>
-        musica.titulo.toLowerCase().includes(textoPesquisa.toLowerCase().trim()) ||
-        musica.artista.toLowerCase().includes(textoPesquisa.toLowerCase().trim()) ||
-        musica.cifra.toLowerCase().includes(textoPesquisa.toLowerCase().trim())
+        removerAcentos(musica.titulo.toLowerCase()).includes(termo) ||
+        removerAcentos(musica.artista.toLowerCase()).includes(termo) ||
+        removerAcentos(musica.cifra.toLowerCase()).includes(termo)
     );
 
     if (musicasLocais.length > 0) {

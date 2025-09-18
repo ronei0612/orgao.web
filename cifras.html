@@ -102,39 +102,39 @@
         function renderCifras() {
             const container = document.getElementById('cifras-container');
             container.innerHTML = '';
+            const termo = removerAcentos(searchTerm.toLowerCase());
             const filtered = cifras.filter(item => {
-                if (!searchTerm) return true;
-                const termo = searchTerm.toLowerCase();
+                if (!termo) return true;
                 return (
-                    (item.artista && item.artista.toLowerCase().includes(termo)) ||
-                    (item.titulo && item.titulo.toLowerCase().includes(termo)) ||
-                    (item.cifra && item.cifra.toLowerCase().includes(termo))
+                    (item.artista && removerAcentos(item.artista.toLowerCase()).includes(termo)) ||
+                    (item.titulo && removerAcentos(item.titulo.toLowerCase()).includes(termo)) ||
+                    (item.cifra && removerAcentos(item.cifra.toLowerCase()).includes(termo))
                 );
             });
             filtered.forEach((item, idx) => {
                 const div = document.createElement('div');
                 div.className = 'card cifras-card shadow-sm';
                 div.innerHTML = `
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-7 form-group">
-                                    <label class="form-label">Título</label>
-                                    <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${cifras.indexOf(item)}" data-field="titulo">
-                                </div>
-                                <div class="col-md-5 form-group">
-                                    <label class="form-label">Artista</label>
-                                    <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${cifras.indexOf(item)}" data-field="artista">
-                                </div>
-                                <div class="col-12 mt-2 form-group">
-                                    <label class="form-label">Música</label>
-                                    <textarea class="form-control" rows="4" data-idx="${cifras.indexOf(item)}" data-field="cifra">${item.cifra || ''}</textarea>
-                                </div>
-                                <div class="col-12 mt-3 text-end">
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-7 form-group">
+                                        <label class="form-label">Título</label>
+                                        <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${cifras.indexOf(item)}" data-field="titulo">
+                                    </div>
+                                    <div class="col-md-5 form-group">
+                                        <label class="form-label">Artista</label>
+                                        <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${cifras.indexOf(item)}" data-field="artista">
+                                    </div>
+                                    <div class="col-12 mt-2 form-group">
+                                        <label class="form-label">Música</label>
+                                        <textarea class="form-control" rows="4" data-idx="${cifras.indexOf(item)}" data-field="cifra">${item.cifra || ''}</textarea>
+                                    </div>
+                                    <div class="col-12 mt-3 text-end">
                                         <button class="btn btn-danger btn-sm" onclick="deleteCifra(${cifras.indexOf(item)})"><i class="bi bi-trash"></i> Excluir</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `;
                 container.appendChild(div);
             });
         }
@@ -171,11 +171,7 @@
             const idx = e.target.getAttribute('data-idx');
             const field = e.target.getAttribute('data-field');
             if (idx !== null && field) {
-                if (e.target.type === 'number') {
-                    cifras[idx][field] = parseInt(e.target.value, 10);
-                } else {
-                    cifras[idx][field] = e.target.value;
-                }
+                cifras[idx][field] = e.target.value;
                 saveLocalCifras();
             }
         });
