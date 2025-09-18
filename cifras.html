@@ -4,82 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Editar Cifras.json</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./assets/css/stylesNew.css">
     <style>
-        body.dark-mode {
-            background-color: #181a1b !important;
-            color: #f8f9fa !important;
-        }
-
-        .dark-mode .card {
+        .cifras-card {
             background-color: #23272b;
             color: #f8f9fa;
             border-color: #343a40;
-        }
-
-        .dark-mode .form-control,
-        .dark-mode .form-label {
-            background-color: #23272b;
-            color: #f8f9fa;
-            border-color: #343a40;
-        }
-
-            .dark-mode .form-control::placeholder {
-                color: #b0b3b8 !important;
-                opacity: 1;
-            }
-
-        .dark-mode .btn-primary {
-            background-color: #375a7f;
-            border-color: #375a7f;
-        }
-
-        .dark-mode .btn-success {
-            background-color: #00bc8c;
-            border-color: #00bc8c;
-        }
-
-        .dark-mode .btn-danger {
-            background-color: #e74c3c;
-            border-color: #e74c3c;
+            margin-bottom: 1.5rem;
         }
 
         .form-label {
             font-weight: bold;
-            color: #495057;
-            margin-bottom: 0.25rem;
             letter-spacing: 0.5px;
-        }
-
-        .dark-mode .form-label {
-            color: #b0b3b8;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-control, textarea.form-control {
-            border-width: 2px;
-        }
-
-        .card {
-            margin-bottom: 1.5rem;
         }
 
         textarea.form-control {
             font-size: 12pt;
             font-family: Consolas, 'Courier New', Courier, monospace;
         }
+
+        .btn-action {
+            min-width: 120px;
+        }
     </style>
 </head>
-<body class="bg-light">
-    <div class="container py-4">
+<body class="dark-mode">
+    <div class="container py-4" id="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="text-center flex-grow-1 mb-0">Editar Cifras.json</h1>
-            <button id="darkmode-btn" class="btn btn-outline-secondary ms-3" title="Alternar modo escuro">
-                <span id="darkmode-icon" class="bi bi-moon"></span> Modo Escuro
-            </button>
         </div>
         <div class="mb-4">
             <input id="search-bar" type="text" class="form-control" placeholder="Pesquisar">
@@ -87,15 +42,14 @@
         <div id="cifras-container"></div>
         <div class="text-center mt-3">
             <div class="d-inline-flex gap-2">
-                <button id="add-btn" class="btn btn-success">Adicionar Item</button>
-                <button id="save-btn" class="btn btn-warning">Salvar</button>
-                <button id="download-btn" class="btn btn-primary">Baixar Arquivo</button>
+                <button id="add-btn" class="btn btn-add btn-action"><i class="bi bi-plus-square"></i> Adicionar</button>
+                <button id="save-btn" class="btn btn-warning btn-action"><i class="bi bi-save"></i> Salvar</button>
+                <button id="download-btn" class="btn btn-primary btn-action"><i class="bi bi-download"></i> Baixar</button>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap Icons CDN for moon/sun icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="./assets/js/scriptNew.js"></script>
 
     <script>
         let cifras = [];
@@ -148,39 +102,39 @@
         function renderCifras() {
             const container = document.getElementById('cifras-container');
             container.innerHTML = '';
+            const termo = removerAcentos(searchTerm.toLowerCase());
             const filtered = cifras.filter(item => {
-                if (!searchTerm) return true;
-                const termo = searchTerm.toLowerCase();
+                if (!termo) return true;
                 return (
-                    (item.artista && item.artista.toLowerCase().includes(termo)) ||
-                    (item.titulo && item.titulo.toLowerCase().includes(termo)) ||
-                    (item.cifra && item.cifra.toLowerCase().includes(termo))
+                    (item.artista && removerAcentos(item.artista.toLowerCase()).includes(termo)) ||
+                    (item.titulo && removerAcentos(item.titulo.toLowerCase()).includes(termo)) ||
+                    (item.cifra && removerAcentos(item.cifra.toLowerCase()).includes(termo))
                 );
             });
             filtered.forEach((item, idx) => {
                 const div = document.createElement('div');
-                div.className = 'card mb-3 shadow-sm';
+                div.className = 'card cifras-card shadow-sm';
                 div.innerHTML = `
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-7 form-group">
-                                    <label class="form-label">Título</label>
-                                    <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${cifras.indexOf(item)}" data-field="titulo">
-                                </div>
-                                <div class="col-md-5 form-group">
-                                    <label class="form-label">Artista</label>
-                                    <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${cifras.indexOf(item)}" data-field="artista">
-                                </div>
-                                <div class="col-12 mt-2 form-group">
-                                    <label class="form-label">Música</label>
-                                    <textarea class="form-control" rows="4" data-idx="${cifras.indexOf(item)}" data-field="cifra">${item.cifra || ''}</textarea>
-                                </div>
-                                <div class="col-12 mt-3 text-end">
-                                    <button class="btn btn-danger btn-sm" onclick="deleteCifra(${cifras.indexOf(item)})">Excluir</button>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-7 form-group">
+                                        <label class="form-label">Título</label>
+                                        <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${cifras.indexOf(item)}" data-field="titulo">
+                                    </div>
+                                    <div class="col-md-5 form-group">
+                                        <label class="form-label">Artista</label>
+                                        <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${cifras.indexOf(item)}" data-field="artista">
+                                    </div>
+                                    <div class="col-12 mt-2 form-group">
+                                        <label class="form-label">Música</label>
+                                        <textarea class="form-control" rows="4" data-idx="${cifras.indexOf(item)}" data-field="cifra">${item.cifra || ''}</textarea>
+                                    </div>
+                                    <div class="col-12 mt-3 text-end">
+                                        <button class="btn btn-danger btn-sm" onclick="deleteCifra(${cifras.indexOf(item)})"><i class="bi bi-trash"></i> Excluir</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `;
                 container.appendChild(div);
             });
         }
@@ -217,11 +171,7 @@
             const idx = e.target.getAttribute('data-idx');
             const field = e.target.getAttribute('data-field');
             if (idx !== null && field) {
-                if (e.target.type === 'number') {
-                    cifras[idx][field] = parseInt(e.target.value, 10);
-                } else {
-                    cifras[idx][field] = e.target.value;
-                }
+                cifras[idx][field] = e.target.value;
                 saveLocalCifras();
             }
         });
@@ -246,29 +196,6 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
-
-        // Modo escuro
-        const darkBtn = document.getElementById('darkmode-btn');
-        const darkIcon = document.getElementById('darkmode-icon');
-        function setDarkMode(on) {
-            if (on) {
-                document.body.classList.add('dark-mode');
-                darkIcon.classList.remove('bi-moon');
-                darkIcon.classList.add('bi-sun');
-                darkBtn.innerHTML = '<span id="darkmode-icon" class="bi bi-sun"></span> Modo Claro';
-                localStorage.setItem('darkmode', 'on');
-            } else {
-                document.body.classList.remove('dark-mode');
-                darkIcon.classList.remove('bi-sun');
-                darkIcon.classList.add('bi-moon');
-                darkBtn.innerHTML = '<span id="darkmode-icon" class="bi bi-moon"></span> Modo Escuro';
-                localStorage.setItem('darkmode', 'off');
-            }
-        }
-        darkBtn.addEventListener('click', function () {
-            setDarkMode(!document.body.classList.contains('dark-mode'));
-        });
-        if (localStorage.getItem('darkmode') === 'on') setDarkMode(true);
 
         // Inicializa a página
         loadCifras();
