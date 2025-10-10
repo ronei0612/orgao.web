@@ -57,12 +57,36 @@
             .step.active.playing {
                 background-color: #28a745;
             }
+
+        .rhythm-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+            .rhythm-buttons button {
+                width: 50px;
+            }
+
+                .rhythm-buttons button.selected {
+                    background-color: #007bff;
+                    color: white;
+                }
     </style>
 </head>
 
 <body>
     <div class="container">
         <h1>Bateria Online</h1>
+
+        <div class="rhythm-buttons">
+            <button id="rhythm-a" class="btn btn-secondary rhythm-button">A</button>
+            <button id="rhythm-b" class="btn btn-secondary rhythm-button">B</button>
+            <button id="rhythm-c" class="btn btn-secondary rhythm-button">C</button>
+            <button id="rhythm-d" class="btn btn-secondary rhythm-button">D</button>
+            <button id="save-rhythm" class="btn btn-primary">Salvar</button>
+        </div>
+
         <div class="controls">
             <button id="play-pause" class="btn btn-success">Play</button>
             <input type="number" id="bpm" value="90" class="form-control" style="width: 70px;">
@@ -87,11 +111,18 @@
             const tracksContainer = document.getElementById('tracks');
             const numStepsInput = document.getElementById('num-steps');
 
+            const rhythmAButton = document.getElementById('rhythm-a');
+            const rhythmBButton = document.getElementById('rhythm-b');
+            const rhythmCButton = document.getElementById('rhythm-c');
+            const rhythmDButton = document.getElementById('rhythm-d');
+            const saveRhythmButton = document.getElementById('save-rhythm');
+
             let bpm = 90;
             let isPlaying = false;
             let intervalId;
             let numSteps = 4;
             let currentStep = 1;
+            let selectedRhythm = 'A';
 
             const instruments = [
                 'Hi-hat',
@@ -100,6 +131,7 @@
                 'Ride'
             ];
 
+            // Função para criar uma linha de instrumento
             function createTrack(instrumentName) {
                 const track = document.createElement('div');
                 track.classList.add('track');
@@ -120,6 +152,7 @@
                 tracksContainer.appendChild(track);
             }
 
+            // Função para inicializar as tracks
             function initializeTracks() {
                 tracksContainer.innerHTML = '';
                 instruments.forEach(createTrack);
@@ -127,16 +160,19 @@
 
             initializeTracks();
 
+            // Função para ativar/desativar um passo
             function toggleStep(event) {
                 event.target.classList.toggle('active');
             }
 
+            // Função para tocar um som
             function playSound(soundId) {
                 const sound = document.getElementById(soundId);
                 sound.currentTime = 0;
                 sound.play();
             }
 
+            // Função para reproduzir o ritmo
             function playBeat() {
                 clearInterval(intervalId);
 
@@ -176,6 +212,7 @@
                 }, 60000 / bpm);
             }
 
+            // Função para iniciar/parar a reprodução
             function togglePlay() {
                 isPlaying = !isPlaying;
                 if (isPlaying) {
@@ -188,12 +225,70 @@
                 }
             }
 
+            // Função para salvar o ritmo no localStorage
+            function saveRhythm() {
+                const rhythmData = {};
+                document.querySelectorAll('.track').forEach(track => {
+                    const instrument = track.querySelector('label').textContent.toLowerCase().replace(/ /g, '');
+                    const activeSteps = [];
+                    track.querySelectorAll('.step.active').forEach(step => {
+                        activeSteps.push(parseInt(step.dataset.step));
+                    });
+                    rhythmData[instrument] = activeSteps;
+                });
+                localStorage.setItem(`rhythm-${selectedRhythm}`, JSON.stringify(rhythmData));
+                console.log(`Ritmo ${selectedRhythm} salvo!`);
+            }
+
+            // Função para carregar o ritmo do localStorage
+            function loadRhythm(rhythmKey) {
+                const savedRhythm = localStorage.getItem(rhythmKey);
+                if (savedRhythm) {
+                    const rhythmData = JSON.parse(savedRhythm);
+                    document.querySelectorAll('.track').forEach(track => {
+                        const instrument = track.querySelector('label').textContent.toLowerCase().replace(/ /g, '');
+                        const activeSteps = rhythmData[instrument] || [];
+
+                        track.querySelectorAll('.step').forEach(step => {
+                            const stepNumber = parseInt(step.dataset.step);
+                            if (activeSteps.includes(stepNumber)) {
+                                step.classList.add('active');
+                            } else {
+                                step.classList.remove('active');
+                            }
+                        });
+                    });
+                    console.log(`Ritmo ${rhythmKey.replace('rhythm-', '')} carregado!`);
+                } else {
+                    console.log(`Nenhum ritmo salvo para ${rhythmKey.replace('rhythm-', '')}.`);
+                }
+            }
+
+            // Função para selecionar um botão de ritmo
+            function selectRhythm(rhythmButton, rhythmKey) {
+                document.querySelectorAll('.rhythm-button').forEach(button => {
+                    button.classList.remove('selected');
+                });
+                rhythmButton.classList.add('selected');
+                selectedRhythm = rhythmKey.replace('rhythm-', '').toUpperCase();
+                loadRhythm('rhythm-' + selectedRhythm);
+            }
+
+            // Event listeners para os botões de ritmo
+            rhythmAButton.addEventListener('click', () => selectRhythm(rhythmAButton, 'rhythm-a'));
+            rhythmBButton.addEventListener('click', () => selectRhythm(rhythmBButton, 'rhythm-b'));
+            rhythmCButton.addEventListener('click', () => selectRhythm(rhythmCButton, 'rhythm-c'));
+            rhythmDButton.addEventListener('click', () => selectRhythm(rhythmDButton, 'rhythm-d'));
+
+            // Event listener para o botão de salvar
+            saveRhythmButton.addEventListener('click', saveRhythm);
+
             playPauseButton.addEventListener('click', togglePlay);
 
             bpmInput.addEventListener('change', () => {
                 bpm = parseInt(bpmInput.value);
                 if (isPlaying) {
-                    playBeat(); // Reinicia o ritmo com o novo BPM
+                    playBeat();
                 }
             });
 
@@ -207,10 +302,13 @@
                 numSteps = parseInt(numStepsInput.value);
                 initializeTracks();
                 if (isPlaying) {
-                    playBeat(); // Reinicia o ritmo com o novo número de steps
+                    playBeat();
                 }
-                currentStep = 1; // Reseta o currentStep
+                currentStep = 1;
             });
+
+            // Carregar o ritmo selecionado ao carregar a página
+            selectRhythm(rhythmAButton, 'rhythm-a');
         });
     </script>
 </body>
