@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bateria Online</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         body {
             font-family: sans-serif;
@@ -72,6 +75,12 @@
                     background-color: #007bff;
                     color: white;
                 }
+
+        .track label i {
+            font-size: 1.5em; /* Ajuste o tamanho do ícone */
+            margin-right: 5px; /* Adicione um espaço entre o ícone e os passos */
+            vertical-align: middle; /* Alinhe verticalmente o ícone com os passos */
+        }
     </style>
 </head>
 
@@ -84,7 +93,7 @@
             <button id="rhythm-b" class="btn btn-secondary rhythm-button">B</button>
             <button id="rhythm-c" class="btn btn-secondary rhythm-button">C</button>
             <button id="rhythm-d" class="btn btn-secondary rhythm-button">D</button>
-            <button id="save-rhythm" class="btn btn-primary">Salvar</button>
+            <button id="save-rhythm" class="btn btn-primary" style="width:auto">Salvar</button>
         </div>
 
         <div class="controls">
@@ -125,19 +134,19 @@
             let selectedRhythm = 'A';
 
             const instruments = [
-                'Hi-hat',
-                'Caixa',
-                'Bombo',
-                'Ride'
+                { name: 'Hi-hat', icon: 'fas fa-hippo' },
+                { name: 'Caixa', icon: 'fas fa-drum' },
+                { name: 'Bombo', icon: 'fas fa-compact-disc' },
+                { name: 'Ride', icon: 'fas fa-bicycle' }
             ];
 
             // Função para criar uma linha de instrumento
-            function createTrack(instrumentName) {
+            function createTrack(instrument) {
                 const track = document.createElement('div');
                 track.classList.add('track');
 
                 const label = document.createElement('label');
-                label.textContent = instrumentName;
+                label.innerHTML = `<i class="${instrument.icon}"></i> ${instrument.name}`;
                 track.appendChild(label);
 
                 for (let i = 1; i <= numSteps; i++) {
