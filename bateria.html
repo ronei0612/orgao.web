@@ -44,13 +44,17 @@
         }
 
             .step.active {
-                background-color: #28a745;
+                background-color: #198754;
                 color: white;
             }
 
-                .step.active.playing {
-                    background-color: #198754; /* Cor verde mais escura para destacar que está tocando */
-                }
+            .step.playing {
+                background-color: #ffc107;
+            }
+
+            .step.active.playing {
+                background-color: #28a745;
+            }
     </style>
 </head>
 <body>
@@ -131,18 +135,20 @@
                 let currentStep = 1;
 
                 intervalId = setInterval(() => {
-                    // Desativar todos os passos ativos (para visualização)
-                    document.querySelectorAll('.track .step.active.playing').forEach(step => {
+                    // Remover classes de "playing" de todos os passos
+                    document.querySelectorAll('.step.playing').forEach(step => {
                         step.classList.remove('playing');
                     });
 
-                    // Para cada linha, verificar se o passo atual está ativo
                     document.querySelectorAll('.track').forEach(track => {
                         const instrument = track.querySelector('label').textContent.toLowerCase().replace(/ /g, '');
                         const step = track.querySelector(`.step[data-step="${currentStep}"]`);
 
+                        // Adiciona a classe "playing" ao passo atual (ativo ou não)
+                        step.classList.add('playing');
+
                         if (step.classList.contains('active')) {
-                            step.classList.add('playing'); // Adiciona classe para destacar visualmente
+                            // Se o passo estiver ativo, toca o som
                             switch (instrument) {
                                 case 'hi-hat':
                                     playSound('hihat-sound');
