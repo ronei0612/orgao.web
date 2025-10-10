@@ -76,10 +76,20 @@
                     color: white;
                 }
 
+        .rhythm-button.pending {
+            animation: blinker 1s linear infinite;
+        }
+
         .track label i {
             font-size: 1.5em; /* Ajuste o tamanho do ícone */
             margin-right: 5px; /* Adicione um espaço entre o ícone e os passos */
             vertical-align: middle; /* Alinhe verticalmente o ícone com os passos */
+        }
+
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -132,6 +142,8 @@
             let numSteps = 4;
             let currentStep = 1;
             let selectedRhythm = 'A';
+            let pendingRhythm = null; // Variável para armazenar o ritmo pendente
+            let pendingButton = null;
 
             const instruments = [
                 { name: 'Hi-hat', icon: 'fas fa-hippo' },
@@ -146,7 +158,7 @@
                 track.classList.add('track');
 
                 const label = document.createElement('label');
-                label.innerHTML = `<i class="${instrument.icon}"></i> ${instrument.name}`;
+                label.innerHTML = `<i class="${instrument.icon}" title="${instrument.name}"></i>`;
                 track.appendChild(label);
 
                 for (let i = 1; i <= numSteps; i++) {
@@ -191,7 +203,7 @@
                     });
 
                     document.querySelectorAll('.track').forEach(track => {
-                        const instrument = track.querySelector('label').textContent.toLowerCase().replace(/ /g, '');
+                        const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
                         const step = track.querySelector(`.step[data-step="${currentStep}"]`);
 
                         step.classList.add('playing');
@@ -217,6 +229,16 @@
                     currentStep++;
                     if (currentStep > numSteps) {
                         currentStep = 1;
+
+                        // Verificar se há um ritmo pendente para carregar
+                        if (pendingRhythm) {
+                            loadRhythm(`rhythm-${pendingRhythm}`);
+                            pendingRhythm = null; // Limpar o ritmo pendente
+                            if (pendingButton) {
+                                pendingButton.classList.remove('pending'); // Remove a classe de piscar
+                                pendingButton = null;
+                            }
+                        }
                     }
                 }, 60000 / bpm);
             }
@@ -238,7 +260,7 @@
             function saveRhythm() {
                 const rhythmData = {};
                 document.querySelectorAll('.track').forEach(track => {
-                    const instrument = track.querySelector('label').textContent.toLowerCase().replace(/ /g, '');
+                    const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
                     const activeSteps = [];
                     track.querySelectorAll('.step.active').forEach(step => {
                         activeSteps.push(parseInt(step.dataset.step));
@@ -255,7 +277,7 @@
                 if (savedRhythm) {
                     const rhythmData = JSON.parse(savedRhythm);
                     document.querySelectorAll('.track').forEach(track => {
-                        const instrument = track.querySelector('label').textContent.toLowerCase().replace(/ /g, '');
+                        const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
                         const activeSteps = rhythmData[instrument] || [];
 
                         track.querySelectorAll('.step').forEach(step => {
@@ -267,20 +289,23 @@
                             }
                         });
                     });
-                    console.log(`Ritmo ${rhythmKey.replace('rhythm-', '')} carregado!`);
-                } else {
-                    console.log(`Nenhum ritmo salvo para ${rhythmKey.replace('rhythm-', '')}.`);
                 }
             }
 
             // Função para selecionar um botão de ritmo
             function selectRhythm(rhythmButton, rhythmKey) {
+                if (pendingButton) {
+                    pendingButton.classList.remove('pending');
+                }
+
                 document.querySelectorAll('.rhythm-button').forEach(button => {
                     button.classList.remove('selected');
                 });
                 rhythmButton.classList.add('selected');
+                pendingRhythm = rhythmKey.replace('rhythm-', '').toUpperCase(); // Define o ritmo pendente
                 selectedRhythm = rhythmKey.replace('rhythm-', '').toUpperCase();
-                loadRhythm('rhythm-' + selectedRhythm);
+                rhythmButton.classList.add('pending'); // Adiciona a classe de piscar
+                pendingButton = rhythmButton;
             }
 
             // Event listeners para os botões de ritmo
@@ -317,7 +342,11 @@
             });
 
             // Carregar o ritmo selecionado ao carregar a página
-            selectRhythm(rhythmAButton, 'rhythm-a');
+            document.querySelectorAll('.rhythm-button').forEach(button => {
+                button.classList.remove('selected');
+            });
+            rhythmAButton.classList.add('selected');
+            loadRhythm('rhythm-A');
         });
     </script>
 </body>
