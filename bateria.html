@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +20,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            align-items: center;
         }
 
         .track {
@@ -57,19 +59,21 @@
             }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Caixa de Ritmos Online</h1>
         <div class="controls">
             <button id="play-pause" class="btn btn-success">Play</button>
-            <input type="number" id="bpm" value="90" class="form-control">
+            <input type="number" id="bpm" value="90" class="form-control" style="width: 70px;">
+            <input type="number" id="num-steps" value="4" class="form-control" style="width: 70px;">
             <button id="clear" class="btn btn-danger">Limpar</button>
         </div>
 
         <div id="tracks">
         </div>
 
-        <!-- Elementos de ·udio (formato .ogg) -->
+        <!-- Elementos de √°udio (formato .ogg) -->
         <audio id="hihat-sound" src="./assets/audio/studio/Drums/chimbal.ogg"></audio>
         <audio id="snare-sound" src="./assets/audio/studio/Drums/caixa.ogg"></audio>
         <audio id="kick-sound" src="./assets/audio/studio/Drums/bumbo.ogg"></audio>
@@ -82,10 +86,13 @@
             const bpmInput = document.getElementById('bpm');
             const clearButton = document.getElementById('clear');
             const tracksContainer = document.getElementById('tracks');
+            const numStepsInput = document.getElementById('num-steps');
 
             let bpm = 90;
             let isPlaying = false;
             let intervalId;
+            let numSteps = 4; // Valor padr√£o
+            let currentStep = 1;
 
             const instruments = [
                 'Hi-hat',
@@ -94,7 +101,7 @@
                 'Ride'
             ];
 
-            // FunÁ„o para criar uma linha de instrumento
+            // Fun√ß√£o para criar uma linha de instrumento
             function createTrack(instrumentName) {
                 const track = document.createElement('div');
                 track.classList.add('track');
@@ -103,7 +110,7 @@
                 label.textContent = instrumentName;
                 track.appendChild(label);
 
-                for (let i = 1; i <= 4; i++) {
+                for (let i = 1; i <= numSteps; i++) {
                     const step = document.createElement('div');
                     step.classList.add('step');
                     step.textContent = i;
@@ -115,24 +122,30 @@
                 tracksContainer.appendChild(track);
             }
 
-            // Criar todas as linhas de instrumentos
-            instruments.forEach(createTrack);
+            // Fun√ß√£o para inicializar as tracks
+            function initializeTracks() {
+                tracksContainer.innerHTML = ''; // Limpa as tracks existentes
+                instruments.forEach(createTrack);
+            }
 
-            // FunÁ„o para ativar/desativar um passo
+            // Criar todas as linhas de instrumentos
+            initializeTracks();
+
+            // Fun√ß√£o para ativar/desativar um passo
             function toggleStep(event) {
                 event.target.classList.toggle('active');
             }
 
-            // FunÁ„o para tocar um som
+            // Fun√ß√£o para tocar um som
             function playSound(soundId) {
                 const sound = document.getElementById(soundId);
-                sound.currentTime = 0; // Reinicia o som se j· estiver tocando
+                sound.currentTime = 0;
                 sound.play();
             }
 
-            // FunÁ„o para reproduzir o ritmo
+            // Fun√ß√£o para reproduzir o ritmo
             function playBeat() {
-                let currentStep = 1;
+                clearInterval(intervalId); // Limpa o intervalo anterior
 
                 intervalId = setInterval(() => {
                     // Remover classes de "playing" de todos os passos
@@ -144,7 +157,7 @@
                         const instrument = track.querySelector('label').textContent.toLowerCase().replace(/ /g, '');
                         const step = track.querySelector(`.step[data-step="${currentStep}"]`);
 
-                        // Adiciona a classe "playing" ao passo atual (ativo ou n„o)
+                        // Adiciona a classe "playing" ao passo atual (ativo ou n√£o)
                         step.classList.add('playing');
 
                         if (step.classList.contains('active')) {
@@ -167,13 +180,13 @@
                     });
 
                     currentStep++;
-                    if (currentStep > 4) {
+                    if (currentStep > numSteps) {
                         currentStep = 1;
                     }
-                }, 60000 / bpm); // Converter BPM para milissegundos
+                }, 60000 / bpm);
             }
 
-            // FunÁ„o para iniciar/parar a reproduÁ„o
+            // Fun√ß√£o para iniciar/parar a reprodu√ß√£o
             function togglePlay() {
                 isPlaying = !isPlaying;
                 if (isPlaying) {
@@ -181,29 +194,40 @@
                     playBeat();
                 } else {
                     playPauseButton.textContent = 'Play';
+                    playPauseButton.textContent = 'Play';
                     clearInterval(intervalId);
                 }
             }
 
-            // Lidar com o clique no bot„o "Play/Pause"
+            // Lidar com o clique no bot√£o "Play/Pause"
             playPauseButton.addEventListener('click', togglePlay);
 
-            // Lidar com a mudanÁa no campo de BPM
+            // Lidar com a mudan√ßa no campo de BPM
             bpmInput.addEventListener('change', () => {
                 bpm = parseInt(bpmInput.value);
                 if (isPlaying) {
-                    clearInterval(intervalId);
-                    playBeat();
+                    playBeat(); // Reinicia o ritmo com o novo BPM
                 }
             });
 
-            // Lidar com o clique no bot„o "Limpar"
+            // Lidar com o clique no bot√£o "Limpar"
             clearButton.addEventListener('click', () => {
                 document.querySelectorAll('.step.active').forEach(step => {
                     step.classList.remove('active');
                 });
             });
+
+            // Lidar com a mudan√ßa no input "num-steps"
+            numStepsInput.addEventListener('change', () => {
+                numSteps = parseInt(numStepsInput.value);
+                initializeTracks();
+                if (isPlaying) {
+                    playBeat(); // Reinicia o ritmo com o novo n√∫mero de steps
+                }
+                currentStep = 1; // Reseta o currentStep
+            });
         });
     </script>
 </body>
+
 </html>
