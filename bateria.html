@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caixa de Ritmos Online</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .track {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+            .track label {
+                width: 120px;
+                text-align: right;
+                margin-right: 10px;
+            }
+
+        .step {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ccc;
+            margin-right: 5px;
+            cursor: pointer;
+            text-align: center;
+            line-height: 30px;
+        }
+
+            .step.active {
+                background-color: #28a745;
+                color: white;
+            }
+
+                .step.active.playing {
+                    background-color: #198754; /* Cor verde mais escura para destacar que está tocando */
+                }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Caixa de Ritmos Online</h1>
+        <div class="controls">
+            <button id="play-pause" class="btn btn-success">Play</button>
+            <input type="number" id="bpm" value="90" class="form-control">
+            <button id="clear" class="btn btn-danger">Limpar</button>
+        </div>
+
+        <div id="tracks">
+        </div>
+
+        <!-- Elementos de áudio (formato .ogg) -->
+        <audio id="hihat-sound" src="./assets/audio/studio/Drums/chimbal.ogg"></audio>
+        <audio id="snare-sound" src="./assets/audio/studio/Drums/caixa.ogg"></audio>
+        <audio id="kick-sound" src="./assets/audio/studio/Drums/bumbo.ogg"></audio>
+        <audio id="ride-sound" src="./assets/audio/studio/Drums/ride.ogg"></audio>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const playPauseButton = document.getElementById('play-pause');
+            const bpmInput = document.getElementById('bpm');
+            const clearButton = document.getElementById('clear');
+            const tracksContainer = document.getElementById('tracks');
+
+            let bpm = 90;
+            let isPlaying = false;
+            let intervalId;
+
+            const instruments = [
+                'Hi-hat',
+                'Tarola',
+                'Bombo',
+                'Ride'
+            ];
+
+            // Função para criar uma linha de instrumento
+            function createTrack(instrumentName) {
+                const track = document.createElement('div');
+                track.classList.add('track');
+
+                const label = document.createElement('label');
+                label.textContent = instrumentName;
+                track.appendChild(label);
+
+                for (let i = 1; i <= 4; i++) {
+                    const step = document.createElement('div');
+                    step.classList.add('step');
+                    step.textContent = i;
+                    step.dataset.step = i;
+                    step.addEventListener('click', toggleStep);
+                    track.appendChild(step);
+                }
+
+                tracksContainer.appendChild(track);
+            }
+
+            // Criar todas as linhas de instrumentos
+            instruments.forEach(createTrack);
+
+            // Função para ativar/desativar um passo
+            function toggleStep(event) {
+                event.target.classList.toggle('active');
+            }
+
+            // Função para tocar um som
+            function playSound(soundId) {
+                const sound = document.getElementById(soundId);
+                sound.currentTime = 0; // Reinicia o som se já estiver tocando
+                sound.play();
+            }
+
+            // Função para reproduzir o ritmo
+            function playBeat() {
+                let currentStep = 1;
+
+                intervalId = setInterval(() => {
+                    // Desativar todos os passos ativos (para visualização)
+                    document.querySelectorAll('.track .step.active.playing').forEach(step => {
+                        step.classList.remove('playing');
+                    });
+
+                    // Para cada linha, verificar se o passo atual está ativo
+                    document.querySelectorAll('.track').forEach(track => {
+                        const instrument = track.querySelector('label').textContent.toLowerCase().replace(/ /g, '');
+                        const step = track.querySelector(`.step[data-step="${currentStep}"]`);
+
+                        if (step.classList.contains('active')) {
+                            step.classList.add('playing'); // Adiciona classe para destacar visualmente
+                            switch (instrument) {
+                                case 'hi-hat':
+                                    playSound('hihat-sound');
+                                    break;
+                                case 'tarola':
+                                    playSound('snare-sound');
+                                    break;
+                                case 'bombo':
+                                    playSound('kick-sound');
+                                    break;
+                                case 'ride':
+                                    playSound('ride-sound');
+                                    break;
+                            }
+                        }
+                    });
+
+                    currentStep++;
+                    if (currentStep > 4) {
+                        currentStep = 1;
+                    }
+                }, 60000 / bpm); // Converter BPM para milissegundos
+            }
+
+            // Função para iniciar/parar a reprodução
+            function togglePlay() {
+                isPlaying = !isPlaying;
+                if (isPlaying) {
+                    playPauseButton.textContent = 'Pause';
+                    playBeat();
+                } else {
+                    playPauseButton.textContent = 'Play';
+                    clearInterval(intervalId);
+                }
+            }
+
+            // Lidar com o clique no botão "Play/Pause"
+            playPauseButton.addEventListener('click', togglePlay);
+
+            // Lidar com a mudança no campo de BPM
+            bpmInput.addEventListener('change', () => {
+                bpm = parseInt(bpmInput.value);
+                if (isPlaying) {
+                    clearInterval(intervalId);
+                    playBeat();
+                }
+            });
+
+            // Lidar com o clique no botão "Limpar"
+            clearButton.addEventListener('click', () => {
+                document.querySelectorAll('.step.active').forEach(step => {
+                    step.classList.remove('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
