@@ -142,6 +142,9 @@
             let pendingRhythm = null;
             let pendingButton = null;
 
+            // Aplica BPM dobrado ao carregar a página
+            drumMachine.setBPM(parseInt(bpmInput.value));
+
             // Delegação de eventos para steps
             tracksContainer.addEventListener('click', (event) => {
                 if (event.target.classList.contains('step')) {
@@ -259,6 +262,8 @@
                             }
                         });
                     });
+                    // Aplica BPM dobrado ao mudar ritmo
+                    drumMachine.setBPM(parseInt(bpmInput.value));
                 } else {
                     clearSteps();
                 }

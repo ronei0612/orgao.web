@@ -137,7 +137,7 @@ class DrumMachine {
     }
 
     setBPM(bpm) {
-        this.bpm = bpm;
+        this.bpm = bpm * 2;
     }
 
     setNumSteps(steps) {
