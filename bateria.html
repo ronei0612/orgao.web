@@ -147,6 +147,27 @@
             let pendingRhythm = null;
             let pendingButton = null;
 
+            // Função para criar um ritmo em branco
+            function createEmptyRhythm(bpm, numSteps) {
+                const rhythmData = {};
+                drumMachine.instruments.forEach(inst => {
+                    rhythmData[inst.name.toLowerCase().replace(/ /g, '')] = Array(numSteps).fill(0);
+                });
+                rhythmData.bpm = bpm;
+                rhythmData.numSteps = numSteps;
+                return rhythmData;
+            }
+
+            // Garante que os ritmos A, B, C, D existam em branco
+            ['A', 'B', 'C', 'D'].forEach(r => {
+                const key = `rhythm-${r}`;
+                if (!localStorage.getItem(key)) {
+                    const bpm = parseInt(bpmInput.value);
+                    const numSteps = parseInt(numStepsInput.value);
+                    localStorage.setItem(key, JSON.stringify(createEmptyRhythm(bpm, numSteps)));
+                }
+            });
+
             // Aplica BPM dobrado ao carregar a página
             drumMachine.setBPM(parseInt(bpmInput.value));
 
