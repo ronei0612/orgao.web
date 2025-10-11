@@ -9,89 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
           integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
           crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <style>
-        body {
-            font-family: sans-serif;
-            background-color: #f8f9fa;
-        }
-
-        .container {
-            margin-top: 20px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            align-items: center;
-        }
-
-        .track {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-
-            .track label {
-                width: 120px;
-                text-align: right;
-                margin-right: 10px;
-            }
-
-        .step {
-            width: 30px;
-            height: 30px;
-            border: 1px solid #ccc;
-            margin-right: 5px;
-            cursor: pointer;
-            text-align: center;
-            line-height: 30px;
-        }
-
-            .step.active {
-                background-color: #198754;
-                color: white;
-            }
-
-            .step.playing {
-                background-color: #ffc107;
-            }
-
-            .step.active.playing {
-                background-color: #28a745;
-            }
-
-        .rhythm-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-            .rhythm-buttons button {
-                width: 50px;
-            }
-
-                .rhythm-buttons button.selected {
-                    background-color: #007bff;
-                    color: white;
-                }
-
-        .rhythm-button.pending {
-            animation: blinker 1s linear infinite;
-        }
-
-        .track label i {
-            font-size: 1.5em; /* Ajuste o tamanho do ícone */
-            margin-right: 5px; /* Adicione um espaço entre o ícone e os passos */
-            vertical-align: middle; /* Alinhe verticalmente o ícone com os passos */
-        }
-
-        @keyframes blinker {
-            50% {
-                opacity: 0;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/bateria.css">
 </head>
 
 <body>
@@ -116,180 +34,151 @@
         <div id="tracks">
         </div>
 
-        <audio id="hihat-sound" src="./assets/audio/studio/Drums/chimbal.ogg"></audio>
-        <audio id="snare-sound" src="./assets/audio/studio/Drums/caixa.ogg"></audio>
-        <audio id="kick-sound" src="./assets/audio/studio/Drums/bumbo.ogg"></audio>
-        <audio id="ride-sound" src="./assets/audio/studio/Drums/ride.ogg"></audio>
     </div>
 
+    <script src="assets/js/DrumMachine.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            const drumMachine = new DrumMachine();
+            await drumMachine.init();
+
+            // Cache de elementos
             const playPauseButton = document.getElementById('play-pause');
             const bpmInput = document.getElementById('bpm');
             const clearButton = document.getElementById('clear');
             const tracksContainer = document.getElementById('tracks');
             const numStepsInput = document.getElementById('num-steps');
-
-            const rhythmAButton = document.getElementById('rhythm-a');
-            const rhythmBButton = document.getElementById('rhythm-b');
-            const rhythmCButton = document.getElementById('rhythm-c');
-            const rhythmDButton = document.getElementById('rhythm-d');
+            const rhythmButtons = document.querySelectorAll('.rhythm-button');
             const saveRhythmButton = document.getElementById('save-rhythm');
 
-            let bpm = 90;
-            let isPlaying = false;
-            let intervalId;
-            let numSteps = 4;
-            let currentStep = 1;
             let selectedRhythm = 'A';
-            let pendingRhythm = null; // Variável para armazenar o ritmo pendente
+            let pendingRhythm = null;
             let pendingButton = null;
 
-            const instruments = [
-                { name: 'Hi-hat', icon: 'fas fa-hippo' },
-                { name: 'Caixa', icon: 'fas fa-drum' },
-                { name: 'Bombo', icon: 'fas fa-compact-disc' },
-                { name: 'Ride', icon: 'fas fa-bicycle' }
-            ];
+            // Função para criar um ritmo em branco
+            function createEmptyRhythm(bpm, numSteps) {
+                const rhythmData = {};
+                drumMachine.instruments.forEach(inst => {
+                    rhythmData[inst.name.toLowerCase().replace(/ /g, '')] = Array(numSteps).fill(0);
+                });
+                rhythmData.bpm = bpm;
+                rhythmData.numSteps = numSteps;
+                return rhythmData;
+            }
 
-            // Função para criar uma linha de instrumento
+            // Garante que os ritmos A, B, C, D existam em branco
+            ['A', 'B', 'C', 'D'].forEach(r => {
+                const key = `rhythm-${r}`;
+                if (!localStorage.getItem(key)) {
+                    const bpm = parseInt(bpmInput.value);
+                    const numSteps = parseInt(numStepsInput.value);
+                    localStorage.setItem(key, JSON.stringify(createEmptyRhythm(bpm, numSteps)));
+                }
+            });
+
+            // Aplica BPM dobrado ao carregar a página
+            drumMachine.setBPM(parseInt(bpmInput.value));
+
+            // Delegação de eventos para steps
+            tracksContainer.addEventListener('click', (event) => {
+                if (event.target.classList.contains('step')) {
+                    toggleStep(event.target);
+                }
+            });
+
+            // Função para criar uma linha de instrumento usando DocumentFragment
             function createTrack(instrument) {
                 const track = document.createElement('div');
                 track.classList.add('track');
 
                 const label = document.createElement('label');
-                label.innerHTML = `<i class="${instrument.icon}" title="${instrument.name}"></i>`;
+                label.innerHTML = `${instrument.name} <i class="${instrument.icon}" title="${instrument.name}"></i>`;
                 track.appendChild(label);
 
-                for (let i = 1; i <= numSteps; i++) {
+                const stepsFragment = document.createDocumentFragment();
+                const currentSteps = parseInt(numStepsInput.value);
+                for (let i = 1; i <= currentSteps; i++) {
                     const step = document.createElement('div');
                     step.classList.add('step');
                     step.textContent = i;
                     step.dataset.step = i;
-                    step.addEventListener('click', toggleStep);
-                    track.appendChild(step);
+                    step.dataset.volume = 0;
+                    stepsFragment.appendChild(step);
                 }
-
-                tracksContainer.appendChild(track);
+                track.appendChild(stepsFragment);
+                return track;
             }
 
-            // Função para inicializar as tracks
+            // Inicializa as tracks usando DocumentFragment
             function initializeTracks() {
+                const fragment = document.createDocumentFragment();
+                drumMachine.instruments.forEach(inst => {
+                    fragment.appendChild(createTrack(inst));
+                });
                 tracksContainer.innerHTML = '';
-                instruments.forEach(createTrack);
+                tracksContainer.appendChild(fragment);
             }
-
-            initializeTracks();
 
             // Função para ativar/desativar um passo
-            function toggleStep(event) {
-                event.target.classList.toggle('active');
+            function toggleStep(step) {
+                let volume = parseInt(step.dataset.volume);
+                volume = (volume + 1) % 4; // Agora vai de 0 a 3
+                step.dataset.volume = volume;
+                step.classList.remove('active', 'low-volume', 'third-volume');
+                if (volume === 1) {
+                    step.classList.add('active');
+                } else if (volume === 2) {
+                    step.classList.add('low-volume');
+                } else if (volume === 3) {
+                    step.classList.add('third-volume');
+                }
             }
 
-            // Função para tocar um som
-            function playSound(soundId) {
-                const sound = document.getElementById(soundId);
-                sound.currentTime = 0;
-                sound.play();
+            // Limpar todos os steps
+            function clearSteps() {
+                tracksContainer.querySelectorAll('.step').forEach(step => {
+                    step.classList.remove('active', 'low-volume');
+                    step.dataset.volume = 0;
+                });
             }
 
-            // Função para reproduzir o ritmo
-            function playBeat() {
-                clearInterval(intervalId);
-
-                intervalId = setInterval(() => {
-                    document.querySelectorAll('.step.playing').forEach(step => {
-                        step.classList.remove('playing');
-                    });
-
-                    document.querySelectorAll('.track').forEach(track => {
-                        const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
-                        const step = track.querySelector(`.step[data-step="${currentStep}"]`);
-
-                        step.classList.add('playing');
-
-                        if (step.classList.contains('active')) {
-                            switch (instrument) {
-                                case 'hi-hat':
-                                    playSound('hihat-sound');
-                                    break;
-                                case 'caixa':
-                                    playSound('snare-sound');
-                                    break;
-                                case 'bombo':
-                                    playSound('kick-sound');
-                                    break;
-                                case 'ride':
-                                    playSound('ride-sound');
-                                    break;
-                            }
-                        }
-                    });
-
-                    currentStep++;
-                    if (currentStep > numSteps) {
-                        currentStep = 1;
-
-                        // Verificar se há um ritmo pendente para carregar
-                        if (pendingRhythm) {
-                            loadRhythm(`rhythm-${pendingRhythm}`);
-                            pendingRhythm = null; // Limpar o ritmo pendente
-                            if (pendingButton) {
-                                pendingButton.classList.remove('pending'); // Remove a classe de piscar
-                                pendingButton = null;
-                            }
-                        }
+            // Configurar callback para troca de ritmo
+            drumMachine.onMeasureEnd = () => {
+                if (pendingRhythm) {
+                    loadRhythm(`rhythm-${pendingRhythm}`);
+                    pendingRhythm = null;
+                    if (pendingButton) {
+                        pendingButton.classList.remove('pending');
+                        pendingButton = null;
                     }
-                }, 60000 / bpm);
-            }
+                }
+            };
 
             // Função para iniciar/parar a reprodução
             function togglePlay() {
-                isPlaying = !isPlaying;
-                if (isPlaying) {
-                    playPauseButton.textContent = 'Pause';
-                    playBeat();
+                if (!drumMachine.isPlaying) {
+                    drumMachine.start();
+                    playPauseButton.textContent = 'Stop';
                 } else {
+                    drumMachine.stop();
                     playPauseButton.textContent = 'Play';
-                    playPauseButton.textContent = 'Play';
-                    clearInterval(intervalId);
+                    // Retornar ao estado inicial visual
+                    // Não há steps tocando, mas pode garantir que o passo inicial está pronto
+                    // Se quiser, pode desmarcar todos os steps, mas normalmente só o currentStep volta ao início
                 }
             }
 
             // Função para salvar o ritmo no localStorage
             function saveRhythm() {
                 const rhythmData = {};
-                document.querySelectorAll('.track').forEach(track => {
+                tracksContainer.querySelectorAll('.track').forEach(track => {
                     const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
-                    const activeSteps = [];
-                    track.querySelectorAll('.step.active').forEach(step => {
-                        activeSteps.push(parseInt(step.dataset.step));
-                    });
-                    rhythmData[instrument] = activeSteps;
+                    const stepsData = Array.from(track.querySelectorAll('.step')).map(step => parseInt(step.dataset.volume));
+                    rhythmData[instrument] = stepsData;
                 });
+                rhythmData.bpm = parseInt(bpmInput.value); // Salva o BPM
+                rhythmData.numSteps = parseInt(numStepsInput.value); // Salva a quantidade de tracks
                 localStorage.setItem(`rhythm-${selectedRhythm}`, JSON.stringify(rhythmData));
-                console.log(`Ritmo ${selectedRhythm} salvo!`);
-            }
-
-            // Função para carregar o ritmo do localStorage
-            function loadRhythm(rhythmKey) {
-                const savedRhythm = localStorage.getItem(rhythmKey);
-                if (savedRhythm) {
-                    const rhythmData = JSON.parse(savedRhythm);
-                    document.querySelectorAll('.track').forEach(track => {
-                        const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
-                        const activeSteps = rhythmData[instrument] || [];
-
-                        track.querySelectorAll('.step').forEach(step => {
-                            const stepNumber = parseInt(step.dataset.step);
-                            if (activeSteps.includes(stepNumber)) {
-                                step.classList.add('active');
-                            } else {
-                                step.classList.remove('active');
-                            }
-                        });
-                    });
-                }
             }
 
             // Função para selecionar um botão de ritmo
@@ -297,55 +186,86 @@
                 if (pendingButton) {
                     pendingButton.classList.remove('pending');
                 }
-
-                document.querySelectorAll('.rhythm-button').forEach(button => {
-                    button.classList.remove('selected');
-                });
+                rhythmButtons.forEach(button => button.classList.remove('selected'));
                 rhythmButton.classList.add('selected');
-                pendingRhythm = rhythmKey.replace('rhythm-', '').toUpperCase(); // Define o ritmo pendente
-                selectedRhythm = rhythmKey.replace('rhythm-', '').toUpperCase();
-                rhythmButton.classList.add('pending'); // Adiciona a classe de piscar
+                pendingRhythm = rhythmKey.replace('rhythm-', '').toUpperCase();
+                selectedRhythm = pendingRhythm;
                 pendingButton = rhythmButton;
+                // Se não estiver tocando, muda o ritmo instantaneamente
+                if (!drumMachine.isPlaying) {
+                    loadRhythm(`rhythm-${selectedRhythm}`);
+                } else {
+                    rhythmButton.classList.add('pending');
+                }
+            }
+
+            // Função para carregar o ritmo do localStorage
+            function loadRhythm(rhythmKey) {
+                const savedRhythm = localStorage.getItem(rhythmKey);
+                if (savedRhythm) {
+                    const rhythmData = JSON.parse(savedRhythm);
+                    // Se a quantidade de tracks estiver salva, atualiza o input e DrumMachine
+                    if (typeof rhythmData.numSteps === 'number') {
+                        numStepsInput.value = rhythmData.numSteps;
+                        drumMachine.setNumSteps(rhythmData.numSteps);
+                        initializeTracks();
+                    }
+                    tracksContainer.querySelectorAll('.track').forEach(track => {
+                        const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
+                        const stepsData = rhythmData[instrument] || [];
+                        track.querySelectorAll('.step').forEach((step, index) => {
+                            const volume = stepsData[index] !== undefined ? stepsData[index] : 0;
+                            step.dataset.volume = volume;
+                            step.classList.remove('active', 'low-volume');
+                            if (volume === 1) {
+                                step.classList.add('active');
+                            } else if (volume === 2) {
+                                step.classList.add('low-volume');
+                            }
+                        });
+                    });
+                    // Se o BPM estiver salvo, atualiza o input e DrumMachine
+                    if (typeof rhythmData.bpm === 'number') {
+                        bpmInput.value = rhythmData.bpm;
+                        drumMachine.setBPM(rhythmData.bpm);
+                    } else {
+                        drumMachine.setBPM(parseInt(bpmInput.value));
+                    }
+                } else {
+                    clearSteps();
+                }
+            }
+
+            // Função para iniciar/parar a reprodução
+            function togglePlay() {
+                if (!drumMachine.isPlaying) {
+                    drumMachine.start();
+                    playPauseButton.textContent = 'Stop';
+                } else {
+                    drumMachine.stop();
+                    playPauseButton.textContent = 'Play';
+                }
             }
 
             // Event listeners para os botões de ritmo
-            rhythmAButton.addEventListener('click', () => selectRhythm(rhythmAButton, 'rhythm-a'));
-            rhythmBButton.addEventListener('click', () => selectRhythm(rhythmBButton, 'rhythm-b'));
-            rhythmCButton.addEventListener('click', () => selectRhythm(rhythmCButton, 'rhythm-c'));
-            rhythmDButton.addEventListener('click', () => selectRhythm(rhythmDButton, 'rhythm-d'));
+            document.getElementById('rhythm-a').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-a'), 'rhythm-a'));
+            document.getElementById('rhythm-b').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-b'), 'rhythm-b'));
+            document.getElementById('rhythm-c').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-c'), 'rhythm-c'));
+            document.getElementById('rhythm-d').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-d'), 'rhythm-d'));
 
-            // Event listener para o botão de salvar
             saveRhythmButton.addEventListener('click', saveRhythm);
-
             playPauseButton.addEventListener('click', togglePlay);
-
-            bpmInput.addEventListener('change', () => {
-                bpm = parseInt(bpmInput.value);
-                if (isPlaying) {
-                    playBeat();
-                }
-            });
-
-            clearButton.addEventListener('click', () => {
-                document.querySelectorAll('.step.active').forEach(step => {
-                    step.classList.remove('active');
-                });
-            });
-
+            bpmInput.addEventListener('change', () => drumMachine.setBPM(parseInt(bpmInput.value)));
+            clearButton.addEventListener('click', clearSteps);
             numStepsInput.addEventListener('change', () => {
-                numSteps = parseInt(numStepsInput.value);
+                drumMachine.setNumSteps(parseInt(numStepsInput.value));
                 initializeTracks();
-                if (isPlaying) {
-                    playBeat();
-                }
-                currentStep = 1;
             });
 
             // Carregar o ritmo selecionado ao carregar a página
-            document.querySelectorAll('.rhythm-button').forEach(button => {
-                button.classList.remove('selected');
-            });
-            rhythmAButton.classList.add('selected');
+            rhythmButtons.forEach(button => button.classList.remove('selected'));
+            document.getElementById('rhythm-a').classList.add('selected');
+            initializeTracks();
             loadRhythm('rhythm-A');
         });
     </script>
