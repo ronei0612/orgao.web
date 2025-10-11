@@ -158,7 +158,7 @@
                 track.classList.add('track');
 
                 const label = document.createElement('label');
-                label.innerHTML = `<i class="${instrument.icon}" title="${instrument.name}"></i>`;
+                label.innerHTML = `${instrument.name} <i class="${instrument.icon}" title="${instrument.name}"></i>`;
                 track.appendChild(label);
 
                 for (let i = 1; i <= numSteps; i++) {
