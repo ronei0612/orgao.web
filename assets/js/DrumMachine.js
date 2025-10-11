@@ -4,10 +4,10 @@ class DrumMachine {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.buffers = new Map();
         this.instruments = [
-            { name: 'Hi-hat', icon: 'fas fa-hippo', file: audioPath + 'chimbal.ogg' },
-            { name: 'Caixa', icon: 'fas fa-drum', file: audioPath + 'caixa.ogg' },
-            { name: 'Bombo', icon: 'fas fa-compact-disc', file: audioPath + 'bumbo.ogg' },
-            { name: 'Ride', icon: 'fas fa-bicycle', file: audioPath + 'ride.ogg' }
+            { name: 'Hi-hat', icon: 'fas fa-hippo', file: audioPath + 'chimbal.ogg', file3: audioPath + 'aberto.ogg' },
+            { name: 'Caixa', icon: 'fas fa-drum', file: audioPath + 'caixa.ogg', file3: audioPath + 'aro.ogg' },
+            { name: 'Bombo', icon: 'fas fa-compact-disc', file: audioPath + 'bumbo.ogg', file3: null },
+            { name: 'Ride', icon: 'fas fa-bicycle', file: audioPath + 'ride.ogg', file3: audioPath + 'prato1.ogg' }
         ];
         this.isPlaying = false;
         this.currentStep = 1;
@@ -32,6 +32,13 @@ class DrumMachine {
             const arrayBuffer = await response.arrayBuffer();
             const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
             this.buffers.set(instrument.name.toLowerCase(), audioBuffer);
+            // Carrega o terceiro som se existir
+            if (instrument.file3) {
+                const response3 = await fetch(instrument.file3);
+                const arrayBuffer3 = await response3.arrayBuffer();
+                const audioBuffer3 = await this.audioContext.decodeAudioData(arrayBuffer3);
+                this.buffers.set(instrument.name.toLowerCase() + '-3', audioBuffer3);
+            }
         });
 
         await Promise.all(loadPromises);
@@ -51,9 +58,25 @@ class DrumMachine {
     }
 
     scheduleNote(instrument, step, time, volume) {
-        const buffer = this.buffers.get(instrument);
-        if (buffer && volume > 0) {
-            this.playSound(buffer, time, volume === 2 ? 0.3 : 1);
+        if (volume === 3) {
+            // Terceiro som
+            if (instrument === 'hihat') {
+                const buffer = this.buffers.get('hi-hat-3') || this.buffers.get('hihat-3');
+                if (buffer) this.playSound(buffer, time, 1);
+            } else if (instrument === 'caixa') {
+                const buffer = this.buffers.get('caixa-3');
+                if (buffer) this.playSound(buffer, time, 1);
+            } else if (instrument === 'bombo') {
+                // Não faz nada
+            } else if (instrument === 'ride') {
+                const buffer = this.buffers.get('ride-3');
+                if (buffer) this.playSound(buffer, time, 1);
+            }
+        } else {
+            const buffer = this.buffers.get(instrument);
+            if (buffer && volume > 0) {
+                this.playSound(buffer, time, volume === 2 ? 0.3 : 1);
+            }
         }
     }
 

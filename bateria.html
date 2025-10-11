@@ -61,6 +61,11 @@
                 background-color: #28a745;
             }
 
+            .step.third-volume {
+                background-color: #ff69b4; /* Rosa forte para o terceiro estado */
+                color: white;
+            }
+
         .rhythm-buttons {
             display: flex;
             gap: 10px;
@@ -188,13 +193,15 @@
             // Função para ativar/desativar um passo
             function toggleStep(step) {
                 let volume = parseInt(step.dataset.volume);
-                volume = (volume + 1) % 3;
+                volume = (volume + 1) % 4; // Agora vai de 0 a 3
                 step.dataset.volume = volume;
-                step.classList.remove('active', 'low-volume');
+                step.classList.remove('active', 'low-volume', 'third-volume');
                 if (volume === 1) {
                     step.classList.add('active');
                 } else if (volume === 2) {
                     step.classList.add('low-volume');
+                } else if (volume === 3) {
+                    step.classList.add('third-volume');
                 }
             }
 
