@@ -1,191 +1,231 @@
-var _tempo = 90;
-var ritmosJson = JSON.parse('{"2/4":[18,22,26,30,37,41,45,49,50,52,56,60,64],"2/4_fill":[18,22,26,30,37,41,45,49,50,52,56,60,64],"2/4_brush":[18,22,26,30,37,41,45,49,50,52,56,60,64,273,275,277,279,281,283,285,287],"2/4_brush_fill":[18,22,26,30,37,41,45,49,50,52,56,60,64,273,275,277,279,281,283,285,287],"2/4_aro":[18,22,26,30,37,41,45,49,50,52,56,60,64,273,275,277,279,281,283,285,287,313,321,358,362,366,370],"2/4_aro_fill":[18,22,26,30,37,41,45,49,50,52,56,60,64,273,275,277,279,281,283,285,287,313,321,322,358,362,366,370],"2/4_caixa":[18,22,26,30,37,41,45,49,50,52,56,60,64,273,275,277,279,281,283,285,287,326,330,334,338,358,362,366,370],"2/4_caixa_fill":[18,22,26,37,41,45,52,56,60,81,82,83,84,86,273,275,277,279,281,283,285,287,326,330,331,334,335,338,339,354,358,362,366,370],"2/4_chimbal":[18,22,26,30,37,41,45,49,50,52,56,60,64,256,260,264,268,326,330,334,338,358,362,366,370],"2/4_chimbal_fill":[18,22,26,37,41,45,52,56,60,81,82,83,84,86,220,236,251,252,256,260,264,326,330,331,334,335,350,358,362,366],"2/4_meiaLua":[18,22,26,30,37,41,45,49,50,52,56,60,64,120,128,141,149,156,160,164,168,171,173,175,177,179,181,183,185,326,330,334,338,358,362,366,370],"2/4_meiaLua_fill":[18,22,26,37,41,45,52,56,60,81,82,83,84,86,120,128,141,156,160,171,173,175,177,179,181,219,233,234,235,247,248,249,326,330,331,334,338,346,358,362,366,370,373],"2/4_brushCravo":[273,277,281,285],"2/4_brushCravo_fill":[273,277,281,285],"2/4_cravo":[35,43,54,58,62,66,73,81,273,277,281,285],"2/4_cravo_fill":[35,43,54,58,62,66,73,81,273,277,281,285],"3/4":[14,18,22,27,31,35,42,46],"3/4_fill":[14,18,22,27,31,35,42,46],"3/4_brush":[14,18,22,27,31,35,42,46,144,209,211,213,215,217,219],"3/4_brush_fill":[14,18,22,27,31,35,42,46,144,209,211,213,215,217,219],"3/4_aro":[14,18,22,27,31,35,42,46,209,211,213,215,217,219,237,274,278,282],"3/4_aro_fill":[14,18,22,27,31,35,42,46,209,211,213,215,217,219,239,274],"3/4_caixa":[14,18,22,27,31,35,42,46,209,211,213,215,217,219,250,254,274,278,274,282],"3/4_caixa_fill":[14,18,27,31,42,46,61,62,63,66,86,204,209,211,213,215,219,250,256,274,278,280,284],"3/4_chimbal":[14,18,22,27,31,35,42,46,196,200,204,250,254,274,278,274,282],"3/4_chimbal_fill":[14,18,27,31,42,46,61,62,63,66,86,180,191,196,200,206,250,254,274,278],"3/4_meiaLua":[14,18,22,27,31,35,42,46,94,98,105,115,122,126,131,135,139,146,150,154,250,254,274,278,282],"3/4_meiaLua_fill":[14,18,27,31,42,46,61,62,63,66,86,96,105,120,124,131,135,139,146,168,180,189,191,250,254,274,278,263,274],"3/4_brushCravo":[209,213,217],"3/4_brushCravo_fill":[209,213,217],"3/4_cravo":[27,42,46,50,57,61,209,213,217],"3/4_cravo_fill":[27,42,46,50,57,61,209,213,217],"4/4":[18,24,26,35,39,47,58,62],"4/4_fill":[18,24,26,35,39,47,58,62],"4/4_brush":[18,24,26,35,39,47,58,62,188,273,277,281,285],"4/4_brush_fill":[18,24,26,35,39,47,58,62,188,273,277,281,285],"4/4_aro":[18,24,26,35,39,47,58,62,273,277,281,285,319,358,364,366],"4/4_aro_fill":[18,24,26,35,39,47,58,62,264,275,277,287,317,319,358,364,366],"4/4_caixa":[18,24,26,35,39,47,58,62,273,275,277,279,281,283,285,287,328,336,358,364,366],"4/4_caixa_fill":[18,22,26,35,37,41,43,45,55,57,81,82,83,84,86,253,264,273,275,277,279,293,328,336,352,358,364,366,368],"4/4_chimbal":[18,24,26,35,39,47,58,62,256,260,264,268,328,336,358,364,366],"4/4_chimbal_fill":[18,22,26,35,37,41,43,45,55,57,81,82,83,84,86,236,256,260,264,275,328,332,336,337,352,358,364,368],"4/4_meiaLua":[18,24,26,35,39,47,58,62,124,132,137,145,156,160,164,168,171,175,179,183,328,336,358,364,366],"4/4_meiaLua_fill":[18,22,26,35,37,41,43,45,55,57,81,82,83,84,86,124,137,145,156,160,171,175,219,220,232,233,234,235,245,246,247,248,266,326,327,328,329,358],"4/4_brushCravo":[273,277,281,285],"4/4_brushCravo_fill":[273,277,281,285],"4/4_cravo":[35,47,54,58,62,66,73,77,273,277,281,285],"4/4_cravo_fill":[35,47,54,58,62,66,73,77,273,277,281,285],"4/8":[18,22,26,30,35,37,41,43,45,49,55,57,63,65],"4/8_fill":[18,22,26,30,35,37,41,43,45,49,55,57,63,65],"4/8_brush":[18,22,26,30,35,37,41,43,45,49,55,57,63,65,188,273,277,281,285],"4/8_brush_fill":[18,22,26,30,35,37,41,43,45,49,55,57,63,65,188,273,277,281,285],"4/8_aro":[18,22,26,30,35,37,41,43,45,49,55,57,63,65,273,275,277,279,281,283,285,287,313,321,358,362,366,369,371],"4/8_aro_fill":[18,22,26,30,35,37,41,43,45,49,55,57,63,65,266,270,273,275,277,279,281,285,313,321,358,362,366,370],"4/8_caixa":[18,22,26,30,35,37,41,43,45,49,55,57,63,65,273,275,277,279,281,283,285,287,326,330,334,338,358,362,366,369,371],"4/8_caixa_fill":[18,22,26,35,37,41,43,45,55,57,81,82,83,84,86,260,268,273,287,326,330,333,336,338,339,358,362,366,368,369,371],"4/8_chimbal":[18,22,26,30,35,37,41,43,45,49,55,57,63,65,256,258,260,262,264,266,268,270,326,330,334,338,358,362,366,369,371],"4/8_chimbal_fill":[18,22,26,35,37,41,43,45,55,57,81,82,83,84,86,220,235,236,250,251,256,258,260,262,264,266,271,326,330,332,333,334,358,362],"4/8_meiaLua":[18,22,26,30,35,37,41,43,45,49,55,57,63,65,122,126,130,134,138,140,142,144,146,148,150,152,154,158,162,166,171,173,175,177,179,181,183,185,326,330,334,338,358,362,366,369,371],"4/8_meiaLua_fill":[18,22,26,35,37,41,43,45,55,57,81,82,83,84,86,122,126,138,140,142,144,154,158,162,171,173,175,177,181,185,218,219,220,231,232,233,234,246,247,262,326,330,346,358,362],"4/8_brushCravo":[273,277,281,285],"4/8_brushCravo_fill":[273,277,281,285],"4/8_cravo":[35,43,56,64,71,75,79,83,273,277,281,285],"4/8_cravo_fill":[35,43,56,64,71,75,79,83,273,277,281,285],"6/8":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,69,71,73,77,79,83,85,89,91,95,97],"6/8_fill":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,69,71,73,77,79,83,85,89,91,95,97],"6/8_brush":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,69,71,73,77,79,83,85,89,91,95,97,276,401,403,405,407,409,411,413,415,417,419,421,423],"6/8_brush_fill":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,69,71,73,77,79,83,85,89,91,95,97,276,401,403,405,407,409,411,413,415,417,419,421,423],"6/8_aro":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,69,71,73,77,79,83,85,89,91,95,97,401,403,405,407,409,411,413,415,417,419,421,423,457,469,526,536,538],"6/8_aro_fill":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,69,71,73,77,79,83,85,89,91,95,97,401,403,405,407,409,411,413,415,417,419,421,423,457,465,467,471,526,536,538,544],"6/8_caixa":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,69,71,73,77,79,83,85,89,91,95,97,401,403,405,407,409,411,413,415,417,419,421,423,482,494,526,536,538],"6/8_caixa_fill":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,77,79,83,85,86,89,91,120,121,122,123,124,126,388,394,398,401,403,405,407,409,411,415,417,421,482,488,494,498,499,526,536,540,542,546],"6/8_chimbal":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,69,71,73,77,79,83,85,89,91,95,97,376,378,380,382,384,386,388,390,392,394,396,398,482,494,526,536,538],"6/8_chimbal_fill":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,77,79,83,85,86,89,91,120,121,122,123,124,126,322,342,359,376,378,380,382,386,388,390,398,482,490,494,499,523,526,536,538,546],"6/8_meiaLua":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,69,71,73,77,79,83,85,89,91,95,97,176,182,188,194,203,205,209,211,215,217,221,223,227,229,231,233,235,237,239,241,243,245,247,249,251,253,255,257,259,261,263,265,267,269,271,273,482,494,526,536,538],"6/8_meiaLua_fill":[26,30,32,36,38,42,44,51,53,55,57,59,61,63,65,67,77,79,83,85,89,91,86,120,121,122,123,124,126,176,182,188,203,205,209,211,227,229,231,233,235,237,251,253,255,257,259,261,263,265,323,324,342,343,346,347,365,366,396,482,488,489,494,495,526,536],"6/8_brushCravo":[401,403,405,407,409,411,413,415,417,419,421,423],"6/8_brushCravo_fill":[401,403,405,407,409,411,413,415,417,419,421,423],"6/8_cravo":[51,57,63,69,78,86,90,98,105,109,117,121,401,403,405,407,409,411,413,415,417,419,421,423],"6/8_cravo_fill":[51,57,63,69,78,86,90,98,105,109,117,121,401,403,405,407,409,411,413,415,417,419,421,423],"8-beat":[18,24,35,39,47,58,62,66],"8-beat_fill":[18,24,35,39,47,58,62,66],"8-beat_brush":[18,24,35,39,47,58,62,66,188,273,277,281,285],"8-beat_brush_fill":[18,24,35,39,47,58,62,66,188,273,277,281,285],"8-beat_aro":[18,24,35,39,47,58,62,66,273,277,281,285,319,358,364],"8-beat_aro_fill":[18,24,35,39,47,58,62,66,264,273,277,287,317,319,358,364],"8-beat_caixa":[18,24,35,39,47,58,62,66,273,275,277,279,281,283,285,287,328,336,358,364],"8-beat_caixa_fill":[18,24,35,39,58,62,81,82,83,86,253,264,273,275,277,278,279,328,336,352,358,364,368],"8-beat_chimbal":[18,24,35,39,47,58,62,66,256,260,264,268,328,336,358,364],"8-beat_chimbal_fill":[18,24,35,39,58,62,81,82,83,86,236,256,260,264,328,332,336,337,344,352,358,364,368],"8-beat_meiaLua":[18,24,35,39,47,58,62,66,124,132,137,145,156,160,164,168,171,175,179,183,328,336,358,364],"8-beat_meiaLua_fill":[118,24,35,39,58,62,81,82,83,86,124,137,145,156,160,171,175,219,220,232,233,234,235,245,246,247,248,270,326,327,328,329,358],"16-beat":[18,25,26,35,39,42,44,47,57,62],"16-beat_fill":[18,25,26,35,39,42,44,47,57,62],"16-beat_brush":[18,25,26,35,39,42,44,47,57,62,188,273,275,277,279,281,283,285,287],"16-beat_brush_fill":[18,25,26,35,39,42,44,47,57,62,188,273,275,277,279,281,283,285,287],"16-beat_aro":[18,25,26,35,39,42,44,47,57,62,273,275,277,279,281,283,285,287,291,293,295,297,299,301,303,305,311,358,365,366],"16-beat_aro_fill":[18,25,26,35,39,42,44,47,57,62,270,273,275,277,279,281,283,285,291,293,295,297,299,301,303,311,319,358,365,366],"16-beat_caixa":[18,25,26,35,39,42,44,47,57,62,273,275,277,279,281,283,285,287,291,293,295,297,299,301,303,305,328,336,358,365,366],"16-beat_caixa_fill":[18,25,26,35,39,42,44,57,80,81,82,83,84,86,252,270,273,275,277,279,281,291,293,295,297,299,328,329,336,351,352,358,365,366,367],"16-beat_chimbal":[18,25,26,35,39,42,44,47,57,62,256,258,260,262,264,266,268,270,328,336,358,365,366],"16-beat_chimbal_fill":[18,25,26,35,39,42,44,57,80,81,82,83,84,86,220,235,236,249,250,251,256,258,260,262,264,270,328,329,358,365,366,367],"16-beat_meiaLua":[18,25,26,35,39,42,44,47,57,62,120,124,128,132,139,143,147,151,155,157,159,161,163,165,167,169,171,173,175,177,179,181,183,185,189,191,193,195,197,199,201,203,328,336,358,365,366],"16-beat_meiaLua_fill":[18,25,26,35,39,42,44,57,80,81,82,83,84,86,120,124,139,143,155,157,159,171,173,175,177,189,191,193,219,232,233,234,245,246,247,271,328,329,333,337,358],"Balada":[18,24,35,37,41,43,47,49,53,55,57,59,61,63,65,67],"Balada_fill":[18,24,35,37,41,43,47,49,53,55,57,59,61,63,65,67],"Balada_brush":[18,24,35,37,41,43,47,49,53,55,57,59,61,63,65,67,188,273,277,281,285],"Balada_brush_fill":[18,24,35,37,41,43,47,49,53,55,57,59,61,63,65,67,188,273,277,281,285],"Balada_aro":[18,24,35,37,41,43,47,49,53,55,57,59,61,63,65,67,188,273,277,281,285,319,358,364],"Balada_aro_fill":[18,24,35,37,41,43,47,49,53,55,57,59,61,63,65,67,188,270,273,277,281,285,319,321,358,364],"Balada_caixa":[18,24,35,37,41,43,47,49,53,55,57,59,61,63,65,67,273,275,277,279,281,283,285,287,328,336,358,364],"Balada_caixa_fill":[18,24,35,37,41,43,53,55,57,59,61,80,81,82,83,84,86,253,264,273,275,277,279,328,336,352,358,364,368],"Balada_chimbal":[18,24,35,37,41,43,47,49,53,55,57,59,61,63,65,67,256,260,264,268,328,336,358,364],"Balada_chimbal_fill":[18,24,35,37,41,43,53,55,57,59,61,80,81,82,83,84,86,237,252,253,256,260,264,328,336,351,352,358,364,366],"Balada_meiaLua":[18,24,35,37,41,43,47,49,53,55,57,59,61,63,65,67,124,132,137,145,156,160,164,168,171,175,179,183,328,336,358,364],"Balada_meiaLua_fill":[18,24,35,37,41,43,53,55,57,59,61,80,81,82,83,84,86,124,137,145,156,160,171,175,179,237,252,253,328,332,333,335,336,358,364,368],"Baiao":[18,21,22,26,29,30,35,39,41,43,47,49,53,55,57,61,63,65],"Baiao_fill":[18,21,22,26,29,30,35,39,41,43,47,49,53,55,57,61,63,65],"Baiao_brush":[18,21,22,26,29,30,35,39,41,43,47,49,53,55,57,61,63,65,273,275,277,279,281,283,285,287],"Baiao_brush_fill":[18,21,22,26,29,30,35,39,41,43,47,49,53,55,57,61,63,65,273,275,277,279,281,283,285,287],"Baiao_aro":[18,21,22,26,29,30,35,39,41,43,47,49,53,55,57,61,63,65,273,275,277,279,281,283,285,287,313,321,358,361,366,369],"Baiao_aro_fill":[18,21,22,26,29,30,35,39,41,43,47,49,53,55,57,61,63,65,270,273,275,277,279,281,283,285,297,299,301,303,313,321,358,361,366,369],"Baiao_caixa":[18,21,22,26,29,30,35,39,41,43,47,49,53,55,57,61,63,65,273,275,277,279,281,283,285,287,291,293,295,297,299,301,303,305,330,338,358,361,366,369],"Baiao_caixa_fill":[18,21,22,26,35,39,41,43,53,55,57,61,80,81,82,83,84,86,268,273,275,277,279,281,283,291,293,295,297,299,301,330,334,338,339,348,350,352,354,358,361,366,370],"Baiao_chimbal":[18,21,22,26,29,30,35,39,41,43,47,49,53,55,57,61,63,65,256,258,260,262,264,266,268,270,330,338,358,361,366,369],"Baiao_chimbal_fill":[18,21,22,26,35,39,41,43,53,55,57,61,80,81,82,83,84,86,235,236,237,250,251,256,258,260,262,268,330,332,333,334,358,361],"Baiao_meiaLua":[18,21,22,26,29,30,35,39,41,43,47,49,53,55,57,61,63,65,122,126,130,134,137,141,145,149,155,157,159,161,163,165,167,169,171,173,175,177,179,181,183,185,330,338,358,361,366,369],"Baiao_meiaLua_fill":[18,21,22,26,35,39,41,43,53,55,57,61,80,81,82,83,84,86,122,126,137,141,155,157,159,161,171,173,175,177,179,181,195,197,218,219,220,231,232,233,234,246,247,268,330,346,358,361],"Funk":[18,25,28,35,39,42,44,47,57,62],"Funk_fill":[18,25,28,35,39,42,44,47,57,62],"Funk_brush":[18,25,28,35,39,42,44,47,57,62,188,273,275,277,279,281,283,285,287],"Funk_brush_fill":[18,25,28,35,39,42,44,47,57,62,188,273,275,277,279,281,283,285,287],"Funk_aro":[18,25,28,35,39,42,44,47,57,62,273,275,277,279,281,283,285,287,311,358,365,368],"Funk_aro_fill":[18,25,28,35,39,42,44,47,57,62,270,273,275,277,279,281,283,285,311,358,365,368],"Funk_caixa":[18,25,28,35,39,42,44,47,57,62,273,275,277,279,281,283,285,287,328,336,358,365,368],"Funk_caixa_fill":[18,25,28,35,39,42,44,57,62,81,82,83,84,86,264,273,275,277,279,328,332,333,336,337,339,352,358,365,368,372],"Funk_chimbal":[18,25,28,35,39,42,44,47,57,62,256,260,264,268,328,336,358,365,368],"Funk_chimbal_fill":[18,25,28,35,39,42,44,47,57,62,86,237,252,253,256,260,262,328,331,332,335,336,358,367,368],"Funk_meiaLua":[18,25,28,35,39,42,44,47,57,62,120,124,128,132,139,143,147,151,155,157,159,161,163,165,167,169,171,175,179,183,328,336,358,365,368],"Funk_meiaLua_fill":[18,25,28,35,39,42,44,57,81,82,83,84,86,120,124,128,139,143,155,157,159,161,171,175,179,218,219,233,234,248,249,328,331,332,358,373],"Marcha":[18,22,26,30,35,37,41,43,47,49,55,57,61,63,67],"Marcha_fill":[18,22,26,30,35,37,41,43,47,49,55,57,61,63,67],"Marcha_brush":[18,22,26,30,35,37,41,43,47,49,55,57,61,63,67,188,273,277,281,285],"Marcha_brush_fill":[18,22,26,30,35,37,41,43,47,49,55,57,61,63,67,188,273,277,281,285],"Marcha_aro":[18,22,26,30,35,37,41,43,47,49,55,57,61,63,67,273,275,277,279,281,283,285,287,310,313,317,358,362,366,370],"Marcha_aro_fill":[18,22,26,30,35,37,41,43,47,49,55,57,61,63,67,270,273,275,277,279,281,283,285,310,313,317,319,358,362,366,372],"Marcha_caixa":[18,22,26,30,35,37,41,43,47,49,55,57,61,63,67,273,275,277,279,281,283,285,287,327,330,334,358,362,366,370],"Marcha_caixa_fill":[18,22,26,35,37,41,43,55,57,61,79,81,82,83,84,86,268,273,275,277,279,281,283,327,332,336,348,358,362,364,368,372],"Marcha_chimbal":[18,22,26,30,35,37,41,43,47,49,55,57,61,63,67,256,260,264,268,327,330,334,358,362,366,370],"Marcha_chimbal_fill":[18,22,26,35,37,41,43,55,57,61,79,81,82,83,84,86,219,220,234,249,250,256,260,264,269,327,332,348,354,358,362,364],"Marcha_meiaLua":[18,22,26,30,35,37,41,43,47,49,55,57,61,63,67,122,126,130,134,137,141,145,149,155,157,159,161,163,165,167,169,171,175,179,183,327,330,334,358,362,366,370],"Marcha_meiaLua_fill":[18,22,26,35,37,41,43,55,57,61,79,81,82,83,84,86,122,126,137,141,155,157,159,171,175,219,231,232,233,234,245,246,247,269,328,329,344,358,373],"Valsa":[14,22,27,31,35,46,50],"Valsa_fill":[14,22,27,31,35,46,50],"Valsa_brush":[14,22,27,31,35,46,50,144,209,211,213,215,217,219],"Valsa_brush_fill":[14,22,27,31,35,46,50,144,209,211,213,215,217,219],"Valsa_aro":[14,22,27,31,35,46,50,209,211,213,215,217,219,239,274],"Valsa_aro_fill":[14,22,27,31,35,46,50,209,211,213,215,217,219,239,274],"Valsa_caixa":[14,22,27,31,35,46,50,209,211,213,215,217,219,252,274,282],"Valsa_caixa_fill":[14,27,31,46,61,62,63,66,204,209,211,213,215,219,250,256,274,278,280,284],"Valsa_chimbal":[14,22,27,31,35,46,50,196,200,204,252,274,282],"Valsa_chimbal_fill":[14,27,31,46,61,62,63,66,180,191,196,200,206,250,254,274,278],"Valsa_meiaLua":[14,22,27,31,35,46,50,96,105,113,120,124,128,131,135,139,146,150,154,252,274,282],"Valsa_meiaLua_fill":[14,27,31,46,61,62,63,66,96,105,120,124,131,135,139,146,168,180,189,191,252,263,274]}');
-const ritmosNomes = Object.keys(ritmosJson);
-var _somSolo;
 
-function setBeats(ritmoMatrix) {//compasso
-    if (ritmoMatrix === '6/8')
-        measureLength.value = 24;
-    else if (ritmoMatrix === '3/4' || ritmoMatrix === 'Valsa')
-        measureLength.value = 12;
-    else
-        measureLength.value = 16;
-        
-    measureLength.dispatchEvent(eventoChange);
-}
+document.addEventListener('DOMContentLoaded', async () => {
+    const drumMachine = new DrumMachine();
+    await drumMachine.init();
 
-function selecionarRitmo(ritmo, virada = false) {
-    if (_trocarRitmo && ritmo && ritmo !== undefined) {
-        _viradaRitmo = fazerViradaBateria(_ritmoSelecionado);
+    // Cache de elementos
+    const playPauseButton = document.getElementById('play-pause');
+    const bpmInput = document.getElementById('bpm');
+    const clearButton = document.getElementById('clear');
+    const tracksContainer = document.getElementById('tracks');
+    const numStepsInput = document.getElementById('num-steps');
+    const rhythmButtons = document.querySelectorAll('.rhythm-button');
+    const saveRhythmButton = document.getElementById('save-rhythm');
 
-        if (virada === false)
-            _trocarRitmo = false;
+    let selectedRhythm = 'A';
+    let pendingRhythm = null;
+    let pendingButton = null;
 
-        try {
-            let ritmoMatrix = ritmo;
-            if (ritmo.includes('_'))
-                ritmoMatrix = ritmo.split('_')[0];
+    // Função para criar um ritmo em branco
+    function createEmptyRhythm(bpm, numSteps) {
+        const rhythmData = {};
+        drumMachine.instruments.forEach(inst => {
+            rhythmData[inst.name.toLowerCase().replace(/ /g, '')] = Array(numSteps).fill(0);
+        });
+        rhythmData.bpm = bpm;
+        rhythmData.numSteps = numSteps;
+        return rhythmData;
+    }
 
-            if (ritmoMatrix != 'null') {
-                setBeats(ritmoMatrix);
+    // Garante que os ritmos A, B, C, D existam em branco
+    ['A', 'B', 'C', 'D'].forEach(r => {
+        const key = `rhythm-${r}`;
+        if (!localStorage.getItem(key)) {
+            const bpm = parseInt(bpmInput.value);
+            const numSteps = parseInt(numStepsInput.value);
+            localStorage.setItem(key, JSON.stringify(createEmptyRhythm(bpm, numSteps)));
+        }
+    });
 
-                let tabelaBateria = document.getElementById('tracker-table');
-                let tdsAtivados = document.getElementsByClassName('tracker-enabled');
+    // Aplica BPM dobrado ao carregar a página
+    drumMachine.setBPM(parseInt(bpmInput.value));
 
-                Array.from(tdsAtivados).forEach((tdAtivado) => {
-                    tdAtivado.classList.remove('tracker-enabled');
+    // Delegação de eventos para steps
+    tracksContainer.addEventListener('click', (event) => {
+        if (event.target.classList.contains('step')) {
+            toggleStep(event.target);
+        }
+    });
+
+    // Função para criar uma linha de instrumento usando DocumentFragment
+    function createTrack(instrument) {
+        const track = document.createElement('div');
+        track.classList.add('track');
+
+        const label = document.createElement('label');
+        label.innerHTML = `${instrument.name} <i class="${instrument.icon}" title="${instrument.name}"></i>`;
+        track.appendChild(label);
+
+        const stepsFragment = document.createDocumentFragment();
+        const currentSteps = parseInt(numStepsInput.value);
+        for (let i = 1; i <= currentSteps; i++) {
+            const step = document.createElement('div');
+            step.classList.add('step');
+            step.textContent = i;
+            step.dataset.step = i;
+            step.dataset.volume = 0;
+            stepsFragment.appendChild(step);
+        }
+        track.appendChild(stepsFragment);
+        return track;
+    }
+
+    // Inicializa as tracks usando DocumentFragment
+    function initializeTracks() {
+        const fragment = document.createDocumentFragment();
+        drumMachine.instruments.forEach(inst => {
+            fragment.appendChild(createTrack(inst));
+        });
+        tracksContainer.innerHTML = '';
+        tracksContainer.appendChild(fragment);
+    }
+
+    // Função para ativar/desativar um passo
+    function toggleStep(step) {
+        let volume = parseInt(step.dataset.volume);
+        volume = (volume + 1) % 4; // Agora vai de 0 a 3
+        step.dataset.volume = volume;
+        step.classList.remove('active', 'low-volume', 'third-volume');
+        if (volume === 1) {
+            step.classList.add('active');
+        } else if (volume === 2) {
+            step.classList.add('low-volume');
+        } else if (volume === 3) {
+            step.classList.add('third-volume');
+        }
+    }
+
+    // Limpar todos os steps
+    function clearSteps() {
+        tracksContainer.querySelectorAll('.step').forEach(step => {
+            step.classList.remove('active', 'low-volume');
+            step.dataset.volume = 0;
+        });
+    }
+
+    // Configurar callback para troca de ritmo
+    drumMachine.onMeasureEnd = () => {
+        if (pendingRhythm) {
+            loadRhythm(`rhythm-${pendingRhythm}`);
+            pendingRhythm = null;
+            if (pendingButton) {
+                pendingButton.classList.remove('pending');
+                pendingButton = null;
+            }
+        }
+    };
+
+    // Função para iniciar/parar a reprodução
+    function togglePlay() {
+        if (!drumMachine.isPlaying) {
+            drumMachine.start();
+            playPauseButton.textContent = 'Stop';
+        } else {
+            drumMachine.stop();
+            playPauseButton.textContent = 'Play';
+            // Retornar ao estado inicial visual
+            // Não há steps tocando, mas pode garantir que o passo inicial está pronto
+            // Se quiser, pode desmarcar todos os steps, mas normalmente só o currentStep volta ao início
+        }
+    }
+
+    // Função para salvar o ritmo no localStorage
+    function saveRhythm() {
+        const rhythmData = {};
+        tracksContainer.querySelectorAll('.track').forEach(track => {
+            const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
+            const stepsData = Array.from(track.querySelectorAll('.step')).map(step => parseInt(step.dataset.volume));
+            rhythmData[instrument] = stepsData;
+        });
+        rhythmData.bpm = parseInt(bpmInput.value); // Salva o BPM
+        rhythmData.numSteps = parseInt(numStepsInput.value); // Salva a quantidade de tracks
+        localStorage.setItem(`rhythm-${selectedRhythm}`, JSON.stringify(rhythmData));
+    }
+
+    // Função para selecionar um botão de ritmo
+    function selectRhythm(rhythmButton, rhythmKey) {
+        if (pendingButton) {
+            pendingButton.classList.remove('pending');
+        }
+        rhythmButtons.forEach(button => button.classList.remove('selected'));
+        rhythmButton.classList.add('selected');
+        pendingRhythm = rhythmKey.replace('rhythm-', '').toUpperCase();
+        selectedRhythm = pendingRhythm;
+        pendingButton = rhythmButton;
+        // Se não estiver tocando, muda o ritmo instantaneamente
+        if (!drumMachine.isPlaying) {
+            loadRhythm(`rhythm-${selectedRhythm}`);
+        } else {
+            rhythmButton.classList.add('pending');
+        }
+    }
+
+    // Função para carregar o ritmo do localStorage
+    function loadRhythm(rhythmKey) {
+        const savedRhythm = localStorage.getItem(rhythmKey);
+        if (savedRhythm) {
+            const rhythmData = JSON.parse(savedRhythm);
+            // Se a quantidade de tracks estiver salva, atualiza o input e DrumMachine
+            if (typeof rhythmData.numSteps === 'number') {
+                numStepsInput.value = rhythmData.numSteps;
+                drumMachine.setNumSteps(rhythmData.numSteps);
+                initializeTracks();
+            }
+            tracksContainer.querySelectorAll('.track').forEach(track => {
+                const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
+                const stepsData = rhythmData[instrument] || [];
+                track.querySelectorAll('.step').forEach((step, index) => {
+                    const volume = stepsData[index] !== undefined ? stepsData[index] : 0;
+                    step.dataset.volume = volume;
+                    step.classList.remove('active', 'low-volume');
+                    if (volume === 1) {
+                        step.classList.add('active');
+                    } else if (volume === 2) {
+                        step.classList.add('low-volume');
+                    }
                 });
-
-                let tdsAtivar = tabelaBateria.getElementsByTagName('td');
-                let numerosIndex = ritmosJson[ritmo];
-
-                numerosIndex.forEach((numeroIndex) => {
-                    tdsAtivar[numeroIndex].classList.add('tracker-enabled');
-                });
+            });
+            // Se o BPM estiver salvo, atualiza o input e DrumMachine
+            if (typeof rhythmData.bpm === 'number') {
+                bpmInput.value = rhythmData.bpm;
+                drumMachine.setBPM(rhythmData.bpm);
+            } else {
+                drumMachine.setBPM(parseInt(bpmInput.value));
             }
-        } catch { }
-    }
-
-    mudarTempoCompasso();
-}
-
-
-function mudarTempoCompasso(alteradoRange) {
-    if (alteradoRange) {
-        _tempo = parseInt(bpmRange.value);
-        bpm.value = bpmRange.value;
-
-    }
-    else {
-        _tempo = parseInt(bpm.value);
-        bpmRange.value = bpm.value;
-    }
-
-    let bpmValor = 60000 / _tempo;
-
-    if (selectRitmo.value === '6/8')
-        bpmValor = bpmValor / 2;
-
-    lightCompasso.style.animation = 'blink ' + bpmValor + 'ms infinite';    
-}
-
-function fazerViradaBateria(ritmoSelecionado) {
-    var viradaRitmo = ritmoSelecionado + '_fill';
-    return viradaRitmo;
-}
-
-function fecharChimbal(instrumentName, sourceChimbalAberto, triggerTime) {
-    if (instrumentName === 'chimbal' || instrumentName === 'chimbal2')
-        if (_chimbalIsAberto) {
-            sourceChimbalAberto.stop(triggerTime);
-            _chimbalIsAberto = false;
-        }
-}
-
-function pararBaixo(ctx) {
-    if (_sourceBaixo) {
-        //let node = _sourceBaixo.context.createGain();
-        //_sourceBaixo.connect(node);
-        //node.gain.setValueAtTime(1, ctx.currentTime);
-        //node.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1);
-
-        // Parar o �udio ap�s o fading out
-        //_sourceBaixo.stop(ctx.currentTime + 0.1);
-        //_sourceBaixo.stop(ctx.currentTime + 0.05);
-        _sourceBaixo.stop();
-    }
-}
-
-function guardarChimbalAberto(instrumentName, instrument) {
-    if (instrumentName === 'aberto') {
-        _sourceChimbalAberto = instrument;
-        _chimbalIsAberto = true;
-    }
-}
-
-function guardarBaixo(instrument) {
-    _sourceBaixo = instrument;
-}
-
-function mudarRitmo(ritmo) {
-    _trocarRitmo = true;
-
-    if (ritmo === '')
-        _ritmoSelecionado = selectRitmo.value;
-    else
-        _ritmoSelecionado = selectRitmo.value + "_" + ritmo;
-
-    selecionarRitmo(_ritmoSelecionado);
-}
-
-function gerarRitmosNomes(ritmosNomes) {
-    selectRitmo.innerHTML = "";
-
-    if (_instrumentoSelecionado === 'orgao') {
-        for (var i = 0, len = ritmosNomes.length; i < len; i++) {
-            if (ritmosNomes[i].includes('/') && !ritmosNomes[i].includes('_')) {
-                let opt = document.createElement('option');
-                opt.value = ritmosNomes[i];
-                opt.textContent += ritmosNomes[i];
-                selectRitmo.appendChild(opt);
-            }
+        } else {
+            clearSteps();
         }
     }
-    else {
-        for (var i = 0, len = ritmosNomes.length; i < len; i++) {
-            if (!ritmosNomes[i].includes('_')) {
-                let opt = document.createElement('option');
-                opt.value = ritmosNomes[i];
-                opt.textContent += ritmosNomes[i];
-                selectRitmo.appendChild(opt);
-            }
+
+    // Função para iniciar/parar a reprodução
+    function togglePlay() {
+        if (!drumMachine.isPlaying) {
+            drumMachine.start();
+            playPauseButton.textContent = 'Stop';
+        } else {
+            drumMachine.stop();
+            playPauseButton.textContent = 'Play';
         }
     }
-}
 
-function verificarETocarBateria_2(tunerAcompanhamento, instrumentoAcompanhamento) {
-    if (iconVolumeMute.style.display === 'none') {
-        if (tunerDiv.style.display !== 'none') {
-            if (tunerAcompanhamento) {
-                // if (autoTunerCheck.checked === false)
-                //     autoTunerCheck.checked = true;
+    // Event listeners para os botões de ritmo
+    document.getElementById('rhythm-a').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-a'), 'rhythm-a'));
+    document.getElementById('rhythm-b').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-b'), 'rhythm-b'));
+    document.getElementById('rhythm-c').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-c'), 'rhythm-c'));
+    document.getElementById('rhythm-d').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-d'), 'rhythm-d'));
 
-                _instrumentoSelecionado = instrumentoAcompanhamento;
-                _acordeAntesSelecionado = verificarAcompanhamentoEtocar(notaTuner.innerText, _acordeAntesSelecionado);
+    saveRhythmButton.addEventListener('click', saveRhythm);
+    playPauseButton.addEventListener('click', togglePlay);
+    bpmInput.addEventListener('change', () => drumMachine.setBPM(parseInt(bpmInput.value)));
+    clearButton.addEventListener('click', clearSteps);
+    numStepsInput.addEventListener('change', () => {
+        drumMachine.setNumSteps(parseInt(numStepsInput.value));
+        initializeTracks();
+    });
 
-                //autoTunerCheck.dispatchEvent(eventoChange);
-            }
-            else {
-                // if (autoTunerCheck.checked) {
-                //     pararOsAcordes();
-                //     autoTunerCheck.checked = false;
-                //     autoTunerCheck.dispatchEvent(eventoChange);
-                // }
-            }
-        }
-
-        return true;
-    }
-}
-
-function playGuitarra() {
-    stopGuitarra();
-
-    if (_guitarraSelecionado && _acordeNotas) {
-        let notas = _acordeNotas;
-        //notas.sort();
-        primeiraGuitar.frequency = notasFrequencias[notas[0].replace('#', '_')];
-        quintaGuitar.frequency = notasFrequencias[notas[2].replace('#', '_') + '1'];
-        primeiraGuitar.play();
-        quintaGuitar.play();
-        _guitarraParado = false;
-    }
-}
-
-function stopGuitarra(forcar) {
-    if (!_guitarraParado || forcar) {
-        primeiraGuitar.stop();
-        quintaGuitar.stop();
-        _guitarraParado = true;
-    }
-}
+    // Carregar o ritmo selecionado ao carregar a página
+    rhythmButtons.forEach(button => button.classList.remove('selected'));
+    document.getElementById('rhythm-a').classList.add('selected');
+    initializeTracks();
+    loadRhythm('rhythm-A');
+});
