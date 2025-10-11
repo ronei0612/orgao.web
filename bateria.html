@@ -241,6 +241,7 @@
                     rhythmData[instrument] = stepsData;
                 });
                 rhythmData.bpm = parseInt(bpmInput.value); // Salva o BPM
+                rhythmData.numSteps = parseInt(numStepsInput.value); // Salva a quantidade de tracks
                 localStorage.setItem(`rhythm-${selectedRhythm}`, JSON.stringify(rhythmData));
             }
 
@@ -267,6 +268,12 @@
                 const savedRhythm = localStorage.getItem(rhythmKey);
                 if (savedRhythm) {
                     const rhythmData = JSON.parse(savedRhythm);
+                    // Se a quantidade de tracks estiver salva, atualiza o input e DrumMachine
+                    if (typeof rhythmData.numSteps === 'number') {
+                        numStepsInput.value = rhythmData.numSteps;
+                        drumMachine.setNumSteps(rhythmData.numSteps);
+                        initializeTracks();
+                    }
                     tracksContainer.querySelectorAll('.track').forEach(track => {
                         const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
                         const stepsData = rhythmData[instrument] || [];
