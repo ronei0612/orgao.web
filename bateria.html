@@ -129,23 +129,27 @@
             const drumMachine = new DrumMachine();
             await drumMachine.init();
 
+            // Cache de elementos
             const playPauseButton = document.getElementById('play-pause');
             const bpmInput = document.getElementById('bpm');
             const clearButton = document.getElementById('clear');
             const tracksContainer = document.getElementById('tracks');
             const numStepsInput = document.getElementById('num-steps');
-
-            const rhythmAButton = document.getElementById('rhythm-a');
-            const rhythmBButton = document.getElementById('rhythm-b');
-            const rhythmCButton = document.getElementById('rhythm-c');
-            const rhythmDButton = document.getElementById('rhythm-d');
+            const rhythmButtons = document.querySelectorAll('.rhythm-button');
             const saveRhythmButton = document.getElementById('save-rhythm');
 
             let selectedRhythm = 'A';
             let pendingRhythm = null;
             let pendingButton = null;
 
-            // Função para criar uma linha de instrumento
+            // Delegação de eventos para steps
+            tracksContainer.addEventListener('click', (event) => {
+                if (event.target.classList.contains('step')) {
+                    toggleStep(event.target);
+                }
+            });
+
+            // Função para criar uma linha de instrumento usando DocumentFragment
             function createTrack(instrument) {
                 const track = document.createElement('div');
                 track.classList.add('track');
@@ -154,43 +158,49 @@
                 label.innerHTML = `${instrument.name} <i class="${instrument.icon}" title="${instrument.name}"></i>`;
                 track.appendChild(label);
 
+                const stepsFragment = document.createDocumentFragment();
                 const currentSteps = parseInt(numStepsInput.value);
                 for (let i = 1; i <= currentSteps; i++) {
                     const step = document.createElement('div');
                     step.classList.add('step');
                     step.textContent = i;
                     step.dataset.step = i;
-                    step.dataset.volume = 0; // 0: off, 1: full, 2: low
-                    step.addEventListener('click', toggleStep);
-                    track.appendChild(step);
+                    step.dataset.volume = 0;
+                    stepsFragment.appendChild(step);
                 }
-
-                tracksContainer.appendChild(track);
+                track.appendChild(stepsFragment);
+                return track;
             }
 
-            // Função para inicializar as tracks
+            // Inicializa as tracks usando DocumentFragment
             function initializeTracks() {
+                const fragment = document.createDocumentFragment();
+                drumMachine.instruments.forEach(inst => {
+                    fragment.appendChild(createTrack(inst));
+                });
                 tracksContainer.innerHTML = '';
-                drumMachine.instruments.forEach(createTrack);
+                tracksContainer.appendChild(fragment);
             }
-
-            initializeTracks();
 
             // Função para ativar/desativar um passo
-            function toggleStep(event) {
-                const step = event.target;
+            function toggleStep(step) {
                 let volume = parseInt(step.dataset.volume);
-
-                volume = (volume + 1) % 3; // Cicla entre 0, 1, 2
+                volume = (volume + 1) % 3;
                 step.dataset.volume = volume;
-
                 step.classList.remove('active', 'low-volume');
-
                 if (volume === 1) {
                     step.classList.add('active');
                 } else if (volume === 2) {
                     step.classList.add('low-volume');
                 }
+            }
+
+            // Limpar todos os steps
+            function clearSteps() {
+                tracksContainer.querySelectorAll('.step').forEach(step => {
+                    step.classList.remove('active', 'low-volume');
+                    step.dataset.volume = 0;
+                });
             }
 
             // Configurar callback para troca de ritmo
@@ -209,26 +219,25 @@
             function togglePlay() {
                 if (!drumMachine.isPlaying) {
                     drumMachine.start();
-                    playPauseButton.textContent = 'Pause';
+                    playPauseButton.textContent = 'Stop';
                 } else {
                     drumMachine.stop();
                     playPauseButton.textContent = 'Play';
+                    // Retornar ao estado inicial visual
+                    // Não há steps tocando, mas pode garantir que o passo inicial está pronto
+                    // Se quiser, pode desmarcar todos os steps, mas normalmente só o currentStep volta ao início
                 }
             }
 
             // Função para salvar o ritmo no localStorage
             function saveRhythm() {
                 const rhythmData = {};
-                document.querySelectorAll('.track').forEach(track => {
+                tracksContainer.querySelectorAll('.track').forEach(track => {
                     const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
-                    const stepsData = [];
-                    track.querySelectorAll('.step').forEach(step => {
-                        stepsData.push(parseInt(step.dataset.volume));
-                    });
+                    const stepsData = Array.from(track.querySelectorAll('.step')).map(step => parseInt(step.dataset.volume));
                     rhythmData[instrument] = stepsData;
                 });
                 localStorage.setItem(`rhythm-${selectedRhythm}`, JSON.stringify(rhythmData));
-                console.log(`Ritmo ${selectedRhythm} salvo!`);
             }
 
             // Função para carregar o ritmo do localStorage
@@ -236,15 +245,13 @@
                 const savedRhythm = localStorage.getItem(rhythmKey);
                 if (savedRhythm) {
                     const rhythmData = JSON.parse(savedRhythm);
-                    document.querySelectorAll('.track').forEach(track => {
+                    tracksContainer.querySelectorAll('.track').forEach(track => {
                         const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
                         const stepsData = rhythmData[instrument] || [];
-
                         track.querySelectorAll('.step').forEach((step, index) => {
                             const volume = stepsData[index] !== undefined ? stepsData[index] : 0;
                             step.dataset.volume = volume;
                             step.classList.remove('active', 'low-volume');
-
                             if (volume === 1) {
                                 step.classList.add('active');
                             } else if (volume === 2) {
@@ -252,10 +259,8 @@
                             }
                         });
                     });
-                }
-                else {
-                    // faça clicar no botão clearButton
-                    clearButton.dispatchEvent(new Event('click'));
+                } else {
+                    clearSteps();
                 }
             }
 
@@ -264,53 +269,33 @@
                 if (pendingButton) {
                     pendingButton.classList.remove('pending');
                 }
-
-                document.querySelectorAll('.rhythm-button').forEach(button => {
-                    button.classList.remove('selected');
-                });
+                rhythmButtons.forEach(button => button.classList.remove('selected'));
                 rhythmButton.classList.add('selected');
-                pendingRhythm = rhythmKey.replace('rhythm-', '').toUpperCase(); // Define o ritmo pendente
-                selectedRhythm = rhythmKey.replace('rhythm-', '').toUpperCase();
-                rhythmButton.classList.add('pending'); // Adiciona a classe de piscar
+                pendingRhythm = rhythmKey.replace('rhythm-', '').toUpperCase();
+                selectedRhythm = pendingRhythm;
+                rhythmButton.classList.add('pending');
                 pendingButton = rhythmButton;
             }
 
             // Event listeners para os botões de ritmo
-            rhythmAButton.addEventListener('click', () => selectRhythm(rhythmAButton, 'rhythm-a'));
-            rhythmBButton.addEventListener('click', () => selectRhythm(rhythmBButton, 'rhythm-b'));
-            rhythmCButton.addEventListener('click', () => selectRhythm(rhythmCButton, 'rhythm-c'));
-            rhythmDButton.addEventListener('click', () => selectRhythm(rhythmDButton, 'rhythm-d'));
+            document.getElementById('rhythm-a').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-a'), 'rhythm-a'));
+            document.getElementById('rhythm-b').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-b'), 'rhythm-b'));
+            document.getElementById('rhythm-c').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-c'), 'rhythm-c'));
+            document.getElementById('rhythm-d').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-d'), 'rhythm-d'));
 
-            // Event listener para o botão de salvar
             saveRhythmButton.addEventListener('click', saveRhythm);
-
             playPauseButton.addEventListener('click', togglePlay);
-
-            bpmInput.addEventListener('change', () => {
-                const bpm = parseInt(bpmInput.value);
-                drumMachine.setBPM(bpm);
-            });
-
-            clearButton.addEventListener('click', () => {
-                document.querySelectorAll('.step.active').forEach(step => {
-                    step.classList.remove('active');
-                });
-                document.querySelectorAll('.step.low-volume').forEach(step => {
-                    step.classList.remove('low-volume');
-                });
-            });
-
+            bpmInput.addEventListener('change', () => drumMachine.setBPM(parseInt(bpmInput.value)));
+            clearButton.addEventListener('click', clearSteps);
             numStepsInput.addEventListener('change', () => {
-                const steps = parseInt(numStepsInput.value);
-                drumMachine.setNumSteps(steps);
+                drumMachine.setNumSteps(parseInt(numStepsInput.value));
                 initializeTracks();
             });
 
             // Carregar o ritmo selecionado ao carregar a página
-            document.querySelectorAll('.rhythm-button').forEach(button => {
-                button.classList.remove('selected');
-            });
-            rhythmAButton.classList.add('selected');
+            rhythmButtons.forEach(button => button.classList.remove('selected'));
+            document.getElementById('rhythm-a').classList.add('selected');
+            initializeTracks();
             loadRhythm('rhythm-A');
         });
     </script>

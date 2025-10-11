@@ -16,6 +16,8 @@ class DrumMachine {
         this.lookahead = 25.0;
         this.bpm = 90;
         this.numSteps = 4;
+        this.animationFrameId = null;
+        this.lastDrawTime = 0;
 
         this.init();
     }
@@ -69,24 +71,43 @@ class DrumMachine {
 
     scheduler() {
         while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
-            document.querySelectorAll('.track').forEach(track => {
-                const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
-                const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
-                if (!step) return;
-                const volume = parseInt(step.dataset.volume);
-                if (isNaN(volume) || volume <= 0) return;
-
-                this.scheduleNote(instrument, this.currentStep, this.nextNoteTime, volume);
-
-                // Efeito de piscar: adiciona 'playing' e remove após 100ms
-                step.classList.add('playing');
-                setTimeout(() => {
-                    step.classList.remove('playing');
-                }, 100);
-            });
-
+            this.scheduleCurrentStep();
             this.nextNote();
         }
+    }
+
+    scheduleCurrentStep() {
+        document.querySelectorAll('.track').forEach(track => {
+            const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
+            const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
+            if (!step) return;
+            
+            const volume = parseInt(step.dataset.volume);
+            if (isNaN(volume) || volume <= 0) return;
+
+            this.scheduleNote(instrument, this.currentStep, this.nextNoteTime, volume);
+
+            step.classList.add('playing');
+            setTimeout(() => step.classList.remove('playing'), 100);
+        });
+    }
+
+    timerWorker() {
+        if (!this.isPlaying) {
+            if (this.animationFrameId) {
+                cancelAnimationFrame(this.animationFrameId);
+                this.animationFrameId = null;
+            }
+            return;
+        }
+
+        const currentTime = performance.now();
+        if (currentTime - this.lastDrawTime >= this.lookahead) {
+            this.scheduler();
+            this.lastDrawTime = currentTime;
+        }
+
+        this.animationFrameId = requestAnimationFrame(() => this.timerWorker());
     }
 
     start() {
@@ -95,25 +116,24 @@ class DrumMachine {
         }
 
         this.isPlaying = true;
-        this.currentStep = this.numSteps;
+        this.currentStep = 1;
         this.nextNoteTime = this.audioContext.currentTime;
-        this.scheduler();
+        this.lastDrawTime = performance.now();
         this.timerWorker();
     }
 
     stop() {
         this.isPlaying = false;
-        // Remover visual feedback
-        // document.querySelectorAll('.step.playing').forEach(step => {
-        //     step.classList.remove('playing');
-        // });
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+        this.reset();
     }
 
-    timerWorker() {
-        if (this.isPlaying) {
-            this.scheduler();
-            setTimeout(() => this.timerWorker(), this.lookahead);
-        }
+    reset() {
+        this.currentStep = 1;
+        this.nextNoteTime = 0;
     }
 
     setBPM(bpm) {
