@@ -240,7 +240,26 @@
                     const stepsData = Array.from(track.querySelectorAll('.step')).map(step => parseInt(step.dataset.volume));
                     rhythmData[instrument] = stepsData;
                 });
+                rhythmData.bpm = parseInt(bpmInput.value); // Salva o BPM
                 localStorage.setItem(`rhythm-${selectedRhythm}`, JSON.stringify(rhythmData));
+            }
+
+            // Função para selecionar um botão de ritmo
+            function selectRhythm(rhythmButton, rhythmKey) {
+                if (pendingButton) {
+                    pendingButton.classList.remove('pending');
+                }
+                rhythmButtons.forEach(button => button.classList.remove('selected'));
+                rhythmButton.classList.add('selected');
+                pendingRhythm = rhythmKey.replace('rhythm-', '').toUpperCase();
+                selectedRhythm = pendingRhythm;
+                pendingButton = rhythmButton;
+                // Se não estiver tocando, muda o ritmo instantaneamente
+                if (!drumMachine.isPlaying) {
+                    loadRhythm(`rhythm-${selectedRhythm}`);
+                } else {
+                    rhythmButton.classList.add('pending');
+                }
             }
 
             // Função para carregar o ritmo do localStorage
@@ -262,24 +281,27 @@
                             }
                         });
                     });
-                    // Aplica BPM dobrado ao mudar ritmo
-                    drumMachine.setBPM(parseInt(bpmInput.value));
+                    // Se o BPM estiver salvo, atualiza o input e DrumMachine
+                    if (typeof rhythmData.bpm === 'number') {
+                        bpmInput.value = rhythmData.bpm;
+                        drumMachine.setBPM(rhythmData.bpm);
+                    } else {
+                        drumMachine.setBPM(parseInt(bpmInput.value));
+                    }
                 } else {
                     clearSteps();
                 }
             }
 
-            // Função para selecionar um botão de ritmo
-            function selectRhythm(rhythmButton, rhythmKey) {
-                if (pendingButton) {
-                    pendingButton.classList.remove('pending');
+            // Função para iniciar/parar a reprodução
+            function togglePlay() {
+                if (!drumMachine.isPlaying) {
+                    drumMachine.start();
+                    playPauseButton.textContent = 'Stop';
+                } else {
+                    drumMachine.stop();
+                    playPauseButton.textContent = 'Play';
                 }
-                rhythmButtons.forEach(button => button.classList.remove('selected'));
-                rhythmButton.classList.add('selected');
-                pendingRhythm = rhythmKey.replace('rhythm-', '').toUpperCase();
-                selectedRhythm = pendingRhythm;
-                rhythmButton.classList.add('pending');
-                pendingButton = rhythmButton;
             }
 
             // Event listeners para os botões de ritmo
