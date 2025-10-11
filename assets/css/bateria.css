@@ -1,0 +1,91 @@
+body {
+    font-family: sans-serif;
+    background-color: #f8f9fa;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.track {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.track label {
+    width: 120px;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.step {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ccc;
+    margin-right: 5px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 30px;
+}
+
+.step.active {
+    background-color: #198754;
+    color: white;
+}
+
+.step.playing {
+    background-color: #ffc107;
+}
+
+.step.active.playing {
+    background-color: #28a745;
+}
+
+.step.third-volume {
+    background-color: #ff69b4; /* Rosa forte para o terceiro estado */
+    color: white;
+}
+
+.rhythm-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.rhythm-buttons button {
+    width: 50px;
+}
+
+.rhythm-buttons button.selected {
+    background-color: #007bff;
+    color: white;
+}
+
+.rhythm-button.pending {
+    animation: blinker 1s linear infinite;
+}
+
+.track label i {
+    font-size: 1.5em; /* Ajuste o tamanho do ícone */
+    margin-right: 5px; /* Adicione um espaço entre o ícone e os passos */
+    vertical-align: middle; /* Alinhe verticalmente o ícone com os passos */
+}
+
+.step.low-volume {
+    background-color: #8fbc8f; /* Cor verde mais clara para low volume */
+    color: white;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
