@@ -4,10 +4,10 @@ class DrumMachine {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.buffers = new Map();
         this.instruments = [
-            { name: 'Hi-hat', icon: 'fas fa-hippo', file: audioPath + 'chimbal.ogg', file3: audioPath + 'aberto.ogg' },
+            { name: 'Chimbal', icon: 'fas fa-record-vinyl', file: audioPath + 'chimbal.ogg', file3: audioPath + 'aberto.ogg' },
             { name: 'Caixa', icon: 'fas fa-drum', file: audioPath + 'caixa.ogg', file3: audioPath + 'aro.ogg' },
-            { name: 'Bombo', icon: 'fas fa-compact-disc', file: audioPath + 'bumbo.ogg', file3: null },
-            { name: 'Ride', icon: 'fas fa-bicycle', file: audioPath + 'ride.ogg', file3: audioPath + 'prato1.ogg' }
+            { name: 'Bumbo', icon: 'fas fa-stroopwafel', file: audioPath + 'bumbo.ogg', file3: null },
+            { name: 'Prato', icon: 'fas fa-compact-disc', file: audioPath + 'ride.ogg', file3: audioPath + 'prato1.ogg' }
         ];
         this.isPlaying = false;
         this.currentStep = 1;
@@ -60,16 +60,16 @@ class DrumMachine {
     scheduleNote(instrument, step, time, volume) {
         if (volume === 3) {
             // Terceiro som
-            if (instrument === 'hihat') {
-                const buffer = this.buffers.get('hi-hat-3') || this.buffers.get('hihat-3');
+            if (instrument === 'chimbal') {
+                const buffer = this.buffers.get('chimbal-3');
                 if (buffer) this.playSound(buffer, time, 1);
             } else if (instrument === 'caixa') {
                 const buffer = this.buffers.get('caixa-3');
                 if (buffer) this.playSound(buffer, time, 1);
-            } else if (instrument === 'bombo') {
+            } else if (instrument === 'bumbo') {
                 // Não faz nada
-            } else if (instrument === 'ride') {
-                const buffer = this.buffers.get('ride-3');
+            } else if (instrument === 'prato') {
+                const buffer = this.buffers.get('prato-3');
                 if (buffer) this.playSound(buffer, time, 1);
             }
         } else {
