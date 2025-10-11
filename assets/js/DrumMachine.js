@@ -18,6 +18,7 @@ class DrumMachine {
         this.numSteps = 4;
         this.animationFrameId = null;
         this.lastDrawTime = 0;
+        this.lastChimbalAbertoSource = null;
 
         this.init();
     }
@@ -44,7 +45,7 @@ class DrumMachine {
         await Promise.all(loadPromises);
     }
 
-    playSound(buffer, time, volume = 1) {
+    playSound(buffer, time, volume = 1, isChimbalAberto = false) {
         const source = this.audioContext.createBufferSource();
         const gainNode = this.audioContext.createGain();
 
@@ -55,6 +56,10 @@ class DrumMachine {
         gainNode.connect(this.audioContext.destination);
 
         source.start(time);
+
+        if (isChimbalAberto) {
+            this.lastChimbalAbertoSource = source;
+        }
     }
 
     scheduleNote(instrument, step, time, volume) {
@@ -62,7 +67,7 @@ class DrumMachine {
             // Terceiro som
             if (instrument === 'chimbal') {
                 const buffer = this.buffers.get('chimbal-3');
-                if (buffer) this.playSound(buffer, time, 1);
+                if (buffer) this.playSound(buffer, time, 1, true);
             } else if (instrument === 'caixa') {
                 const buffer = this.buffers.get('caixa-3');
                 if (buffer) this.playSound(buffer, time, 1);
@@ -104,12 +109,25 @@ class DrumMachine {
             const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
             const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
             if (!step) return;
-            
             const volume = parseInt(step.dataset.volume);
             if (isNaN(volume) || volume <= 0) return;
 
-            this.scheduleNote(instrument, this.currentStep, this.nextNoteTime, volume);
+            // Chimbal: se o anterior foi aberto e o atual for fechado, pare o som aberto
+            if (instrument === 'chimbal') {
+                const prevStepNum = this.currentStep === 1 ? this.numSteps : this.currentStep - 1;
+                const prevStep = track.querySelector(`.step[data-step="${prevStepNum}"]`);
+                if (prevStep) {
+                    const prevVolume = parseInt(prevStep.dataset.volume);
+                    if (prevVolume === 3 && (volume === 1 || volume === 2)) {
+                        if (this.lastChimbalAbertoSource) {
+                            try { this.lastChimbalAbertoSource.stop(); } catch {}
+                            this.lastChimbalAbertoSource = null;
+                        }
+                    }
+                }
+            }
 
+            this.scheduleNote(instrument, this.currentStep, this.nextNoteTime, volume);
             step.classList.add('playing');
             setTimeout(() => step.classList.remove('playing'), 100);
         });
