@@ -16,6 +16,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     let pendingRhythm = null;
     let pendingButton = null;
 
+    // Novo: Rastrear o número de cliques em cada botão
+    const rhythmButtonClicks = {};
+    rhythmButtons.forEach(button => {
+        rhythmButtonClicks[button.id] = 0;
+    });
+
     // Função para criar um ritmo em branco
     function createEmptyRhythm(bpm, numSteps) {
         const rhythmData = {};
@@ -47,7 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Função para criar uma linha de instrumento usando DocumentFragment
+    // Função para criar uma linha de instrumento
     function createTrack(instrument) {
         const track = document.createElement('div');
         track.classList.add('track');
@@ -70,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return track;
     }
 
-    // Inicializa as tracks usando DocumentFragment
+    // Inicializa as tracks
     function initializeTracks() {
         const fragment = document.createDocumentFragment();
         drumMachine.instruments.forEach(inst => {
@@ -118,14 +124,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Função para iniciar/parar a reprodução
     function togglePlay() {
         if (!drumMachine.isPlaying) {
+            rhythmButtons.forEach(button => button.classList.remove('lighter')); //Remover a classe 'lighter' ao iniciar o play
             drumMachine.start();
             playPauseButton.textContent = 'Stop';
         } else {
             drumMachine.stop();
             playPauseButton.textContent = 'Play';
-            // Retornar ao estado inicial visual
-            // Não há steps tocando, mas pode garantir que o passo inicial está pronto
-            // Se quiser, pode desmarcar todos os steps, mas normalmente só o currentStep volta ao início
         }
     }
 
@@ -144,6 +148,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Função para selecionar um botão de ritmo
     function selectRhythm(rhythmButton, rhythmKey) {
+        const buttonId = rhythmButton.id;
+        rhythmButtonClicks[buttonId]++;
+
+        // Remover 'lighter' de todos os botões ANTES de adicionar ao atual
+        rhythmButtons.forEach(button => button.classList.remove('lighter'));
+
+        if (!drumMachine.isPlaying && rhythmButtonClicks[buttonId] > 1 && rhythmButton.classList.contains('selected')) {
+            // Ação de "segundo clique" quando não está tocando, e SE o botão já está selecionado
+            rhythmButton.classList.add('lighter'); // Adiciona a classe 'lighter'
+            rhythmButtonClicks[buttonId] = 0; // Reseta o contador para o próximo clique
+            return; // Sai da função para não executar a seleção normal
+        }
+
+
         if (pendingButton) {
             pendingButton.classList.remove('pending');
         }
@@ -197,18 +215,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Função para iniciar/parar a reprodução
-    function togglePlay() {
-        if (!drumMachine.isPlaying) {
-            drumMachine.start();
-            playPauseButton.textContent = 'Stop';
-        } else {
-            drumMachine.stop();
-            playPauseButton.textContent = 'Play';
-        }
-    }
-
-    // Event listeners para os botões de ritmo
+    // Event listeners para os botões de ritmo (já existente, mas adaptado)
     document.getElementById('rhythm-a').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-a'), 'rhythm-a'));
     document.getElementById('rhythm-b').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-b'), 'rhythm-b'));
     document.getElementById('rhythm-c').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-c'), 'rhythm-c'));
@@ -224,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Carregar o ritmo selecionado ao carregar a página
-    rhythmButtons.forEach(button => button.classList.remove('selected'));
+    rhythmButtons.forEach(button => button.classList.remove('selected', 'lighter'));
     document.getElementById('rhythm-a').classList.add('selected');
     initializeTracks();
     loadRhythm('rhythm-A');

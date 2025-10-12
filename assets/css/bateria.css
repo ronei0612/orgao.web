@@ -73,6 +73,11 @@ body {
     animation: blinker 1s linear infinite;
 }
 
+.rhythm-buttons button.lighter {
+    background-color: #ADD8E6; /* Um azul mais claro */
+    color: black; /* Opcional: Mude a cor do texto para melhor contraste */
+}
+
 .track label i {
     font-size: 1.5em; /* Ajuste o tamanho do ícone */
     margin-right: 5px; /* Adicione um espaço entre o ícone e os passos */
