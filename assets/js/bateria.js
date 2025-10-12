@@ -67,8 +67,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         track.classList.add('track');
 
         const label = document.createElement('label');
-        label.innerHTML = `<img class="instrument-icon" src="./assets/icons/${instrument.icon}" title="${instrument.name}">`;
+        const button = document.createElement('button'); // Criar o botão aqui
+        button.classList.add('instrument-button');
+        const img = document.createElement('img');
+        img.classList.add('instrument-icon');
+        img.src = `./assets/icons/${instrument.icon}`;
+        img.title = instrument.name;
+        button.appendChild(img);
+        label.appendChild(button);
         track.appendChild(label);
+
+        // Adiciona um event listener ao botão do instrumento
+        button.addEventListener('click', () => {
+            button.classList.toggle('selected'); // Alterna a classe 'selected'
+        });
 
         const stepsFragment = document.createDocumentFragment();
         const currentSteps = parseInt(numStepsInput.value);
