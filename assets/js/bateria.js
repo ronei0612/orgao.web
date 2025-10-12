@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', async () => {
     const drumMachine = new DrumMachine();
     await drumMachine.init();
@@ -36,10 +35,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Garante que os ritmos A, B, C, D existam em branco
     ['A', 'B', 'C', 'D'].forEach(r => {
         const key = `rhythm-${r}`;
+        const fillKey = `rhythm-${r}-fill`; // Chave para o ritmo "fill"
+
         if (!localStorage.getItem(key)) {
             const bpm = parseInt(bpmInput.value);
             const numSteps = parseInt(numStepsInput.value);
             localStorage.setItem(key, JSON.stringify(createEmptyRhythm(bpm, numSteps)));
+        }
+
+        if (!localStorage.getItem(fillKey)) {
+            const bpm = parseInt(bpmInput.value);
+            const numSteps = parseInt(numStepsInput.value);
+            localStorage.setItem(fillKey, JSON.stringify(createEmptyRhythm(bpm, numSteps)));
         }
     });
 
@@ -135,6 +142,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Função para salvar o ritmo no localStorage
     function saveRhythm() {
+        let saveKey = `rhythm-${selectedRhythm}`;
+        const selectedButton = document.getElementById(`rhythm-${selectedRhythm.toLowerCase()}`);
+
+        if (selectedButton && selectedButton.classList.contains('lighter')) {
+            saveKey = `${saveKey}-fill`;
+        }
+
         const rhythmData = {};
         tracksContainer.querySelectorAll('.track').forEach(track => {
             const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
@@ -143,10 +157,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
         rhythmData.bpm = parseInt(bpmInput.value); // Salva o BPM
         rhythmData.numSteps = parseInt(numStepsInput.value); // Salva a quantidade de tracks
-        localStorage.setItem(`rhythm-${selectedRhythm}`, JSON.stringify(rhythmData));
+        localStorage.setItem(saveKey, JSON.stringify(rhythmData));
     }
 
-    // Função para selecionar um botão de ritmo
+    // Função para selecionar um botão de ritmo (modificada)
     function selectRhythm(rhythmButton, rhythmKey) {
         const buttonId = rhythmButton.id;
         rhythmButtonClicks[buttonId]++;
@@ -158,6 +172,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Ação de "segundo clique" quando não está tocando, e SE o botão já está selecionado
             rhythmButton.classList.add('lighter'); // Adiciona a classe 'lighter'
             rhythmButtonClicks[buttonId] = 0; // Reseta o contador para o próximo clique
+
+            // Carregar o ritmo "fill" se existir, senão carrega o normal
+            const fillKey = `rhythm-${selectedRhythm}-fill`;
+            if (localStorage.getItem(fillKey)) {
+                loadRhythm(fillKey);
+            } else {
+                loadRhythm(`rhythm-${selectedRhythm}`);
+            }
+
             return; // Sai da função para não executar a seleção normal
         }
 
