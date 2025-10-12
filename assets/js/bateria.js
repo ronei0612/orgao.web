@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         track.classList.add('track');
 
         const label = document.createElement('label');
-        label.innerHTML = `${instrument.name} <i class="${instrument.icon}" title="${instrument.name}"></i>`;
+        label.innerHTML = `<img class="instrument-icon" src="./assets/icons/${instrument.icon}" title="${instrument.name}">`;
         track.appendChild(label);
 
         const stepsFragment = document.createDocumentFragment();

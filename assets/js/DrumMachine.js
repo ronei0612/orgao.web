@@ -4,8 +4,9 @@ class DrumMachine {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.buffers = new Map();
         this.instruments = [
+            { name: 'Meia-Lua', icon: 'meiaLua.svg', file: audioPath + 'meialua.ogg', file3: null },
             { name: 'Chimbal', icon: 'fas fa-record-vinyl', file: audioPath + 'chimbal.ogg', file3: audioPath + 'aberto.ogg' },
-            { name: 'Caixa', icon: 'fas fa-drum', file: audioPath + 'caixa.ogg', file3: audioPath + 'aro.ogg' },
+            { name: 'Caixa', icon: 'aro.svg', file: audioPath + 'caixa.ogg', file3: audioPath + 'aro.ogg' },
             { name: 'Bumbo', icon: 'fas fa-stroopwafel', file: audioPath + 'bumbo.ogg', file3: null },
             { name: 'Prato', icon: 'fas fa-compact-disc', file: audioPath + 'ride.ogg', file3: audioPath + 'prato1.ogg' }
         ];

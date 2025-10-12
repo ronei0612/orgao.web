@@ -89,6 +89,13 @@ body {
     color: white;
 }
 
+.instrument-icon {
+    width: 40px; /* Ajuste o tamanho conforme necessário */
+    height: 40px;
+    vertical-align: middle; /* Alinha o ícone verticalmente com o texto */
+    margin-right: 5px; /* Adiciona um espaço entre o ícone e o texto */
+}
+
 @keyframes blinker {
     50% {
         opacity: 0;
