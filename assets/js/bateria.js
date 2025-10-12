@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const rhythmData = {};
         tracksContainer.querySelectorAll('.track').forEach(track => {
-            const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
+            const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
             const stepsData = Array.from(track.querySelectorAll('.step')).map(step => parseInt(step.dataset.volume));
             rhythmData[instrument] = stepsData;
         });
@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 initializeTracks();
             }
             tracksContainer.querySelectorAll('.track').forEach(track => {
-                const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
+                const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
                 const stepsData = rhythmData[instrument] || [];
                 track.querySelectorAll('.step').forEach((step, index) => {
                     const volume = stepsData[index] !== undefined ? stepsData[index] : 0;
