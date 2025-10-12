@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let selectedRhythm = 'A';
     let pendingRhythm = null;
     let pendingButton = null;
+    let fillLoaded = false; // Nova variável para controlar se o fill foi carregado
 
     // Novo: Rastrear o número de cliques em cada botão
     const rhythmButtonClicks = {};
@@ -32,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return rhythmData;
     }
 
-    // Garante que os ritmos A, B, C, D existam em branco
+    // Garante que os ritmos A, B, C, D e A-fill, B-fill, C-fill, D-fill existam em branco
     ['A', 'B', 'C', 'D'].forEach(r => {
         const key = `rhythm-${r}`;
         const fillKey = `rhythm-${r}-fill`; // Chave para o ritmo "fill"
@@ -116,10 +117,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Configurar callback para troca de ritmo
+    // Configurar callback para troca de ritmo (modificada)
     drumMachine.onMeasureEnd = () => {
         if (pendingRhythm) {
-            loadRhythm(`rhythm-${pendingRhythm}`);
+            if (fillLoaded) {
+                loadRhythm(`rhythm-${pendingRhythm}`);
+                fillLoaded = false; // Reset flag
+            } else {
+                loadRhythm(`rhythm-${pendingRhythm}-fill`);
+                fillLoaded = true; // Set flag
+            }
             pendingRhythm = null;
             if (pendingButton) {
                 pendingButton.classList.remove('pending');
@@ -191,6 +198,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         rhythmButtons.forEach(button => button.classList.remove('selected'));
         rhythmButton.classList.add('selected');
         pendingRhythm = rhythmKey.replace('rhythm-', '').toUpperCase();
+
+        // Load fill immediately
+        if (drumMachine.isPlaying) {
+            const fillKey = `rhythm-${pendingRhythm}-fill`;
+            if (localStorage.getItem(fillKey)) {
+                loadRhythm(fillKey);
+                fillLoaded = true;
+            } else {
+                loadRhythm(`rhythm-${pendingRhythm}`);
+                fillLoaded = false;
+            }
+        }
+
         selectedRhythm = pendingRhythm;
         pendingButton = rhythmButton;
         // Se não estiver tocando, muda o ritmo instantaneamente
