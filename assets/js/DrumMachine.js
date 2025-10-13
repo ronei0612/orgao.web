@@ -4,10 +4,17 @@ class DrumMachine {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.buffers = new Map();
         this.instruments = [
-            { name: 'Chimbal', icon: 'fas fa-record-vinyl', file: audioPath + 'chimbal.ogg', file3: audioPath + 'aberto.ogg' },
-            { name: 'Caixa', icon: 'fas fa-drum', file: audioPath + 'caixa.ogg', file3: audioPath + 'aro.ogg' },
-            { name: 'Bumbo', icon: 'fas fa-stroopwafel', file: audioPath + 'bumbo.ogg', file3: null },
-            { name: 'Prato', icon: 'fas fa-compact-disc', file: audioPath + 'ride.ogg', file3: audioPath + 'prato1.ogg' }
+            { name: 'Prato', icon: 'prato1.svg', file: audioPath + 'ride.ogg', file3: audioPath + 'prato2.ogg' },
+            { name: 'Tom', icon: 'tom.svg', file: audioPath + 'tom-03.ogg', file3: audioPath + 'tom-02.ogg' },
+            { name: 'Surdo', icon: 'tom.svg', file: audioPath + 'tom.ogg', file3: audioPath + 'prato1.ogg' },
+            { name: 'Chimbal', icon: 'chimbal.svg', file: audioPath + 'chimbal.ogg', file3: audioPath + 'aberto.ogg' },
+            { name: 'Caixa', icon: 'caixa.svg', file: audioPath + 'caixa.ogg', file3: audioPath + 'aro.ogg' },
+            { name: 'Bumbo', icon: 'bumbo.svg', file: audioPath + 'bumbo.ogg', file3: null },
+            { name: 'Meia-Lua', icon: 'meiaLua.svg', file: audioPath + 'meialua.ogg', file3: null },
+            { name: 'Baixo', icon: 'baixo.svg', file: audioPath + 'bumbo.ogg', file3: null },
+            { name: 'Violao', icon: 'violao.svg', file: audioPath + 'bumbo.ogg', file3: null },
+            { name: 'Strings', icon: 'strings.svg', file: audioPath + 'bumbo.ogg', file3: null },
+            { name: 'Piano', icon: 'piano.svg', file: audioPath + 'bumbo.ogg', file3: null }
         ];
         this.isPlaying = false;
         this.currentStep = 1;
@@ -106,11 +113,15 @@ class DrumMachine {
 
     scheduleCurrentStep() {
         document.querySelectorAll('.track').forEach(track => {
-            const instrument = track.querySelector('label i').title.toLowerCase().replace(/ /g, '');
+            const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
             const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
+            const instrumentButton = track.querySelector('.instrument-button'); // Pega o botão do instrumento
             if (!step) return;
             const volume = parseInt(step.dataset.volume);
             if (isNaN(volume) || volume <= 0) return;
+
+            // Verifica se o instrumento está selecionado (adicione esta linha!)
+            if (!instrumentButton.classList.contains('selected')) return;
 
             // Chimbal: se o anterior foi aberto e o atual for fechado, pare o som aberto
             if (instrument === 'chimbal') {
@@ -120,7 +131,7 @@ class DrumMachine {
                     const prevVolume = parseInt(prevStep.dataset.volume);
                     if (prevVolume === 3 && (volume === 1 || volume === 2)) {
                         if (this.lastChimbalAbertoSource) {
-                            try { this.lastChimbalAbertoSource.stop(); } catch {}
+                            try { this.lastChimbalAbertoSource.stop(); } catch { }
                             this.lastChimbalAbertoSource = null;
                         }
                     }

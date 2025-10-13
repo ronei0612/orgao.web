@@ -20,20 +20,21 @@ body {
     margin-bottom: 5px;
 }
 
-.track label {
-    width: 120px;
-    text-align: right;
-    margin-right: 10px;
-}
+    .track label {
+        width: auto;
+        text-align: left;
+        margin-right: 10px;
+        margin-bottom: 0px;
+    }
 
 .step {
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     border: 1px solid #ccc;
     margin-right: 5px;
     cursor: pointer;
     text-align: center;
-    line-height: 30px;
+    line-height: 35px;
 }
 
 .step.active {
@@ -50,7 +51,7 @@ body {
 }
 
 .step.third-volume {
-    background-color: #ff69b4; /* Rosa forte para o terceiro estado */
+    background-color: #ff69b4;
     color: white;
 }
 
@@ -73,16 +74,49 @@ body {
     animation: blinker 1s linear infinite;
 }
 
-.track label i {
-    font-size: 1.5em; /* Ajuste o tamanho do ícone */
-    margin-right: 5px; /* Adicione um espaço entre o ícone e os passos */
-    vertical-align: middle; /* Alinhe verticalmente o ícone com os passos */
+.rhythm-buttons button.lighter {
+    background-color: #ADD8E6;
+    color: black;
 }
 
 .step.low-volume {
-    background-color: #8fbc8f; /* Cor verde mais clara para low volume */
+    background-color: #8fbc8f;
     color: white;
 }
+
+.instrument-icon {
+    vertical-align: middle;
+}
+
+.instrument-button {
+    width: 35px;
+    height: 35px;
+    border: none;
+    background-color: #eee;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background-color 0.2s ease;
+}
+
+    .instrument-button:hover {
+        background-color: #ddd;
+    }
+
+    .instrument-button img {
+        width: 80%;
+        height: 80%;
+        pointer-events: none;
+    }
+
+    .instrument-button.selected {
+        background-color: #007bff;
+    }
+
+        .instrument-button.selected img {
+            filter: brightness(0) invert(1);
+        }
 
 @keyframes blinker {
     50% {
