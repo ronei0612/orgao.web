@@ -150,14 +150,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Configurar callback para troca de ritmo (modificada)
     drumMachine.onMeasureEnd = () => {
-        if (pendingRhythm) {
-            if (fillLoaded) {
-                loadRhythm(`rhythm-${pendingRhythm}`);
-                fillLoaded = false; // Reset flag
+        if (pendingRhythm && drumMachine.isPlaying) { // Adicionada verificação drumMachine.isPlaying
+            const selectedButton = document.getElementById(`rhythm-${pendingRhythm.toLowerCase()}`);
+            const isFillSelected = selectedButton && selectedButton.classList.contains('lighter');
+
+            if (isFillSelected) {
+                if (fillLoaded) {
+                    loadRhythm(`rhythm-${pendingRhythm}`);
+                    fillLoaded = false; // Reset flag
+                } else {
+                    loadRhythm(`rhythm-${pendingRhythm}-fill`);
+                    fillLoaded = true; // Set flag
+                }
             } else {
-                loadRhythm(`rhythm-${pendingRhythm}-fill`);
-                fillLoaded = true; // Set flag
+                loadRhythm(`rhythm-${pendingRhythm}`); // Carrega o ritmo normal se o "fill" não estiver selecionado
+                fillLoaded = false;
             }
+
             pendingRhythm = null;
             if (pendingButton) {
                 pendingButton.classList.remove('pending');
