@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Adiciona um event listener ao botão do instrumento
         button.addEventListener('click', () => {
-            button.classList.toggle('selected'); // Alterna a classe 'selected'
+            button.classList.toggle('selected');
         });
 
         const stepsFragment = document.createDocumentFragment();
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         tracksContainer.appendChild(fragment);
     }
 
-    // Função para ativar/desativar um passo
+    // Função para ativar/desativar um track
     function toggleStep(step) {
         let volume = parseInt(step.dataset.volume);
         volume = (volume + 1) % 4; // Agora vai de 0 a 3
@@ -118,6 +118,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             step.classList.add('low-volume');
         } else if (volume === 3) {
             step.classList.add('third-volume');
+        }
+
+        // Encontra o track pai
+        const track = step.closest('.track');
+        if (!track) return;
+
+        // Encontra o botão do instrumento
+        const instrumentButton = track.querySelector('.instrument-button');
+        if (!instrumentButton) return;
+
+        // Verifica se o track está em branco
+        const steps = Array.from(track.querySelectorAll('.step'));
+        const isTrackEmpty = steps.every(step => parseInt(step.dataset.volume) === 0);
+
+        // Atualiza o estado de seleção do botão do instrumento
+        if (isTrackEmpty) {
+            instrumentButton.classList.remove('selected');
+        } else {
+            instrumentButton.classList.add('selected');
         }
     }
 
@@ -172,7 +191,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         tracksContainer.querySelectorAll('.track').forEach(track => {
             const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
             const stepsData = Array.from(track.querySelectorAll('.step')).map(step => parseInt(step.dataset.volume));
-            rhythmData[instrument] = stepsData;
+            const instrumentButton = track.querySelector('.instrument-button');
+            rhythmData[instrument] = {
+                steps: stepsData,
+                selected: instrumentButton.classList.contains('selected') // Salva o estado de seleção
+            };
         });
         rhythmData.bpm = parseInt(bpmInput.value); // Salva o BPM
         rhythmData.numSteps = parseInt(numStepsInput.value); // Salva a quantidade de tracks
@@ -246,9 +269,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             tracksContainer.querySelectorAll('.track').forEach(track => {
                 const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
-                const stepsData = rhythmData[instrument] || [];
+                const instrumentButton = track.querySelector('.instrument-button');
+                const instrumentData = rhythmData[instrument]; // Pega os dados do instrumento
+                const stepsData = instrumentData ? instrumentData.steps : []; // Pega os steps ou um array vazio
+                const isSelected = instrumentData ? instrumentData.selected : false; // Carrega o estado de seleção
+
+                // Define o estado de seleção do botão
+                if (isSelected) {
+                    instrumentButton.classList.add('selected');
+                } else {
+                    instrumentButton.classList.remove('selected');
+                }
+
                 track.querySelectorAll('.step').forEach((step, index) => {
-                    const volume = stepsData[index] !== undefined ? stepsData[index] : 0;
+                    //Verifica se stepsData é um array e se o índice está dentro dos limites
+                    const volume = Array.isArray(stepsData) && index < stepsData.length ? stepsData[index] : 0;
                     step.dataset.volume = volume;
                     step.classList.remove('active', 'low-volume');
                     if (volume === 1) {
@@ -257,6 +292,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                         step.classList.add('low-volume');
                     }
                 });
+
+                // Verifica se o track está em branco (ADICIONADO)
+                const steps = Array.from(track.querySelectorAll('.step'));
+                const isTrackEmpty = steps.every(step => parseInt(step.dataset.volume) === 0);
+
+                // Atualiza o estado de seleção do botão do instrumento (ADICIONADO)
+                if (isTrackEmpty) {
+                    instrumentButton.classList.remove('selected');
+                } else {
+                    instrumentButton.classList.add('selected');
+                }
             });
             // Se o BPM estiver salvo, atualiza o input e DrumMachine
             if (typeof rhythmData.bpm === 'number') {
