@@ -16,6 +16,22 @@
     <div class="container-lg">
         <h1>Bateria Online</h1>
 
+        <div class="form-group">
+            <label for="rhythmName">Nome do Ritmo:</label>
+            <div class="input-group">
+                <select class="form-control" id="rhythmName">
+                    <option>Novo Ritmo</option>
+                    <!-- As opções serão preenchidas dinamicamente com JavaScript -->
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="addRhythmName">Adicionar</button>
+                    <button class="btn btn-outline-secondary" type="button" id="saveRhythmName">Salvar</button>
+                    <button class="btn btn-outline-secondary" type="button" id="editRhythmName">Editar</button>
+                    <button class="btn btn-outline-secondary" type="button" id="deleteRhythmName">Excluir</button>
+                </div>
+            </div>
+        </div>
+
         <div class="rhythm-buttons">
             <button id="rhythm-a" class="btn btn-secondary rhythm-button">A</button>
             <button id="rhythm-b" class="btn btn-secondary rhythm-button">B</button>

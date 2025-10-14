@@ -5,15 +5,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Cache de elementos
     const playPauseButton = document.getElementById('play-pause');
     const bpmInput = document.getElementById('bpm');
-    const tracksContainer = document.getElementById('tracks');
     const numStepsInput = document.getElementById('num-steps');
+    const tracksContainer = document.getElementById('tracks');
     const rhythmButtons = document.querySelectorAll('.rhythm-button');
     const saveRhythmButton = document.getElementById('save-rhythm');
+
+    // Novos elementos
+    const rhythmNameSelect = document.getElementById('rhythmName');
+    const addRhythmNameButton = document.getElementById('addRhythmName');
+    const saveRhythmNameButton = document.getElementById('saveRhythmName');
+    const editRhythmNameButton = document.getElementById('editRhythmName');
+    const deleteRhythmNameButton = document.getElementById('deleteRhythmName');
 
     let selectedRhythm = 'A';
     let pendingRhythm = null;
     let pendingButton = null;
     let fillLoaded = false; // Nova variável para controlar se o fill foi carregado
+    let currentRhythmName = 'Novo Ritmo'; // Nome do ritmo atual
 
     // Novo: Rastrear o número de cliques em cada botão
     const rhythmButtonClicks = {};
@@ -30,6 +38,43 @@ document.addEventListener('DOMContentLoaded', async () => {
         rhythmData.bpm = bpm;
         rhythmData.numSteps = numSteps;
         return rhythmData;
+    }
+
+    // Carregar nomes de ritmos do localStorage
+    function loadRhythmNames() {
+        const rhythmNames = JSON.parse(localStorage.getItem('rhythmNames') || '[]');
+        rhythmNameSelect.innerHTML = ''; // Limpa as opções existentes
+        rhythmNames.forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            rhythmNameSelect.appendChild(option);
+        });
+        // Adiciona a opção "Novo Ritmo" no final
+        const newRhythmOption = document.createElement('option');
+        newRhythmOption.value = 'Novo Ritmo';
+        newRhythmOption.textContent = 'Novo Ritmo';
+        rhythmNameSelect.appendChild(newRhythmOption);
+        rhythmNameSelect.value = currentRhythmName; // Restaura o valor selecionado
+    }
+    // Adicionar um novo nome de ritmo
+    function addRhythmName() {
+        const newName = prompt('Digite o nome do novo ritmo:');
+        if (newName) {
+            const rhythmNames = Array.from(rhythmNameSelect.options).map(option => option.value);
+            if (rhythmNames.includes(newName)) {
+                alert('Este nome de ritmo já existe.');
+                return;
+            }
+            const option = document.createElement('option');
+            option.value = newName;
+            option.textContent = newName;
+            rhythmNameSelect.add(option, rhythmNameSelect.options[rhythmNameSelect.options.length - 1]); // Adiciona antes do "Novo Ritmo"
+            saveRhythmNames();
+            rhythmNameSelect.value = newName;
+            currentRhythmName = newName;
+            loadRhythm(); // Carrega o novo ritmo
+        }
     }
 
     // Garante que os ritmos A, B, C, D e A-fill, B-fill, C-fill, D-fill existam em branco
@@ -49,6 +94,31 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.setItem(fillKey, JSON.stringify(createEmptyRhythm(bpm, numSteps)));
         }
     });
+
+    // Excluir o nome do ritmo atual
+    function deleteRhythmName() {
+        const currentName = rhythmNameSelect.value;
+        if (currentName === 'Novo Ritmo') {
+            alert('Selecione um ritmo para excluir.');
+            return;
+        }
+        if (confirm(`Tem certeza que deseja excluir o ritmo "${currentName}"?`)) {
+            rhythmNameSelect.remove(rhythmNameSelect.selectedIndex);
+            saveRhythmNames();
+            rhythmNameSelect.value = 'Novo Ritmo'; // Seleciona "Novo Ritmo"
+            currentRhythmName = 'Novo Ritmo';
+            loadRhythm(); // Carrega um ritmo vazio
+        }
+    }
+
+    // Salvar nomes de ritmos no localStorage
+    function saveRhythmNames() {
+        const rhythmNames = Array.from(rhythmNameSelect.options).map(option => option.value).filter(name => name !== 'Novo Ritmo');
+        localStorage.setItem('rhythmNames', JSON.stringify(rhythmNames));
+    }
+
+    // Inicializa os nomes dos ritmos
+    loadRhythmNames();
 
     // Aplica BPM dobrado ao carregar a página
     drumMachine.setBPM(parseInt(bpmInput.value));
@@ -329,6 +399,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('rhythm-b').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-b'), 'rhythm-b'));
     document.getElementById('rhythm-c').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-c'), 'rhythm-c'));
     document.getElementById('rhythm-d').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-d'), 'rhythm-d'));
+
+    // Event listeners para os botões de nome do ritmo
+    addRhythmNameButton.addEventListener('click', addRhythmName);
+    saveRhythmNameButton.addEventListener('click', saveRhythmName);
+    editRhythmNameButton.addEventListener('click', editRhythmName);
+    deleteRhythmNameButton.addEventListener('click', deleteRhythmName);
 
     saveRhythmButton.addEventListener('click', saveRhythm);
     playPauseButton.addEventListener('click', togglePlay);
