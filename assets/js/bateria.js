@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Novos elementos
     const rhythmNameSelect = document.getElementById('rhythmName');
     const addRhythmNameButton = document.getElementById('addRhythmName');
-    const saveRhythmNameButton = document.getElementById('saveRhythmName');
     const editRhythmNameButton = document.getElementById('editRhythmName');
     const deleteRhythmNameButton = document.getElementById('deleteRhythmName');
 
@@ -402,7 +401,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Event listeners para os botões de nome do ritmo
     addRhythmNameButton.addEventListener('click', addRhythmName);
-    saveRhythmNameButton.addEventListener('click', saveRhythmName);
     editRhythmNameButton.addEventListener('click', editRhythmName);
     deleteRhythmNameButton.addEventListener('click', deleteRhythmName);
 
