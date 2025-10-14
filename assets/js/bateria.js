@@ -338,6 +338,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         initializeTracks();
     });
 
+
+    // Event listeners para os botões de incremento e decremento do BPM
+    document.querySelector('.increment-bpm').addEventListener('click', () => {
+        let bpm = parseInt(bpmInput.value);
+        bpmInput.value = bpm + 1;
+        drumMachine.setBPM(parseInt(bpmInput.value));
+    });
+
+    document.querySelector('.decrement-bpm').addEventListener('click', () => {
+        let bpm = parseInt(bpmInput.value);
+        bpmInput.value = bpm - 1 > 0 ? bpm - 1 : 1; // Garante que o valor mínimo seja 1
+        drumMachine.setBPM(parseInt(bpmInput.value));
+    });
+
+    // Event listeners para os botões de incremento e decremento do Num Steps
+    document.querySelector('.increment-steps').addEventListener('click', () => {
+        let numSteps = parseInt(numStepsInput.value);
+        numStepsInput.value = numSteps + 1;
+        drumMachine.setNumSteps(parseInt(numStepsInput.value));
+        initializeTracks();
+    });
+
+    document.querySelector('.decrement-steps').addEventListener('click', () => {
+        let numSteps = parseInt(numStepsInput.value);
+        numStepsInput.value = numSteps - 1 > 1 ? numSteps - 1 : 1; // Garante que o valor mínimo seja 1
+        drumMachine.setNumSteps(parseInt(numStepsInput.value));
+        initializeTracks();
+    });
+
+    bpmInput.addEventListener('change', () => drumMachine.setBPM(parseInt(bpmInput.value)));
+    numStepsInput.addEventListener('change', () => {
+        drumMachine.setNumSteps(parseInt(numStepsInput.value));
+        initializeTracks();
+    });
+
     // Carregar o ritmo selecionado ao carregar a página
     rhythmButtons.forEach(button => button.classList.remove('selected', 'lighter'));
     document.getElementById('rhythm-a').classList.add('selected');
