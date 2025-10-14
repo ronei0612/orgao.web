@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Cache de elementos
     const playPauseButton = document.getElementById('play-pause');
     const bpmInput = document.getElementById('bpm');
-    const clearButton = document.getElementById('clear');
     const tracksContainer = document.getElementById('tracks');
     const numStepsInput = document.getElementById('num-steps');
     const rhythmButtons = document.querySelectorAll('.rhythm-button');
@@ -334,7 +333,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     saveRhythmButton.addEventListener('click', saveRhythm);
     playPauseButton.addEventListener('click', togglePlay);
     bpmInput.addEventListener('change', () => drumMachine.setBPM(parseInt(bpmInput.value)));
-    clearButton.addEventListener('click', clearSteps);
     numStepsInput.addEventListener('change', () => {
         drumMachine.setNumSteps(parseInt(numStepsInput.value));
         initializeTracks();
