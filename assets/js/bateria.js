@@ -41,19 +41,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Garante que os ritmos A, B, C, D e A-fill, B-fill, C-fill, D-fill existam em branco
     ['A', 'B', 'C', 'D'].forEach(r => {
-        const key = `rhythm-${r}`;
-        const fillKey = `rhythm-${r}-fill`; // Chave para o ritmo "fill"
+        const key = `${defaultStyle}-${r}`;
+        const fillKey = `${defaultStyle}-${r}-fill`;
 
         if (!localStorage.getItem(key)) {
             const bpm = parseInt(bpmInput.value);
             const numSteps = parseInt(numStepsInput.value);
-            localStorage.setItem(key, JSON.stringify(createEmptyRhythm(bpm, numSteps)));
+            saveRhythmToStyle(defaultStyle, r, createEmptyRhythm(bpm, numSteps), false);
         }
 
         if (!localStorage.getItem(fillKey)) {
             const bpm = parseInt(bpmInput.value);
             const numSteps = parseInt(numStepsInput.value);
-            localStorage.setItem(fillKey, JSON.stringify(createEmptyRhythm(bpm, numSteps)));
+            saveRhythmToStyle(defaultStyle, `${r}-fill`, createEmptyRhythm(bpm, numSteps), false);
         }
     });
 
@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             styleSelect.selectedIndex = 0;
+
         }
         else {
             // Adiciona a opção "Novo Ritmo"
@@ -114,6 +115,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                 stylesArray[index] = newName;
                 localStorage.setItem('styles', JSON.stringify(stylesArray));
             }
+
+            // Renomear os ritmos no localStorage
+            ['A', 'B', 'C', 'D'].forEach(r => {
+                const oldKey = `${currentName}-${r}`;
+                const newKey = `${newName}-${r}`;
+                const oldFillKey = `${currentName}-${r}-fill`;
+                const newFillKey = `${newName}-${r}-fill`;
+
+                // Renomear o ritmo normal
+                const rhythmData = localStorage.getItem(oldKey);
+                if (rhythmData) {
+                    localStorage.setItem(newKey, rhythmData);
+                    localStorage.removeItem(oldKey);
+                }
+
+                // Renomear o ritmo fill
+                const fillData = localStorage.getItem(oldFillKey);
+                if (fillData) {
+                    localStorage.setItem(newFillKey, fillData);
+                    localStorage.removeItem(oldFillKey);
+                }
+            });
         }
     }
 
@@ -132,6 +155,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             styleSelect.add(option, styleSelect.options[styleSelect.options.length - 1]); // Adiciona antes do "Novo Ritmo"
             saveStyles();
             styleSelect.value = newName;
+
+            // Criar ritmos em branco para o novo estilo
+            ['A', 'B', 'C', 'D'].forEach(r => {
+                const bpm = parseInt(bpmInput.value);
+                const numSteps = parseInt(numStepsInput.value);
+                saveRhythmToStyle(newName, r, createEmptyRhythm(bpm, numSteps), false);
+                saveRhythmToStyle(newName, `${r}-fill`, createEmptyRhythm(bpm, numSteps), false);
+            });
+
+            loadRhythmForStyleAndRhythm(styleSelect.value, selectedRhythm);
         }
     }
 
@@ -143,11 +176,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             saveStyles();
             if (styleSelect.length === 0) {
                 loadStyles();
-                styleSelect.value = defaultStyle; // Seleciona "Novo Ritmo"
             }
             else {
                 styleSelect.selectedIndex = styleSelect.length - 1;
             }
+
+            // Remover os ritmos do localStorage
+            ['A', 'B', 'C', 'D'].forEach(r => {
+                localStorage.removeItem(`${currentName}-${r}`);
+                localStorage.removeItem(`${currentName}-${r}-fill`);
+            });
+
+            loadRhythmForStyleAndRhythm(styleSelect.value, selectedRhythm);
         }
     }
 
@@ -155,6 +195,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     function saveStyles() {
         const styles = Array.from(styleSelect.options).map(option => option.value);
         localStorage.setItem('styles', JSON.stringify(styles));
+    }
+
+    // Função para salvar o ritmo no localStorage, associado ao estilo
+    function saveRhythmToStyle(styleName, rhythmKey, rhythmData, shouldAlert = true) {
+        const saveKey = `${styleName}-${rhythmKey}`;
+        localStorage.setItem(saveKey, JSON.stringify(rhythmData));
+        if (shouldAlert) {
+            alert(`Ritmo ${rhythmKey} salvo no estilo ${styleName}!`);
+        }
+
+    }
+
+    // Atualiza a função saveRhythm para usar saveRhythmToStyle
+    function saveRhythm() {
+        const styleName = styleSelect.value;
+        let rhythmKey = selectedRhythm;
+        const selectedButton = document.getElementById(`rhythm-${selectedRhythm.toLowerCase()}`);
+
+        if (selectedButton && selectedButton.classList.contains('lighter')) {
+            rhythmKey = `${rhythmKey}-fill`;
+        }
+
+        const rhythmData = {};
+        tracksContainer.querySelectorAll('.track').forEach(track => {
+            const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
+            const stepsData = Array.from(track.querySelectorAll('.step')).map(step => parseInt(step.dataset.volume));
+            const instrumentButton = track.querySelector('.instrument-button');
+            rhythmData[instrument] = {
+                steps: stepsData,
+                selected: instrumentButton.classList.contains('selected') // Salva o estado de seleção
+            };
+        });
+        rhythmData.bpm = parseInt(bpmInput.value); // Salva o BPM
+        rhythmData.numSteps = parseInt(numStepsInput.value); // Salva a quantidade de tracks
+        saveRhythmToStyle(styleName, rhythmKey, rhythmData);
+    }
+
+    function loadRhythmForStyleAndRhythm(styleName, rhythm) {
+        loadRhythm(`${styleName}-${rhythm}`);
     }
 
     // Inicializa os nomes dos ritmos
@@ -265,14 +344,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (isFillSelected) {
                 if (fillLoaded) {
-                    loadRhythm(`rhythm-${pendingRhythm}`);
+                    loadRhythm(`${styleSelect.value}-${pendingRhythm}`);
                     fillLoaded = false; // Reset flag
                 } else {
-                    loadRhythm(`rhythm-${pendingRhythm}-fill`);
+                    loadRhythm(`${styleSelect.value}-${pendingRhythm}-fill`);
                     fillLoaded = true; // Set flag
                 }
             } else {
-                loadRhythm(`rhythm-${pendingRhythm}`); // Carrega o ritmo normal se o "fill" não estiver selecionado
+                loadRhythm(`${styleSelect.value}-${pendingRhythm}`); // Carrega o ritmo normal se o "fill" não estiver selecionado
                 fillLoaded = false;
             }
 
@@ -296,30 +375,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Função para salvar o ritmo no localStorage
-    function saveRhythm() {
-        let saveKey = `rhythm-${selectedRhythm}`;
-        const selectedButton = document.getElementById(`rhythm-${selectedRhythm.toLowerCase()}`);
-
-        if (selectedButton && selectedButton.classList.contains('lighter')) {
-            saveKey = `${saveKey}-fill`;
-        }
-
-        const rhythmData = {};
-        tracksContainer.querySelectorAll('.track').forEach(track => {
-            const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
-            const stepsData = Array.from(track.querySelectorAll('.step')).map(step => parseInt(step.dataset.volume));
-            const instrumentButton = track.querySelector('.instrument-button');
-            rhythmData[instrument] = {
-                steps: stepsData,
-                selected: instrumentButton.classList.contains('selected') // Salva o estado de seleção
-            };
-        });
-        rhythmData.bpm = parseInt(bpmInput.value); // Salva o BPM
-        rhythmData.numSteps = parseInt(numStepsInput.value); // Salva a quantidade de tracks
-        localStorage.setItem(saveKey, JSON.stringify(rhythmData));
-    }
-
     // Função para selecionar um botão de ritmo (modificada)
     function selectRhythm(rhythmButton, rhythmKey) {
         const buttonId = rhythmButton.id;
@@ -334,11 +389,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             rhythmButtonClicks[buttonId] = 0; // Reseta o contador para o próximo clique
 
             // Carregar o ritmo "fill" se existir, senão carrega o normal
-            const fillKey = `rhythm-${selectedRhythm}-fill`;
+            const fillKey = `${styleSelect.value}-${selectedRhythm}-fill`;
             if (localStorage.getItem(fillKey)) {
                 loadRhythm(fillKey);
             } else {
-                loadRhythm(`rhythm-${selectedRhythm}`);
+                loadRhythm(`${styleSelect.value}-${selectedRhythm}`);
             }
 
             return; // Sai da função para não executar a seleção normal
@@ -354,12 +409,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Load fill immediately
         if (drumMachine.isPlaying) {
-            const fillKey = `rhythm-${pendingRhythm}-fill`;
+            const fillKey = `${styleSelect.value}-${pendingRhythm}-fill`;
             if (localStorage.getItem(fillKey)) {
                 loadRhythm(fillKey);
                 fillLoaded = true;
             } else {
-                loadRhythm(`rhythm-${pendingRhythm}`);
+                loadRhythm(`${styleSelect.value}-${pendingRhythm}`);
                 fillLoaded = false;
             }
         }
@@ -368,7 +423,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         pendingButton = rhythmButton;
         // Se não estiver tocando, muda o ritmo instantaneamente
         if (!drumMachine.isPlaying) {
-            loadRhythm(`rhythm-${selectedRhythm}`);
+            loadRhythm(`${styleSelect.value}-${selectedRhythm}`);
         } else {
             rhythmButton.classList.add('pending');
         }
@@ -434,11 +489,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // Garante que selectedRhythm é atualizado quando um botão de ritmo é clicado
+    function updateSelectedRhythm(rhythmKey) {
+        selectedRhythm = rhythmKey.replace('rhythm-', '').toUpperCase();
+    }
+
     // Event listeners para os botões de ritmo (já existente, mas adaptado)
-    document.getElementById('rhythm-a').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-a'), 'rhythm-a'));
-    document.getElementById('rhythm-b').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-b'), 'rhythm-b'));
-    document.getElementById('rhythm-c').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-c'), 'rhythm-c'));
-    document.getElementById('rhythm-d').addEventListener('click', () => selectRhythm(document.getElementById('rhythm-d'), 'rhythm-d'));
+    document.getElementById('rhythm-a').addEventListener('click', () => {
+        updateSelectedRhythm('rhythm-a');
+        selectRhythm(document.getElementById('rhythm-a'), 'rhythm-a');
+    });
+    document.getElementById('rhythm-b').addEventListener('click', () => {
+        updateSelectedRhythm('rhythm-b');
+        selectRhythm(document.getElementById('rhythm-b'), 'rhythm-b');
+    });
+    document.getElementById('rhythm-c').addEventListener('click', () => {
+        updateSelectedRhythm('rhythm-c');
+        selectRhythm(document.getElementById('rhythm-c'), 'rhythm-c');
+    });
+    document.getElementById('rhythm-d').addEventListener('click', () => {
+        updateSelectedRhythm('rhythm-d');
+        selectRhythm(document.getElementById('rhythm-d'), 'rhythm-d');
+    });
 
     // Event listeners para os botões de nome do ritmo
     addStyleButton.addEventListener('click', addStyle);
@@ -488,9 +560,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         initializeTracks();
     });
 
+    // Atualiza o event listener para o styleSelect
+    styleSelect.addEventListener('change', () => {
+        loadRhythmForStyleAndRhythm(styleSelect.value, selectedRhythm);
+    });
+
     // Carregar o ritmo selecionado ao carregar a página
     rhythmButtons.forEach(button => button.classList.remove('selected', 'lighter'));
     document.getElementById('rhythm-a').classList.add('selected');
     initializeTracks();
-    loadRhythm('rhythm-A');
+
+    // Carregar o style e o ritmo selecionado ao carregar a página
+    loadStyles();
+    loadRhythmForStyleAndRhythm(styleSelect.value, selectedRhythm);
 });
