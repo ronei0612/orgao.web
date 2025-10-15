@@ -47,13 +47,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!localStorage.getItem(key)) {
             const bpm = parseInt(bpmInput.value);
             const numSteps = parseInt(numStepsInput.value);
-            saveRhythmToStyle(defaultStyle, r, createEmptyRhythm(bpm, numSteps), false);
+            saveRhythmToStyle(defaultStyle, r, createEmptyRhythm(bpm, numSteps));
         }
 
         if (!localStorage.getItem(fillKey)) {
             const bpm = parseInt(bpmInput.value);
             const numSteps = parseInt(numStepsInput.value);
-            saveRhythmToStyle(defaultStyle, `${r}-fill`, createEmptyRhythm(bpm, numSteps), false);
+            saveRhythmToStyle(defaultStyle, `${r}-fill`, createEmptyRhythm(bpm, numSteps));
         }
     });
 
@@ -93,13 +93,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function editStyle() {
         const currentName = styleSelect.value;
-        const newName = prompt('Digite o novo nome para o ritmo:', currentName);
+        const newName = prompt('Digite o novo nome para o estilo:', currentName);
         if (newName && newName !== currentName) {
             //const styles = Array.from(styleSelect.options).map(option => option.value);
             const styles = JSON.parse(localStorage.getItem('styles') || '[]');
 
             if (styles.includes(newName)) {
-                alert('Este nome de ritmo já existe.');
+                alert('Este nome de estilo já existe.');
                 return;
             }
 
@@ -140,19 +140,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Adicionar um novo nome de ritmo
+    // Adicionar um novo nome de estilo
     function addStyle() {
-        const newName = prompt('Digite o nome do novo ritmo:');
+        const newName = prompt('Digite o nome do novo estilo:');
         if (newName) {
             let styles = JSON.parse(localStorage.getItem('styles') || '[]');
             if (styles.includes(newName)) {
-                alert('Este nome de ritmo já existe.');
+                alert('Este nome de estilo já existe.');
                 return;
             }
             const option = document.createElement('option');
             option.value = newName;
             option.textContent = newName;
-            styleSelect.add(option, styleSelect.options[styleSelect.options.length - 1]); // Adiciona antes do "Novo Ritmo"
+            styleSelect.add(option, styleSelect.options[styleSelect.options.length - 1]); // Adiciona antes do "Novo Estilo"
             saveStyles();
             styleSelect.value = newName;
 
@@ -160,18 +160,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             ['A', 'B', 'C', 'D'].forEach(r => {
                 const bpm = parseInt(bpmInput.value);
                 const numSteps = parseInt(numStepsInput.value);
-                saveRhythmToStyle(newName, r, createEmptyRhythm(bpm, numSteps), false);
-                saveRhythmToStyle(newName, `${r}-fill`, createEmptyRhythm(bpm, numSteps), false);
+                saveRhythmToStyle(newName, r, createEmptyRhythm(bpm, numSteps));
+                saveRhythmToStyle(newName, `${r}-fill`, createEmptyRhythm(bpm, numSteps));
             });
 
             loadRhythmForStyleAndRhythm(styleSelect.value, selectedRhythm);
         }
     }
 
-    // Excluir o nome do ritmo atual
+    // Excluir o nome do estilo atual
     function deleteStyle() {
         const currentName = styleSelect.value;
-        if (confirm(`Tem certeza que deseja excluir o ritmo "${currentName}"?`)) {
+        if (confirm(`Tem certeza que deseja excluir o estilo "${currentName}"?`)) {
             styleSelect.remove(styleSelect.selectedIndex);
             saveStyles();
             if (styleSelect.length === 0) {
@@ -191,20 +191,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Salvar nomes de ritmos no localStorage
+    // Salvar nomes de estilo no localStorage
     function saveStyles() {
         const styles = Array.from(styleSelect.options).map(option => option.value);
         localStorage.setItem('styles', JSON.stringify(styles));
     }
 
     // Função para salvar o ritmo no localStorage, associado ao estilo
-    function saveRhythmToStyle(styleName, rhythmKey, rhythmData, shouldAlert = true) {
+    function saveRhythmToStyle(styleName, rhythmKey, rhythmData) {
         const saveKey = `${styleName}-${rhythmKey}`;
         localStorage.setItem(saveKey, JSON.stringify(rhythmData));
-        if (shouldAlert) {
-            alert(`Ritmo ${rhythmKey} salvo no estilo ${styleName}!`);
-        }
-
     }
 
     // Atualiza a função saveRhythm para usar saveRhythmToStyle
@@ -236,7 +232,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadRhythm(`${styleName}-${rhythm}`);
     }
 
-    // Inicializa os nomes dos ritmos
+    // Inicializa os nomes dos estilos
     loadStyles();
 
     // Aplica BPM dobrado ao carregar a página
@@ -512,7 +508,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         selectRhythm(document.getElementById('rhythm-d'), 'rhythm-d');
     });
 
-    // Event listeners para os botões de nome do ritmo
+    // Event listeners para os botões de nome do estilo
     addStyleButton.addEventListener('click', addStyle);
     editStyleButton.addEventListener('click', editStyle);
     deleteStyleButton.addEventListener('click', deleteStyle);
@@ -571,6 +567,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializeTracks();
 
     // Carregar o style e o ritmo selecionado ao carregar a página
-    loadStyles();
+    //loadStyles();
     loadRhythmForStyleAndRhythm(styleSelect.value, selectedRhythm);
 });
