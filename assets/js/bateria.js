@@ -16,17 +16,90 @@ document.addEventListener('DOMContentLoaded', async () => {
     const editStyleButton = document.getElementById('editStyle');
     const deleteStyleButton = document.getElementById('deleteStyle');
 
+    // Elementos de copiar e colar
+    const copyRhythmButton = document.getElementById('copy-rhythm');
+    const pasteRhythmButton = document.getElementById('paste-rhythm');
+
     let selectedRhythm = 'A';
     let pendingRhythm = null;
     let pendingButton = null;
     let fillLoaded = false; // Nova variável para controlar se o fill foi carregado
-    let defaultStyle = 'Novo Estilo'; // Nome do ritmo atual
+    let defaultStyle = 'Novo Estilo';
+    let copiedRhythmData = null; // Variável para armazenar os dados copiados
 
     // Novo: Rastrear o número de cliques em cada botão
     const rhythmButtonClicks = {};
     rhythmButtons.forEach(button => {
         rhythmButtonClicks[button.id] = 0;
     });
+
+    // Função para copiar o ritmo
+    function copyRhythm() {
+        const rhythmData = {};
+        tracksContainer.querySelectorAll('.track').forEach(track => {
+            const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
+            const stepsData = Array.from(track.querySelectorAll('.step')).map(step => parseInt(step.dataset.volume));
+            const instrumentButton = track.querySelector('.instrument-button');
+            rhythmData[instrument] = {
+                steps: stepsData,
+                selected: instrumentButton.classList.contains('selected') // Salva o estado de seleção
+            };
+        });
+        copiedRhythmData = rhythmData;
+    }
+
+    // Função para colar o ritmo
+    function pasteRhythm() {
+        if (!copiedRhythmData) {
+            return;
+        }
+
+        tracksContainer.querySelectorAll('.track').forEach(track => {
+            const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
+            const instrumentData = copiedRhythmData[instrument];
+
+            if (instrumentData) {
+                const stepsData = instrumentData.steps;
+                const instrumentButton = track.querySelector('.instrument-button');
+                const isSelected = instrumentData.selected;
+
+                // Define o estado de seleção do botão
+                if (isSelected) {
+                    instrumentButton.classList.add('selected');
+                } else {
+                    instrumentButton.classList.remove('selected');
+                }
+
+                track.querySelectorAll('.step').forEach((step, index) => {
+                    const volume = index < stepsData.length ? stepsData[index] : 0;
+                    step.dataset.volume = volume;
+                    step.classList.remove('active', 'low-volume', 'third-volume');
+                    if (volume === 1) {
+                        step.classList.add('active');
+                    } else if (volume === 2) {
+                        step.classList.add('low-volume');
+                    } else if (volume === 3) {
+                        step.classList.add('third-volume');
+                    }
+                });
+
+                // Verifica se o track está em branco
+                const steps = Array.from(track.querySelectorAll('.step'));
+                const isTrackEmpty = steps.every(step => parseInt(step.dataset.volume) === 0);
+
+                // Atualiza o estado de seleção do botão do instrumento
+                if (isTrackEmpty) {
+                    instrumentButton.classList.remove('selected');
+                } else {
+                    instrumentButton.classList.add('selected');
+                }
+            }
+        });
+    }
+
+    // Event listeners para copiar e colar
+    copyRhythmButton.addEventListener('click', copyRhythm);
+    pasteRhythmButton.addEventListener('click', pasteRhythm);
 
     // Função para criar um ritmo em branco
     function createEmptyRhythm(bpm, numSteps) {
@@ -163,8 +236,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 saveRhythmToStyle(newName, r, createEmptyRhythm(bpm, numSteps));
                 saveRhythmToStyle(newName, `${r}-fill`, createEmptyRhythm(bpm, numSteps));
             });
-
-            loadRhythmForStyleAndRhythm(styleSelect.value, selectedRhythm);
         }
     }
 
@@ -186,8 +257,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 localStorage.removeItem(`${currentName}-${r}`);
                 localStorage.removeItem(`${currentName}-${r}-fill`);
             });
-
-            loadRhythmForStyleAndRhythm(styleSelect.value, selectedRhythm);
         }
     }
 
