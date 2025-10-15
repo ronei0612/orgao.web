@@ -59,31 +59,43 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Carregar nomes de ritmos do localStorage
     function loadRhythmNames() {
-        if (rhythmNameSelect.innerText.includes(defaultRhythmName)) {
-            return;
-        }
-
         const rhythmNames = JSON.parse(localStorage.getItem('rhythmNames') || '[]');
-        rhythmNameSelect.innerHTML = ''; // Limpa as opções existentes
-        rhythmNames.forEach(name => {
-            const option = document.createElement('option');
-            option.value = name;
-            option.textContent = name;
-            rhythmNameSelect.appendChild(option);
-        });
-        // Adiciona a opção "Novo Ritmo" no final
-        const newRhythmOption = document.createElement('option');
-        newRhythmOption.value = defaultRhythmName;
-        newRhythmOption.textContent = defaultRhythmName;
-        rhythmNameSelect.appendChild(newRhythmOption);
-        rhythmNameSelect.value = defaultRhythmName; // Restaura o valor selecionado
+        if (rhythmNames.length > 0) {
+            rhythmNameSelect.innerHTML = ''; // Limpa as opções existentes
+
+            // Ordena os nomes alfabeticamente
+            const sortedRhythmNames = sortRhythmNames(rhythmNames);
+
+            // Adiciona as opções ao select
+            sortedRhythmNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                rhythmNameSelect.appendChild(option);
+            });
+
+            rhythmNameSelect.selectedIndex = 0;
+        }
+        else {
+            // Adiciona a opção "Novo Ritmo"
+            const newRhythmOption = document.createElement('option');
+            newRhythmOption.value = defaultRhythmName;
+            newRhythmOption.textContent = defaultRhythmName;
+            rhythmNameSelect.appendChild(newRhythmOption);
+            rhythmNameSelect.value = defaultRhythmName; // Restaura o valor selecionado
+        }
+    }
+
+    function sortRhythmNames(rhythmNames) {
+        return [...rhythmNames].sort((a, b) => a.localeCompare(b));
     }
 
     function editRhythmName() {
         const currentName = rhythmNameSelect.value;
         const newName = prompt('Digite o novo nome para o ritmo:', currentName);
         if (newName && newName !== currentName) {
-            const rhythmNames = Array.from(rhythmNameSelect.options).map(option => option.value);
+            //const rhythmNames = Array.from(rhythmNameSelect.options).map(option => option.value);
+            const rhythmNames = JSON.parse(localStorage.getItem('rhythmNames') || '[]');
 
             if (rhythmNames.includes(newName)) {
                 alert('Este nome de ritmo já existe.');
@@ -109,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function addRhythmName() {
         const newName = prompt('Digite o nome do novo ritmo:');
         if (newName) {
-            const rhythmNames = Array.from(rhythmNameSelect.options).map(option => option.value);
+            let rhythmNames = JSON.parse(localStorage.getItem('rhythmNames') || '[]');
             if (rhythmNames.includes(newName)) {
                 alert('Este nome de ritmo já existe.');
                 return;
