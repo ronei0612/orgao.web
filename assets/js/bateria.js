@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let pendingRhythm = null;
     let pendingButton = null;
     let fillLoaded = false; // Nova variável para controlar se o fill foi carregado
-    let defaultStyle = 'Novo Ritmo'; // Nome do ritmo atual
+    let defaultStyle = 'Novo Estilo'; // Nome do ritmo atual
 
     // Novo: Rastrear o número de cliques em cada botão
     const rhythmButtonClicks = {};
