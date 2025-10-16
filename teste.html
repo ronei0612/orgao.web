@@ -17,6 +17,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
 
     <style>
+        .select2-results__options > li[aria-selected="false"][data-select2-id*="acordes"] {
+            color: gray;
+            background-color: #ecf0f1;
+            /*font-weight: bold; Adiciona o estilo negrito */
+        }
     </style>
 </head>
 
@@ -29,9 +34,9 @@
 
                     <select class="form-control select2-editavel" id="savesSelect">
                         <option></option> <!-- Tag vazia necessária para o placeholder funcionar bem -->
-                        <option value="vazio">Acordes</option>
-                        <option value="Exemplo 2">Exemplo 1</option>
-                        <option value="Exemplo 3">Exemplo 2</option>
+                        <option value="acordes">Acordes</option>
+                        <option value="Exemplo 1">Exemplo 1</option>
+                        <option value="Exemplo 2">Exemplo 2</option>
                     </select>
 
                 </div>
@@ -52,10 +57,18 @@
             $('#savesSelect').select2({
                 theme: 'bootstrap4', // Usa o tema do Bootstrap 4 para facilitar a estilização
                 tags: true,          // Permite editar/criar novas opções (funciona como input)
-                placeholder: "Repertório...",
+                placeholder: "Escolha a Música...",
                 allowClear: true,
                 width: '100%'        // Garante que o JS force a largura total
             });
+        });
+
+        $('#savesSelect').on('select2:select', function (e) {
+            var selectedValue = e.params.data.id; // Obtém o valor selecionado
+
+            if (selectedValue === 'acordes') {
+                $(this).val(null).trigger('change'); // Desseleciona a opção
+            }
         });
     </script>
 </body>
