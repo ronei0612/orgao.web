@@ -9,6 +9,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="./assets/css/stylesNew.css">
+
+    <!-- CSS do Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
 </head>
 
 <body>
@@ -39,7 +43,12 @@
             <div class="mx-1"></div>
             <div class="d-flex flex-grow-1">
                 <div class="d-flex align-items-center justify-content-between w-100">
-                    <select class="form-control rounded-left-custom" id="savesSelect"></select>
+                    <select class="form-control rounded-left-custom" id="savesSelect">
+                        <!--<option></option>--> <!-- Tag vazia necessária para o placeholder funcionar bem -->
+                        <!--<option value="acordes">Acordes</option>
+                        <option value="Exemplo 1">Exemplo 1</option>
+                        <option value="Exemplo 2">Exemplo 2</option>-->
+                    </select>
                     <button class="btn btn-control-custom btn-add rounded-right" id="addButton">
                         <i class="bi bi-plus-square"></i>
                     </button>
@@ -51,8 +60,8 @@
                     </button>
                 </div>
             </div>
-        </div>        
-    
+        </div>
+
         <div class="mb-2 flex-grow-1">
             <iframe class="w-100 border border-secondary rounded d-none" id="liturgiaDiariaFrame" src="https://liturgiadiaria.edicoescnbb.com.br/"></iframe>
             <iframe class="w-100 border border-secondary rounded d-none" id="santamissaFrame" src="./santamissa.html"></iframe>
@@ -64,10 +73,10 @@
             <button class="btn btn-link d-none" id="prevButton">
                 <i class="bi bi-chevron-compact-left" style="font-size: larger;"></i>
             </button>
-            <button class="btn-custom btn-icons mx-2 d-none" data-action="play" id="playButton"><i class="bi bi-play-fill"></i></button>        
+            <button class="btn-custom btn-icons mx-2 d-none" data-action="play" id="playButton"><i class="bi bi-play-fill"></i></button>
             <button class="btn-custom btn-icons pressed pulse mx-2" data-action="stop" id="stopButton"><i class="bi bi-search"></i></button>
             <button class="btn-custom btn-icons mx-2" data-action="notes" id="notesButton"><i class="bi bi-music-note-beamed"></i></button>
-        
+
             <button class="btn btn-link d-none" id="nextButton">
                 <i class="bi bi-chevron-compact-right" style="font-size: larger;"></i>
             </button>
@@ -76,13 +85,13 @@
         <div class="d-flex justify-content-center align-items-center" id="controlButtons">
             <button class="btn btn-link d-none" id="prevButton">
                 <i class="bi bi-chevron-compact-left" style="font-size: larger;"></i>
-            </button>        
+            </button>
             <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde9" value="Bb">Bb</button>
-            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde7" value="A">A</button>        
-            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde11" value="B°">B°</button>        
+            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde7" value="A">A</button>
+            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde11" value="B°">B°</button>
             <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde8" value="E">E</button>
             <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde10" value="D">D</button>
-        </div>                        
+        </div>
 
         <div class="d-flex justify-content-center" id="acordesButtons">
             <button class="btn-custom mx-1" data-action="acorde" id="acorde1" value="C">C</button>
@@ -128,7 +137,7 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
 
     <!-- Modal para pesquisa -->
     <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
@@ -213,10 +222,58 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <!-- IMPORTANTE: Usar jQuery FULL, não a versão 'slim', para o Select2 funcionar corretamente -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- JS do Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script src="./assets/js/Pizzicato.min.js"></script>
     <script src="./assets/js/scriptNew.js"></script>
+
+
+
+    <script>
+        $(document).ready(function () {
+            var $select = $('#savesSelect').select2({
+                theme: 'bootstrap4',
+                placeholder: "Escolha a Música...",
+                width: '100%'        // Garante que o JS force a largura total
+            });
+
+            // Evento keyup no campo de busca do Select2
+            $(document).on('keyup', '.select2-search__field', function (e) {
+                var searchTerm = $(this).val();
+
+                if (searchTerm) {
+                    $('.select2-results__options').find('.pesquisar-na-web').remove();
+
+                    var $optionPesquisaWeb = $('<li class="select2-results__option pesquisar-na-web" role="treeitem" aria-selected="false"></li>');
+                    $optionPesquisaWeb.html('<i class="bi bi-search"></i> Pesquisar na Web');
+
+                    $('.select2-results__options').prepend($optionPesquisaWeb);
+
+                    $optionPesquisaWeb.on('click', function () {
+                        pesquisarNaWeb(searchTerm);
+                        $select.select2('close');
+                    });
+                } else {
+                    $('.select2-results__options').find('.pesquisar-na-web').remove();
+                }
+            });
+
+
+            $('#savesSelect').on('select2:select', function (e) {
+                var selectedValue = e.params.data.id; // Obtém o valor selecionado
+
+                if (selectedValue === 'acordes') {
+                    $(this).val(null).trigger('change'); // Desseleciona a opção
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
