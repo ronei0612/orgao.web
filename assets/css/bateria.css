@@ -3,10 +3,6 @@ body {
     background-color: #f8f9fa;
 }
 
-.container {
-    margin-top: 20px;
-}
-
 .controls {
     display: flex;
     gap: 10px;
@@ -35,6 +31,14 @@ body {
     cursor: pointer;
     text-align: center;
     line-height: 35px;
+    box-sizing: border-box; /* Garante que o padding/border não afete o tamanho total */
+    flex-shrink: 0; /* Impede que os steps encolham */
+}
+
+#tracks {
+    overflow-x: auto; /* Adiciona scroll horizontal */
+    white-space: nowrap; /* Impede quebras de linha */
+    padding-bottom: 10px; /* Espaço para a barra de rolagem não cobrir os steps */
 }
 
 .step.active {
