@@ -713,6 +713,7 @@ class UIController {
     }
 
     esconderInterfaceDePesquisa() {
+        this.elements.editTextarea.classList.add('d-none');
         this.elements.searchResultsList.classList.remove('d-none');
         this.elements.searchButton.disabled = false;
     }
@@ -1603,6 +1604,12 @@ const togglePressedState = (event) => {
         }
     }
 };
+
+function pesquisarNaWeb(texto) {
+    elements.searchInput.value = texto;
+    $('#searchModal').modal('show');
+    searchMusic();
+}
 
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');

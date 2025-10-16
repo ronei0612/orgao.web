@@ -1,58 +1,108 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Editável com Bootstrap e Select2</title>
-    <!-- Inclua os arquivos CSS do Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Inclua os arquivos CSS do Select2 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Órgão.Web - Select2 Editável</title>
+
+    <!-- CSS do Layout Original -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- CSS do Select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Tema Bootstrap 4 para Select2 (Opcional, mas ajuda na integração) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
+
     <style>
-        .select2-container--default .select2-selection--single {
-            height: 38px;
-            padding: .5rem .75rem;
-            font-size: 1rem;
-            line-height: 1.5;
-            border: 1px solid #ced4da;
-            border-radius: .25rem;
+        .select2-results__options > li[aria-selected="false"][data-select2-id*="acordes"] {
+            color: gray;
+            background-color: #ecf0f1;
+            /*font-weight: bold; Adiciona o estilo negrito */
         }
-
-            .select2-container--default .select2-selection--single .select2-selection__rendered {
-                line-height: 28px;
-            }
-
-            .select2-container--default .select2-selection--single .select2-selection__arrow {
-                height: 36px;
-            }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Select Editável com Select2</h1>
-        <div class="form-group">
-            <label for="meuSelect">Selecione uma opção:</label>
-            <select class="form-control select2" id="meuSelect">
-                <option value="opcao1">Opção 1</option>
-                <option value="opcao2">Opção 2</option>
-                <option value="opcao3">Opção 3</option>
-            </select>
+    <!-- Estrutura de Layout exata fornecida por você -->
+    <div class="container d-flex flex-column vh-100" id="container">
+        <div class="d-sm-flex mt-1 mb-1">
+            <div class="d-flex flex-grow-1">
+                <div class="d-flex align-items-center justify-content-between w-100">
+
+                    <select class="form-control select2-editavel" id="savesSelect">
+                        <option></option> <!-- Tag vazia necessária para o placeholder funcionar bem -->
+                        <option value="acordes">Acordes</option>
+                        <option value="Exemplo 1">Exemplo 1</option>
+                        <option value="Exemplo 2">Exemplo 2</option>
+                    </select>
+
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Inclua os arquivos JavaScript do jQuery (necessário para o Select2) -->
+    <!-- IMPORTANTE: Usar jQuery FULL, não a versão 'slim', para o Select2 funcionar corretamente -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <!-- Inclua os arquivos JavaScript do Bootstrap (opcional, dependendo dos seus outros componentes) -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Inclua os arquivos JavaScript do Select2 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- JS do Select2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
         $(document).ready(function () {
-            $('.select2').select2({
-                tags: true,
-                tokenSeparators: [',', ' ']
+            var $select = $('#savesSelect').select2({
+                theme: 'bootstrap4', // Usa o tema do Bootstrap 4 para facilitar a estilização
+                tags: true,          // Permite editar/criar novas opções (funciona como input)
+                placeholder: "Escolha a Música...",
+                allowClear: true,
+                width: '100%'        // Garante que o JS force a largura total
             });
+
+            // Evento keyup no campo de busca do Select2
+            $(document).on('keyup', '.select2-search__field', function (e) {
+                var searchTerm = $(this).val();
+
+                if (searchTerm) {
+                    // Remove a opção "Pesquisar na Web" se já existir para não duplicar
+                    $('.select2-results__options').find('.pesquisar-na-web').remove();
+
+                    // Adiciona a opção "Pesquisar na Web" com um ícone do Bootstrap Icons
+                    var $option = $('<li class="select2-results__option pesquisar-na-web" role="treeitem" aria-selected="false"></li>');
+                    $option.html('<i class="bi bi-search"></i> Pesquisar na Web');
+
+                    // Insere a opção como a primeira do dropdown
+                    $('.select2-results__options').prepend($option);
+
+                    // Adiciona um evento de clique para a opção "Pesquisar na Web"
+                    $option.on('click', function () {
+                        alert('Você pesquisaria por: ' + searchTerm); // Substitua pelo seu código de pesquisa na web
+                        $select.select2('close'); // Fecha o dropdown
+        });
+
+                    // Força a abertura do dropdown se ele estiver fechado
+                    if (!$('.select2-container--open').length) {
+                        $select.select2('open');
+                    }
+                } else {
+                    // Se o campo de busca estiver vazio, remove a opção "Pesquisar na Web"
+                    $('.select2-results__options').find('.pesquisar-na-web').remove();
+                }
+            });
+
+
+        $('#savesSelect').on('select2:select', function (e) {
+            var selectedValue = e.params.data.id; // Obtém o valor selecionado
+
+            if (selectedValue === 'acordes') {
+                $(this).val(null).trigger('change'); // Desseleciona a opção
+            }
+        });
         });
     </script>
 </body>
+
 </html>
