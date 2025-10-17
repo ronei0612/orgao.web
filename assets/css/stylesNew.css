@@ -440,7 +440,11 @@ input:checked+.slider:before {
 .select2-results__options > li[aria-selected="false"][data-select2-id*="acordes"] {
     color: gray;
     background-color: #ecf0f1;
-    /*font-weight: bold; Adiciona o estilo negrito */
+    font-style: italic;
+}
+
+.select2-results__options > li[aria-selected="true"][data-select2-id*="acordes"] {
+    font-style: italic;
 }
 
 body.dark-mode .select2-results__options > li {
