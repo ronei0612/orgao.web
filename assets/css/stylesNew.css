@@ -442,3 +442,7 @@ input:checked+.slider:before {
     background-color: #ecf0f1;
     /*font-weight: bold; Adiciona o estilo negrito */
 }
+
+body.dark-mode .select2-results__options > li {
+    color: #000;
+}
