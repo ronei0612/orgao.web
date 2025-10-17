@@ -407,6 +407,8 @@ $('#searchModal').on('shown.bs.modal', () => {
 
     if (_pesquisarNaWeb) {
         _pesquisarNaWeb = false;
+        elements.searchIcon.classList.add('d-none');
+        elements.spinner.classList.remove('d-none');
         elements.editTextarea.classList.add('d-none');
         elements.searchResultsList.classList.remove('d-none');
     }
