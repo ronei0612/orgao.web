@@ -68,6 +68,7 @@ const elements = {
 const cifraPlayer = new CifraPlayer(elements);
 const uiController = new UIController(elements);
 const localStorageManager = new LocalStorageManager();
+var _pesquisarNaWeb = false;
 
 const camposHarmonicos = {
     // Campos harmônicos maiores
@@ -403,7 +404,9 @@ $('#searchModal').on('shown.bs.modal', () => {
     elements.editTextarea.value = elements.iframeCifra.contentDocument.body.innerText;
     elements.searchInput.focus();
     uiController.exibirBotoesSalvarTocar();
-    if (elements.searchInput.value) {
+
+    if (_pesquisarNaWeb) {
+        _pesquisarNaWeb = false;
         elements.editTextarea.classList.add('d-none');
         elements.searchResultsList.classList.remove('d-none');
     }
@@ -718,6 +721,7 @@ const togglePressedState = (event) => {
 };
 
 function pesquisarNaWeb(texto) {
+    _pesquisarNaWeb = true;
     elements.searchInput.value = texto;
     $('#searchModal').modal('show');
     searchMusic();
