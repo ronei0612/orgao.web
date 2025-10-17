@@ -44,10 +44,6 @@
             <div class="d-flex flex-grow-1">
                 <div class="d-flex align-items-center justify-content-between w-100">
                     <select class="form-control rounded-left-custom" id="savesSelect">
-                        <!--<option></option>--> <!-- Tag vazia necessária para o placeholder funcionar bem -->
-                        <!--<option value="acordes">Acordes</option>
-                        <option value="Exemplo 1">Exemplo 1</option>
-                        <option value="Exemplo 2">Exemplo 2</option>-->
                     </select>
                     <button class="btn btn-control-custom btn-add rounded-right" id="addButton">
                         <i class="bi bi-plus-square"></i>
@@ -230,22 +226,27 @@
     <!-- JS do Select2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <script src="./assets/js/Pizzicato.min.js"></script>
+    <script src="./assets/js/Pizzicato/0.6.4/Pizzicato.min.js"></script>
+    <script src="./assets/js/CifraPlayer.js"></script>
+    <script src="./assets/js/UIController.js"></script>
+    <script src="./assets/js/LocalStorageManager.js"></script>
     <script src="./assets/js/scriptNew.js"></script>
-
-
 
     <script>
         $(document).ready(function () {
             var $select = $('#savesSelect').select2({
                 theme: 'bootstrap4',
                 placeholder: "Escolha a Música...",
-                width: '100%'        // Garante que o JS force a largura total
+                width: '100%'
             });
 
-            // Evento keyup no campo de busca do Select2
             $(document).on('keyup', '.select2-search__field', function (e) {
                 var searchTerm = $(this).val();
+
+                if (e.key === 'Enter') {
+                    pesquisarNaWeb(searchTerm);
+                    $select.select2('close');
+                }
 
                 if (searchTerm) {
                     $('.select2-results__options').find('.pesquisar-na-web').remove();
@@ -267,8 +268,9 @@
 
             $('#savesSelect').on('select2:select', function (e) {
                 var selectedValue = e.params.data.id; // Obtém o valor selecionado
+                selectEscolhido(selectedValue);
 
-                if (selectedValue === 'acordes') {
+                if (selectedValue === 'acordes__') {
                     $(this).val(null).trigger('change'); // Desseleciona a opção
                 }
             });
