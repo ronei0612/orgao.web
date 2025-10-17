@@ -403,6 +403,10 @@ $('#searchModal').on('shown.bs.modal', () => {
     elements.editTextarea.value = elements.iframeCifra.contentDocument.body.innerText;
     elements.searchInput.focus();
     uiController.exibirBotoesSalvarTocar();
+    if (elements.searchInput.value) {
+        elements.editTextarea.classList.add('d-none');
+        elements.searchResultsList.classList.remove('d-none');
+    }
 });
 
 $('#alertModal').on('shown.bs.modal', () => {
@@ -557,17 +561,17 @@ async function searchMusic() {
     if (musicasLocais.length > 0) {
         const max = 4;
         const topTitles = musicasLocais.slice(0, max);
-            topTitles.forEach((cifra) => {
-                const title = cifra.titulo + ' - ' + cifra.artista;
-                const listItem = document.createElement('li');
-                listItem.className = 'list-group-item';
-                const link = document.createElement('a');
-                link.href = '#';
-                    link.onclick = () => choseCifraLocal(cifra.id);
-                    link.textContent = title;
-                    listItem.appendChild(link);
-                    elements.searchResultsList.appendChild(listItem);
-                });
+        topTitles.forEach((cifra) => {
+            const title = cifra.titulo + ' - ' + cifra.artista;
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item';
+            const link = document.createElement('a');
+            link.href = '#';
+            link.onclick = () => choseCifraLocal(cifra.id);
+            link.textContent = title;
+            listItem.appendChild(link);
+            elements.searchResultsList.appendChild(listItem);
+        });
 
         uiController.esconderInterfaceDePesquisa();
     }

@@ -202,7 +202,6 @@ class UIController {
     }
 
     esconderInterfaceDePesquisa() {
-        this.elements.editTextarea.classList.add('d-none');
         this.elements.searchResultsList.classList.remove('d-none');
         this.elements.searchButton.disabled = false;
     }

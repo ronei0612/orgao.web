@@ -237,12 +237,16 @@
             var $select = $('#savesSelect').select2({
                 theme: 'bootstrap4',
                 placeholder: "Escolha a Música...",
-                width: '100%'        // Garante que o JS force a largura total
+                width: '100%'
             });
 
-            // Evento keyup no campo de busca do Select2
             $(document).on('keyup', '.select2-search__field', function (e) {
                 var searchTerm = $(this).val();
+
+                if (e.key === 'Enter') {
+                    pesquisarNaWeb(searchTerm);
+                    $select.select2('close');
+                }
 
                 if (searchTerm) {
                     $('.select2-results__options').find('.pesquisar-na-web').remove();
