@@ -108,8 +108,8 @@ class UIController {
         this.elements.savesSelect.appendChild(defaultOption);
 
         const emptyOption = document.createElement('option');
-        emptyOption.value = '';
-        emptyOption.text = '';
+        emptyOption.value = 'acordes__';
+        emptyOption.text = 'Acordes';
         this.elements.savesSelect.appendChild(emptyOption);
 
         this.elements.savesSelect.style.color = '';

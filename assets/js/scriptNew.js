@@ -247,42 +247,6 @@ elements.increaseTom.addEventListener('click', () => {
     }
 });
 
-elements.savesSelect.addEventListener('change', () => {
-    const selectItem = elements.savesSelect.value;
-
-    if (selectItem) {
-        const saves = JSON.parse(localStorage.getItem('saves'));
-        elements.editTextarea.value = saves[selectItem];
-        elements.searchModalLabel.textContent = selectItem;
-        elements.savesSelect.style.color = 'black';
-        const texto = elements.editTextarea.value;
-        const musicaCifrada = cifraPlayer.destacarCifras(texto);
-        const tom = descobrirTom(musicaCifrada);
-        elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
-        uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
-
-        if (tom !== '') {
-            uiController.exibirBotoesCifras();
-            elements.tomSelect.dispatchEvent(new Event('change'));
-        }
-        else {
-            //uiController.exibirBotoesAcordes();            
-            uiController.esconderBotoesAcordes();
-            uiController.esconderBotoesPlay();
-        }
-        uiController.exibirIframeCifra();
-        cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
-        
-        cifraPlayer.indiceAcorde = 0;
-    }
-    else {
-        uiController.exibirBotoesTom();
-        uiController.exibirBotoesAcordes();
-        elements.savesSelect.selectedIndex = 0;
-        elements.iframeCifra.contentDocument.body.innerHTML = '';
-    }
-});
-
 elements.addButton.addEventListener('click', function () {
     this.classList.add('pressed');
 
@@ -444,6 +408,40 @@ $('#searchModal').on('shown.bs.modal', () => {
 $('#alertModal').on('shown.bs.modal', () => {
     elements.itemNameInput.focus();
 });
+
+function selectEscolhido(selectItem) {
+    if (selectItem && selectItem !== 'acordes__') {
+        const saves = JSON.parse(localStorage.getItem('saves'));
+        elements.editTextarea.value = saves[selectItem];
+        elements.searchModalLabel.textContent = selectItem;
+        elements.savesSelect.style.color = 'black';
+        const texto = elements.editTextarea.value;
+        const musicaCifrada = cifraPlayer.destacarCifras(texto);
+        const tom = descobrirTom(musicaCifrada);
+        elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
+        uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
+
+        if (tom !== '') {
+            uiController.exibirBotoesCifras();
+            elements.tomSelect.dispatchEvent(new Event('change'));
+        }
+        else {
+            //uiController.exibirBotoesAcordes();            
+            uiController.esconderBotoesAcordes();
+            uiController.esconderBotoesPlay();
+        }
+        uiController.exibirIframeCifra();
+        cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
+
+        cifraPlayer.indiceAcorde = 0;
+    }
+    else {
+        uiController.exibirBotoesTom();
+        uiController.exibirBotoesAcordes();
+        elements.savesSelect.selectedIndex = 0;
+        elements.iframeCifra.contentDocument.body.innerHTML = '';
+    }
+}
 
 function descobrirTom(textoHtml) {
     const tempDiv = document.createElement('div');

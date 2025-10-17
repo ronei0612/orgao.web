@@ -44,10 +44,6 @@
             <div class="d-flex flex-grow-1">
                 <div class="d-flex align-items-center justify-content-between w-100">
                     <select class="form-control rounded-left-custom" id="savesSelect">
-                        <!--<option></option>--> <!-- Tag vazia necessária para o placeholder funcionar bem -->
-                        <!--<option value="acordes">Acordes</option>
-                        <option value="Exemplo 1">Exemplo 1</option>
-                        <option value="Exemplo 2">Exemplo 2</option>-->
                     </select>
                     <button class="btn btn-control-custom btn-add rounded-right" id="addButton">
                         <i class="bi bi-plus-square"></i>
@@ -268,8 +264,9 @@
 
             $('#savesSelect').on('select2:select', function (e) {
                 var selectedValue = e.params.data.id; // Obtém o valor selecionado
+                selectEscolhido(selectedValue);
 
-                if (selectedValue === 'acordes') {
+                if (selectedValue === 'acordes__') {
                     $(this).val(null).trigger('change'); // Desseleciona a opção
                 }
             });
