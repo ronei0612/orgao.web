@@ -154,7 +154,7 @@ elements.saveButton.addEventListener('click', () => {
 
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
     if (saves.hasOwnProperty(saveName)) {
-        uiController.exibirMensagemAlerta('Sobrescrever os dados?', `Salvando "${saveName}"`);
+        uiController.exibirMensagemAlerta(`Salvar "${saveName}"?`, 'Confirmação');
         uiController.resetarSimNaoAlert();
     }
     else {
