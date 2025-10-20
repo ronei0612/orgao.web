@@ -25,6 +25,18 @@ class UIController {
         this.elements.acorde11.classList.add('d-none');
     }
 
+    editarMusica() {
+        this.elements.iframeCifra.classList.add('d-none');
+        this.elements.editTextarea.classList.remove('d-none');
+        this.elements.selectContainer.classList.add('d-none');
+        this.elements.itemNameInput.classList.remove('d-none');
+        this.elements.saveButton.classList.remove('d-none');
+        this.elements.cancelButton.classList.remove('d-none');
+        this.elements.editSavesSelect.classList.add('d-none');
+        this.elements.deleteSavesSelect.classList.add('d-none');
+        this.elements.addButton.classList.add('d-none');
+    }
+
     exibirBotoesAcordes() {
         this.atualizarBotoesNavegacao('centralizado');
         this.exibirBotoesTom();

@@ -255,10 +255,11 @@ elements.addButton.addEventListener('click', function () {
     }, 100);
 
     if (!elements.deleteSavesSelect.classList.contains('d-none')) {
-        itemModalLabel.innerText = "Novo";
-        elements.itemNameInput.value = "";
-        elements.savesSelect.selectedIndex = 0;
-        $('#itemModal').modal('show');
+        elements.iframeCifra.contentDocument.body.innerHTML = '';
+        uiController.editarMusica();
+        uiController.exibirBotoesTom();
+        uiController.exibirBotoesAcordes();
+        elements.itemNameInput.click();
     }
 
     uiController.toggleEditDeleteButtons();
@@ -268,24 +269,9 @@ elements.editSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
     elements.itemNameInput.value = saveName ? saveName : '';
 
-    elements.iframeCifra.classList.add('d-none');
-    elements.editTextarea.classList.remove('d-none');
-    elements.selectContainer.classList.add('d-none');
-    elements.itemNameInput.classList.remove('d-none');
-    elements.saveButton.classList.remove('d-none');
-    elements.cancelButton.classList.remove('d-none');
-    elements.editSavesSelect.classList.add('d-none');
-    elements.deleteSavesSelect.classList.add('d-none');
-    elements.addButton.classList.add('d-none');
-
+    uiController.editarMusica();
     uiController.exibirBotoesTom();
     uiController.exibirBotoesAcordes();
-    
-    //if (elements.savesSelect.selectedIndex !== 0) {
-    //    itemModalLabel.innerText = "Editar - " + saveName;
-    //    elements.itemNameInput.value = saveName ? saveName : "";
-    //    $('#itemModal').modal('show');
-    //}
 });
 
 elements.deleteSavesSelect.addEventListener('click', () => {
