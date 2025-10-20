@@ -867,7 +867,6 @@ function fullScreen() {
 }
 
 function salvarSave(newSaveName) {
-    debugger;
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
 
     if (newSaveName) {
