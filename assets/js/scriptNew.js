@@ -709,15 +709,11 @@ const togglePressedState = (event) => {
         if (action === 'play' || action === 'acorde') {
             setTimeout(() => button.classList.add('pulse'), 100);
             elements.stopButton.classList.remove('pulse');
-            elements.stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
-            elements.playButton.classList.remove('pulse');
+            elements.playButton.classList.add('d-none');
+            elements.stopButton.classList.remove('d-none');
         } else {
-            if (action === 'stop' && elements.stopButton.innerHTML.includes('bi-search')) {
-                $('#searchModal').modal('show');
-            }
-            elements.playButton.classList.remove('pressed', 'pulse');
-            elements.stopButton.classList.add('pulse');
-            elements.stopButton.innerHTML = '<i class="bi bi-search"></i>';
+            elements.playButton.classList.remove('d-none', 'pressed'),
+            elements.stopButton.classList.add('d-none', 'pulse');
         }
     }
 };
