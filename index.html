@@ -33,6 +33,10 @@
             .iframe-edit-button:hover {
                 opacity: 1;
             }
+
+        #selectContainer {
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -64,8 +68,19 @@
             <div class="mx-1"></div>
             <div class="d-flex flex-grow-1">
                 <div class="d-flex align-items-center justify-content-between w-100">
-                    <select class="form-control rounded-left-custom" id="savesSelect">
-                    </select>
+                    <div id="selectContainer">
+                        <select class="form-control rounded-left-custom" id="savesSelect">
+                        </select>
+                    </div>
+                    <input type="text" class="form-control d-none" id="itemNameInput" placeholder="Nome da Música...">
+
+                    <button class="btn btn-primary btn-control-custom rounded-right d-none" id="saveButton">
+                        <i class="bi bi-check"></i>
+                    </button>
+                    <button class="btn btn-danger btn-control-custom rounded-right d-none" id="cancelButton">
+                        ×
+                    </button>
+
                     <button class="btn btn-control-custom btn-add rounded-right" id="addButton">
                         <i class="bi bi-plus-square"></i>
                     </button>
@@ -83,13 +98,9 @@
             <iframe class="w-100 border border-secondary rounded d-none" id="liturgiaDiariaFrame" src="https://liturgiadiaria.edicoescnbb.com.br/"></iframe>
             <iframe class="w-100 border border-secondary rounded d-none" id="santamissaFrame" src="./santamissa.html"></iframe>
             <iframe class="w-100 border border-secondary rounded d-none" id="oracoesFrame" src="./oracoes.html"></iframe>
-            <div class="iframe-container">
-                <iframe class="w-100 border border-secondary rounded" id="iframeCifra"></iframe>
-                <button type="button" class="btn btn-light iframe-edit-button" data-toggle="modal"
-                        data-target="#searchModal">
-                    <i class="bi bi-pencil"></i>
-                </button>
-            </div>
+            <iframe class="w-100 border border-secondary rounded" id="iframeCifra"></iframe>
+
+            <textarea class="modal-textarea d-none" id="editTextarea" placeholder="Editar Cifra..."></textarea>
         </div>
 
         <div class="d-flex justify-content-center align-items-center" id="controlButtons">
@@ -181,16 +192,12 @@
                             <i class="bi bi-search" id="searchIcon"></i>
                         </button>
                     </div>
-                    <textarea class="modal-textarea mt-3" id="editTextarea" placeholder="Criar nova Cifra..."></textarea>
                     <ul class="list-group mt-3 d-none" id="searchResults"></ul>
                     <ul class="list-group mt-3 d-none" id="saves"></ul>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeButton">× Fechar</button>
                     <div>
-                        <button class="btn btn-control-custom btn-add" id="saveButton">
-                            <i class="bi bi-save"></i> Salvar
-                        </button>
                         <button type="button" class="btn btn-primary" id="startButton">
                             <i class="bi bi-check"></i> Tocar
                         </button>
@@ -211,7 +218,6 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" class="form-control" id="itemNameInput" placeholder="Nome da Música...">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">× Fechar</button>

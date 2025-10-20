@@ -193,10 +193,11 @@ class UIController {
     }
 
     exibirInterfaceDePesquisa() {
-        this.elements.editTextarea.classList.add('d-none');
+        //this.elements.editTextarea.classList.add('d-none');
         this.elements.searchIcon.classList.add('d-none');
         this.elements.spinner.classList.remove('d-none');
         this.elements.saveButton.classList.add('d-none');
+        this.elements.cancelButton.classList.add('d-none');
         this.elements.startButton.classList.add('d-none');
         this.elements.searchButton.disabled = true;
     }
@@ -226,11 +227,22 @@ class UIController {
         
         this.elements.startButton.classList.remove('d-none');
         this.elements.saveButton.classList.remove('d-none');
+        this.elements.cancelButton.classList.remove('d-none');
         this.elements.addButton.classList.remove('d-none');
-        this.elements.editTextarea.classList.remove('d-none');
+    }
+
+    resetInterface() {
+        elements.editTextarea.classList.add('d-none');
+        elements.itemNameInput.classList.add('d-none');
+        elements.saveButton.classList.add('d-none');
+        elements.cancelButton.classList.add('d-none');
+        elements.selectContainer.classList.remove('d-none');
+        elements.addButton.classList.remove('d-none');
+        elements.iframeCifra.classList.remove('d-none');
     }
 
     exibirIframeCifra() {
+        this.resetInterface();
         this.elements.iframeCifra.classList.remove('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');

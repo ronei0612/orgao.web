@@ -4,6 +4,7 @@ const elements = {
     editTextarea: document.getElementById('editTextarea'),
     startButton: document.getElementById('startButton'),
     saveButton: document.getElementById('saveButton'),
+    cancelButton: document.getElementById('cancelButton'),
     addButton: document.getElementById('addButton'),
     saveNewItemButton: document.getElementById('saveNewItemButton'),
     playButton: document.getElementById('playButton'),
@@ -26,6 +27,7 @@ const elements = {
     darkModeToggle: document.getElementById('darkModeToggle'),
     searchModalLabel: document.getElementById('searchModalLabel'),
     savesSelect: document.getElementById('savesSelect'),
+    selectContainer: document.getElementById('selectContainer'),
     editSavesSelect: document.getElementById('editSavesSelect'),
     deleteSavesSelect: document.getElementById('deleteSavesSelect'),
     tomSelect: document.getElementById('tomSelect'),
@@ -138,33 +140,30 @@ elements.saveNewItemButton.addEventListener("click", () => {
     $('#itemModal').modal('hide');
 });
 
+elements.cancelButton.addEventListener("click", () => {
+    uiController.resetInterface();
+});
+
 elements.saveButton.addEventListener('click', () => {
-    const saveContent = elements.editTextarea.value;
+    let saveName = elements.itemNameInput.value;
+    if (!saveName) {
+        const musicasDefault = elements.savesSelect.querySelectorAll('option[value^="Música "]');
+        const count = musicasDefault.length + 1;
+        saveName = "Música " + count;
+    }
 
-    if (saveContent) {
-        let saveName = elements.searchModalLabel.textContent;
-        if (saveName) {
-            if (saveName === "Música") {
-                itemModalLabel.innerText = "Novo";
-                $('#itemModal').modal('show');
-                return;
-            }
-            let saves = JSON.parse(localStorage.getItem('saves')) || {};
-            if (saves.hasOwnProperty(saveName)) {
-                uiController.exibirMensagemAlerta(`Salvar "${saveName}"?`, `Salvar "${saveName}"`);
-                uiController.resetarSimNaoAlert();
-            }
-            else {
-                salvarSave(saveName);
+    let saves = JSON.parse(localStorage.getItem('saves')) || {};
+    if (saves.hasOwnProperty(saveName)) {
+        uiController.exibirMensagemAlerta('Sobrescrever os dados?', `Salvando "${saveName}"`);
+        uiController.resetarSimNaoAlert();
+    }
+    else {
+        salvarSave(saveName);
 
-                uiController.exibirMensagemAlerta(`"${saveName}" salvo com sucesso!`, 'Música');
-                uiController.resetarOkAlert();
+        uiController.exibirMensagemAlerta(`"${saveName}" salvo com sucesso!`, 'Música');
+        uiController.resetarOkAlert();
 
-                $('#alertModal').modal('show');
-            }
-        }
-    } else {
-        elements.editTextarea.focus();
+        $('#alertModal').modal('show');
     }
 });
 
@@ -267,11 +266,26 @@ elements.addButton.addEventListener('click', function () {
 
 elements.editSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
-    if (elements.savesSelect.selectedIndex !== 0) {
-        itemModalLabel.innerText = "Editar - " + saveName;
-        elements.itemNameInput.value = saveName ? saveName : "";
-        $('#itemModal').modal('show');
-    }
+    elements.itemNameInput.value = saveName ? saveName : '';
+
+    elements.iframeCifra.classList.add('d-none');
+    elements.editTextarea.classList.remove('d-none');
+    elements.selectContainer.classList.add('d-none');
+    elements.itemNameInput.classList.remove('d-none');
+    elements.saveButton.classList.remove('d-none');
+    elements.cancelButton.classList.remove('d-none');
+    elements.editSavesSelect.classList.add('d-none');
+    elements.deleteSavesSelect.classList.add('d-none');
+    elements.addButton.classList.add('d-none');
+
+    uiController.exibirBotoesTom();
+    uiController.exibirBotoesAcordes();
+    
+    //if (elements.savesSelect.selectedIndex !== 0) {
+    //    itemModalLabel.innerText = "Editar - " + saveName;
+    //    elements.itemNameInput.value = saveName ? saveName : "";
+    //    $('#itemModal').modal('show');
+    //}
 });
 
 elements.deleteSavesSelect.addEventListener('click', () => {
@@ -362,7 +376,7 @@ elements.simButtonAlert.addEventListener('click', () => {
 });
 
 elements.naoButtonAlert.addEventListener('click', () => {
-    $('#itemModal').modal('show');
+    $('#alertModal').modal('hide');
 });
 
 function handleInteractionStart() {
@@ -414,9 +428,9 @@ $('#searchModal').on('shown.bs.modal', () => {
     }
 });
 
-$('#alertModal').on('shown.bs.modal', () => {
-    elements.itemNameInput.focus();
-});
+//$('#alertModal').on('shown.bs.modal', () => {
+//    elements.itemNameInput.focus();
+//});
 
 function selectEscolhido(selectItem) {
     if (selectItem && selectItem !== 'acordes__') {
@@ -871,6 +885,7 @@ function fullScreen() {
 }
 
 function salvarSave(newSaveName) {
+    debugger;
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
 
     if (newSaveName) {
