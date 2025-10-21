@@ -456,4 +456,5 @@ body.dark-mode .select2-results__options > li {
 img.button-control {
     width: 30px;
     height: 30px;
+    cursor: pointer;
 }
