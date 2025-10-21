@@ -6,6 +6,8 @@ class UIController {
     exibirBotoesCifras() {
         this.elements.notesButton.classList.remove('d-none');
         this.elements.playButton.classList.remove('d-none');
+        this.elements.voltarButton.classList.remove('d-none');
+        this.elements.avancarButton.classList.remove('d-none');
         this.elements.nextButton.classList.remove('d-none');
         this.elements.prevButton.classList.remove('d-none');
         this.esconderBotoesAcordes();

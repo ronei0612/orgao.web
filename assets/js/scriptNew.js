@@ -8,6 +8,8 @@ const elements = {
     addButton: document.getElementById('addButton'),
     saveNewItemButton: document.getElementById('saveNewItemButton'),
     playButton: document.getElementById('playButton'),
+    avancarButton: document.getElementById('avancarButton'),
+    voltarButton: document.getElementById('voltarButton'),
     notesButton: document.getElementById('notesButton'),
     stopButton: document.getElementById('stopButton'),
     searchButton: document.getElementById('searchButton'),
@@ -344,7 +346,11 @@ elements.stopButton.addEventListener('mousedown', () => {
     cifraPlayer.pararReproducao();
 });
 
-elements.playButton.addEventListener('click', () => {
+elements.playButton.addEventListener('mousedown', () => {
+    cifraPlayer.iniciarReproducao();
+})
+
+elements.avancarButton.addEventListener('mousedown', () => {
     cifraPlayer.iniciarReproducao();
 })
 
