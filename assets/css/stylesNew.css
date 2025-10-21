@@ -399,50 +399,34 @@ input:checked+.slider:before {
 
 .btn-custom[data-action="acorde"]#acorde1 {
     background-color: var(--acorde-botao-azul);
+    --cor-botao: var(--acorde-botao-azul);
 }
 .btn-custom[data-action="acorde"]#acorde2 {
     background-color: var(--acorde-botao-roxo);
+    --cor-botao: var(--acorde-botao-azul);
 }
 
 .btn-custom[data-action="acorde"]#acorde3 {
     background-color: var(--acorde-botao-rosa);
+    --cor-botao: var(--acorde-botao-rosa);
 }
 .btn-custom[data-action="acorde"]#acorde4 {
     background-color: var(--acorde-botao-vermelho);
+    --cor-botao: var(--acorde-botao-vermelho);
 }
 
 .btn-custom[data-action="acorde"]#acorde5 {
     background-color: var(--acorde-botao-laranja);
+    --cor-botao: var(--acorde-botao-laranja);
 }
 .btn-custom[data-action="acorde"]#acorde6 {
     background-color: var(--acorde-botao-amarelo);
+    --cor-botao: var(--acorde-botao-amarelo);
 }
 
-.btn-custom[data-action="acorde"]#acorde1.pressed {
-    background-color: #006666;
-    box-shadow: 0 0 10px #006666;
-}
-.btn-custom[data-action="acorde"]#acorde2.pressed {
-    background-color: #006666;
-    box-shadow: 0 0 10px #006666;
-}
-
-.btn-custom[data-action="acorde"]#acorde3.pressed {
-    background-color: #D96060;
-    box-shadow: 0 0 10px #D96060;
-}
-.btn-custom[data-action="acorde"]#acorde4.pressed {
-    background-color: #D96060;
-    box-shadow: 0 0 10px #D96060;
-}
-
-.btn-custom[data-action="acorde"]#acorde5.pressed {
-    background-color: #8B8000;
-    box-shadow: 0 0 10px #8B8000;
-}
-.btn-custom[data-action="acorde"]#acorde6.pressed {
-    background-color: #8B8000;
-    box-shadow: 0 0 10px #8B8000;
+.btn-custom[data-action="acorde"].pressed {
+    filter: brightness(85%);
+    box-shadow: 0 0 10px var(--cor-botao);
 }
 
 .btn-custom[data-action="playStop"] {
