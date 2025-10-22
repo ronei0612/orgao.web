@@ -89,17 +89,15 @@ iframe {
 }
 
 .dark-mode #santamissaFrame {
-    background-color: var(--dark-mode-bg);
-    color: white;
+    filter: invert(1);
 }
 
 .dark-mode #oracoesFrame {
-    background-color: var(--dark-mode-bg);
-    color: white;
+    filter: invert(1);
 }
 
 .dark-mode #liturgiaDiariaFrame {
-    background-color: #e0dcb5;
+    filter: invert(1);
 }
 
 #savesSelect option {

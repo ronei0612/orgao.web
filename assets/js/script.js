@@ -751,24 +751,7 @@ const updateSwitchDarkMode = () => {
     }
 };
 
-const aplicarModoEscuroIframe = () => {    
-    if (document.body.classList.contains('dark-mode')) {
-        if (!location.origin.includes('file:')) {
-            if (elements.oracoesFrame.contentDocument.body)
-                elements.oracoesFrame.contentDocument.body.style.color = '#FFFFFF';
-            if (elements.santamissaFrame.contentDocument.body)
-                elements.santamissaFrame.contentDocument.body.style.color = '#FFFFFF';
-        }
-    }
-    else {
-        if (!location.origin.includes('file:')) {
-            if (elements.oracoesFrame.contentDocument.body)
-                elements.oracoesFrame.contentDocument.body.style.color = '#000000';
-            if (elements.santamissaFrame.contentDocument.body)
-                elements.santamissaFrame.contentDocument.body.style.color = '#000000';
-        }
-    }
-    
+const aplicarModoEscuroIframe = () => {
     const scrollTop = localStorage.getItem('scrollTop');
     if (scrollTop && !location.origin.includes('file:')) {
         elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
