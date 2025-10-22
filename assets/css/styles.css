@@ -74,10 +74,6 @@ iframe {
     transition: background-color 0.3s;
 }
 
-body.dark-mode #iframeCifra {
-    background-color: var(--dark-mode-bg);
-}
-
 #editTextarea {
     width: 100%;
     height: 100%;
@@ -88,19 +84,21 @@ body.dark-mode #iframeCifra {
     font-family: Consolas, 'Courier New', Courier, monospace;
 }
 
-body.dark-mode #santamissaFrame {
+.dark-mode #iframeCifra {
+    background-color: var(--dark-mode-bg);
+}
+
+.dark-mode #santamissaFrame {
     background-color: var(--dark-mode-bg);
     color: white;
 }
 
-body.dark-mode #oracoesFrame {
+.dark-mode #oracoesFrame {
     background-color: var(--dark-mode-bg);
     color: white;
 }
 
-
-
-body.dark-mode #liturgiaDiariaFrame {
+.dark-mode #liturgiaDiariaFrame {
     background-color: #e0dcb5;
 }
 
