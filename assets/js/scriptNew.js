@@ -343,8 +343,9 @@ elements.notesButton.addEventListener('click', () => {
 
 elements.stopButton.addEventListener('mousedown', () => {
     uiController.esconderEditDeleteButtons();
-    uiController.esconderEditDeleteButtons();
-    uiController.esconderBotoesAvancarVoltarCifra();
+    if (elements.acorde1.classList.contains('d-none')) {
+        uiController.esconderBotoesAvancarVoltarCifra();
+    }
     cifraPlayer.pararReproducao();
 });
 
