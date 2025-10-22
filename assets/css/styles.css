@@ -84,19 +84,11 @@ iframe {
     font-family: Consolas, 'Courier New', Courier, monospace;
 }
 
-.dark-mode #iframeCifra {
+/*.dark-mode #iframeCifra {
     background-color: var(--dark-mode-bg);
-}
+}*/
 
-.dark-mode #santamissaFrame {
-    filter: invert(1);
-}
-
-.dark-mode #oracoesFrame {
-    filter: invert(1);
-}
-
-.dark-mode #liturgiaDiariaFrame {
+.dark-mode iframe {
     filter: invert(1);
 }
 
