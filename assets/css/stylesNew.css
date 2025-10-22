@@ -1,3 +1,12 @@
+:root {
+    --acorde-botao-azul: #4682B4;
+    --acorde-botao-amarelo: #E6B800;
+    --acorde-botao-vermelho: #F08080;
+    --acorde-botao-laranja: #FF8C00;
+    --acorde-botao-rosa: #DA70D6;
+    --acorde-botao-roxo: #9370DB;
+}
+
 #savesSelect option {
     color: black;
 }
@@ -35,6 +44,14 @@
         border-color: #80bdff;
         box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     }
+
+#editTextarea {
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+}
 
 body {
     background-color: #F0F0F0;
@@ -102,17 +119,18 @@ body.dark-mode .modal-content {
             }
 
     .btn-custom[data-action="play"] {
-        background-color: #9988B4;
-        font-size: 24px;
+        background-color: #3c7df1;
+        font-size: 30px;
+        border: 2px solid #21bee8;
     }
 
         .btn-custom[data-action="play"].pressed {
-            background-color: #8A2BE2;
-            box-shadow: 0 0 10px #8A2BE2;
+            background-color: #21bee8;
+            box-shadow: 0 0 10px #21bee8;
         }
 
         .btn-custom[data-action="play"].pulse {
-            box-shadow: 0 0 20px 5px rgba(138, 43, 226, .7);
+            box-shadow: 0 0 20px 5px rgba(33, 190, 232, .7);
         }
 
     .btn-custom[data-action="notes"] {
@@ -380,51 +398,35 @@ input:checked+.slider:before {
 }
 
 .btn-custom[data-action="acorde"]#acorde1 {
-    background-color: #008B8B;
+    background-color: var(--acorde-botao-azul);
+    --cor-botao: var(--acorde-botao-azul);
 }
 .btn-custom[data-action="acorde"]#acorde2 {
-    background-color: #008B8B;
+    background-color: var(--acorde-botao-roxo);
+    --cor-botao: var(--acorde-botao-azul);
 }
 
 .btn-custom[data-action="acorde"]#acorde3 {
-    background-color: #F08080;
+    background-color: var(--acorde-botao-rosa);
+    --cor-botao: var(--acorde-botao-rosa);
 }
 .btn-custom[data-action="acorde"]#acorde4 {
-    background-color: #F08080;
+    background-color: var(--acorde-botao-vermelho);
+    --cor-botao: var(--acorde-botao-vermelho);
 }
 
 .btn-custom[data-action="acorde"]#acorde5 {
-    background-color: #BDB76B;
+    background-color: var(--acorde-botao-laranja);
+    --cor-botao: var(--acorde-botao-laranja);
 }
 .btn-custom[data-action="acorde"]#acorde6 {
-    background-color: #BDB76B;
+    background-color: var(--acorde-botao-amarelo);
+    --cor-botao: var(--acorde-botao-amarelo);
 }
 
-.btn-custom[data-action="acorde"]#acorde1.pressed {
-    background-color: #006666;
-    box-shadow: 0 0 10px #006666;
-}
-.btn-custom[data-action="acorde"]#acorde2.pressed {
-    background-color: #006666;
-    box-shadow: 0 0 10px #006666;
-}
-
-.btn-custom[data-action="acorde"]#acorde3.pressed {
-    background-color: #D96060;
-    box-shadow: 0 0 10px #D96060;
-}
-.btn-custom[data-action="acorde"]#acorde4.pressed {
-    background-color: #D96060;
-    box-shadow: 0 0 10px #D96060;
-}
-
-.btn-custom[data-action="acorde"]#acorde5.pressed {
-    background-color: #8B8000;
-    box-shadow: 0 0 10px #8B8000;
-}
-.btn-custom[data-action="acorde"]#acorde6.pressed {
-    background-color: #8B8000;
-    box-shadow: 0 0 10px #8B8000;
+.btn-custom[data-action="acorde"].pressed {
+    filter: brightness(85%);
+    box-shadow: 0 0 10px var(--cor-botao);
 }
 
 .btn-custom[data-action="playStop"] {
@@ -440,9 +442,42 @@ input:checked+.slider:before {
 .select2-results__options > li[aria-selected="false"][data-select2-id*="acordes"] {
     color: gray;
     background-color: #ecf0f1;
-    /*font-weight: bold; Adiciona o estilo negrito */
+    font-style: italic;
+}
+
+.select2-results__options > li[aria-selected="true"][data-select2-id*="acordes"] {
+    font-style: italic;
 }
 
 body.dark-mode .select2-results__options > li {
     color: #000;
+}
+
+img.button-control {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+#avancarButton:active {
+    transform: scale(0.95);
+    opacity: 0.7;
+}
+#voltarButton:active {
+    transform: scale(0.95);
+    opacity: 0.7;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }

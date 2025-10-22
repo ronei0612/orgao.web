@@ -4,9 +4,12 @@ const elements = {
     editTextarea: document.getElementById('editTextarea'),
     startButton: document.getElementById('startButton'),
     saveButton: document.getElementById('saveButton'),
+    cancelButton: document.getElementById('cancelButton'),
     addButton: document.getElementById('addButton'),
     saveNewItemButton: document.getElementById('saveNewItemButton'),
     playButton: document.getElementById('playButton'),
+    avancarButton: document.getElementById('avancarButton'),
+    voltarButton: document.getElementById('voltarButton'),
     notesButton: document.getElementById('notesButton'),
     stopButton: document.getElementById('stopButton'),
     searchButton: document.getElementById('searchButton'),
@@ -26,6 +29,7 @@ const elements = {
     darkModeToggle: document.getElementById('darkModeToggle'),
     searchModalLabel: document.getElementById('searchModalLabel'),
     savesSelect: document.getElementById('savesSelect'),
+    selectContainer: document.getElementById('selectContainer'),
     editSavesSelect: document.getElementById('editSavesSelect'),
     deleteSavesSelect: document.getElementById('deleteSavesSelect'),
     tomSelect: document.getElementById('tomSelect'),
@@ -138,33 +142,30 @@ elements.saveNewItemButton.addEventListener("click", () => {
     $('#itemModal').modal('hide');
 });
 
+elements.cancelButton.addEventListener("click", () => {
+    uiController.resetInterface();
+});
+
 elements.saveButton.addEventListener('click', () => {
-    const saveContent = elements.editTextarea.value;
+    let saveName = elements.itemNameInput.value;
+    if (!saveName) {
+        const musicasDefault = elements.savesSelect.querySelectorAll('option[value^="Música "]');
+        const count = musicasDefault.length + 1;
+        saveName = "Música " + count;
+    }
 
-    if (saveContent) {
-        let saveName = elements.searchModalLabel.textContent;
-        if (saveName) {
-            if (saveName === "Música") {
-                itemModalLabel.innerText = "Novo";
-                $('#itemModal').modal('show');
-                return;
-            }
-            let saves = JSON.parse(localStorage.getItem('saves')) || {};
-            if (saves.hasOwnProperty(saveName)) {
-                uiController.exibirMensagemAlerta(`Salvar "${saveName}"?`, `Salvar "${saveName}"`);
-                uiController.resetarSimNaoAlert();
-            }
-            else {
-                salvarSave(saveName);
+    let saves = JSON.parse(localStorage.getItem('saves')) || {};
+    if (saves.hasOwnProperty(saveName)) {
+        uiController.exibirMensagemAlerta(`Salvar "${saveName}"?`, 'Confirmação');
+        uiController.resetarSimNaoAlert();
+    }
+    else {
+        salvarSave(saveName);
 
-                uiController.exibirMensagemAlerta(`"${saveName}" salvo com sucesso!`, 'Música');
-                uiController.resetarOkAlert();
+        uiController.exibirMensagemAlerta(`"${saveName}" salvo com sucesso!`, 'Música');
+        uiController.resetarOkAlert();
 
-                $('#alertModal').modal('show');
-            }
-        }
-    } else {
-        elements.editTextarea.focus();
+        $('#alertModal').modal('show');
     }
 });
 
@@ -256,10 +257,11 @@ elements.addButton.addEventListener('click', function () {
     }, 100);
 
     if (!elements.deleteSavesSelect.classList.contains('d-none')) {
-        itemModalLabel.innerText = "Novo";
-        elements.itemNameInput.value = "";
-        elements.savesSelect.selectedIndex = 0;
-        $('#itemModal').modal('show');
+        elements.iframeCifra.contentDocument.body.innerHTML = '';
+        uiController.editarMusica();
+        uiController.exibirBotoesTom();
+        uiController.exibirBotoesAcordes();
+        elements.itemNameInput.click();
     }
 
     uiController.toggleEditDeleteButtons();
@@ -267,11 +269,11 @@ elements.addButton.addEventListener('click', function () {
 
 elements.editSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
-    if (elements.savesSelect.selectedIndex !== 0) {
-        itemModalLabel.innerText = "Editar - " + saveName;
-        elements.itemNameInput.value = saveName ? saveName : "";
-        $('#itemModal').modal('show');
-    }
+    elements.itemNameInput.value = saveName ? saveName : '';
+
+    uiController.editarMusica();
+    uiController.exibirBotoesTom();
+    uiController.exibirBotoesAcordes();
 });
 
 elements.deleteSavesSelect.addEventListener('click', () => {
@@ -341,10 +343,19 @@ elements.notesButton.addEventListener('click', () => {
 
 elements.stopButton.addEventListener('mousedown', () => {
     uiController.esconderEditDeleteButtons();
+    uiController.esconderEditDeleteButtons();
+    uiController.esconderBotoesAvancarVoltarCifra();
     cifraPlayer.pararReproducao();
 });
 
-elements.playButton.addEventListener('click', () => {
+elements.playButton.addEventListener('mousedown', () => {
+    if (elements.acorde1.classList.contains('d-none')) {
+        cifraPlayer.iniciarReproducao();
+        uiController.exibirBotoesAvancarVoltarCifra();
+    }
+})
+
+elements.avancarButton.addEventListener('mousedown', () => {
     cifraPlayer.iniciarReproducao();
 })
 
@@ -362,7 +373,7 @@ elements.simButtonAlert.addEventListener('click', () => {
 });
 
 elements.naoButtonAlert.addEventListener('click', () => {
-    $('#itemModal').modal('show');
+    $('#alertModal').modal('hide');
 });
 
 function handleInteractionStart() {
@@ -414,9 +425,9 @@ $('#searchModal').on('shown.bs.modal', () => {
     }
 });
 
-$('#alertModal').on('shown.bs.modal', () => {
-    elements.itemNameInput.focus();
-});
+//$('#alertModal').on('shown.bs.modal', () => {
+//    elements.itemNameInput.focus();
+//});
 
 function selectEscolhido(selectItem) {
     if (selectItem && selectItem !== 'acordes__') {
@@ -708,16 +719,12 @@ const togglePressedState = (event) => {
 
         if (action === 'play' || action === 'acorde') {
             setTimeout(() => button.classList.add('pulse'), 100);
-            elements.stopButton.classList.remove('pulse');
-            elements.stopButton.innerHTML = '<i class="bi bi-stop-fill"></i>';
-            elements.playButton.classList.remove('pulse');
+            //elements.stopButton.classList.remove('pulse');
+            elements.playButton.classList.add('d-none');
+            elements.stopButton.classList.remove('d-none');
         } else {
-            if (action === 'stop' && elements.stopButton.innerHTML.includes('bi-search')) {
-                $('#searchModal').modal('show');
-            }
-            elements.playButton.classList.remove('pressed', 'pulse');
-            elements.stopButton.classList.add('pulse');
-            elements.stopButton.innerHTML = '<i class="bi bi-search"></i>';
+            elements.playButton.classList.remove('d-none', 'pressed'),
+            elements.stopButton.classList.add('d-none', 'pulse');
         }
     }
 };

@@ -8,7 +8,29 @@ class UIController {
         this.elements.playButton.classList.remove('d-none');
         this.elements.nextButton.classList.remove('d-none');
         this.elements.prevButton.classList.remove('d-none');
+        this.elements.notesButton.classList.remove('mx-2');
+        this.elements.notesButton.classList.add('ml-4');
         this.esconderBotoesAcordes();
+    }
+
+    esconderBotoesAvancarVoltarCifra() {
+        this.elements.voltarButton.classList.remove('fade-in');
+        this.elements.voltarButton.classList.add('d-none');
+        this.elements.avancarButton.classList.remove('fade-in');
+        this.elements.avancarButton.classList.add('d-none');
+        this.elements.notesButton.classList.remove('mx-2');
+        this.elements.notesButton.classList.add('ml-4');
+        this.atualizarBotoesNavegacao();
+    }
+
+    exibirBotoesAvancarVoltarCifra() {
+        this.elements.voltarButton.classList.remove('d-none');
+        this.elements.voltarButton.classList.add('fade-in');
+        this.elements.avancarButton.classList.remove('d-none');
+        this.elements.avancarButton.classList.add('fade-in');
+        this.elements.nextButton.classList.add('d-none');
+        this.elements.prevButton.classList.add('d-none');
+        this.elements.notesButton.classList.remove('ml-4');
     }
 
     esconderBotoesAcordes() {
@@ -25,11 +47,25 @@ class UIController {
         this.elements.acorde11.classList.add('d-none');
     }
 
+    editarMusica() {
+        this.elements.iframeCifra.classList.add('d-none');
+        this.elements.editTextarea.classList.remove('d-none');
+        this.elements.selectContainer.classList.add('d-none');
+        this.elements.itemNameInput.classList.remove('d-none');
+        this.elements.saveButton.classList.remove('d-none');
+        this.elements.cancelButton.classList.remove('d-none');
+        this.elements.editSavesSelect.classList.add('d-none');
+        this.elements.deleteSavesSelect.classList.add('d-none');
+        this.elements.addButton.classList.add('d-none');
+    }
+
     exibirBotoesAcordes() {
         this.atualizarBotoesNavegacao('centralizado');
         this.exibirBotoesTom();
         this.elements.notesButton.classList.remove('d-none');
-        this.elements.playButton.classList.add('d-none');
+        this.elements.notesButton.classList.remove('ml-4');
+        this.elements.notesButton.classList.add('mx-2');
+        //this.elements.playButton.classList.add('d-none');
         this.elements.nextButton.classList.add('d-none');
         this.elements.prevButton.classList.add('d-none');
 
@@ -139,8 +175,8 @@ class UIController {
         this.elements.nextButton.classList.add('d-none');
     }
 
-    atualizarBotoesNavegacao(direcao) {
-        if (direcao === 'esquerda') {
+    atualizarBotoesNavegacao(direcao = '') {
+        if (direcao === 'esquerda' || this.elements.controlButtons.classList.contains('justify-content-left')) {
             this.elements.nextButton.classList.remove('d-none');
             if (this.elements.controlButtons.classList.contains('justify-content-center')) {
                 this.elements.controlButtons.classList.remove('justify-content-center');
@@ -150,7 +186,7 @@ class UIController {
                 this.elements.controlButtons.classList.remove('justify-content-end');
                 this.elements.controlButtons.classList.add('justify-content-center');
             }
-        } else if (direcao === 'direita') {
+        } else if (direcao === 'direita' || this.elements.controlButtons.classList.contains('justify-content-end')) {
             this.elements.prevButton.classList.remove('d-none');
             if (this.elements.controlButtons.classList.contains('justify-content-center')) {
                 this.elements.controlButtons.classList.remove('justify-content-center');
@@ -160,7 +196,7 @@ class UIController {
                 this.elements.controlButtons.classList.remove('justify-content-left');
                 this.elements.controlButtons.classList.add('justify-content-center');
             }
-        } else if (direcao === 'centralizado') {
+        } else if (direcao === 'centralizado' || this.elements.controlButtons.classList.contains('justify-content-center')) {
             this.elements.controlButtons.classList.add('justify-content-center');
             this.elements.prevButton.classList.remove('d-none');
             this.elements.nextButton.classList.remove('d-none');
@@ -193,10 +229,11 @@ class UIController {
     }
 
     exibirInterfaceDePesquisa() {
-        this.elements.editTextarea.classList.add('d-none');
+        //this.elements.editTextarea.classList.add('d-none');
         this.elements.searchIcon.classList.add('d-none');
         this.elements.spinner.classList.remove('d-none');
         this.elements.saveButton.classList.add('d-none');
+        this.elements.cancelButton.classList.add('d-none');
         this.elements.startButton.classList.add('d-none');
         this.elements.searchButton.disabled = true;
     }
@@ -226,11 +263,22 @@ class UIController {
         
         this.elements.startButton.classList.remove('d-none');
         this.elements.saveButton.classList.remove('d-none');
+        this.elements.cancelButton.classList.remove('d-none');
         this.elements.addButton.classList.remove('d-none');
-        this.elements.editTextarea.classList.remove('d-none');
+    }
+
+    resetInterface() {
+        elements.editTextarea.classList.add('d-none');
+        elements.itemNameInput.classList.add('d-none');
+        elements.saveButton.classList.add('d-none');
+        elements.cancelButton.classList.add('d-none');
+        elements.selectContainer.classList.remove('d-none');
+        elements.addButton.classList.remove('d-none');
+        elements.iframeCifra.classList.remove('d-none');
     }
 
     exibirIframeCifra() {
+        this.resetInterface();
         this.elements.iframeCifra.classList.remove('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
