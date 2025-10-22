@@ -6,11 +6,23 @@ class UIController {
     exibirBotoesCifras() {
         this.elements.notesButton.classList.remove('d-none');
         this.elements.playButton.classList.remove('d-none');
-        this.elements.voltarButton.classList.remove('d-none');
-        this.elements.avancarButton.classList.remove('d-none');
         this.elements.nextButton.classList.remove('d-none');
         this.elements.prevButton.classList.remove('d-none');
         this.esconderBotoesAcordes();
+    }
+
+    esconderBotoesAvancarVoltarCifra() {
+        this.elements.voltarButton.classList.remove('fade-in');
+        this.elements.voltarButton.classList.add('d-none');
+        this.elements.avancarButton.classList.remove('fade-in');
+        this.elements.avancarButton.classList.add('d-none');
+    }
+
+    exibirBotoesAvancarVoltarCifra() {
+        this.elements.voltarButton.classList.remove('d-none');
+        this.elements.voltarButton.classList.add('fade-in');
+        this.elements.avancarButton.classList.remove('d-none');
+        this.elements.avancarButton.classList.add('fade-in');
     }
 
     esconderBotoesAcordes() {

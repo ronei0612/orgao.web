@@ -343,11 +343,16 @@ elements.notesButton.addEventListener('click', () => {
 
 elements.stopButton.addEventListener('mousedown', () => {
     uiController.esconderEditDeleteButtons();
+    uiController.esconderEditDeleteButtons();
+    uiController.esconderBotoesAvancarVoltarCifra();
     cifraPlayer.pararReproducao();
 });
 
 elements.playButton.addEventListener('mousedown', () => {
-    cifraPlayer.iniciarReproducao();
+    if (elements.acorde1.classList.contains('d-none')) {
+        cifraPlayer.iniciarReproducao();
+        uiController.exibirBotoesAvancarVoltarCifra();
+    }
 })
 
 elements.avancarButton.addEventListener('mousedown', () => {
@@ -714,7 +719,7 @@ const togglePressedState = (event) => {
 
         if (action === 'play' || action === 'acorde') {
             setTimeout(() => button.classList.add('pulse'), 100);
-            elements.stopButton.classList.remove('pulse');
+            //elements.stopButton.classList.remove('pulse');
             elements.playButton.classList.add('d-none');
             elements.stopButton.classList.remove('d-none');
         } else {
