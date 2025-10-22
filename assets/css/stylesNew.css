@@ -5,6 +5,18 @@
     --acorde-botao-laranja: #FF8C00;
     --acorde-botao-rosa: #DA70D6;
     --acorde-botao-roxo: #9370DB;
+
+    --body-bg: #F0F0F0;
+    --body-color: #333;
+    --dark-mode-bg: #0C101C;
+
+    --btn-custom-bg: #9988B4;
+    --btn-custom-active-bg: #8A2BE2;
+    --btn-dark-cyan: #008B8B;
+    --btn-dark-cyan-hover: #005F5F;
+
+    --select2-bg: #ecf0f1;
+    --select2-text: gray;
 }
 
 #savesSelect option {
@@ -101,12 +113,12 @@ body.dark-mode .modal-content {
     .btn-custom[data-action="acorde"] {
         font-size: 18px;
         font-weight: bold;
-        background-color: #9988B4;
+        background-color: var(--btn-custom-bg);
     }
 
         .btn-custom[data-action="acorde"].pressed {
-            background-color: #8A2BE2;
-            box-shadow: 0 0 10px #8A2BE2;
+            background-color: var(--btn-custom-active-bg);
+            box-shadow: 0 0 10px var(--btn-custom-active-bg);
         }
 
         .btn-custom[data-action="acorde"].btn-acordeSecundario {
@@ -114,7 +126,7 @@ body.dark-mode .modal-content {
         }
 
             .btn-custom[data-action="acorde"].btn-acordeSecundario.pressed {
-                background-color: #6A5ACD;/*4B0082*/
+                background-color: #6A5ACD; /*4B0082*/
                 box-shadow: 0 0 10px #6A5ACD;
             }
 
@@ -134,13 +146,13 @@ body.dark-mode .modal-content {
         }
 
     .btn-custom[data-action="notes"] {
-        background-color: #9988B4;
+        background-color: var(--btn-custom-bg);
         font-size: 24px;
     }
 
         .btn-custom[data-action="notes"].pressed {
-            background-color: #8A2BE2;
-            box-shadow: 0 0 10px #8A2BE2;
+            background-color: var(--btn-custom-active-bg);
+            box-shadow: 0 0 10px var(--btn-custom-active-bg);
         }
 
     .btn-custom[data-action="stop"] {
@@ -211,17 +223,17 @@ body.dark-mode .modal-content {
     }
 
 .btn-add {
-    background-color: #008B8B;
+    background-color: var(--btn-dark-cyan);
     color: white;
 }
 
     .btn-add:hover {
-        background-color: #005F5F;
+        background-color: var(--btn-dark-cyan-hover);
         color: white;
     }
 
     .btn-add.pressed {
-        background-color: #005F5F;
+        background-color: var(--btn-dark-cyan-hover);
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
         transform: scale(0.98);
         transition: all 0.2s ease;
@@ -260,7 +272,7 @@ iframe {
 }
 
 body.dark-mode #iframeCifra {
-    background-color: #101524;
+    background-color: var(--dark-mode-bg);
 }
 
 .list-group-item {
@@ -282,12 +294,12 @@ body.dark-mode .list-group-item {
 }
 
 .btn-dark-cyan {
-    background-color: #008B8B;
+    background-color: var(--btn-dark-cyan);
     color: #fff;
 }
 
     .btn-dark-cyan:hover {
-        background-color: #005F5F;
+        background-color: var(--btn-dark-cyan-hover);
         color: white;
     }
 
@@ -401,6 +413,7 @@ input:checked+.slider:before {
     background-color: var(--acorde-botao-azul);
     --cor-botao: var(--acorde-botao-azul);
 }
+
 .btn-custom[data-action="acorde"]#acorde2 {
     background-color: var(--acorde-botao-roxo);
     --cor-botao: var(--acorde-botao-azul);
@@ -410,6 +423,7 @@ input:checked+.slider:before {
     background-color: var(--acorde-botao-rosa);
     --cor-botao: var(--acorde-botao-rosa);
 }
+
 .btn-custom[data-action="acorde"]#acorde4 {
     background-color: var(--acorde-botao-vermelho);
     --cor-botao: var(--acorde-botao-vermelho);
@@ -419,29 +433,30 @@ input:checked+.slider:before {
     background-color: var(--acorde-botao-laranja);
     --cor-botao: var(--acorde-botao-laranja);
 }
+
 .btn-custom[data-action="acorde"]#acorde6 {
     background-color: var(--acorde-botao-amarelo);
     --cor-botao: var(--acorde-botao-amarelo);
 }
 
 .btn-custom[data-action="acorde"].pressed {
-    filter: brightness(85%);
+    filter: brightness(80%);
     box-shadow: 0 0 10px var(--cor-botao);
 }
 
 .btn-custom[data-action="playStop"] {
-    background-color: #9988B4;
+    background-color: var(--btn-custom-bg);
     font-size: 24px;
 }
 
     .btn-custom[data-action="playStop"].playing {
-        background-color: #8A2BE2;
-        box-shadow: 0 0 10px #8A2BE2;
+        background-color: var(--btn-custom-active-bg);
+        box-shadow: 0 0 10px var(--btn-custom-active-bg);
     }
 
 .select2-results__options > li[aria-selected="false"][data-select2-id*="acordes"] {
     color: gray;
-    background-color: #ecf0f1;
+    background-color: var(--select2-bg);
     font-style: italic;
 }
 
@@ -450,7 +465,7 @@ input:checked+.slider:before {
 }
 
 body.dark-mode .select2-results__options > li {
-    color: #000;
+    color: black;
 }
 
 img.button-control {
@@ -459,10 +474,7 @@ img.button-control {
     cursor: pointer;
 }
 
-#avancarButton:active {
-    transform: scale(0.95);
-    opacity: 0.7;
-}
+#avancarButton:active,
 #voltarButton:active {
     transform: scale(0.95);
     opacity: 0.7;
