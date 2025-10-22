@@ -53,7 +53,6 @@ const elements = {
     downloadSavesLink: document.getElementById('downloadSavesLink'),
     uploadSavesLink: document.getElementById('uploadSavesLink'),
     liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame'),
-    santamissaFrame: document.getElementById('santamissaFrame'),
     acorde1: document.getElementById('acorde1'),
     acorde2: document.getElementById('acorde2'),
     acorde3: document.getElementById('acorde3'),
@@ -753,31 +752,6 @@ const updateSwitchDarkMode = () => {
 };
 
 const aplicarModoEscuroIframe = () => {
-    const iframeDoc = elements.iframeCifra.contentDocument || elements.iframeCifra.contentWindow.document;
-    iframeDoc.body.style.color = document.body.classList.contains('dark-mode') ? '#FFFFFF' : '#4F4F4F';
-    elements.liturgiaDiariaFrame.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#e0dcb5' : '#FFFFFF'; //f5f5dc
-    
-    if (document.body.classList.contains('dark-mode')) {
-        if (!location.origin.includes('file:')) {
-            elements.santamissaFrame.style.backgroundColor = '#101524';
-            elements.oracoesFrame.style.backgroundColor = '#101524';
-            if (elements.oracoesFrame.contentDocument.body)
-                elements.oracoesFrame.contentDocument.body.style.color = '#FFFFFF';
-            if (elements.santamissaFrame.contentDocument.body)
-                elements.santamissaFrame.contentDocument.body.style.color = '#FFFFFF';
-        }
-    }
-    else {
-        if (!location.origin.includes('file:')) {
-            elements.santamissaFrame.style.backgroundColor = '#FFFFFF';
-            elements.oracoesFrame.style.backgroundColor = '#FFFFFF';
-            if (elements.oracoesFrame.contentDocument.body)
-                elements.oracoesFrame.contentDocument.body.style.color = '#000000';
-            if (elements.santamissaFrame.contentDocument.body)
-                elements.santamissaFrame.contentDocument.body.style.color = '#000000';
-        }
-    }
-    
     const scrollTop = localStorage.getItem('scrollTop');
     if (scrollTop && !location.origin.includes('file:')) {
         elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));

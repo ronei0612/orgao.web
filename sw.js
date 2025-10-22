@@ -9,8 +9,8 @@ const urlsToCache = [
     './',
     './index.html',
     './cifras.json', // Nosso banco de dados de cifras
-    './assets/css/stylesNew.css',
-    './assets/js/scriptNew.js',
+    './assets/css/styles.css',
+    './assets/js/script.js',
     './assets/js/Pizzicato.min.js',
 
     // Páginas dos iframes
