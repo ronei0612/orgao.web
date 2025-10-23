@@ -2,10 +2,90 @@
 
 <head>
         <meta content="text/html; charset=UTF-8" http-equiv="content-type">
-        <link rel="stylesheet" href="./assets/css/frame-styles.css">
+        <style>
+            :root {
+                --cor-principal: #333;
+                --cor-marrom: #9c7b3e;
+                --fonte-padrao: Arial, sans-serif;
+                --fonte-titulo: "Merriweather", serif;
+                --tamanho-fonte-padrao: 13pt;
+            }
+
+            body {
+                background-color: #FAF9F6;
+                color: var(--cor-principal);
+                font-family: var(--fonte-padrao);
+            }
+
+            .default {
+                font-weight: 400;
+                text-decoration: none;
+                vertical-align: baseline;
+                font-style: normal;
+            }
+
+            .brown {
+                color: var(--cor-marrom);
+            }
+
+            .bold {
+                font-weight: 700;
+            }
+
+            .breakline {
+                font-size: var(--tamanho-fonte-padrao);
+                height: 12pt;
+            }
+
+            p {
+                padding-top: 0;
+                padding-bottom: 0;
+                line-height: 1.15;
+                orphans: 2;
+                widows: 2;
+                text-align: left;
+                margin: 0;
+                font-size: var(--tamanho-fonte-padrao);
+            }
+
+            h1, h2 {
+                font-family: var(--fonte-titulo);
+                line-height: 1.15;
+                page-break-after: avoid;
+                orphans: 2;
+                widows: 2;
+                text-align: center;
+                padding-top: 10pt;
+                padding-bottom: 0;
+            }
+
+            h1 {
+                font-size: 33pt;
+                font-weight: 700;
+            }
+
+            h2 {
+                color: var(--cor-marrom);
+                font-size: 24pt;
+                font-weight: 700;
+            }
+
+            h3 {
+                color: var(--cor-marrom);
+                font-weight: 700;
+                font-size: 16pt;
+                padding-bottom: 0pt;
+                font-family: var(--fonte-padrao);
+                line-height: 1.15;
+                page-break-after: avoid;
+                orphans: 2;
+                widows: 2;
+                text-align: left;
+            }
+        </style>
 </head>
 
-<body class="doc-content">
+<body>
     <h1 class="">Ritos Iniciais</h1>
     <p class="breakline"></p>
     <p class="brown">
@@ -72,7 +152,7 @@
     </p>
     <p class="default">Irmãos e irmãs,</p>
     <p class="default">
-        reconheçamos <span class="default">
+        reconheçamos
             os nossos
             pecados,
     </p>
@@ -105,8 +185,6 @@
     <p class="breakline"></p>
     <p class="breakline"></p>
     <p class="brown">
-        <span class="default">
-            <span class="">
                 Segue-se a
                 absolvição sacerdotal:
     </p>
@@ -130,12 +208,12 @@
     <p class="breakline"></p>
     <p class="default">Ou:</p>
 
-    <p class="default"><span class="italic">Kýrie, eléison</p>
-    <p class="bold">℟.<span class="italic">Kýrie, eléison</p>
-    <p class="default"><span class="italic">Christe, eléison</p>
-    <p class="bold">℟.<span class="italic">Christe, eléison</p>
-    <p class="default"><span class="italic">Kýrie, eléison</p>
-    <p class="bold">℟.<span class="italic">Kýrie, eléison</p>
+    <p class="default"><span class="italic">Kýrie, eléison</span></p>
+    <p class="bold">℟.<span class="italic">Kýrie, eléison</span></p>
+    <p class="default"><span class="italic">Christe, eléison</span></p>
+    <p class="bold">℟.<span class="italic">Christe, eléison</span></p>
+    <p class="default"><span class="italic">Kýrie, eléison</span></p>
+    <p class="bold">℟.<span class="italic">Kýrie, eléison</span></p>
 
     <p class="breakline"></p>
     <p class="breakline"></p>
@@ -156,8 +234,6 @@
     <p class="breakline"></p>
 
     <p class="brown">
-        <span class="default">
-            <span class="">
                 Segue-se a
                 absolvição sacerdotal:
     </p>
@@ -180,12 +256,12 @@
     <p class="breakline"></p>
     <p class="default">Ou:</p>
 
-    <p class="default"><span class="italic">Kýrie, eléison</p>
-    <p class="bold">℟.<span class="italic">Kýrie, eléison</p>
-    <p class="default"><span class="italic">Christe, eléison</p>
-    <p class="bold">℟.<span class="italic">Christe, eléison</p>
-    <p class="default"><span class="italic">Kýrie, eléison</p>
-    <p class="bold">℟.<span class="italic">Kýrie, eléison</p>
+    <p class="default"><span class="italic">Kýrie, eléison</span></p>
+    <p class="bold">℟.<span class="italic">Kýrie, eléison</span></p>
+    <p class="default"><span class="italic">Christe, eléison</span></p>
+    <p class="bold">℟.<span class="italic">Christe, eléison</span></p>
+    <p class="default"><span class="italic">Kýrie, eléison</span></p>
+    <p class="bold">℟.<span class="italic">Kýrie, eléison</span></p>
 
     <h3 class="">Terceira fórmula</h3>
     <p class="breakline"></p>
@@ -195,7 +271,7 @@
         tende piedade de nós.
     </p>
     <p class="breakline"></p>
-    <p class="brown">Ⓑ Para o canto se pode usar a aclamação grega: <span class="italic">Kýrie, eléison.</p>
+    <p class="brown">Ⓑ Para o canto se pode usar a aclamação grega: <span class="italic">Kýrie, eléison.</span></p>
     <p class="default">Senhor, que viestes salvar os corações arrependidos,</p>
     <p class="default">tende piedade de nós.</p>
     <p class="breakline"></p>
@@ -218,7 +294,6 @@
     <p class="breakline"></p>
     <p class="breakline"></p>
     <p class="brown">
-        <span class="">
             Segue-se a
             absolvição sacerdotal:
         
@@ -299,10 +374,10 @@
     <p class="bold">Creio em Deus Pai todo-poderoso,</p>
     <p class="bold">Criador do céu e da terra.</p>
     <p class="bold">E em Jesus Cristo, seu único Filho, nosso Senhor,</p>
-    <p class="brown"><span class="italic">(Todos se inclinam)</p>
+    <p class="brown"><span class="italic">(Todos se inclinam)</span></p>
     <p class="bold">que foi concebido pelo poder do Espírito Santo,</p>
     <p class="bold">nasceu da Virgem Maria,</p>
-    <p class="brown"><span class="italic">(Retorna-se à posição anterior)</p>
+    <p class="brown"><span class="italic">(Retorna-se à posição anterior)</span></p>
     <p class="bold">padeceu sob Pôncio Pilatos,</p>
     <p class="bold">foi crucificado, morto e sepultado,</p>
     <p class="bold">desceu à mansão dos mortos,</p>
@@ -333,11 +408,11 @@
     <p class="default">Por Ele todas as coisas foram feitas.</p>
     <p class="bold">E, por nós, homens, e para a nossa salvação,</p>
     <p class="bold">desceu dos céus:</p>
-    <p class="brown"><span class="italic">(Todos se inclinam)</p>
+    <p class="brown"><span class="italic">(Todos se inclinam)</span></p>
     <p class="default">e se encarnou pelo Espírito Santo,</p>
     <p class="default">no seio da Virgem Maria,</p>
     <p class="default">e se fez homem.</p>
-    <p class="brown"><span class="italic">(Retorna-se à posição anterior)</p>
+    <p class="brown"><span class="italic">(Retorna-se à posição anterior)</span></p>
     <p class="bold">Também por nós foi crucificado</p>
     <p class="bold">sob Pôncio Pilatos;</p>
     <p class="bold">padeceu e foi sepultado.</p>
@@ -457,8 +532,8 @@
     </p>
     <p class="default">Orai, irmãos e irmãs,</p>
     <p class="default">
-        para que o <span class="default">
-            meu e o vosso<span class="default">
+        para que o
+            meu e o vosso
                 sacrifício seja aceito por Deus
                 Pai todo-poderoso.
     </p>
@@ -715,8 +790,8 @@
     <p class="default">Ajudados pela vossa misericórdia,</p>
     <p class="default">sejamos sempre livres do pecado</p>
     <p class="default">e protegidos de todos os perigos,</p>
-    <p class="default">enquanto <span class="default">aguardamos a feliz esperança</p>
-    <p class="default">e a vinda do Nosso Salvador, Jesus Cristo<span class="default">.</p>
+    <p class="default">enquanto aguardamos a feliz esperança</p>
+    <p class="default">e a vinda do Nosso Salvador, Jesus Cristo.</p>
     <p class="brown">O sacerdote une as mãos.</p>
     <p class="breakline"></p>
     <p class="brown">O povo conclui a oração, aclamando:</p>
