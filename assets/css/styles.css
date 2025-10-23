@@ -69,7 +69,7 @@ body.dark-mode .modal-content {
 iframe {
     width: 100%;
     height: 100%;
-    background-color: #FAF9F6;
+    background-color: #FEFCEF;
     border-radius: 8px;
     transition: background-color 0.3s;
 }
