@@ -11,18 +11,18 @@ const urlsToCache = [
     './cifras.json', // Nosso banco de dados de cifras
     './assets/css/styles.css',
     './assets/js/script.js',
-    './assets/js/Pizzicato.min.js',
+    './assets/lib/js/Pizzicato/0.6.4/Pizzicato.min.js',
+    './assets/lib/js/Jquery/3.5.1/jquery.min.js',
+    './assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css',
+    './assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js',
 
     // Páginas dos iframes
     './santamissa.html',
     './oracoes.html',
 
     // Dependências externas (CDNs) - CRÍTICO para o modo offline!
-    'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css',
     'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css',
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css',
-    'https://code.jquery.com/jquery-3.3.1.slim.min.js',
-    'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'
 ];
 
 // Evento de Instalação: Salva todos os arquivos listados no cache.
