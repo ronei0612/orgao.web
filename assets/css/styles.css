@@ -84,10 +84,6 @@ iframe {
     font-family: Consolas, 'Courier New', Courier, monospace;
 }
 
-/*.dark-mode #iframeCifra {
-    background-color: var(--dark-mode-bg);
-}*/
-
 .dark-mode iframe {
     filter: invert(1);
 }
