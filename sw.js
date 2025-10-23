@@ -1,6 +1,6 @@
 // Define um nome e uma versão para o cache.
 // Mudar a versão (ex: v2) no futuro forçará a atualização de todos os arquivos.
-const CACHE_NAME = '1.3';
+const CACHE_NAME = '1.4';
 
 // Lista de todos os arquivos que seu site precisa para funcionar offline.
 // Eu analisei seu index.html e listei todos os recursos essenciais.
@@ -11,17 +11,18 @@ const urlsToCache = [
     './cifras.json', // Nosso banco de dados de cifras
     './assets/css/styles.css',
     './assets/js/script.js',
-    './assets/lib/js/Pizzicato/0.6.4/Pizzicato.min.js',
+    './assets/lib/js/Pizzicato/0.6.4/Pizzicato.js',
     './assets/lib/js/Jquery/3.5.1/jquery.min.js',
     './assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css',
     './assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js',
+    './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css',
+    './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/fonts/bootstrap-icons.woff2',
 
     // Páginas dos iframes
     './santamissa.html',
     './oracoes.html',
 
     // Dependências externas (CDNs) - CRÍTICO para o modo offline!
-    'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'
 ];
 

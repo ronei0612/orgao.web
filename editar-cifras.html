@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Editar Cifras.json</title>
     <link href="./assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="./assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="./assets/css/styles.css">
     <style>
@@ -49,11 +49,15 @@
         </div>
     </div>
 
+    <script src="./assets/lib/js/Pizzicato/0.6.4/Pizzicato.js"></script>
+    <script src="./assets/js/CifraPlayer.js"></script>
+    <script src="./assets/js/UIController.js"></script>
+    <script src="./assets/js/LocalStorageManager.js"></script>
     <script src="./assets/js/script.js"></script>
 
     <script>
         let cifras = [];
-        let url = 'https://raw.githubusercontent.com/ronei0612/orgao.web/main/cifras.json';
+        let url = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
         let searchTerm = '';
         const LOCAL_KEY = 'cifras_local';
 
@@ -115,26 +119,26 @@
                 const div = document.createElement('div');
                 div.className = 'card cifras-card shadow-sm';
                 div.innerHTML = `
-                            <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-7 form-group">
-                                        <label class="form-label">Título</label>
-                                        <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${cifras.indexOf(item)}" data-field="titulo">
-                                    </div>
-                                    <div class="col-md-5 form-group">
-                                        <label class="form-label">Artista</label>
-                                        <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${cifras.indexOf(item)}" data-field="artista">
-                                    </div>
-                                    <div class="col-12 mt-2 form-group">
-                                        <label class="form-label">Música</label>
-                                        <textarea class="form-control" rows="4" data-idx="${cifras.indexOf(item)}" data-field="cifra">${item.cifra || ''}</textarea>
-                                    </div>
-                                    <div class="col-12 mt-3 text-end">
-                                        <button class="btn btn-danger btn-sm" onclick="deleteCifra(${cifras.indexOf(item)})"><i class="bi bi-trash"></i> Excluir</button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
+                                        <div class="card-body">
+                                            <div class="row g-3">
+                                                <div class="col-md-7 form-group">
+                                                    <label class="form-label">Título</label>
+                                                    <input type="text" class="form-control" value="${item.titulo || ''}" data-idx="${cifras.indexOf(item)}" data-field="titulo">
+                                                </div>
+                                                <div class="col-md-5 form-group">
+                                                    <label class="form-label">Artista</label>
+                                                    <input type="text" class="form-control" value="${item.artista || ''}" data-idx="${cifras.indexOf(item)}" data-field="artista">
+                                                </div>
+                                                <div class="col-12 mt-2 form-group">
+                                                    <label class="form-label">Música</label>
+                                                    <textarea class="form-control" rows="4" data-idx="${cifras.indexOf(item)}" data-field="cifra">${item.cifra || ''}</textarea>
+                                                </div>
+                                                <div class="col-12 mt-3 text-end">
+                                                    <button class="btn btn-danger btn-sm" onclick="deleteCifra(${cifras.indexOf(item)})"><i class="bi bi-trash"></i> Excluir</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
                 container.appendChild(div);
             });
         }

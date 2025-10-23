@@ -30,6 +30,7 @@ const elements = {
     searchModalLabel: document.getElementById('searchModalLabel'),
     savesSelect: document.getElementById('savesSelect'),
     selectContainer: document.getElementById('selectContainer'),
+    selectedButton: document.getElementById('selectedButton'),
     editSavesSelect: document.getElementById('editSavesSelect'),
     deleteSavesSelect: document.getElementById('deleteSavesSelect'),
     tomSelect: document.getElementById('tomSelect'),
@@ -131,6 +132,11 @@ elements.santamissaFrame.addEventListener('load', () => {
             elements.oracoesFrame.classList.add('d-none');
         }
     });
+});
+
+elements.selectedButton.addEventListener("click", () => {
+    uiController.exibirSavesSelect();
+    selectEscolhido(elements.selectedButton.innerText);
 });
 
 elements.saveNewItemButton.addEventListener("click", () => {
@@ -424,10 +430,6 @@ $('#searchModal').on('shown.bs.modal', () => {
         elements.searchResultsList.classList.remove('d-none');
     }
 });
-
-//$('#alertModal').on('shown.bs.modal', () => {
-//    elements.itemNameInput.focus();
-//});
 
 function selectEscolhido(selectItem) {
     if (selectItem && selectItem !== 'acordes__') {
@@ -951,7 +953,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     var cifrasLocal = './cifras.json';
-	cifrasLocal = 'https://raw.githubusercontent.com/ronei0612/orgao.web/main/cifras.json';
+    cifrasLocal = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
     if (location.origin.includes('file:')) {
         cifrasLocal = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
     }
