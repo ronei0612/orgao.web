@@ -11,7 +11,7 @@ const urlsToCache = [
     './cifras.json', // Nosso banco de dados de cifras
     './assets/css/styles.css',
     './assets/js/script.js',
-    './assets/lib/js/Pizzicato/0.6.4/Pizzicato.min.js',
+    './assets/lib/js/Pizzicato/0.6.4/Pizzicato.js',
     './assets/lib/js/Jquery/3.5.1/jquery.min.js',
     './assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css',
     './assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js',
