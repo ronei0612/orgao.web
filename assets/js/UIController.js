@@ -322,7 +322,19 @@ class UIController {
         }
     }
 
+    exibirSavesSelect() {
+        this.elements.savesSelect.value = this.elements.selectedButton.innerText;
+        this.elements.selectContainer.classList.remove('d-none');
+        this.elements.selectedButton.classList.add('d-none');
+        this.elements.savesSelect.click();
+    }
+
     exibirFrame(frameId) {
+        if (this.elements.savesSelect.value) {
+            this.elements.selectContainer.classList.add('d-none');
+            this.elements.selectedButton.classList.remove('d-none');
+            this.elements.selectedButton.innerText = this.elements.savesSelect.value;
+        }
         this.elements.oracoesFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.iframeCifra.classList.add('d-none');
