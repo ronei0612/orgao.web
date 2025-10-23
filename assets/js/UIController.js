@@ -268,13 +268,13 @@ class UIController {
     }
 
     resetInterface() {
-        elements.editTextarea.classList.add('d-none');
-        elements.itemNameInput.classList.add('d-none');
-        elements.saveButton.classList.add('d-none');
-        elements.cancelButton.classList.add('d-none');
-        elements.selectContainer.classList.remove('d-none');
-        elements.addButton.classList.remove('d-none');
-        elements.iframeCifra.classList.remove('d-none');
+        this.elements.editTextarea.classList.add('d-none');
+        this.elements.itemNameInput.classList.add('d-none');
+        this.elements.saveButton.classList.add('d-none');
+        this.elements.cancelButton.classList.add('d-none');
+        this.elements.selectContainer.classList.remove('d-none');
+        this.elements.addButton.classList.remove('d-none');
+        this.elements.iframeCifra.classList.remove('d-none');
     }
 
     exibirIframeCifra() {
@@ -287,11 +287,11 @@ class UIController {
 
     exibirTextoCifrasCarregado(tom = null, texto = null) {
         if (tom) {
-            uiController.exibirBotoesTom();
+            this.exibirBotoesTom();
             cifraPlayer.preencherSelect(tom);
         }
         else {
-            uiController.esconderBotoesTom();
+            this.esconderBotoesTom();
             let textoLetra = this.elements.iframeCifra.contentDocument.body.innerHTML;
             textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
                 .replace("font-size: 12pt;", "font-size: 15pt;");
@@ -330,7 +330,7 @@ class UIController {
 
         this.exibirBotoesAcordes();
         
-        uiController.exibirTextoCifrasCarregado('C', elements.editTextarea.value);
+        this.exibirTextoCifrasCarregado('C', elements.editTextarea.value);
         cifraPlayer.preencherSelect('C');
 
         this.exibirBotoesTom();
