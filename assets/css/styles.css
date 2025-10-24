@@ -230,11 +230,6 @@ body.dark-mode .select2-results__options > li {
         background-color: var(--btn-custom-bg);
     }
 
-        .btn-custom[data-action="acorde"].pressed {
-            background-color: var(--btn-custom-active-bg);
-            box-shadow: 0 0 10px var(--btn-custom-active-bg);
-        }
-
         .btn-custom[data-action="acorde"].btn-acordeSecundario {
             background-color: #998FA1;
         }
