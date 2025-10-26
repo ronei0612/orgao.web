@@ -2,7 +2,7 @@
 const elements = {
     controlButtons: document.getElementById('controlButtons'),
     editTextarea: document.getElementById('editTextarea'),
-    startButton: document.getElementById('startButton'),
+    tocarButton: document.getElementById('tocarButton'),
     saveButton: document.getElementById('saveButton'),
     cancelButton: document.getElementById('cancelButton'),
     addButton: document.getElementById('addButton'),
@@ -176,8 +176,8 @@ elements.saveButton.addEventListener('click', () => {
 
 elements.darkModeToggle.addEventListener('change', toggleDarkMode);
 
-elements.startButton.addEventListener('click', () => {
-    if (elements.editTextarea.value) {
+elements.tocarButton.addEventListener('click', () => {
+    //if (elements.editTextarea.value) {
         uiController.exibirBotoesCifras();
         const texto = elements.editTextarea.value;
         let musicaCifrada = cifraPlayer.destacarCifras(texto);
@@ -198,10 +198,10 @@ elements.startButton.addEventListener('click', () => {
         
         cifraPlayer.indiceAcorde = 0;
         $('#searchModal').modal('hide');
-    }
-    else {
-        elements.searchInput.focus();
-    }
+    //}
+    //else {
+    //    elements.searchInput.focus();
+    //}
 });
 
 elements.prevButton.addEventListener('click', () => {
@@ -374,7 +374,7 @@ elements.simButtonAlert.addEventListener('click', () => {
         const saveName = elements.searchModalLabel.textContent;
         salvarSave(saveName);
         if (elements.savesSelect.value === saveName) //verificação se for item deletado
-            elements.startButton.dispatchEvent(new Event('click'));
+            elements.tocarButton.dispatchEvent(new Event('click'));
     }
 });
 
