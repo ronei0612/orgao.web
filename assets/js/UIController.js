@@ -234,7 +234,7 @@ class UIController {
         this.elements.spinner.classList.remove('d-none');
         this.elements.saveButton.classList.add('d-none');
         this.elements.cancelButton.classList.add('d-none');
-        this.elements.startButton.classList.add('d-none');
+        this.elements.tocarButton.classList.add('d-none');
         this.elements.searchButton.disabled = true;
     }
 
@@ -255,15 +255,13 @@ class UIController {
         this.elements.searchResultsList.innerHTML = '';
     }
 
-    exibirBotoesSalvarTocar() {
+    exibirBotaoTocar() {
         this.elements.searchButton.disabled = false;
         this.elements.spinner.classList.add('d-none');
         this.elements.searchIcon.classList.remove('d-none');
         this.elements.searchResultsList.classList.add('d-none');
         
-        this.elements.startButton.classList.remove('d-none');
-        this.elements.saveButton.classList.remove('d-none');
-        this.elements.cancelButton.classList.remove('d-none');
+        this.elements.tocarButton.classList.remove('d-none');
         this.elements.addButton.classList.remove('d-none');
     }
 

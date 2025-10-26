@@ -1,8 +1,9 @@
 
 const elements = {
     controlButtons: document.getElementById('controlButtons'),
+    cifraDisplay: document.getElementById('cifraDisplay'),
     editTextarea: document.getElementById('editTextarea'),
-    startButton: document.getElementById('startButton'),
+    tocarButton: document.getElementById('tocarButton'),
     saveButton: document.getElementById('saveButton'),
     cancelButton: document.getElementById('cancelButton'),
     addButton: document.getElementById('addButton'),
@@ -112,7 +113,7 @@ const camposHarmonicos = {
     'A#m': ['A#m', 'D', 'E#m', 'F#m', 'G', 'A']
 };
 
-const version = 1;
+const version = 1.4;
 const holdTime = 1000;
 var held = false;
 var timer;
@@ -172,36 +173,34 @@ elements.saveButton.addEventListener('click', () => {
 
         $('#alertModal').modal('show');
     }
+
+    const tom = descobrirTom(elements.editTextarea.value);
+    escolhidoLetraOuCifra();
 });
 
 elements.darkModeToggle.addEventListener('change', toggleDarkMode);
 
-elements.startButton.addEventListener('click', () => {
-    if (elements.editTextarea.value) {
-        uiController.exibirBotoesCifras();
-        const texto = elements.editTextarea.value;
-        let musicaCifrada = cifraPlayer.destacarCifras(texto);
-        const tom = descobrirTom(musicaCifrada);        
-        musicaCifrada = cifraPlayer.destacarCifras(texto, tom);
-        uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
-        elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
-        if (!tom)
-            elements.tomSelect.dispatchEvent(new Event('change'));
-        if (tom === '') {
-            let textoLetra = elements.iframeCifra.contentDocument.body.innerHTML;
-            textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
-                .replace("font-size: 12pt;", "font-size: 15pt;");
-            elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
-        }
-        uiController.exibirIframeCifra();
-        cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
-        
-        cifraPlayer.indiceAcorde = 0;
-        $('#searchModal').modal('hide');
+elements.tocarButton.addEventListener('click', () => {
+    uiController.exibirBotoesCifras();
+    const texto = elements.cifraDisplay.value;
+    let musicaCifrada = cifraPlayer.destacarCifras(texto);
+    const tom = descobrirTom(musicaCifrada);
+    musicaCifrada = cifraPlayer.destacarCifras(texto, tom);
+    uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
+    elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
+    if (!tom)
+        elements.tomSelect.dispatchEvent(new Event('change'));
+    if (tom === '') {
+        let textoLetra = elements.iframeCifra.contentDocument.body.innerHTML;
+        textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
+            .replace("font-size: 12pt;", "font-size: 15pt;");
+        elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
     }
-    else {
-        elements.searchInput.focus();
-    }
+    uiController.exibirIframeCifra();
+    cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
+
+    cifraPlayer.indiceAcorde = 0;
+    $('#searchModal').modal('hide');
 });
 
 elements.prevButton.addEventListener('click', () => {
@@ -276,6 +275,7 @@ elements.editSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
     elements.itemNameInput.value = saveName ? saveName : '';
 
+    elements.editTextarea.value = elements.iframeCifra.contentDocument.body.innerText;
     uiController.editarMusica();
     uiController.exibirBotoesTom();
     uiController.exibirBotoesAcordes();
@@ -374,7 +374,7 @@ elements.simButtonAlert.addEventListener('click', () => {
         const saveName = elements.searchModalLabel.textContent;
         salvarSave(saveName);
         if (elements.savesSelect.value === saveName) //verificação se for item deletado
-            elements.startButton.dispatchEvent(new Event('click'));
+            elements.tocarButton.dispatchEvent(new Event('click'));
     }
 });
 
@@ -418,18 +418,30 @@ $('#searchModal').on('shown.bs.modal', () => {
     if (elements.savesSelect.value !== '')
         elements.searchModalLabel.textContent = elements.savesSelect.value;
 
-    elements.editTextarea.value = elements.iframeCifra.contentDocument.body.innerText;
-    elements.searchInput.focus();
-    uiController.exibirBotoesSalvarTocar();
+    //elements.editTextarea.value = elements.iframeCifra.contentDocument.body.innerText;
+    //elements.searchInput.focus();
+    uiController.exibirBotaoTocar();
 
     if (_pesquisarNaWeb) {
         _pesquisarNaWeb = false;
         elements.searchIcon.classList.add('d-none');
         elements.spinner.classList.remove('d-none');
-        elements.editTextarea.classList.add('d-none');
-        elements.searchResultsList.classList.remove('d-none');
+        elements.editTextarea.classList.add('d-none'); // editTextarea sempre oculto ao pesquisar na web
+        elements.cifraDisplay.classList.add('d-none'); // cifraDisplay também oculto ao pesquisar na web
+        elements.searchResultsList.classList.remove('d-none'); // Mostra a lista de resultados de pesquisa
     }
 });
+
+function escolhidoLetraOuCifra(tom) {
+    if (tom !== '') {
+        uiController.exibirBotoesCifras();
+        elements.tomSelect.dispatchEvent(new Event('change'));
+    }
+    else {
+        uiController.esconderBotoesAcordes();
+        uiController.esconderBotoesPlay();
+    }
+}
 
 function selectEscolhido(selectItem) {
     if (selectItem && selectItem !== 'acordes__') {
@@ -443,15 +455,7 @@ function selectEscolhido(selectItem) {
         elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
         uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
 
-        if (tom !== '') {
-            uiController.exibirBotoesCifras();
-            elements.tomSelect.dispatchEvent(new Event('change'));
-        }
-        else {
-            //uiController.exibirBotoesAcordes();            
-            uiController.esconderBotoesAcordes();
-            uiController.esconderBotoesPlay();
-        }
+        escolhidoLetraOuCifra(tom);
         uiController.exibirIframeCifra();
         cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
 
@@ -653,15 +657,19 @@ async function choseCifraLocal(id) {
     const texto = musica.cifra;
     const titulo = musica.titulo;
 
-    uiController.exibirTextoCifrasCarregado(null, texto);
+
+    elements.cifraDisplay.classList.remove('d-none');
+    elements.cifraDisplay.textContent = texto;
+    //uiController.exibirTextoCifrasCarregado(null, texto);
 
     if (elements.searchModalLabel.textContent === 'Música') {
         elements.searchModalLabel.textContent = titulo.split(' - ')[0];
     }
-    uiController.exibirBotoesSalvarTocar();
+    uiController.exibirBotaoTocar();
 }
 
 async function choseLink(urlLink, titulo) {
+    debugger;
     uiController.limparResultados();
 
     try {
@@ -677,7 +685,7 @@ async function choseLink(urlLink, titulo) {
             if (elements.searchModalLabel.textContent === 'Música') {
                 elements.searchModalLabel.textContent = titulo.split(' - ')[0];
             }
-            uiController.exibirBotoesSalvarTocar();
+            uiController.exibirBotaoTocar();
         } else {
             alert(data.message);
         }
@@ -685,7 +693,7 @@ async function choseLink(urlLink, titulo) {
         console.error('Error fetching data:', error);
         alert('Erro ao baixar a cifra. Tente novamente mais tarde.');
     } finally {
-        uiController.exibirBotoesSalvarTocar();
+        uiController.exibirBotaoTocar();
     }
 }
 
