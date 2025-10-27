@@ -88,6 +88,19 @@ iframe {
     text-align: left;
 }
 
+#cifraDisplay {
+    width: 100%;
+    height: 300px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    font-size: 12pt;
+    font-family: Consolas, 'Courier New', Courier, monospace;
+    overflow-y: auto;
+    background-color: #fff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
 #editTextarea {
     width: 100%;
     height: 100%;
