@@ -254,31 +254,32 @@
             var $select = $('#savesSelect').select2({
                 theme: 'bootstrap4',
                 placeholder: "Escolha a Música...",
-                width: '100%'
+                width: '100%',
+                minimumResultsForSearch: 0, // Garante que a caixa de pesquisa sempre apareça, mesmo com poucas opções
+                language: {
+                    noResults: function () {
+                        return ""; // Retorna texto vazio se não encontrar nada na pesquisa
+                    }
+                }
             });
 
+            // Lógica para adicionar a opção "Pesquisar na Web"
             $(document).on('keyup', '.select2-search__field', function (e) {
-                var searchTerm = $(this).val();
+                var searchTerm = $(this).val().trim();
 
-                if (e.key === 'Enter') {
-                    pesquisarNaWeb(searchTerm);
-                    $select.select2('close');
-                }
+                $('.select2-results__options').find('.pesquisar-na-web').remove();
 
                 if (searchTerm) {
-                    $('.select2-results__options').find('.pesquisar-na-web').remove();
-
                     var $optionPesquisaWeb = $('<li class="select2-results__option pesquisar-na-web" role="treeitem" aria-selected="false"></li>');
                     $optionPesquisaWeb.html('<i class="bi bi-search"></i> Pesquisar na Web');
 
+                    // Prepend para colocar no topo da lista
                     $('.select2-results__options').prepend($optionPesquisaWeb);
 
                     $optionPesquisaWeb.on('click', function () {
                         pesquisarNaWeb(searchTerm);
                         $select.select2('close');
                     });
-                } else {
-                    $('.select2-results__options').find('.pesquisar-na-web').remove();
                 }
             });
 
