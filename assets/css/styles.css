@@ -503,3 +503,8 @@ img.button-control {
         box-shadow: 0 0 10px 0 rgba(255, 69, 0, 0.7);
     }
 }
+
+.select2-container--bootstrap4 .select2-selection--single {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
