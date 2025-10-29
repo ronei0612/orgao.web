@@ -668,10 +668,7 @@ async function choseCifraLocal(id) {
     const texto = musica.cifra;
     const titulo = musica.titulo;
 
-
-    elements.cifraDisplay.classList.remove('d-none');
     elements.cifraDisplay.textContent = texto;
-    //uiController.exibirTextoCifrasCarregado(null, texto);
 
     if (elements.searchModalLabel.textContent === 'Música') {
         elements.searchModalLabel.textContent = titulo.split(' - ')[0];
@@ -680,7 +677,6 @@ async function choseCifraLocal(id) {
 }
 
 async function choseLink(urlLink, titulo) {
-    debugger;
     uiController.limparResultados();
 
     try {
@@ -693,9 +689,6 @@ async function choseLink(urlLink, titulo) {
         if (data.success) {
             var texto = filtrarLetraCifra(data.message);
             elements.cifraDisplay.textContent = texto;
-            if (elements.searchModalLabel.textContent === 'Música') {
-                elements.searchModalLabel.textContent = titulo.split(' - ')[0];
-            }
             uiController.exibirBotaoTocar();
         } else {
             alert(data.message);
