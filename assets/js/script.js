@@ -149,7 +149,9 @@ elements.saveNewItemButton.addEventListener("click", () => {
 });
 
 elements.cancelButton.addEventListener("click", () => {
+    if (confirm('Cancelar edição?')) {
     uiController.resetInterface();
+    }
 });
 
 elements.saveButton.addEventListener('click', () => {
