@@ -561,8 +561,18 @@ function deletarSave(saveName) {
     uiController.exibirListaSaves();
 }
 
-function removerAcentos(str) {
-    return str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
+function removerAcentosEcaracteres(str) {
+    if (!str) {
+        return "";
+    }
+    // 1. Normaliza para remover acentos
+    str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    // 2. Remove tudo que não for letra (a-z, A-Z) ou número (0-9).
+    // Se você quiser apenas letras, remova o 0-9.
+    str = str.replace(/[^a-zA-Z0-9]/g, "");
+
+    return str;
 }
 
 async function searchMusic() {
@@ -573,11 +583,12 @@ async function searchMusic() {
     const textoPesquisa = elements.searchInput.value;
     var titlesCifraClub = [];
 
-    const termo = removerAcentos(textoPesquisa.toLowerCase().trim());
+    const termo = removerAcentosEcaracteres(textoPesquisa.toLowerCase().trim());
+
     var musicasLocais = todasAsCifras.filter(musica =>
-        removerAcentos(musica.titulo.toLowerCase()).includes(termo) ||
-        removerAcentos(musica.artista.toLowerCase()).includes(termo) ||
-        removerAcentos(musica.cifra.toLowerCase()).includes(termo)
+        removerAcentosEcaracteres(musica.titulo.toLowerCase()).includes(termo) ||
+        removerAcentosEcaracteres(musica.artista.toLowerCase()).includes(termo) ||
+        removerAcentosEcaracteres(musica.cifra.toLowerCase()).includes(termo)
     );
 
     if (musicasLocais.length > 0) {
