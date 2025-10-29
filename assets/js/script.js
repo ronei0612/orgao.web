@@ -150,7 +150,7 @@ elements.saveNewItemButton.addEventListener("click", () => {
 
 elements.cancelButton.addEventListener("click", () => {
     if (confirm('Cancelar edição?')) {
-    uiController.resetInterface();
+        uiController.resetInterface();
     }
 });
 
@@ -264,6 +264,11 @@ elements.addButton.addEventListener('click', function () {
 
     if (!elements.deleteSavesSelect.classList.contains('d-none')) {
         elements.iframeCifra.contentDocument.body.innerHTML = '';
+        elements.editTextarea.value = '';
+        elements.itemNameInput.value = '';
+        $('#savesSelect').val('');
+        $('#savesSelect').trigger('change');
+
         uiController.editarMusica();
         uiController.exibirBotoesTom();
         uiController.exibirBotoesAcordes();
