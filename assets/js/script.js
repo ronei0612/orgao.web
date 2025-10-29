@@ -691,8 +691,8 @@ async function choseLink(urlLink, titulo) {
         });
         const data = await response.json();
         if (data.success) {
-            uiController.exibirTextoCifrasCarregado(null, data.message);
-
+            var texto = filtrarLetraCifra(data.message);
+            elements.cifraDisplay.textContent = texto;
             if (elements.searchModalLabel.textContent === 'Música') {
                 elements.searchModalLabel.textContent = titulo.split(' - ')[0];
             }
@@ -705,6 +705,17 @@ async function choseLink(urlLink, titulo) {
         alert('Erro ao baixar a cifra. Tente novamente mais tarde.');
     } finally {
         uiController.exibirBotaoTocar();
+    }
+}
+
+function filtrarLetraCifra(texto) {
+    if (texto) {
+        if (texto.includes('<pre>')) {
+            return texto.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
+        }
+        else {
+            return texto;
+        }
     }
 }
 
