@@ -113,7 +113,7 @@ const camposHarmonicos = {
     'A#m': ['A#m', 'D', 'E#m', 'F#m', 'G', 'A']
 };
 
-const version = 1.4;
+const version = '1.5';
 const holdTime = 1000;
 var held = false;
 var timer;
