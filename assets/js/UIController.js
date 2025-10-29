@@ -229,7 +229,7 @@ class UIController {
     }
 
     exibirInterfaceDePesquisa() {
-        //this.elements.editTextarea.classList.add('d-none');
+        this.elements.cifraDisplay.classList.add('d-none');
         this.elements.searchIcon.classList.add('d-none');
         this.elements.spinner.classList.remove('d-none');
         this.elements.saveButton.classList.add('d-none');
@@ -263,6 +263,7 @@ class UIController {
         
         this.elements.tocarButton.classList.remove('d-none');
         this.elements.addButton.classList.remove('d-none');
+        this.elements.cifraDisplay.classList.remove('d-none');
     }
 
     resetInterface() {
