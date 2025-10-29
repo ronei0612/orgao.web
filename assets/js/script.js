@@ -668,10 +668,7 @@ async function choseCifraLocal(id) {
     const texto = musica.cifra;
     const titulo = musica.titulo;
 
-
-    elements.cifraDisplay.classList.remove('d-none');
     elements.cifraDisplay.textContent = texto;
-    //uiController.exibirTextoCifrasCarregado(null, texto);
 
     if (elements.searchModalLabel.textContent === 'Música') {
         elements.searchModalLabel.textContent = titulo.split(' - ')[0];
@@ -680,7 +677,6 @@ async function choseCifraLocal(id) {
 }
 
 async function choseLink(urlLink, titulo) {
-    debugger;
     uiController.limparResultados();
 
     try {
@@ -691,11 +687,8 @@ async function choseLink(urlLink, titulo) {
         });
         const data = await response.json();
         if (data.success) {
-            uiController.exibirTextoCifrasCarregado(null, data.message);
-
-            if (elements.searchModalLabel.textContent === 'Música') {
-                elements.searchModalLabel.textContent = titulo.split(' - ')[0];
-            }
+            var texto = filtrarLetraCifra(data.message);
+            elements.cifraDisplay.textContent = texto;
             uiController.exibirBotaoTocar();
         } else {
             alert(data.message);
@@ -705,6 +698,17 @@ async function choseLink(urlLink, titulo) {
         alert('Erro ao baixar a cifra. Tente novamente mais tarde.');
     } finally {
         uiController.exibirBotaoTocar();
+    }
+}
+
+function filtrarLetraCifra(texto) {
+    if (texto) {
+        if (texto.includes('<pre>')) {
+            return texto.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
+        }
+        else {
+            return texto;
+        }
     }
 }
 

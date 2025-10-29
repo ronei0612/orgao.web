@@ -229,7 +229,7 @@ class UIController {
     }
 
     exibirInterfaceDePesquisa() {
-        //this.elements.editTextarea.classList.add('d-none');
+        this.elements.cifraDisplay.classList.add('d-none');
         this.elements.searchIcon.classList.add('d-none');
         this.elements.spinner.classList.remove('d-none');
         this.elements.saveButton.classList.add('d-none');
@@ -263,6 +263,7 @@ class UIController {
         
         this.elements.tocarButton.classList.remove('d-none');
         this.elements.addButton.classList.remove('d-none');
+        this.elements.cifraDisplay.classList.remove('d-none');
     }
 
     resetInterface() {
@@ -283,7 +284,7 @@ class UIController {
         this.elements.oracoesFrame.classList.add('d-none');
     }
 
-    exibirTextoCifrasCarregado(tom = null, texto = null) {
+    exibirTextoCifrasCarregado(tom = null) {
         if (tom) {
             this.exibirBotoesTom();
             cifraPlayer.preencherSelect(tom);
@@ -294,15 +295,6 @@ class UIController {
             textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
                 .replace("font-size: 12pt;", "font-size: 15pt;");
             this.elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
-        }
-
-        if (texto) {
-            if (texto.includes('<pre>')) {
-                this.elements.editTextarea.value = texto.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
-            }
-            else {
-                this.elements.editTextarea.value = texto;
-            }
         }
     }
 
