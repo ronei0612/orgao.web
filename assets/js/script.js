@@ -154,7 +154,7 @@ elements.cancelButton.addEventListener("click", () => {
     }
 });
 
-elements.saveButton.addEventListener('click', () => {
+elements.saveButton.addEventListener('click', async () => {
     let saveName = elements.itemNameInput.value;
     if (!saveName) {
         const musicasDefault = elements.savesSelect.querySelectorAll('option[value^="Música "]');
@@ -164,8 +164,14 @@ elements.saveButton.addEventListener('click', () => {
 
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
     if (saves.hasOwnProperty(saveName)) {
-        uiController.exibirMensagemAlerta(`Salvar "${saveName}"?`, 'Confirmação');
-        uiController.resetarSimNaoAlert();
+        const confirmed = await customConfirm(`Salvar "${saveName}"?`);
+        if (confirmed) {
+            const saveName = elements.searchModalLabel.textContent;
+            salvarSave(saveName);
+            const tom = elements.tomSelect.value;
+
+            escolhidoLetraOuCifra(tom);
+        }
     }
     else {
         salvarSave(saveName);
@@ -175,9 +181,6 @@ elements.saveButton.addEventListener('click', () => {
 
         $('#alertModal').modal('show');
     }
-
-    const tom = descobrirTom(elements.editTextarea.value);
-    escolhidoLetraOuCifra();
 });
 
 elements.darkModeToggle.addEventListener('change', toggleDarkMode);
@@ -403,6 +406,44 @@ function handleInteractionStart() {
 
 function handleInteractionEnd() {
     clearTimeout(timer);
+}
+
+function customConfirm(message, title = "Confirmação") {
+    return new Promise((resolve) => {
+        const modal = new bootstrap.Modal(document.getElementById('customConfirmModal'));
+        const modalTitle = document.getElementById('customConfirmModalLabel');
+        const modalBody = document.getElementById('customConfirmModalBody');
+        const btnConfirmAction = document.getElementById('btnConfirmAction');
+        const btnCancelAction = document.getElementById('btnConfirmCancel');
+
+        // Configura o título e a mensagem do modal
+        modalTitle.textContent = title;
+        modalBody.textContent = message;
+
+        // Remove ouvintes de eventos antigos para evitar múltiplas execuções
+        btnConfirmAction.onclick = null;
+        btnCancelAction.onclick = null;
+
+        // Adiciona o ouvinte de evento para o botão "Confirmar"
+        btnConfirmAction.onclick = () => {
+            modal.hide(); // Esconde o modal
+            resolve(true); // Resolve a Promise com true
+        };
+
+        // Adiciona o ouvinte de evento para o botão "Cancelar" ou fechar
+        // O evento 'hidden.bs.modal' também é importante para capturar o fechamento pelo 'X' ou clique fora
+        const handleModalHidden = () => {
+            // Só resolve para false se não foi resolvido anteriormente (pelo botão Confirmar)
+            // Isso evita que a Promise seja resolvida duas vezes
+            resolve(false);
+            // Remove o ouvinte após o uso para evitar duplicação
+            document.getElementById('customConfirmModal').removeEventListener('hidden.bs.modal', handleModalHidden);
+        };
+        document.getElementById('customConfirmModal').addEventListener('hidden.bs.modal', handleModalHidden);
+
+        // Exibe o modal
+        modal.show();
+    });
 }
 
 document.addEventListener('mousedown', fullScreen);
