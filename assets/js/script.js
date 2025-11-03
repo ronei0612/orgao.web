@@ -7,7 +7,6 @@ const elements = {
     saveButton: document.getElementById('saveButton'),
     cancelButton: document.getElementById('cancelButton'),
     addButton: document.getElementById('addButton'),
-    saveNewItemButton: document.getElementById('saveNewItemButton'),
     playButton: document.getElementById('playButton'),
     avancarButton: document.getElementById('avancarButton'),
     voltarButton: document.getElementById('voltarButton'),
@@ -40,7 +39,6 @@ const elements = {
     tomContainer: document.getElementById('tomContainer'),
     pulseRange: document.getElementById('pulseRange'),
     itemNameInput: document.getElementById('itemNameInput'),
-    itemModalLabel: document.getElementById('itemModalLabel'),
     oracoesEucaristicasLink: document.getElementById('oracoesEucaristicasLink'),
     missaOrdinarioLink: document.getElementById('missaOrdinarioLink'),
     liturgiaDiariaLink: document.getElementById('liturgiaDiariaLink'),
@@ -135,14 +133,6 @@ elements.selectedButton.addEventListener("click", () => {
     selectEscolhido(elements.selectedButton.innerText);
 });
 
-elements.saveNewItemButton.addEventListener("click", () => {
-    elements.savesSelect.selectedIndex = 0;
-    let newSaveName = elements.itemNameInput.value;
-    if (newSaveName === '') return;
-    salvarSave(newSaveName);
-    $('#itemModal').modal('hide');
-});
-
 elements.cancelButton.addEventListener("click", async () => {
     const confirmed = await customConfirm('Cancelar edição?');
     if (confirmed) {
@@ -160,8 +150,6 @@ elements.saveButton.addEventListener('click', async () => {
         if (confirmed) {
             salvarSave(saveName, elements.savesSelect.value);
             const tom = elements.tomSelect.value;
-
-            escolhidoLetraOuCifra(tom);
         }
     }
     else {
@@ -461,16 +449,10 @@ document.addEventListener('click', (event) => {
     }
 });
 
-$('#itemModal').on('shown.bs.modal', () => {
-    elements.itemNameInput.focus();
-});
-
 $('#searchModal').on('shown.bs.modal', () => {
     if (elements.savesSelect.value !== '')
         elements.searchModalLabel.textContent = elements.savesSelect.value;
 
-    //elements.editTextarea.value = elements.iframeCifra.contentDocument.body.innerText;
-    //elements.searchInput.focus();
     uiController.exibirBotaoTocar();
 
     if (_pesquisarNaWeb) {
@@ -964,6 +946,7 @@ async function salvarSave(newSaveName, oldSaveName) {
     uiController.exibirListaSaves(newSaveName);
 
     selectEscolhido(newSaveName);
+    //escolhidoLetraOuCifra(tom);
 }
 
 ['mousedown'].forEach(event => {
