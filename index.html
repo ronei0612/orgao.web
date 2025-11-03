@@ -193,27 +193,7 @@
         </div>
     </div>
 
-    <!-- Modal item -->
-    <div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="itemModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="itemModalLabel">Novo</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">× Fechar</button>
-                    <button type="button" class="btn btn-primary" id="saveNewItemButton"><i class="bi bi-save"></i> Salvar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Confirm -->
+    <!-- Modal Custom Confirm -->
     <div class="modal fade" id="customConfirmModal" tabindex="-1" aria-labelledby="customConfirmModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -233,23 +213,20 @@
         </div>
     </div>
 
-    <!-- Modal para mensagem de alerta -->
-    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <!-- Modal Custom Alert -->
+    <div class="modal fade" id="customAlertModal" tabindex="-1" aria-labelledby="customAlertModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="alertModalLabel"></h5>
+                    <h5 class="modal-title" id="customAlertModalLabel">Aviso</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body" id="alertModalMessage">
+                <div class="modal-body" id="customAlertModalBody">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancelButtonAlert">× Cancelar</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="naoButtonAlert">Não</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="okButtonAlert">OK</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="simButtonAlert"></button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnAlertDialogOK">✓ OK</button>
                 </div>
             </div>
         </div>

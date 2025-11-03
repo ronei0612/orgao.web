@@ -213,21 +213,6 @@ class UIController {
         return option;
     }
 
-    resetarOkAlert() {
-        this.elements.okButtonAlert.classList.remove('d-none');
-        this.elements.simButtonAlert.classList.add('d-none');
-        this.elements.naoButtonAlert.classList.add('d-none');
-        this.elements.cancelButtonAlert.classList.add('d-none');
-    }
-
-    resetarSimNaoAlert(simText = '✓ Sim') {
-        this.elements.simButtonAlert.textContent = simText;
-        this.elements.simButtonAlert.classList.remove('d-none');
-        this.elements.naoButtonAlert.classList.remove('d-none');
-        this.elements.okButtonAlert.classList.add('d-none');
-        this.elements.cancelButtonAlert.classList.add('d-none');
-    }
-
     exibirInterfaceDePesquisa() {
         this.elements.cifraDisplay.classList.add('d-none');
         this.elements.searchIcon.classList.add('d-none');
@@ -376,11 +361,5 @@ class UIController {
 
         this.elements.addButton.classList.toggle('rounded-0');
         this.elements.addButton.classList.toggle('rounded-right-custom');
-    }
-
-    exibirMensagemAlerta(mensagem, titulo) {
-        this.elements.alertModalMessage.textContent = mensagem;
-        this.elements.alertModalLabel.textContent = titulo;
-        $('#alertModal').modal('show');
     }
 }

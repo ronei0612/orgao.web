@@ -7,7 +7,6 @@ const elements = {
     saveButton: document.getElementById('saveButton'),
     cancelButton: document.getElementById('cancelButton'),
     addButton: document.getElementById('addButton'),
-    saveNewItemButton: document.getElementById('saveNewItemButton'),
     playButton: document.getElementById('playButton'),
     avancarButton: document.getElementById('avancarButton'),
     voltarButton: document.getElementById('voltarButton'),
@@ -40,13 +39,6 @@ const elements = {
     tomContainer: document.getElementById('tomContainer'),
     pulseRange: document.getElementById('pulseRange'),
     itemNameInput: document.getElementById('itemNameInput'),
-    alertModalLabel: document.getElementById('alertModalLabel'),
-    alertModalMessage: document.getElementById('alertModalMessage'),
-    itemModalLabel: document.getElementById('itemModalLabel'),
-    cancelButtonAlert: document.getElementById('cancelButtonAlert'),
-    simButtonAlert: document.getElementById('simButtonAlert'),
-    naoButtonAlert: document.getElementById('naoButtonAlert'),
-    okButtonAlert: document.getElementById('okButtonAlert'),
     oracoesEucaristicasLink: document.getElementById('oracoesEucaristicasLink'),
     missaOrdinarioLink: document.getElementById('missaOrdinarioLink'),
     liturgiaDiariaLink: document.getElementById('liturgiaDiariaLink'),
@@ -74,6 +66,7 @@ const cifraPlayer = new CifraPlayer(elements);
 const uiController = new UIController(elements);
 const localStorageManager = new LocalStorageManager();
 var _pesquisarNaWeb = false;
+var editing = false;
 
 const camposHarmonicos = {
     // Campos harmônicos maiores
@@ -140,46 +133,27 @@ elements.selectedButton.addEventListener("click", () => {
     selectEscolhido(elements.selectedButton.innerText);
 });
 
-elements.saveNewItemButton.addEventListener("click", () => {
-    elements.savesSelect.selectedIndex = 0;
-    let newSaveName = elements.itemNameInput.value;
-    if (newSaveName === '') return;
-    salvarSave(newSaveName);
-    $('#itemModal').modal('hide');
-});
-
-elements.cancelButton.addEventListener("click", () => {
-    if (confirm('Cancelar edição?')) {
+elements.cancelButton.addEventListener("click", async () => {
+    const confirmed = await customConfirm('Cancelar edição?');
+    if (confirmed) {
         uiController.resetInterface();
+        selectEscolhido(elements.itemNameInput.value);
     }
 });
 
 elements.saveButton.addEventListener('click', async () => {
     let saveName = elements.itemNameInput.value;
-    if (!saveName) {
-        const musicasDefault = elements.savesSelect.querySelectorAll('option[value^="Música "]');
-        const count = musicasDefault.length + 1;
-        saveName = "Música " + count;
-    }
 
-    let saves = JSON.parse(localStorage.getItem('saves')) || {};
-    if (saves.hasOwnProperty(saveName)) {
+    if (editing) {
+        editing = false;
         const confirmed = await customConfirm(`Salvar "${saveName}"?`);
         if (confirmed) {
-            const saveName = elements.searchModalLabel.textContent;
-            salvarSave(saveName);
+            salvarSave(saveName, elements.savesSelect.value);
             const tom = elements.tomSelect.value;
-
-            escolhidoLetraOuCifra(tom);
         }
     }
     else {
         salvarSave(saveName);
-
-        uiController.exibirMensagemAlerta(`"${saveName}" salvo com sucesso!`, 'Música');
-        uiController.resetarOkAlert();
-
-        $('#alertModal').modal('show');
     }
 });
 
@@ -266,8 +240,8 @@ elements.addButton.addEventListener('click', function () {
     }, 100);
 
     if (!elements.deleteSavesSelect.classList.contains('d-none')) {
-        elements.iframeCifra.contentDocument.body.innerHTML = '';
-        elements.editTextarea.value = '';
+        //elements.iframeCifra.contentDocument.body.innerHTML = '';
+        //elements.editTextarea.value = '';        
         elements.itemNameInput.value = '';
         $('#savesSelect').val('');
         $('#savesSelect').trigger('change');
@@ -283,6 +257,8 @@ elements.addButton.addEventListener('click', function () {
 
 elements.editSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
+    if (saveName)
+        editing = true;
     elements.itemNameInput.value = saveName ? saveName : '';
 
     elements.editTextarea.value = elements.iframeCifra.contentDocument.body.innerText;
@@ -291,13 +267,18 @@ elements.editSavesSelect.addEventListener('click', () => {
     uiController.exibirBotoesAcordes();
 });
 
-elements.deleteSavesSelect.addEventListener('click', () => {
+elements.deleteSavesSelect.addEventListener('click', async () => {
     const saveName = elements.savesSelect.value;
     if (elements.savesSelect.selectedIndex !== 0) {
-        uiController.exibirMensagemAlerta(`Deseja excluir "${saveName}"?`, 'Deletar!');
-        uiController.resetarSimNaoAlert();
-
-        $('#alertModal').modal('show');
+        const confirmed = await customConfirm(`Deseja excluir "${saveName}"?`, 'Deletar!');
+        if (confirmed) {
+            let saves = JSON.parse(localStorage.getItem('saves')) || {};
+            delete saves[saveName];
+            localStorage.setItem('saves', JSON.stringify(saves));
+            uiController.resetInterface();
+            uiController.exibirListaSaves();
+            selectEscolhido('acordes__');
+        }
     }
 });
 
@@ -331,8 +312,8 @@ elements.oracoesLink.addEventListener('click', () => {
     uiController.exibirFrame('oracoesFrame');
 });
 
-elements.aboutLink.addEventListener('click', () => {
-    alert('Projeto de Ronei Costa Soares. version: ' + version);
+elements.aboutLink.addEventListener('click', async () => {
+    await customAlert(`Projeto de Ronei Costa Soares. version: ${version}`, 'Versão');
 });
 
 elements.downloadSavesLink.addEventListener('click', () => {
@@ -345,15 +326,6 @@ elements.uploadSavesLink.addEventListener('click', () => {
 
 elements.missaOrdinarioLink.addEventListener('click', () => {
     uiController.exibirFrame('santamissaFrame');
-});
-
-elements.notesButton.addEventListener('click', () => {
-    //cifraPlayer.alternarNotas();
-    
-    // quando pressionar botão das notas, não tocar o acorde denovo
-    // if (!elements.acorde1.classList.contains('d-none')) {
-    //     cifraPlayer.tocarAcorde(cifraPlayer.acordeTocando);
-    // }
 });
 
 elements.stopButton.addEventListener('mousedown', () => {
@@ -375,23 +347,6 @@ elements.avancarButton.addEventListener('mousedown', () => {
     cifraPlayer.iniciarReproducao();
 })
 
-elements.simButtonAlert.addEventListener('click', () => {
-    if (elements.alertModalLabel.textContent === 'Deletar!') {
-        const saveName = elements.savesSelect.value;
-        deletarSave(saveName);
-    }
-    else {
-        const saveName = elements.searchModalLabel.textContent;
-        salvarSave(saveName);
-        if (elements.savesSelect.value === saveName) //verificação se for item deletado
-            elements.tocarButton.dispatchEvent(new Event('click'));
-    }
-});
-
-elements.naoButtonAlert.addEventListener('click', () => {
-    $('#alertModal').modal('hide');
-});
-
 function handleInteractionStart() {
     held = false;
     timer = setTimeout(() => {
@@ -408,6 +363,35 @@ function handleInteractionEnd() {
     clearTimeout(timer);
 }
 
+function customAlert(message, title = "Aviso", buttonText = "OK") {
+    return new Promise((resolve) => {
+        const modal = new bootstrap.Modal(document.getElementById('customAlertModal'));
+        const modalTitle = document.getElementById('customAlertModalLabel');
+        const modalBody = document.getElementById('customAlertModalBody');
+        const btnOk = document.getElementById('btnAlertDialogOK');
+
+        modalTitle.textContent = title;
+        modalBody.textContent = message;
+        btnOk.textContent = buttonText;
+
+        // Limpa ouvintes antigos para evitar duplicação
+        btnOk.onclick = null;
+
+        // Quando o botão OK é clicado ou o modal é fechado por 'X'/'esc', resolve a Promise
+        const handleModalHidden = () => {
+            resolve();
+            document.getElementById('customAlertModal').removeEventListener('hidden.bs.modal', handleModalHidden);
+        };
+        document.getElementById('customAlertModal').addEventListener('hidden.bs.modal', handleModalHidden);
+
+        btnOk.onclick = () => {
+            modal.hide();
+        };
+
+        modal.show();
+    });
+}
+
 function customConfirm(message, title = "Confirmação") {
     return new Promise((resolve) => {
         const modal = new bootstrap.Modal(document.getElementById('customConfirmModal'));
@@ -416,7 +400,6 @@ function customConfirm(message, title = "Confirmação") {
         const btnConfirmAction = document.getElementById('btnConfirmAction');
         const btnCancelAction = document.getElementById('btnConfirmCancel');
 
-        // Configura o título e a mensagem do modal
         modalTitle.textContent = title;
         modalBody.textContent = message;
 
@@ -424,24 +407,23 @@ function customConfirm(message, title = "Confirmação") {
         btnConfirmAction.onclick = null;
         btnCancelAction.onclick = null;
 
-        // Adiciona o ouvinte de evento para o botão "Confirmar"
         btnConfirmAction.onclick = () => {
-            modal.hide(); // Esconde o modal
-            resolve(true); // Resolve a Promise com true
+            modal.hide();
+            resolve(true);
         };
 
-        // Adiciona o ouvinte de evento para o botão "Cancelar" ou fechar
-        // O evento 'hidden.bs.modal' também é importante para capturar o fechamento pelo 'X' ou clique fora
+        btnCancelAction.onclick = () => {
+            modal.hide();
+            resolve();
+        };
+
+        // Ouvinte de evento para o botão "Cancelar" ou fechar
         const handleModalHidden = () => {
-            // Só resolve para false se não foi resolvido anteriormente (pelo botão Confirmar)
-            // Isso evita que a Promise seja resolvida duas vezes
             resolve(false);
-            // Remove o ouvinte após o uso para evitar duplicação
             document.getElementById('customConfirmModal').removeEventListener('hidden.bs.modal', handleModalHidden);
         };
         document.getElementById('customConfirmModal').addEventListener('hidden.bs.modal', handleModalHidden);
 
-        // Exibe o modal
         modal.show();
     });
 }
@@ -458,16 +440,10 @@ document.addEventListener('click', (event) => {
     }
 });
 
-$('#itemModal').on('shown.bs.modal', () => {
-    elements.itemNameInput.focus();
-});
-
 $('#searchModal').on('shown.bs.modal', () => {
     if (elements.savesSelect.value !== '')
         elements.searchModalLabel.textContent = elements.savesSelect.value;
 
-    //elements.editTextarea.value = elements.iframeCifra.contentDocument.body.innerText;
-    //elements.searchInput.focus();
     uiController.exibirBotaoTocar();
 
     if (_pesquisarNaWeb) {
@@ -690,7 +666,7 @@ async function searchMusic() {
             throw new Error(data.message);
         }
     } catch (error) {
-        alert(`Erro na busca: ${error.message}`);
+        await customAlert(`Erro na busca: ${error.message}`, 'Erro!');
         elements.savesList.classList.remove('d-none');
         elements.searchResultsList.classList.add('d-none');
     } finally {
@@ -709,7 +685,7 @@ async function choseCifraLocal(id) {
 
     const musica = todasAsCifras.find(c => c.id === id);
     if (!musica) {
-        alert('Cifra não encontrada.');
+        await customAlert('Cifra não encontrada.', 'Erro!');
         return;
     }
 
@@ -739,11 +715,11 @@ async function choseLink(urlLink, titulo) {
             elements.cifraDisplay.textContent = texto;
             uiController.exibirBotaoTocar();
         } else {
-            alert(data.message);
+            await customAlert(data.message, 'Erro!');
         }
     } catch (error) {
         console.error('Error fetching data:', error);
-        alert('Erro ao baixar a cifra. Tente novamente mais tarde.');
+        await customAlert('Erro ao baixar a cifra. Tente novamente mais tarde.', 'Erro!');
     } finally {
         uiController.exibirBotaoTocar();
     }
@@ -853,12 +829,12 @@ function uploadSaves() {
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = async function (e) {
             try {
                 const importedSaves = JSON.parse(e.target.result);
 
                 if (typeof importedSaves !== 'object' || Array.isArray(importedSaves)) {
-                    alert('Arquivo inválido!');
+                    await customAlert('Arquivo inválido', 'Erro!');
                     return;
                 }
 
@@ -869,9 +845,10 @@ function uploadSaves() {
 
                 // Atualiza a interface
                 uiController.exibirListaSaves();
-                alert('Importado com sucesso!');
+
+                await customAlert('Importado com sucesso', 'Sucesso!');
             } catch (err) {
-                alert('Erro: ' + err.message);
+                await customAlert(err.message, 'Erro!');
             }
         };
         reader.readAsText(file);
@@ -925,72 +902,38 @@ function fullScreen() {
     }
 }
 
-function salvarSave(newSaveName) {
+async function salvarSave(newSaveName, oldSaveName) {
+    if (!newSaveName) {
+        const musicasDefault = elements.savesSelect.querySelectorAll('option[value^="Música "]');
+        const count = musicasDefault.length + 1;
+        newSaveName = "Música " + count;
+    }
+
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
 
-    if (newSaveName) {
-        newSaveName = newSaveName.trim();
-        //newSaveName = newSaveName.charAt(0).toUpperCase() + newSaveName.slice(1).toLowerCase();        
-        let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
-        //saves.hasOwnProperty(newSaveName)
+    newSaveName = newSaveName.trim();
+    let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
 
-        if (temSaveName && elements.searchModalLabel.textContent !== newSaveName) {
-            uiController.exibirMensagemAlerta(`Já existe esse nome!`, 'Atenção!');
-            uiController.resetarOkAlert();
-
-            $('#alertModal').modal('show');
-            return;
-        }
-
-        let selectedOption = elements.savesSelect.options[elements.savesSelect.selectedIndex];
-        let titulo = itemModalLabel.innerText;
-
-        if (titulo.includes("Editar - ")) {
-            var oldSaveName = titulo.split(' - ')[1];
-            if (oldSaveName !== newSaveName) {
-                var saveContent = saves[oldSaveName];
-                saves[newSaveName] = saveContent;
-                delete saves[oldSaveName];
-                selectedOption.textContent = newSaveName;
-                selectedOption.value = newSaveName;
-                localStorage.setItem('saves', JSON.stringify(saves));
-            }
-        } else if (alertModalLabel.innerText === "Deletar!") {
-            const saveName = elements.savesSelect.value;
-            if (saveName) {
-                deletarSave(saveName);
-                $('#searchModal').modal('hide');
-                $('#alertModal').modal('hide');
-            }
-        } else {
-            let newOption = document.createElement("option");
-            newOption.text = newSaveName;
-            newOption.value = newSaveName;
-            elements.savesSelect.add(newOption);
-            elements.savesSelect.value = newSaveName;
-
-            var saveContent = elements.editTextarea.value;
-
-            const musicaCifrada = cifraPlayer.destacarCifras(saveContent);
-            const tom = descobrirTom(musicaCifrada);
-            uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
-            elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(saveContent, tom);
-            uiController.exibirIframeCifra();
-            cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
-
-            if (saveContent.includes('<pre>')) {
-                saveContent = saveContent.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
-            }
-            //saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
-            saves[newSaveName] = saveContent;
-            localStorage.setItem('saves', JSON.stringify(saves));
-            elements.savesSelect.value = newSaveName;
-            elements.searchModalLabel.textContent = newSaveName;
-        }
-
-        $('#searchModal').modal('hide');
-        uiController.exibirListaSaves(newSaveName);
+    if (temSaveName && newSaveName !== elements.savesSelect.value) {
+        await customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Salvar Música');
+        return;
     }
+
+    if (oldSaveName) {
+        var saveContent = saves[oldSaveName];
+        saves[newSaveName] = saveContent;
+        delete saves[oldSaveName];
+    }
+
+    var saveContent = elements.editTextarea.value;
+    saves[newSaveName] = saveContent;
+    localStorage.setItem('saves', JSON.stringify(saves));
+    elements.savesSelect.value = newSaveName;
+
+    uiController.exibirIframeCifra();
+    uiController.exibirListaSaves(newSaveName);
+
+    selectEscolhido(newSaveName);
 }
 
 ['mousedown'].forEach(event => {
