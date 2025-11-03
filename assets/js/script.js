@@ -148,8 +148,9 @@ elements.saveNewItemButton.addEventListener("click", () => {
     $('#itemModal').modal('hide');
 });
 
-elements.cancelButton.addEventListener("click", () => {
-    if (confirm('Cancelar edição?')) {
+elements.cancelButton.addEventListener("click", async () => {
+    const confirmed = await customConfirm('Cancelar edição?');
+    if (confirmed) {
         uiController.resetInterface();
     }
 });
@@ -161,6 +162,8 @@ elements.saveButton.addEventListener('click', async () => {
         const count = musicasDefault.length + 1;
         saveName = "Música " + count;
     }
+
+    //salvarSave(saveName);
 
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
     if (saves.hasOwnProperty(saveName)) {
@@ -176,10 +179,7 @@ elements.saveButton.addEventListener('click', async () => {
     else {
         salvarSave(saveName);
 
-        uiController.exibirMensagemAlerta(`"${saveName}" salvo com sucesso!`, 'Música');
-        uiController.resetarOkAlert();
-
-        $('#alertModal').modal('show');
+        await customAlert(`"${saveName}" salvo com sucesso!`, 'Sucesso');
     }
 });
 
@@ -291,13 +291,13 @@ elements.editSavesSelect.addEventListener('click', () => {
     uiController.exibirBotoesAcordes();
 });
 
-elements.deleteSavesSelect.addEventListener('click', () => {
+elements.deleteSavesSelect.addEventListener('click', async () => {
     const saveName = elements.savesSelect.value;
     if (elements.savesSelect.selectedIndex !== 0) {
-        uiController.exibirMensagemAlerta(`Deseja excluir "${saveName}"?`, 'Deletar!');
-        uiController.resetarSimNaoAlert();
+        const confirmed = await customConfirm(`Deseja excluir "${saveName}"?`, 'Deletar!');
+        if (confirmed) {
 
-        $('#alertModal').modal('show');
+        }
     }
 });
 
@@ -408,6 +408,35 @@ function handleInteractionEnd() {
     clearTimeout(timer);
 }
 
+function customAlert(message, title = "Aviso", buttonText = "OK") {
+    return new Promise((resolve) => {
+        const modal = new bootstrap.Modal(document.getElementById('customAlertModal'));
+        const modalTitle = document.getElementById('customAlertModalLabel');
+        const modalBody = document.getElementById('customAlertModalBody');
+        const btnOk = document.getElementById('btnAlertDialogOK');
+
+        modalTitle.textContent = title;
+        modalBody.textContent = message;
+        btnOk.textContent = buttonText;
+
+        // Limpa ouvintes antigos para evitar duplicação
+        btnOk.onclick = null;
+
+        // Quando o botão OK é clicado ou o modal é fechado por 'X'/'esc', resolve a Promise
+        const handleModalHidden = () => {
+            resolve();
+            document.getElementById('customAlertModal').removeEventListener('hidden.bs.modal', handleModalHidden);
+        };
+        document.getElementById('customAlertModal').addEventListener('hidden.bs.modal', handleModalHidden);
+
+        btnOk.onclick = () => {
+            modal.hide();
+        };
+
+        modal.show();
+    });
+}
+
 function customConfirm(message, title = "Confirmação") {
     return new Promise((resolve) => {
         const modal = new bootstrap.Modal(document.getElementById('customConfirmModal'));
@@ -416,7 +445,6 @@ function customConfirm(message, title = "Confirmação") {
         const btnConfirmAction = document.getElementById('btnConfirmAction');
         const btnCancelAction = document.getElementById('btnConfirmCancel');
 
-        // Configura o título e a mensagem do modal
         modalTitle.textContent = title;
         modalBody.textContent = message;
 
@@ -424,24 +452,23 @@ function customConfirm(message, title = "Confirmação") {
         btnConfirmAction.onclick = null;
         btnCancelAction.onclick = null;
 
-        // Adiciona o ouvinte de evento para o botão "Confirmar"
         btnConfirmAction.onclick = () => {
-            modal.hide(); // Esconde o modal
-            resolve(true); // Resolve a Promise com true
+            modal.hide();
+            resolve(true);
         };
 
-        // Adiciona o ouvinte de evento para o botão "Cancelar" ou fechar
-        // O evento 'hidden.bs.modal' também é importante para capturar o fechamento pelo 'X' ou clique fora
+        btnCancelAction.onclick = () => {
+            modal.hide();
+            resolve();
+        };
+
+        // Ouvinte de evento para o botão "Cancelar" ou fechar
         const handleModalHidden = () => {
-            // Só resolve para false se não foi resolvido anteriormente (pelo botão Confirmar)
-            // Isso evita que a Promise seja resolvida duas vezes
             resolve(false);
-            // Remove o ouvinte após o uso para evitar duplicação
             document.getElementById('customConfirmModal').removeEventListener('hidden.bs.modal', handleModalHidden);
         };
         document.getElementById('customConfirmModal').addEventListener('hidden.bs.modal', handleModalHidden);
 
-        // Exibe o modal
         modal.show();
     });
 }
@@ -925,7 +952,7 @@ function fullScreen() {
     }
 }
 
-function salvarSave(newSaveName) {
+async function salvarSave(newSaveName) {
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
 
     if (newSaveName) {
@@ -935,10 +962,7 @@ function salvarSave(newSaveName) {
         //saves.hasOwnProperty(newSaveName)
 
         if (temSaveName && elements.searchModalLabel.textContent !== newSaveName) {
-            uiController.exibirMensagemAlerta(`Já existe esse nome!`, 'Atenção!');
-            uiController.resetarOkAlert();
-
-            $('#alertModal').modal('show');
+            await customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Atenção!');
             return;
         }
 
