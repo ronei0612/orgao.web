@@ -117,7 +117,6 @@ window.onerror = function (message, source, lineno, colno, error) {
 	alert("Erro!\n" + message + '\nArquivo: ' + source + '\nLinha: ' + lineno + '\nPosicao: ' + colno);
 };
 
-// Faz o link Liturgia da Palavra de dentro do iframe LiturgiaDiaria funcionar
 elements.santamissaFrame.addEventListener('load', () => {
     window.addEventListener('message', (event) => {
         if (event.data === 'mostrarLiturgiaDiaria') {
@@ -341,27 +340,11 @@ elements.playButton.addEventListener('mousedown', () => {
         cifraPlayer.iniciarReproducao();
         uiController.exibirBotoesAvancarVoltarCifra();
     }
-})
+});
 
 elements.avancarButton.addEventListener('mousedown', () => {
     cifraPlayer.iniciarReproducao();
-})
-
-function handleInteractionStart() {
-    held = false;
-    timer = setTimeout(() => {
-        held = true;
-        const icon = elements.notesButton.querySelector('i');
-        icon.classList.remove('bi-music-note-beamed');
-        icon.classList.add('bi-music-note');
-        elements.notesButton.classList.remove('pressed');
-        elements.notesButton.classList.add('notaSolo');
-    }, holdTime);
-}
-
-function handleInteractionEnd() {
-    clearTimeout(timer);
-}
+});
 
 function customAlert(message, title = "Aviso", buttonText = "OK") {
     return new Promise((resolve) => {
@@ -567,22 +550,6 @@ function descobrirTom(textoHtml) {
 
     const tomProvavel = Object.keys(possiveisTons).reduce((a, b) => possiveisTons[a] > possiveisTons[b] ? a : b);
     return tomProvavel;
-}
-
-function desselecionarTodos() {
-    const allItems = document.querySelectorAll('.list-group-item');
-    allItems.forEach(item => item.classList.remove('selected'));
-}
-
-function deletarSave(saveName) {
-    let saves = JSON.parse(localStorage.getItem('saves') || '{}');
-    delete saves[saveName];
-    localStorage.setItem('saves', JSON.stringify(saves));
-    elements.searchModalLabel.textContent = 'Música';
-    elements.iframeCifra.contentDocument.body.innerHTML = '';
-    elements.tomSelect.innerHTML = '<option value="">Letra</option>';
-
-    uiController.exibirListaSaves();
 }
 
 function removerAcentosEcaracteres(str) {
