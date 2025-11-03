@@ -40,13 +40,7 @@ const elements = {
     tomContainer: document.getElementById('tomContainer'),
     pulseRange: document.getElementById('pulseRange'),
     itemNameInput: document.getElementById('itemNameInput'),
-    alertModalLabel: document.getElementById('alertModalLabel'),
-    alertModalMessage: document.getElementById('alertModalMessage'),
     itemModalLabel: document.getElementById('itemModalLabel'),
-    cancelButtonAlert: document.getElementById('cancelButtonAlert'),
-    simButtonAlert: document.getElementById('simButtonAlert'),
-    naoButtonAlert: document.getElementById('naoButtonAlert'),
-    okButtonAlert: document.getElementById('okButtonAlert'),
     oracoesEucaristicasLink: document.getElementById('oracoesEucaristicasLink'),
     missaOrdinarioLink: document.getElementById('missaOrdinarioLink'),
     liturgiaDiariaLink: document.getElementById('liturgiaDiariaLink'),
@@ -161,6 +155,7 @@ elements.saveButton.addEventListener('click', async () => {
     let saveName = elements.itemNameInput.value;
 
     if (editing) {
+        editing = false;
         const confirmed = await customConfirm(`Salvar "${saveName}"?`);
         if (confirmed) {
             salvarSave(saveName, elements.savesSelect.value);
@@ -372,23 +367,6 @@ elements.playButton.addEventListener('mousedown', () => {
 elements.avancarButton.addEventListener('mousedown', () => {
     cifraPlayer.iniciarReproducao();
 })
-
-elements.simButtonAlert.addEventListener('click', () => {
-    if (elements.alertModalLabel.textContent === 'Deletar!') {
-        const saveName = elements.savesSelect.value;
-        deletarSave(saveName);
-    }
-    else {
-        const saveName = elements.searchModalLabel.textContent;
-        salvarSave(saveName);
-        if (elements.savesSelect.value === saveName) //verificação se for item deletado
-            elements.tocarButton.dispatchEvent(new Event('click'));
-    }
-});
-
-elements.naoButtonAlert.addEventListener('click', () => {
-    $('#alertModal').modal('hide');
-});
 
 function handleInteractionStart() {
     held = false;
@@ -964,22 +942,12 @@ async function salvarSave(newSaveName, oldSaveName) {
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
 
     newSaveName = newSaveName.trim();
-    //newSaveName = newSaveName.charAt(0).toUpperCase() + newSaveName.slice(1).toLowerCase();
-
-    
-    //saves.hasOwnProperty(newSaveName)
-
-    //if (editing) {
-        editing = false;
-        let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
+    let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
 
     if (temSaveName && newSaveName !== elements.savesSelect.value) {
-            await customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Salvar Música');
-            return;
-        }
-    //}
-
-    //let selectedOption = elements.savesSelect.options[elements.savesSelect.selectedIndex];
+        await customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Salvar Música');
+        return;
+    }
 
     if (oldSaveName) {
         var saveContent = saves[oldSaveName];
@@ -987,33 +955,10 @@ async function salvarSave(newSaveName, oldSaveName) {
         delete saves[oldSaveName];
     }
 
-    //selectedOption.textContent = newSaveName;
-    //selectedOption.value = newSaveName;
-
-    //} else {
-    //    let newOption = document.createElement("option");
-    //    newOption.text = newSaveName;
-    //    newOption.value = newSaveName;
-    //    elements.savesSelect.add(newOption);
-    //    elements.savesSelect.value = newSaveName;
-
     var saveContent = elements.editTextarea.value;
-
-    //    const musicaCifrada = cifraPlayer.destacarCifras(saveContent);
-    //    const tom = descobrirTom(musicaCifrada);
-    //    uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
-    //    elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(saveContent, tom);
-    //    cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
-
-    //    if (saveContent.includes('<pre>')) {
-    //        saveContent = saveContent.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
-    //    }
-    //    //saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
     saves[newSaveName] = saveContent;
     localStorage.setItem('saves', JSON.stringify(saves));
     elements.savesSelect.value = newSaveName;
-    //    elements.searchModalLabel.textContent = newSaveName;
-    ////}
 
     uiController.exibirIframeCifra();
     uiController.exibirListaSaves(newSaveName);
