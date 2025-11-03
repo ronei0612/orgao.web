@@ -74,6 +74,7 @@ const cifraPlayer = new CifraPlayer(elements);
 const uiController = new UIController(elements);
 const localStorageManager = new LocalStorageManager();
 var _pesquisarNaWeb = false;
+var editing = false;
 
 const camposHarmonicos = {
     // Campos harmônicos maiores
@@ -157,20 +158,15 @@ elements.cancelButton.addEventListener("click", async () => {
 
 elements.saveButton.addEventListener('click', async () => {
     let saveName = elements.itemNameInput.value;
-    if (!saveName) {
-        const musicasDefault = elements.savesSelect.querySelectorAll('option[value^="Música "]');
-        const count = musicasDefault.length + 1;
-        saveName = "Música " + count;
-    }
-
-    //salvarSave(saveName);
 
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
-    if (saves.hasOwnProperty(saveName)) {
+
+    if (editing || saves.hasOwnProperty(saveName)) {
         const confirmed = await customConfirm(`Salvar "${saveName}"?`);
         if (confirmed) {
             const saveName = elements.searchModalLabel.textContent;
-            salvarSave(saveName);
+
+            salvarSave(saveName, elements.savesSelect.value);
             const tom = elements.tomSelect.value;
 
             escolhidoLetraOuCifra(tom);
@@ -283,6 +279,8 @@ elements.addButton.addEventListener('click', function () {
 
 elements.editSavesSelect.addEventListener('click', () => {
     const saveName = elements.savesSelect.value;
+    if (saveName)
+        editing = true;
     elements.itemNameInput.value = saveName ? saveName : '';
 
     elements.editTextarea.value = elements.iframeCifra.contentDocument.body.innerText;
@@ -296,7 +294,12 @@ elements.deleteSavesSelect.addEventListener('click', async () => {
     if (elements.savesSelect.selectedIndex !== 0) {
         const confirmed = await customConfirm(`Deseja excluir "${saveName}"?`, 'Deletar!');
         if (confirmed) {
-
+            let saves = JSON.parse(localStorage.getItem('saves')) || {};
+            delete saves[saveName];
+            localStorage.setItem('saves', JSON.stringify(saves));
+            uiController.resetInterface();
+            uiController.exibirListaSaves();
+            selectEscolhido('acordes__');
         }
     }
 });
@@ -952,12 +955,19 @@ function fullScreen() {
     }
 }
 
-async function salvarSave(newSaveName) {
+async function salvarSave(newSaveName, oldSaveName) {
+    if (!newSaveName) {
+        const musicasDefault = elements.savesSelect.querySelectorAll('option[value^="Música "]');
+        const count = musicasDefault.length + 1;
+        newSaveName = "Música " + count;
+    }
+
     let saves = JSON.parse(localStorage.getItem('saves')) || {};
 
-    if (newSaveName) {
-        newSaveName = newSaveName.trim();
-        //newSaveName = newSaveName.charAt(0).toUpperCase() + newSaveName.slice(1).toLowerCase();        
+    newSaveName = newSaveName.trim();
+    //newSaveName = newSaveName.charAt(0).toUpperCase() + newSaveName.slice(1).toLowerCase();
+
+    if (!editing) {
         let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
         //saves.hasOwnProperty(newSaveName)
 
@@ -965,56 +975,48 @@ async function salvarSave(newSaveName) {
             await customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Atenção!');
             return;
         }
-
-        let selectedOption = elements.savesSelect.options[elements.savesSelect.selectedIndex];
-        let titulo = itemModalLabel.innerText;
-
-        if (titulo.includes("Editar - ")) {
-            var oldSaveName = titulo.split(' - ')[1];
-            if (oldSaveName !== newSaveName) {
-                var saveContent = saves[oldSaveName];
-                saves[newSaveName] = saveContent;
-                delete saves[oldSaveName];
-                selectedOption.textContent = newSaveName;
-                selectedOption.value = newSaveName;
-                localStorage.setItem('saves', JSON.stringify(saves));
-            }
-        } else if (alertModalLabel.innerText === "Deletar!") {
-            const saveName = elements.savesSelect.value;
-            if (saveName) {
-                deletarSave(saveName);
-                $('#searchModal').modal('hide');
-                $('#alertModal').modal('hide');
-            }
-        } else {
-            let newOption = document.createElement("option");
-            newOption.text = newSaveName;
-            newOption.value = newSaveName;
-            elements.savesSelect.add(newOption);
-            elements.savesSelect.value = newSaveName;
-
-            var saveContent = elements.editTextarea.value;
-
-            const musicaCifrada = cifraPlayer.destacarCifras(saveContent);
-            const tom = descobrirTom(musicaCifrada);
-            uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
-            elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(saveContent, tom);
-            uiController.exibirIframeCifra();
-            cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
-
-            if (saveContent.includes('<pre>')) {
-                saveContent = saveContent.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
-            }
-            //saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
-            saves[newSaveName] = saveContent;
-            localStorage.setItem('saves', JSON.stringify(saves));
-            elements.savesSelect.value = newSaveName;
-            elements.searchModalLabel.textContent = newSaveName;
-        }
-
-        $('#searchModal').modal('hide');
-        uiController.exibirListaSaves(newSaveName);
     }
+
+    //let selectedOption = elements.savesSelect.options[elements.savesSelect.selectedIndex];
+
+    if (oldSaveName) {
+        var saveContent = saves[oldSaveName];
+        saves[newSaveName] = saveContent;
+        delete saves[oldSaveName];
+    }
+
+    //selectedOption.textContent = newSaveName;
+    //selectedOption.value = newSaveName;
+
+    //} else {
+    //    let newOption = document.createElement("option");
+    //    newOption.text = newSaveName;
+    //    newOption.value = newSaveName;
+    //    elements.savesSelect.add(newOption);
+    //    elements.savesSelect.value = newSaveName;
+
+    var saveContent = elements.editTextarea.value;
+
+    //    const musicaCifrada = cifraPlayer.destacarCifras(saveContent);
+    //    const tom = descobrirTom(musicaCifrada);
+    //    uiController.exibirTextoCifrasCarregado(tom, elements.editTextarea.value);
+    //    elements.iframeCifra.contentDocument.body.innerHTML = cifraPlayer.destacarCifras(saveContent, tom);
+    //    cifraPlayer.addEventCifrasIframe(elements.iframeCifra);
+
+    //    if (saveContent.includes('<pre>')) {
+    //        saveContent = saveContent.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
+    //    }
+    //    //saveContent = saveContent.replace(/<style[\s\S]*?<\/style>|<\/?[^>]+(>|$)/g, "");
+    saves[newSaveName] = saveContent;
+    localStorage.setItem('saves', JSON.stringify(saves));
+    elements.savesSelect.value = newSaveName;
+    //    elements.searchModalLabel.textContent = newSaveName;
+    ////}
+
+    uiController.exibirIframeCifra();
+    uiController.exibirListaSaves(newSaveName);
+
+    selectEscolhido(newSaveName);
 }
 
 ['mousedown'].forEach(event => {
