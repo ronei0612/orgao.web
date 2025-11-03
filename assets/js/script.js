@@ -312,8 +312,8 @@ elements.oracoesLink.addEventListener('click', () => {
     uiController.exibirFrame('oracoesFrame');
 });
 
-elements.aboutLink.addEventListener('click', () => {
-    alert('Projeto de Ronei Costa Soares. version: ' + version);
+elements.aboutLink.addEventListener('click', async () => {
+    await customAlert(`Projeto de Ronei Costa Soares. version: ${version}`, 'Versão');
 });
 
 elements.downloadSavesLink.addEventListener('click', () => {
@@ -326,15 +326,6 @@ elements.uploadSavesLink.addEventListener('click', () => {
 
 elements.missaOrdinarioLink.addEventListener('click', () => {
     uiController.exibirFrame('santamissaFrame');
-});
-
-elements.notesButton.addEventListener('click', () => {
-    //cifraPlayer.alternarNotas();
-    
-    // quando pressionar botão das notas, não tocar o acorde denovo
-    // if (!elements.acorde1.classList.contains('d-none')) {
-    //     cifraPlayer.tocarAcorde(cifraPlayer.acordeTocando);
-    // }
 });
 
 elements.stopButton.addEventListener('mousedown', () => {
@@ -675,7 +666,7 @@ async function searchMusic() {
             throw new Error(data.message);
         }
     } catch (error) {
-        alert(`Erro na busca: ${error.message}`);
+        await customAlert(`Erro na busca: ${error.message}`, 'Erro!');
         elements.savesList.classList.remove('d-none');
         elements.searchResultsList.classList.add('d-none');
     } finally {
@@ -694,7 +685,7 @@ async function choseCifraLocal(id) {
 
     const musica = todasAsCifras.find(c => c.id === id);
     if (!musica) {
-        alert('Cifra não encontrada.');
+        await customAlert('Cifra não encontrada.', 'Erro!');
         return;
     }
 
@@ -724,11 +715,11 @@ async function choseLink(urlLink, titulo) {
             elements.cifraDisplay.textContent = texto;
             uiController.exibirBotaoTocar();
         } else {
-            alert(data.message);
+            await customAlert(data.message, 'Erro!');
         }
     } catch (error) {
         console.error('Error fetching data:', error);
-        alert('Erro ao baixar a cifra. Tente novamente mais tarde.');
+        await customAlert('Erro ao baixar a cifra. Tente novamente mais tarde.', 'Erro!');
     } finally {
         uiController.exibirBotaoTocar();
     }
@@ -838,12 +829,12 @@ function uploadSaves() {
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = async function (e) {
             try {
                 const importedSaves = JSON.parse(e.target.result);
 
                 if (typeof importedSaves !== 'object' || Array.isArray(importedSaves)) {
-                    alert('Arquivo inválido!');
+                    await customAlert('Arquivo inválido', 'Erro!');
                     return;
                 }
 
@@ -854,9 +845,10 @@ function uploadSaves() {
 
                 // Atualiza a interface
                 uiController.exibirListaSaves();
-                alert('Importado com sucesso!');
+
+                await customAlert('Importado com sucesso', 'Sucesso!');
             } catch (err) {
-                alert('Erro: ' + err.message);
+                await customAlert(err.message, 'Erro!');
             }
         };
         reader.readAsText(file);
@@ -910,10 +902,6 @@ function fullScreen() {
     }
 }
 
-async function criarNovoSave(newSaveName) {
-
-}
-
 async function salvarSave(newSaveName, oldSaveName) {
     if (!newSaveName) {
         const musicasDefault = elements.savesSelect.querySelectorAll('option[value^="Música "]');
@@ -946,7 +934,6 @@ async function salvarSave(newSaveName, oldSaveName) {
     uiController.exibirListaSaves(newSaveName);
 
     selectEscolhido(newSaveName);
-    //escolhidoLetraOuCifra(tom);
 }
 
 ['mousedown'].forEach(event => {
