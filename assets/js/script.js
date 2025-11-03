@@ -171,8 +171,6 @@ elements.saveButton.addEventListener('click', async () => {
     }
     else {
         salvarSave(saveName);
-
-        await customAlert(`"${saveName}" salvo com sucesso!`, 'Salvar Nova Música');
     }
 });
 
@@ -260,7 +258,7 @@ elements.addButton.addEventListener('click', function () {
 
     if (!elements.deleteSavesSelect.classList.contains('d-none')) {
         //elements.iframeCifra.contentDocument.body.innerHTML = '';
-        //elements.editTextarea.value = '';
+        //elements.editTextarea.value = '';        
         elements.itemNameInput.value = '';
         $('#savesSelect').val('');
         $('#savesSelect').trigger('change');
@@ -952,6 +950,10 @@ function fullScreen() {
     }
 }
 
+async function criarNovoSave(newSaveName) {
+
+}
+
 async function salvarSave(newSaveName, oldSaveName) {
     if (!newSaveName) {
         const musicasDefault = elements.savesSelect.querySelectorAll('option[value^="Música "]');
@@ -967,15 +969,15 @@ async function salvarSave(newSaveName, oldSaveName) {
     
     //saves.hasOwnProperty(newSaveName)
 
-    if (editing) {
+    //if (editing) {
         editing = false;
         let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
 
-        if (temSaveName) {
+    if (temSaveName && newSaveName !== elements.savesSelect.value) {
             await customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Salvar Música');
             return;
         }
-    }
+    //}
 
     //let selectedOption = elements.savesSelect.options[elements.savesSelect.selectedIndex];
 
