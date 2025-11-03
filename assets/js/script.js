@@ -153,19 +153,16 @@ elements.cancelButton.addEventListener("click", async () => {
     const confirmed = await customConfirm('Cancelar edição?');
     if (confirmed) {
         uiController.resetInterface();
+        selectEscolhido(elements.itemNameInput.value);
     }
 });
 
 elements.saveButton.addEventListener('click', async () => {
     let saveName = elements.itemNameInput.value;
 
-    let saves = JSON.parse(localStorage.getItem('saves')) || {};
-
-    if (editing || saves.hasOwnProperty(saveName)) {
+    if (editing) {
         const confirmed = await customConfirm(`Salvar "${saveName}"?`);
         if (confirmed) {
-            const saveName = elements.searchModalLabel.textContent;
-
             salvarSave(saveName, elements.savesSelect.value);
             const tom = elements.tomSelect.value;
 
@@ -175,7 +172,7 @@ elements.saveButton.addEventListener('click', async () => {
     else {
         salvarSave(saveName);
 
-        await customAlert(`"${saveName}" salvo com sucesso!`, 'Sucesso');
+        await customAlert(`"${saveName}" salvo com sucesso!`, 'Salvar Nova Música');
     }
 });
 
@@ -262,8 +259,8 @@ elements.addButton.addEventListener('click', function () {
     }, 100);
 
     if (!elements.deleteSavesSelect.classList.contains('d-none')) {
-        elements.iframeCifra.contentDocument.body.innerHTML = '';
-        elements.editTextarea.value = '';
+        //elements.iframeCifra.contentDocument.body.innerHTML = '';
+        //elements.editTextarea.value = '';
         elements.itemNameInput.value = '';
         $('#savesSelect').val('');
         $('#savesSelect').trigger('change');
@@ -967,12 +964,15 @@ async function salvarSave(newSaveName, oldSaveName) {
     newSaveName = newSaveName.trim();
     //newSaveName = newSaveName.charAt(0).toUpperCase() + newSaveName.slice(1).toLowerCase();
 
-    if (!editing) {
-        let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
-        //saves.hasOwnProperty(newSaveName)
+    
+    //saves.hasOwnProperty(newSaveName)
 
-        if (temSaveName && elements.searchModalLabel.textContent !== newSaveName) {
-            await customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Atenção!');
+    if (editing) {
+        editing = false;
+        let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
+
+        if (temSaveName) {
+            await customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Salvar Música');
             return;
         }
     }
