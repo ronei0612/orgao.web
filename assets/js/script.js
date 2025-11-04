@@ -349,6 +349,7 @@ class App {
         else {
             this.uiController.esconderBotoesAcordes();
             this.uiController.esconderBotoesPlay();
+            this.uiController.esconderBotoesTom();
         }
     }
 
@@ -366,7 +367,7 @@ class App {
             const musicaCifradaFinal = this.cifraPlayer.destacarCifras(texto, tom);
             this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifradaFinal;
 
-            //this.uiController.exibirBotoesTom();
+            this.uiController.exibirBotoesTom();
             this.cifraPlayer.preencherSelect(tom);
             this.escolhidoLetraOuCifra(tom);
             this.uiController.exibirIframeCifra();
