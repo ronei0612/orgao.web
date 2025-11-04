@@ -1,5 +1,6 @@
 class CifraPlayer {
     constructor(elements) {
+        this.uiController = new UIController(elements);
         this.elements = elements;
         this.acordeGroup = null;
         this.parado = true;
@@ -228,7 +229,7 @@ class CifraPlayer {
             this.tomAtual = novoTom;
 
             const cifra = this.elements.iframeCifra.contentDocument.body.innerHTML;
-            uiController.exibirTextoCifrasCarregado(novoTom, cifra);
+            this.uiController.exibirTextoCifrasCarregado(novoTom, cifra);
 
             if (this.indiceAcorde > 0) {
                 this.indiceAcorde--;
@@ -406,7 +407,7 @@ class CifraPlayer {
         this.pararAcorde();
         acorde = this.getAcorde(acorde);
         this.acordeTocando = acorde;
-        uiController.desabilitarSelectSaves();
+        this.uiController.desabilitarSelectSaves();
     
         if (!this.acordeGroup) {  
             this.acordeGroup = new Pizzicato.Group();
@@ -465,7 +466,7 @@ class CifraPlayer {
     }
 
     pararAcorde() {
-        uiController.habilitarSelectSaves();
+        this.uiController.habilitarSelectSaves();
         if (this.acordeGroup) {
             this.acordeGroup.stop();
 
