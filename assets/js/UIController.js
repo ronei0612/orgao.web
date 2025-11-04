@@ -81,8 +81,6 @@ class UIController {
         this.elements.acorde10.classList.remove('d-none');
         this.elements.acorde11.classList.remove('d-none');
         
-        cifraPlayer.preencherSelect('C');
-        
         this.elements.acorde1.value = 'C';
         this.elements.acorde1.textContent = 'C';
         this.elements.acorde2.value = 'Am';
@@ -269,20 +267,6 @@ class UIController {
         this.elements.oracoesFrame.classList.add('d-none');
     }
 
-    exibirTextoCifrasCarregado(tom = null) {
-        if (tom) {
-            this.exibirBotoesTom();
-            cifraPlayer.preencherSelect(tom);
-        }
-        else {
-            this.esconderBotoesTom();
-            let textoLetra = this.elements.iframeCifra.contentDocument.body.innerHTML;
-            textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
-                .replace("font-size: 12pt;", "font-size: 15pt;");
-            this.elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
-        }
-    }
-
     esconderEditDeleteButtons() {
         if (this.elements.deleteSavesSelect.classList.contains('show')) {
             this.elements.deleteSavesSelect.classList.remove('show');
@@ -318,7 +302,6 @@ class UIController {
         this.exibirBotoesAcordes();
         
         this.exibirTextoCifrasCarregado('C', elements.editTextarea.value);
-        cifraPlayer.preencherSelect('C');
 
         this.exibirBotoesTom();
 

@@ -91,12 +91,12 @@ class App {
         this.elements.itemNameInput.addEventListener('keydown', this.handleItemNameInputKeydown.bind(this));
         this.elements.searchButton.addEventListener('click', this.searchMusic.bind(this));
         this.elements.clearButton.addEventListener('click', () => this.handleClearSearchClick());
-        this.elements.liturgiaDiariaLink.addEventListener('click', () => this.uiController.exibirFrame('liturgiaDiariaFrame'));
-        this.elements.oracoesLink.addEventListener('click', () => this.uiController.exibirFrame('oracoesFrame'));
+        this.elements.liturgiaDiariaLink.addEventListener('click', () => this.exibirFrame('liturgiaDiariaFrame'));
+        this.elements.oracoesLink.addEventListener('click', () => this.exibirFrame('oracoesFrame'));
         this.elements.aboutLink.addEventListener('click', () => this.customAlert(`Projeto de Ronei Costa Soares. version: ${this.version}`, 'Versão'));
         this.elements.downloadSavesLink.addEventListener('click', this.downloadSaves.bind(this));
         this.elements.uploadSavesLink.addEventListener('click', this.uploadSaves.bind(this));
-        this.elements.missaOrdinarioLink.addEventListener('click', () => this.uiController.exibirFrame('santamissaFrame'));
+        this.elements.missaOrdinarioLink.addEventListener('click', () => this.exibirFrame('santamissaFrame'));
         this.elements.stopButton.addEventListener('mousedown', this.handleStopMousedown.bind(this));
         this.elements.playButton.addEventListener('mousedown', this.handlePlayMousedown.bind(this));
         this.elements.avancarButton.addEventListener('mousedown', () => this.cifraPlayer.iniciarReproducao());
@@ -214,7 +214,7 @@ class App {
         let musicaCifrada = this.cifraPlayer.destacarCifras(texto);
         const tom = this.descobrirTom(musicaCifrada);
         musicaCifrada = this.cifraPlayer.destacarCifras(texto, tom);
-        this.uiController.exibirTextoCifrasCarregado(tom, this.elements.editTextarea.value);
+        this.exibirTextoCifrasCarregado(tom, this.elements.editTextarea.value);
         this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
 
         if (!tom)
@@ -250,6 +250,7 @@ class App {
         } else { // Selecionado "Letra"
             this.cifraPlayer.removeCifras(this.elements.iframeCifra.contentDocument.body.innerHTML);
             this.uiController.exibirBotoesAcordes();
+            this.cifraPlayer.preencherSelect('C');
             this.uiController.esconderBotoesTom();
         }
     }
@@ -291,6 +292,7 @@ class App {
             this.uiController.editarMusica();
             this.uiController.exibirBotoesTom();
             this.uiController.exibirBotoesAcordes();
+            this.cifraPlayer.preencherSelect('C');
             this.elements.itemNameInput.click();
         }
 
@@ -308,6 +310,7 @@ class App {
         this.uiController.editarMusica();
         this.uiController.exibirBotoesTom();
         this.uiController.exibirBotoesAcordes();
+        this.cifraPlayer.preencherSelect('C');
     }
 
     async handleDeleteSaveClick() {
@@ -409,7 +412,7 @@ class App {
             const musicaCifradaFinal = this.cifraPlayer.destacarCifras(texto, tom);
             this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifradaFinal;
 
-            this.uiController.exibirTextoCifrasCarregado(tom, this.elements.editTextarea.value);
+            this.exibirTextoCifrasCarregado(tom, this.elements.editTextarea.value);
             this.escolhidoLetraOuCifra(tom);
             this.uiController.exibirIframeCifra();
             this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
@@ -418,6 +421,7 @@ class App {
         else {
             this.uiController.exibirBotoesTom();
             this.uiController.exibirBotoesAcordes();
+            this.cifraPlayer.preencherSelect('C');
             this.elements.savesSelect.selectedIndex = 0;
             this.elements.iframeCifra.contentDocument.body.innerHTML = '';
         }
@@ -688,6 +692,25 @@ class App {
                 this.elements.playButton.classList.remove('d-none');
                 this.elements.stopButton.classList.add('d-none');
             }
+        }
+    }
+
+    exibirFrame(frameId) {
+        this.cifraPlayer.preencherSelect('C');
+        this.uiController.exibirFrame(frameId);
+    }
+
+    exibirTextoCifrasCarregado(tom = null) {
+        if (tom) {
+            this.uiController.exibirBotoesTom();
+            this.cifraPlayer.preencherSelect(tom);
+        }
+        else {
+            this.uiController.esconderBotoesTom();
+            let textoLetra = this.elements.iframeCifra.contentDocument.body.innerHTML;
+            textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
+                .replace("font-size: 12pt;", "font-size: 15pt;");
+            this.elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
         }
     }
 
