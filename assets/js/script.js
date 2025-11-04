@@ -253,7 +253,7 @@ class App {
             const acordeIndex_B_Bm = 13;
             let tomIndex = parseInt(this.elements.tomSelect.selectedIndex);
             if (tomIndex === 1)
-                tomIndex = indexAcorde_B_Bm;
+                tomIndex = acordeIndex_B_Bm;
             this.elements.tomSelect.value = this.elements.tomSelect.options[tomIndex - 1].value;
             this.elements.tomSelect.dispatchEvent(new Event('change'));
         }
