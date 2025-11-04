@@ -51,14 +51,8 @@ class App {
             'Abm': ['Abm', 'Cb', 'Dbm', 'Ebm', 'Fb', 'Gb'],
             'A#m': ['A#m', 'D', 'E#m', 'F#m', 'G', 'A']
         };
-
-        // Binds para funções que precisam ser chamadas pelo DOM/jQuery (Select2, Modals)
-        // Isso é necessário pois o Select2 e os Modals (Bootstrap 4) não são nativos de classes JS.
-        //this.pesquisarNaWeb = this.pesquisarNaWeb.bind(this);
-        //this.selectEscolhido = this.selectEscolhido.bind(this);
     }
 
-    // 4. Entry Point
     init() {
         this.setupServiceWorker();
         this.loadCifrasLocal();
@@ -70,7 +64,6 @@ class App {
         this.setupSelect2();
     }
 
-    // 5. Event Binding
     bindEvents() {
         // Centralização do addEventListener
         this.elements.santamissaFrame.addEventListener('load', this.handleSantaMissaLoad.bind(this));
@@ -384,8 +377,6 @@ class App {
             this.elements.searchResultsList.classList.remove('d-none');
         }
     }
-
-
 
     escolhidoLetraOuCifra(tom) {
         if (tom !== '') {
