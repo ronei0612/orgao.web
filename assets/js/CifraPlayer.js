@@ -50,8 +50,131 @@ class CifraPlayer {
             'F#': 'Gb',
             'G#': 'Ab'
         };
+
+        this.camposHarmonicos = {
+            // Campos harmônicos maiores
+            'C': ['C', 'Dm', 'Em', 'F', 'G', 'Am'],
+            'Db': ['Db', 'Ebm', 'Fm', 'Gb', 'Ab', 'Bbm'],
+            'C#': ['C#', 'D#m', 'Fm', 'F#', 'G#', 'A#m'],
+            'D': ['D', 'Em', 'F#m', 'G', 'A', 'Bm'],
+            'Eb': ['Eb', 'Fm', 'Gm', 'Ab', 'Bb', 'Cm'],
+            'D#': ['D#', 'Fm', 'Gm', 'G#', 'A#', 'Cm'],
+            'E': ['E', 'F#m', 'G#m', 'A', 'B', 'C#m'],
+            'F': ['F', 'Gm', 'Am', 'Bb', 'C', 'Dm'],
+            'F#': ['F#', 'G#m', 'A#m', 'B', 'C#', 'D#m'],
+            'Gb': ['Gb', 'Abm', 'Bbm', 'B', 'Db', 'Ebm'],
+            'G': ['G', 'Am', 'Bm', 'C', 'D', 'Em'],
+            'G#': ['G#', 'A#m', 'B#m', 'C#', 'D#', 'Fm'],
+            'Ab': ['Ab', 'Bbm', 'Cm', 'Db', 'Eb', 'Fm'],
+            'A': ['A', 'Bm', 'C#m', 'D', 'E', 'F#m'],
+            'A#': ['A#', 'B#m', 'Dm', 'D#', 'F', 'Gm'],
+            'Bb': ['Bb', 'Cm', 'Dm', 'Eb', 'F', 'Gm'],
+            'B': ['B', 'C#m', 'D#m', 'E', 'F#', 'G#m'],
+            // Campos harmônicos menores
+            'Am': ['Am', 'C', 'Dm', 'Em', 'F', 'G'],
+            'Bbm': ['Bbm', 'Db', 'Ebm', 'Fm', 'Gb', 'Ab'],
+            'B#m': ['B#m', 'D', 'E#m', 'F#m', 'G', 'A'],
+            'Bm': ['Bm', 'D', 'Em', 'F#m', 'G', 'A'],
+            'Cm': ['Cm', 'Eb', 'Fm', 'Gm', 'Ab', 'Bb'],
+            'C#m': ['C#m', 'E', 'F#m', 'G#m', 'A', 'B'],
+            'Dm': ['Dm', 'F', 'Gm', 'Am', 'Bb', 'C'],
+            'D#m': ['D#m', 'Gb', 'Abm', 'Bbm', 'Cb', 'Db'],
+            'Ebm': ['Ebm', 'Gb', 'Abm', 'Bbm', 'Cb', 'Db'],
+            'Em': ['Em', 'G', 'Am', 'Bm', 'C', 'D'],
+            'Fm': ['Fm', 'Ab', 'Bbm', 'Cm', 'Db', 'Eb'],
+            'F#m': ['F#m', 'A', 'Bm', 'C#m', 'D', 'E'],
+            'Gm': ['Gm', 'Bb', 'Cm', 'Dm', 'Eb', 'F'],
+            'G#m': ['G#m', 'B', 'C#m', 'D#m', 'E', 'F#'],
+            'Abm': ['Abm', 'Cb', 'Dbm', 'Ebm', 'Fb', 'Gb'],
+            'A#m': ['A#m', 'D', 'E#m', 'F#m', 'G', 'A']
+        };
+
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
         this.carregarAcordes();
+    }
+
+    descobrirTom(textoHtml) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = textoHtml;
+        const cifrasTag = tempDiv.querySelectorAll('b');
+
+        if (!cifrasTag.length) {
+            return '';
+        }
+
+        const cifras = [];
+        cifrasTag.forEach(acorde => {
+            if (acorde.innerText)
+                cifras.push(acorde.innerText.split('/')[0]);
+        });
+
+        // Lógica de descoberta do tom (mantida igual, mas agora usando this.camposHarmonicos)
+        const acordesOrdenados = cifras.sort();
+        const padroesAcordes = { doisMenores: false, doisMaiores: false };
+
+        for (let i = 0; i < acordesOrdenados.length - 1; i++) {
+            if (acordesOrdenados[i].endsWith('m') && acordesOrdenados[i + 1].endsWith('m')) {
+                padroesAcordes.doisMenores = true;
+            }
+            if (!acordesOrdenados[i].endsWith('m') && !acordesOrdenados[i + 1].endsWith('m')) {
+                padroesAcordes.doisMaiores = true;
+            }
+        }
+
+        const possiveisTons = {};
+        for (const [tom, acordes] of Object.entries(this.camposHarmonicos)) {
+            let pontos = 0;
+
+            if (padroesAcordes.doisMenores) {
+                for (let i = 0; i < acordes.length - 1; i++) {
+                    if (acordes[i].endsWith('m') && acordes[i + 1].endsWith('m')) {
+                        pontos += 1;
+                    }
+                }
+            }
+            if (padroesAcordes.doisMaiores) {
+                for (let i = 0; i < acordes.length - 1; i++) {
+                    if (!acordes[i].endsWith('m') && !acordes[i + 1].endsWith('m')) {
+                        pontos += 1;
+                    }
+                }
+            }
+
+            pontos += cifras.filter(cifra => acordes.includes(cifra)).length;
+            cifras.forEach(cifra => {
+                if (!acordes.includes(cifra)) {
+                    pontos -= 1; // Subtrai 1 ponto se o acorde não estiver no campo harmônico
+                }
+            });
+
+            possiveisTons[tom] = pontos;
+        }
+
+        const primeiroAcorde = cifras[0];
+        const ultimoAcorde = cifras[cifras.length - 1];
+
+        for (const tom in possiveisTons) {
+            if (this.camposHarmonicos[tom][0] === primeiroAcorde) {
+                possiveisTons[tom] += 1;
+            }
+            if (this.camposHarmonicos[tom][0] === ultimoAcorde) {
+                possiveisTons[tom] += 1;
+            }
+        }
+
+        const tomProvavel = Object.keys(possiveisTons).reduce((a, b) => possiveisTons[a] > possiveisTons[b] ? a : b);
+        return tomProvavel;
+    }
+
+    filtrarLetraCifra(texto) {
+        if (texto) {
+            if (texto.includes('<pre>')) {
+                return texto.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
+            }
+            else {
+                return texto;
+            }
+        }
     }
 
     destacarCifras(texto, tom) {
@@ -228,8 +351,8 @@ class CifraPlayer {
             this.transporCifraNoIframe(novoTom);
             this.tomAtual = novoTom;
 
-            const cifra = this.elements.iframeCifra.contentDocument.body.innerHTML;
-            this.uiController.exibirTextoCifrasCarregado(novoTom, cifra);
+            this.uiController.exibirBotoesTom();
+            this.preencherSelect(novoTom);
 
             if (this.indiceAcorde > 0) {
                 this.indiceAcorde--;
@@ -306,7 +429,7 @@ class CifraPlayer {
         let novoTom = this.getAcorde(tons[novoIndex], this.elements.tomSelect.value);
 
         return novoTom;
-    }    
+    }
 
     addEventCifrasIframe(frame) {
         const elements = frame.contentDocument.getElementsByTagName("b");

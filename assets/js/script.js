@@ -13,44 +13,6 @@ class App {
         this.timer = null;
         this.todasAsCifras = [];
         this.musicaEscolhida = false;
-
-        this.camposHarmonicos = {
-            // Campos harmônicos maiores
-            'C': ['C', 'Dm', 'Em', 'F', 'G', 'Am'],
-            'Db': ['Db', 'Ebm', 'Fm', 'Gb', 'Ab', 'Bbm'],
-            'C#': ['C#', 'D#m', 'Fm', 'F#', 'G#', 'A#m'],
-            'D': ['D', 'Em', 'F#m', 'G', 'A', 'Bm'],
-            'Eb': ['Eb', 'Fm', 'Gm', 'Ab', 'Bb', 'Cm'],
-            'D#': ['D#', 'Fm', 'Gm', 'G#', 'A#', 'Cm'],
-            'E': ['E', 'F#m', 'G#m', 'A', 'B', 'C#m'],
-            'F': ['F', 'Gm', 'Am', 'Bb', 'C', 'Dm'],
-            'F#': ['F#', 'G#m', 'A#m', 'B', 'C#', 'D#m'],
-            'Gb': ['Gb', 'Abm', 'Bbm', 'B', 'Db', 'Ebm'],
-            'G': ['G', 'Am', 'Bm', 'C', 'D', 'Em'],
-            'G#': ['G#', 'A#m', 'B#m', 'C#', 'D#', 'Fm'],
-            'Ab': ['Ab', 'Bbm', 'Cm', 'Db', 'Eb', 'Fm'],
-            'A': ['A', 'Bm', 'C#m', 'D', 'E', 'F#m'],
-            'A#': ['A#', 'B#m', 'Dm', 'D#', 'F', 'Gm'],
-            'Bb': ['Bb', 'Cm', 'Dm', 'Eb', 'F', 'Gm'],
-            'B': ['B', 'C#m', 'D#m', 'E', 'F#', 'G#m'],
-            // Campos harmônicos menores
-            'Am': ['Am', 'C', 'Dm', 'Em', 'F', 'G'],
-            'Bbm': ['Bbm', 'Db', 'Ebm', 'Fm', 'Gb', 'Ab'],
-            'B#m': ['B#m', 'D', 'E#m', 'F#m', 'G', 'A'],
-            'Bm': ['Bm', 'D', 'Em', 'F#m', 'G', 'A'],
-            'Cm': ['Cm', 'Eb', 'Fm', 'Gm', 'Ab', 'Bb'],
-            'C#m': ['C#m', 'E', 'F#m', 'G#m', 'A', 'B'],
-            'Dm': ['Dm', 'F', 'Gm', 'Am', 'Bb', 'C'],
-            'D#m': ['D#m', 'Gb', 'Abm', 'Bbm', 'Cb', 'Db'],
-            'Ebm': ['Ebm', 'Gb', 'Abm', 'Bbm', 'Cb', 'Db'],
-            'Em': ['Em', 'G', 'Am', 'Bm', 'C', 'D'],
-            'Fm': ['Fm', 'Ab', 'Bbm', 'Cm', 'Db', 'Eb'],
-            'F#m': ['F#m', 'A', 'Bm', 'C#m', 'D', 'E'],
-            'Gm': ['Gm', 'Bb', 'Cm', 'Dm', 'Eb', 'F'],
-            'G#m': ['G#m', 'B', 'C#m', 'D#m', 'E', 'F#'],
-            'Abm': ['Abm', 'Cb', 'Dbm', 'Ebm', 'Fb', 'Gb'],
-            'A#m': ['A#m', 'D', 'E#m', 'F#m', 'G', 'A']
-        };
     }
 
     init() {
@@ -70,7 +32,7 @@ class App {
         this.elements.selectedButton.addEventListener("click", this.handleSelectedButtonClick.bind(this));
         this.elements.cancelButton.addEventListener("click", this.handleCancelClick.bind(this));
         this.elements.saveButton.addEventListener('click', this.handleSaveClick.bind(this));
-        this.elements.darkModeToggle.addEventListener('change', this.toggleDarkMode.bind(this));
+        this.elements.darkModeToggle.addEventListener('change', this.uiController.toggleDarkMode.bind(this));
         this.elements.tocarButton.addEventListener('click', this.handleTocarClick.bind(this));
         this.elements.prevButton.addEventListener('click', () => this.uiController.atualizarBotoesNavegacao('esquerda'));
         this.elements.nextButton.addEventListener('click', () => this.uiController.atualizarBotoesNavegacao('direita'));
@@ -86,7 +48,7 @@ class App {
         this.elements.clearButton.addEventListener('click', () => this.handleClearSearchClick());
         this.elements.liturgiaDiariaLink.addEventListener('click', () => this.exibirFrame('liturgiaDiariaFrame'));
         this.elements.oracoesLink.addEventListener('click', () => this.exibirFrame('oracoesFrame'));
-        this.elements.aboutLink.addEventListener('click', () => this.customAlert(`Projeto de Ronei Costa Soares. version: ${this.version}`, 'Versão'));
+        this.elements.aboutLink.addEventListener('click', () => this.uiController.customAlert(`Projeto de Ronei Costa Soares. version: ${this.version}`, 'Versão'));
         this.elements.downloadSavesLink.addEventListener('click', this.downloadSaves.bind(this));
         this.elements.uploadSavesLink.addEventListener('click', this.uploadSaves.bind(this));
         this.elements.missaOrdinarioLink.addEventListener('click', () => this.exibirFrame('santamissaFrame'));
@@ -117,7 +79,7 @@ class App {
 
         // Garante que o jQuery esteja carregado antes de usar
         if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
-            this.customAlert('jQuery ou Select2 não carregados.', 'Erro!');
+            this.uiController.customAlert('jQuery ou Select2 não carregados.', 'Erro!');
             return;
         }
 
@@ -178,7 +140,7 @@ class App {
     }
 
     async handleCancelClick() {
-        const confirmed = await this.customConfirm('Cancelar edição?');
+        const confirmed = await this.uiController.customConfirm('Cancelar edição?');
         if (confirmed) {
             this.uiController.resetInterface();
             this.selectEscolhido(this.elements.itemNameInput.value);
@@ -190,7 +152,7 @@ class App {
 
         if (this.editing) {
             this.editing = false;
-            const confirmed = await this.customConfirm(`Salvar "${saveName}"?`);
+            const confirmed = await this.uiController.customConfirm(`Salvar "${saveName}"?`);
             if (confirmed) {
                 this.salvarSave(saveName, this.elements.savesSelect.value);
                 // A transposição é tratada dentro de salvarSave ou logo após
@@ -205,9 +167,10 @@ class App {
         this.uiController.exibirBotoesCifras();
         const texto = this.elements.cifraDisplay.textContent; // Mudança de value para textContent
         let musicaCifrada = this.cifraPlayer.destacarCifras(texto);
-        const tom = this.descobrirTom(musicaCifrada);
+        const tom = this.cifraPlayer.descobrirTom(musicaCifrada);
         musicaCifrada = this.cifraPlayer.destacarCifras(texto, tom);
-        this.exibirTextoCifrasCarregado(tom, this.elements.editTextarea.value);
+        this.uiController.exibirBotoesTom();
+        this.cifraPlayer.preencherSelect(tom);
         this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
 
         if (!tom)
@@ -309,7 +272,7 @@ class App {
     async handleDeleteSaveClick() {
         const saveName = this.elements.savesSelect.value;
         if (this.elements.savesSelect.selectedIndex !== 0) {
-            const confirmed = await this.customConfirm(`Deseja excluir "${saveName}"?`, 'Deletar!');
+            const confirmed = await this.uiController.customConfirm(`Deseja excluir "${saveName}"?`, 'Deletar!');
             if (confirmed) {
                 this.localStorageManager.delete(saveName);
                 this.uiController.resetInterface();
@@ -397,13 +360,14 @@ class App {
             this.elements.savesSelect.style.color = 'black';
             const texto = this.elements.editTextarea.value;
             const musicaCifrada = this.cifraPlayer.destacarCifras(texto);
-            const tom = this.descobrirTom(musicaCifrada);
+            const tom = this.cifraPlayer.descobrirTom(musicaCifrada);
 
             // Re-renderiza com o tom descoberto para preencher o select
             const musicaCifradaFinal = this.cifraPlayer.destacarCifras(texto, tom);
             this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifradaFinal;
 
-            this.exibirTextoCifrasCarregado(tom, this.elements.editTextarea.value);
+            //this.uiController.exibirBotoesTom();
+            this.cifraPlayer.preencherSelect(tom);
             this.escolhidoLetraOuCifra(tom);
             this.uiController.exibirIframeCifra();
             this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
@@ -416,79 +380,6 @@ class App {
             this.elements.savesSelect.selectedIndex = 0;
             this.elements.iframeCifra.contentDocument.body.innerHTML = '';
         }
-    }
-
-    descobrirTom(textoHtml) {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = textoHtml;
-        const cifrasTag = tempDiv.querySelectorAll('b');
-
-        if (!cifrasTag.length) {
-            return '';
-        }
-
-        const cifras = [];
-        cifrasTag.forEach(acorde => {
-            if (acorde.innerText)
-                cifras.push(acorde.innerText.split('/')[0]);
-        });
-
-        // Lógica de descoberta do tom (mantida igual, mas agora usando this.camposHarmonicos)
-        const acordesOrdenados = cifras.sort();
-        const padroesAcordes = { doisMenores: false, doisMaiores: false };
-
-        for (let i = 0; i < acordesOrdenados.length - 1; i++) {
-            if (acordesOrdenados[i].endsWith('m') && acordesOrdenados[i + 1].endsWith('m')) {
-                padroesAcordes.doisMenores = true;
-            }
-            if (!acordesOrdenados[i].endsWith('m') && !acordesOrdenados[i + 1].endsWith('m')) {
-                padroesAcordes.doisMaiores = true;
-            }
-        }
-
-        const possiveisTons = {};
-        for (const [tom, acordes] of Object.entries(this.camposHarmonicos)) {
-            let pontos = 0;
-
-            if (padroesAcordes.doisMenores) {
-                for (let i = 0; i < acordes.length - 1; i++) {
-                    if (acordes[i].endsWith('m') && acordes[i + 1].endsWith('m')) {
-                        pontos += 1;
-                    }
-                }
-            }
-            if (padroesAcordes.doisMaiores) {
-                for (let i = 0; i < acordes.length - 1; i++) {
-                    if (!acordes[i].endsWith('m') && !acordes[i + 1].endsWith('m')) {
-                        pontos += 1;
-                    }
-                }
-            }
-
-            pontos += cifras.filter(cifra => acordes.includes(cifra)).length;
-            cifras.forEach(cifra => {
-                if (!acordes.includes(cifra)) {
-                    pontos -= 1; // Subtrai 1 ponto se o acorde não estiver no campo harmônico
-                }
-            });
-
-            possiveisTons[tom] = pontos;
-        }
-
-        const primeiroAcorde = cifras[0];
-        const ultimoAcorde = cifras[cifras.length - 1];
-
-        for (const tom in possiveisTons) {
-            if (this.camposHarmonicos[tom][0] === primeiroAcorde) {
-                possiveisTons[tom] += 1;
-            }
-            if (this.camposHarmonicos[tom][0] === ultimoAcorde) {
-                possiveisTons[tom] += 1;
-            }
-        }
-
-        const tomProvavel = Object.keys(possiveisTons).reduce((a, b) => possiveisTons[a] > possiveisTons[b] ? a : b);
-        return tomProvavel;
     }
 
     removerAcentosEcaracteres(str) {
@@ -569,7 +460,7 @@ class App {
                 throw new Error(data.message);
             }
         } catch (error) {
-            await this.customAlert(`Erro na busca: ${error.message}`, 'Erro!');
+            await this.uiController.customAlert(`Erro na busca: ${error.message}`, 'Erro!');
             this.elements.savesList.classList.remove('d-none');
             this.elements.searchResultsList.classList.add('d-none');
         } finally {
@@ -588,7 +479,7 @@ class App {
 
         const musica = this.todasAsCifras.find(c => c.id === id);
         if (!musica) {
-            await this.customAlert('Cifra não encontrada.', 'Erro!');
+            await this.uiController.customAlert('Cifra não encontrada.', 'Erro!');
             return;
         }
 
@@ -614,28 +505,17 @@ class App {
             });
             const data = await response.json();
             if (data.success) {
-                var texto = this.filtrarLetraCifra(data.message);
+                var texto = this.cifraPlayer.filtrarLetraCifra(data.message);
                 this.elements.cifraDisplay.textContent = texto;
                 this.uiController.exibirBotaoTocar();
             } else {
-                await this.customAlert(data.message, 'Erro!');
+                await this.uiController.customAlert(data.message, 'Erro!');
             }
         } catch (error) {
             console.error('Error fetching data:', error);
-            await this.customAlert('Erro ao baixar a cifra. Tente novamente mais tarde.', 'Erro!');
+            await this.uiController.customAlert('Erro ao baixar a cifra. Tente novamente mais tarde.', 'Erro!');
         } finally {
             this.uiController.exibirBotaoTocar();
-        }
-    }
-
-    filtrarLetraCifra(texto) {
-        if (texto) {
-            if (texto.includes('<pre>')) {
-                return texto.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
-            }
-            else {
-                return texto;
-            }
         }
     }
 
@@ -677,32 +557,17 @@ class App {
 
             if (action === 'play' || action === 'acorde') {
                 setTimeout(() => button.classList.add('pulse'), 100);
-                this.elements.playButton.classList.add('d-none');
-                this.elements.stopButton.classList.remove('d-none');
+                this.uiController.exibirBotaoStop();
             } else if (action === 'stop') {
-                this.elements.playButton.classList.remove('d-none');
-                this.elements.stopButton.classList.add('d-none');
+                this.uiController.exibirBotaoPlay();
             }
         }
     }
 
     exibirFrame(frameId) {
+        this.uiController.exibirBotoesTom();
         this.cifraPlayer.preencherSelect('C');
         this.uiController.exibirFrame(frameId);
-    }
-
-    exibirTextoCifrasCarregado(tom = null) {
-        if (tom) {
-            this.uiController.exibirBotoesTom();
-            this.cifraPlayer.preencherSelect(tom);
-        }
-        else {
-            this.uiController.esconderBotoesTom();
-            let textoLetra = this.elements.iframeCifra.contentDocument.body.innerHTML;
-            textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
-                .replace("font-size: 12pt;", "font-size: 15pt;");
-            this.elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
-        }
     }
 
     pesquisarWeb(texto) {
@@ -710,28 +575,6 @@ class App {
         this.elements.searchInput.value = texto;
         $('#searchModal').modal('show');
         this.searchMusic();
-    }
-
-    toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-        this.aplicarModoEscuroIframe();
-    }
-
-    updateSwitchDarkMode() {
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        if (isDarkMode) {
-            this.elements.darkModeToggle.checked = false;
-        } else {
-            this.elements.darkModeToggle.checked = true;
-        }
-    }
-
-    aplicarModoEscuroIframe() {
-        const scrollTop = localStorage.getItem('scrollTop');
-        if (scrollTop && !location.origin.includes('file:')) {
-            this.elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
-        }
     }
 
     isMobileDevice() {
@@ -761,7 +604,7 @@ class App {
                     const importedSaves = JSON.parse(e.target.result);
 
                     if (typeof importedSaves !== 'object' || Array.isArray(importedSaves)) {
-                        await this.customAlert('Arquivo inválido', 'Erro!');
+                        await this.uiController.customAlert('Arquivo inválido', 'Erro!');
                         return;
                     }
 
@@ -770,9 +613,9 @@ class App {
                     localStorage.setItem('saves', JSON.stringify(mergedSaves));
 
                     this.uiController.exibirListaSaves();
-                    await this.customAlert('Importado com sucesso', 'Sucesso!');
+                    await this.uiController.customAlert('Importado com sucesso', 'Sucesso!');
                 } catch (err) {
-                    await this.customAlert(err.message, 'Erro!');
+                    await this.uiController.customAlert(err.message, 'Erro!');
                 }
             };
             reader.readAsText(file);
@@ -836,7 +679,7 @@ class App {
         let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
 
         if (temSaveName && newSaveName.toLowerCase() !== this.elements.savesSelect.value.toLowerCase()) {
-            await this.customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Salvar Música');
+            await this.uiController.customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Salvar Música');
             return;
         }
 
@@ -853,68 +696,6 @@ class App {
         this.uiController.exibirListaSaves(newSaveName);
 
         this.selectEscolhido(newSaveName);
-    }
-
-    // --- Modal Functions (moved from global scope) ---
-    async customAlert(message, title = "Aviso", buttonText = "OK") {
-        return new Promise((resolve) => {
-            const modal = new bootstrap.Modal(document.getElementById('customAlertModal'));
-            const modalTitle = document.getElementById('customAlertModalLabel');
-            const modalBody = document.getElementById('customAlertModalBody');
-            const btnOk = document.getElementById('btnAlertDialogOK');
-
-            modalTitle.textContent = title;
-            modalBody.textContent = message;
-            btnOk.textContent = buttonText;
-
-            btnOk.onclick = null;
-
-            const handleModalHidden = () => {
-                resolve();
-                document.getElementById('customAlertModal').removeEventListener('hidden.bs.modal', handleModalHidden);
-            };
-            document.getElementById('customAlertModal').addEventListener('hidden.bs.modal', handleModalHidden);
-
-            btnOk.onclick = () => {
-                modal.hide();
-            };
-
-            modal.show();
-        });
-    }
-
-    async customConfirm(message, title = "Confirmação") {
-        return new Promise((resolve) => {
-            const modal = new bootstrap.Modal(document.getElementById('customConfirmModal'));
-            const modalTitle = document.getElementById('customConfirmModalLabel');
-            const modalBody = document.getElementById('customConfirmModalBody');
-            const btnConfirmAction = document.getElementById('btnConfirmAction');
-            const btnCancelAction = document.getElementById('btnConfirmCancel');
-
-            modalTitle.textContent = title;
-            modalBody.textContent = message;
-
-            btnConfirmAction.onclick = null;
-            btnCancelAction.onclick = null;
-
-            btnConfirmAction.onclick = () => {
-                modal.hide();
-                resolve(true);
-            };
-
-            btnCancelAction.onclick = () => {
-                modal.hide();
-                resolve(false); // Retorna false se cancelar
-            };
-
-            const handleModalHidden = () => {
-                resolve(false);
-                document.getElementById('customConfirmModal').removeEventListener('hidden.bs.modal', handleModalHidden);
-            };
-            document.getElementById('customConfirmModal').addEventListener('hidden.bs.modal', handleModalHidden);
-
-            modal.show();
-        });
     }
 
     // --- Setup Methods ---
@@ -968,8 +749,8 @@ class App {
         this.elements.darkModeToggle.checked = true;
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
-            this.updateSwitchDarkMode();
-            this.aplicarModoEscuroIframe();
+            this.uiController.updateSwitchDarkMode();
+            this.uiController.aplicarModoEscuroIframe();
         }
     }
 }

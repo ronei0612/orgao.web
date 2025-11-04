@@ -126,6 +126,16 @@ class UIController {
         this.elements.addButton.disabled = false;
     }
 
+    exibirBotaoPlay() {
+        this.elements.playButton.classList.remove('d-none', 'pressed'),
+        this.elements.stopButton.classList.add('d-none', 'pulse');
+    }
+
+    exibirBotaoStop() {
+        this.elements.playButton.classList.add('d-none');
+        this.elements.stopButton.classList.remove('d-none');
+    }
+
     exibirListaSaves(saveSelected) {
         this.elements.addButton.classList.add('rounded-right-custom');
         this.elements.addButton.classList.remove('rounded-0');
@@ -300,9 +310,6 @@ class UIController {
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
 
         this.exibirBotoesAcordes();
-        
-        this.exibirTextoCifrasCarregado('C', elements.editTextarea.value);
-
         this.exibirBotoesTom();
 
         if (frameId) {
@@ -344,5 +351,88 @@ class UIController {
 
         this.elements.addButton.classList.toggle('rounded-0');
         this.elements.addButton.classList.toggle('rounded-right-custom');
+    }
+
+    async customAlert(message, title = "Aviso", buttonText = "OK") {
+        return new Promise((resolve) => {
+            const modal = new bootstrap.Modal(document.getElementById('customAlertModal'));
+            const modalTitle = document.getElementById('customAlertModalLabel');
+            const modalBody = document.getElementById('customAlertModalBody');
+            const btnOk = document.getElementById('btnAlertDialogOK');
+
+            modalTitle.textContent = title;
+            modalBody.textContent = message;
+            btnOk.textContent = buttonText;
+
+            btnOk.onclick = null;
+
+            const handleModalHidden = () => {
+                resolve();
+                document.getElementById('customAlertModal').removeEventListener('hidden.bs.modal', handleModalHidden);
+            };
+            document.getElementById('customAlertModal').addEventListener('hidden.bs.modal', handleModalHidden);
+
+            btnOk.onclick = () => {
+                modal.hide();
+            };
+
+            modal.show();
+        });
+    }
+
+    async customConfirm(message, title = "Confirmação") {
+        return new Promise((resolve) => {
+            const modal = new bootstrap.Modal(document.getElementById('customConfirmModal'));
+            const modalTitle = document.getElementById('customConfirmModalLabel');
+            const modalBody = document.getElementById('customConfirmModalBody');
+            const btnConfirmAction = document.getElementById('btnConfirmAction');
+            const btnCancelAction = document.getElementById('btnConfirmCancel');
+
+            modalTitle.textContent = title;
+            modalBody.textContent = message;
+
+            btnConfirmAction.onclick = null;
+            btnCancelAction.onclick = null;
+
+            btnConfirmAction.onclick = () => {
+                modal.hide();
+                resolve(true);
+            };
+
+            btnCancelAction.onclick = () => {
+                modal.hide();
+                resolve(false); // Retorna false se cancelar
+            };
+
+            const handleModalHidden = () => {
+                resolve(false);
+                document.getElementById('customConfirmModal').removeEventListener('hidden.bs.modal', handleModalHidden);
+            };
+            document.getElementById('customConfirmModal').addEventListener('hidden.bs.modal', handleModalHidden);
+
+            modal.show();
+        });
+    }
+
+    toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        this.aplicarModoEscuroIframe();
+    }
+
+    updateSwitchDarkMode() {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        if (isDarkMode) {
+            this.elements.darkModeToggle.checked = false;
+        } else {
+            this.elements.darkModeToggle.checked = true;
+        }
+    }
+
+    aplicarModoEscuroIframe() {
+        const scrollTop = localStorage.getItem('scrollTop');
+        if (scrollTop && !location.origin.includes('file:')) {
+            this.elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
+        }
     }
 }
