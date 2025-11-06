@@ -604,21 +604,49 @@ class App {
             const reader = new FileReader();
             reader.onload = async (e) => {
                 try {
-                    const importedSaves = JSON.parse(e.target.result);
+                    const importedData = JSON.parse(e.target.result);
 
-                    if (typeof importedSaves !== 'object' || Array.isArray(importedSaves)) {
-                        await this.uiController.customAlert('Arquivo inválido', 'Erro!');
+                    if (typeof importedData !== 'object') {
+                        await this.customAlert('Arquivo inválido: Não é um objeto ou array.', 'Erro!');
                         return;
                     }
 
+                    let newSaves = {};
+
+                    // 1. LÓGICA DE TRANSFORMAÇÃO:
+                    if (Array.isArray(importedData)) {
+                        // Formato: Array de Cifras (do editor ou do downloadSaves)
+                        importedData.forEach(cifra => {
+                            if (cifra.titulo && cifra.cifra) {
+                                const chave = cifra.artista ? `${cifra.titulo} - ${cifra.artista}` : cifra.titulo;
+                                newSaves[chave] = cifra.cifra;
+                            }
+                        });
+                    } else {
+                        // Formato: Objeto de Saves (original)
+                        newSaves = importedData;
+                    }
+
+                    // Verifica se há algo para importar após a transformação
+                    if (Object.keys(newSaves).length === 0) {
+                        await this.uiController.customAlert('Arquivo importado, mas sem cifras válidas.', 'Aviso');
+                        return;
+                    }
+
+                    // 2. Mescla com os saves existentes
                     const currentSaves = this.localStorageManager.getSaves();
-                    const mergedSaves = { ...currentSaves, ...importedSaves };
+                    // O operador spread ( ... ) irá sobrescrever chaves duplicadas
+                    const mergedSaves = { ...currentSaves, ...newSaves };
                     localStorage.setItem('saves', JSON.stringify(mergedSaves));
 
+                    // 3. Atualiza a interface
                     this.uiController.exibirListaSaves();
+
+                    $('#optionsModal').modal('hide');
                     await this.uiController.customAlert('Importado com sucesso', 'Sucesso!');
                 } catch (err) {
-                    await this.uiController.customAlert(err.message, 'Erro!');
+                    // Trata erro de parsing do JSON
+                    await this.uiController.customAlert(`Erro ao processar o arquivo: ${err.message}`, 'Erro!');
                 }
             };
             reader.readAsText(file);
@@ -626,6 +654,8 @@ class App {
 
         input.click();
     }
+
+    // --- DENTRO DA CLASSE App no script.js ---
 
     downloadSaves() {
         const saves = this.localStorageManager.getSaves();
@@ -635,15 +665,48 @@ class App {
             return;
         }
 
-        const dataString = JSON.stringify(saves, null, 2);
+        // 1. TRANSFORMAÇÃO DO FORMATO: Objeto de Saves -> Array de Cifras
+        let maxId = 0;
+        const arrayDeCifras = Object.keys(saves).map((nomeCompleto, index) => {
+            maxId++;
+            const conteudoCifra = saves[nomeCompleto];
+
+            // Tenta separar Artista e Título do nome da chave (ex: "Titulo - Artista")
+            let titulo = nomeCompleto;
+            let artista = '';
+
+            // Verifica se o nome da música segue o padrão "Título - Artista"
+            const partes = nomeCompleto.split(' - ');
+            if (partes.length > 1) {
+                artista = partes.pop().trim(); // A última parte é o artista
+                titulo = partes.join(' - ').trim(); // O restante é o título
+            } else if (nomeCompleto.includes('-')) {
+                // Se houver um '-' mas não for ' - ', use o nome completo como título
+                titulo = nomeCompleto;
+            }
+
+
+            // Retorna o objeto no formato esperado pelo editar-cifras.html
+            return {
+                id: maxId,
+                artista: artista,
+                titulo: titulo,
+                cifra: conteudoCifra
+            };
+        });
+
+        // 2. Criação e Download do Blob
+        const dataString = JSON.stringify(arrayDeCifras, null, 2);
         const blob = new Blob([dataString], { type: 'application/json' });
 
+        // Cria um link temporário para gerar url em memória e simula um click no link
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = nomeDoArquivo;
         document.body.appendChild(link);
         link.click();
 
+        // limpeza
         document.body.removeChild(link);
         URL.revokeObjectURL(link.href);
     }
