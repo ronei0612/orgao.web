@@ -1,5 +1,3 @@
-// --- START OF FILE CifrasEditor.js ---
-
 class CifrasEditor {
     constructor() {
         this.cifras = [];
@@ -17,6 +15,7 @@ class CifrasEditor {
             downloadBtn: document.getElementById('download-btn'),
             importBtn: document.getElementById('import-btn'),
             importFileInput: document.getElementById('import-file-input'),
+            importContainer: document.getElementById('import-cards-container'),
 
             // Card de Edição
             editCard: document.getElementById('cifra-edit-card'),
@@ -40,8 +39,11 @@ class CifrasEditor {
         this.elements.deleteBtn.addEventListener('click', this.deleteSelectedCifra.bind(this));
         this.elements.saveBtn.addEventListener('click', this.saveCurrentCifra.bind(this));
         this.elements.downloadBtn.addEventListener('click', this.downloadJson.bind(this));
-        this.elements.importBtn.addEventListener('click', () => this.elements.importFileInput.click());
-        this.elements.importFileInput.addEventListener('change', this.importJson.bind(this));
+        this.elements.importBtn.addEventListener('click', this.uploadJson.bind(this));
+        this.elements.importFileInput.addEventListener('change', this.handleFileSelect.bind(this));
+
+        // Novo listener para capturar cliques nos botões de importação nos cards temporários
+        document.addEventListener('click', this.handleImportCardAction.bind(this));
 
         // Listeners nos campos do Card para salvar automaticamente
         [this.elements.editTitulo, this.elements.editArtista, this.elements.editCifra].forEach(el => {
@@ -223,7 +225,12 @@ class CifrasEditor {
         }
     }
 
-    importJson(event) {
+    uploadJson() {
+        // Simula o clique no input de arquivo oculto
+        this.elements.importFileInput.click();
+    }
+
+    handleFileSelect(event) {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -233,62 +240,119 @@ class CifrasEditor {
                 const importedData = JSON.parse(e.target.result);
 
                 if (!Array.isArray(importedData)) {
-                    alert('Erro na importação: O arquivo JSON não é uma lista (Array).');
+                    alert('Arquivo inválido: o JSON importado deve ser um array de cifras.');
                     return;
                 }
 
-                this.processImportedCifras(importedData);
+                this.cifrasToImport = importedData;
+                this.renderImportCards();
+
+                // Reseta o input de arquivo para permitir a seleção do mesmo arquivo novamente
+                this.elements.importFileInput.value = '';
 
             } catch (err) {
-                alert(`Erro ao processar arquivo: ${err.message}`);
-            } finally {
-                // Limpa o input file para permitir a importação do mesmo arquivo novamente
-                event.target.value = null;
+                alert(`Erro ao processar o arquivo JSON: ${err.message}`);
             }
         };
         reader.readAsText(file);
     }
 
-    processImportedCifras(importedCifras) {
-        const originalLength = this.cifras.length;
-        let maxId = originalLength > 0 ? Math.max(...this.cifras.map(c => c.id || 0)) : 0;
+    renderImportCards() {
+        const container = this.elements.importContainer;
+        container.innerHTML = '';
 
-        let newCifrasCount = 0;
-        let firstNewCifraIndex = -1;
+        if (this.cifrasToImport.length === 0) return;
 
-        importedCifras.forEach(importedCifra => {
-            // Garante um ID único e sequencial para a nova cifra
-            maxId += 1;
-            const newCifra = {
-                id: maxId,
-                artista: importedCifra.artista || 'Novo Artista Importado',
-                titulo: importedCifra.titulo || 'Nova Cifra Importada',
-                cifra: importedCifra.cifra || '// Cifra Vazia'
-            };
+        // Oculta a interface principal
+        this.elements.editCard.classList.add('d-none');
+        this.elements.saveBtn.classList.add('d-none');
+        this.elements.deleteBtn.classList.add('d-none');
+        $(this.elements.cifraSelect).select2('open'); // Mantém o Select2 no estado inicial
 
-            this.cifras.push(newCifra);
-            newCifrasCount++;
+        const cardListHTML = this.cifrasToImport.map((item, index) => {
+            const title = item.titulo || 'Sem Título';
+            const artist = item.artista || 'Artista Desconhecido';
 
-            if (firstNewCifraIndex === -1) {
-                firstNewCifraIndex = this.cifras.length - 1;
-            }
-        });
+            // Gera o card de visualização para as cifras importadas
+            return `
+            <div class="card cifras-card shadow-sm mb-3" data-import-idx="${index}">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">${title} - ${artist}</h5>
+                    <p class="card-text text-muted" style="white-space: pre-wrap; max-height: 100px; overflow: hidden;">${item.cifra || 'Cifra Vazia'}</p>
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-sm btn-success mr-2" data-action="import-add" data-import-idx="${index}">Adicionar</button>
+                        <button class="btn btn-sm btn-secondary" data-action="import-ignore" data-import-idx="${index}">Ignorar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        }).join('');
 
-        if (newCifrasCount > 0) {
-            this.saveLocalCifras();
+        container.innerHTML = `
+        <h3>Cifras Importadas (${this.cifrasToImport.length})</h3>
+        ${cardListHTML}
+        <div class="text-center mt-3 mb-5">
+            <button id="import-all-btn" class="btn btn-success btn-action" data-action="import-all">Adicionar Todas</button>
+            <button id="cancel-import-btn" class="btn btn-danger btn-action" data-action="import-cancel">Cancelar Importação</button>
+        </div>
+    `;
+    }
 
-            // 1. Destrói e Reconstroi o Select2 para incluir os novos itens
-            $(this.elements.cifraSelect).select2('destroy');
-            this.setupSelect2();
+    handleImportCardAction(e) {
+        const action = e.target.getAttribute('data-action');
+        const importIdx = e.target.getAttribute('data-import-idx');
 
-            // 2. Seleciona a primeira cifra importada para visualização/edição imediata
-            if (firstNewCifraIndex !== -1) {
-                $(this.elements.cifraSelect).val(firstNewCifraIndex).trigger('change');
-                alert(`${newCifrasCount} cifras importadas com sucesso! A primeira está pronta para edição.`);
-            }
-        } else {
-            alert('Nenhuma cifra válida encontrada no arquivo para importação.');
+        if (!action) return;
+
+        if (action === 'import-add') {
+            this.addCifraFromImport(parseInt(importIdx));
+        } else if (action === 'import-ignore') {
+            this.cifrasToImport.splice(parseInt(importIdx), 1);
+            this.renderImportCards();
+        } else if (action === 'import-all') {
+            this.cifrasToImport.forEach(() => this.addCifraFromImport(0, false)); // Adiciona o primeiro item, o array encolhe
+            this.finishImport();
+        } else if (action === 'import-cancel') {
+            this.finishImport();
         }
+    }
+
+    addCifraFromImport(importIndex, reRender = true) {
+        const importedCifra = this.cifrasToImport[importIndex];
+
+        // 1. Gera um novo ID e adiciona ao array principal
+        let maxId = this.cifras.length > 0 ? Math.max(...this.cifras.map(c => c.id || 0)) : 0;
+        const newCifra = { ...importedCifra, id: maxId + 1 };
+
+        this.cifras.push(newCifra);
+
+        // 2. Remove do array de importação
+        this.cifrasToImport.splice(importIndex, 1);
+
+        this.saveLocalCifras();
+
+        // 3. Re-renderiza a lista de importação
+        if (reRender) {
+            if (this.cifrasToImport.length === 0) {
+                this.finishImport();
+            } else {
+                this.renderImportCards();
+            }
+        }
+    }
+
+    finishImport() {
+        this.cifrasToImport = [];
+        this.elements.importContainer.innerHTML = '';
+
+        // Re-inicializa o Select2 com os novos dados
+        $(this.elements.cifraSelect).select2('destroy');
+        this.setupSelect2();
+
+        // Limpa o card e re-habilita a interface de edição
+        this.clearCard();
+
+        alert('Importação finalizada com sucesso! Lista atualizada.');
     }
 
     downloadJson() {

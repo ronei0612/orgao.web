@@ -77,13 +77,16 @@
         <div class="text-center mt-4">
             <div class="d-inline-flex gap-2">
                 <button id="save-btn" class="btn btn-warning btn-action d-none"><i class="bi bi-save"></i> Salvar Edição</button>
+                <button id="import-btn" class="btn btn-info btn-action"><i class="bi bi-upload"></i> Importar JSON</button> <!-- NOVO BOTÃO -->
                 <button id="download-btn" class="btn btn-primary btn-action"><i class="bi bi-download"></i> Baixar JSON Completo</button>
-                <button id="import-btn" class="btn btn-secondary btn-action ml-2"><i class="bi bi-upload"></i> Importar JSON</button>
             </div>
         </div>
 
         <!-- NOVO: Input de arquivo oculto -->
         <input type="file" id="import-file-input" accept="application/json" style="display: none;">
+
+        <!-- NOVO: Container para os Cards de Importação (temporário) -->
+        <div id="import-cards-container" class="mt-4"></div>
     </div>
 
     <!-- REINTRODUZIR: jQuery e Select2 -->
