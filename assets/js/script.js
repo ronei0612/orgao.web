@@ -415,7 +415,7 @@ class App {
             const max = 4;
             const topTitles = musicasLocais.slice(0, max);
             topTitles.forEach((cifra) => {
-                const title = cifra.titulo + ' - ' + cifra.artista;
+                const title = `${newCifra.titulo} - ${newCifra.artista ?? ''}`;
                 const listItem = document.createElement('li');
                 listItem.className = 'list-group-item';
                 const link = document.createElement('a');

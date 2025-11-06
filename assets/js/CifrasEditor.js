@@ -96,7 +96,7 @@ class CifrasEditor {
             return;
         }
 
-        this.elements.cardTitle.textContent = `${cifra.titulo} - ${cifra.artista}`;
+        this.elements.cardTitle.textContent = `${cifra.titulo} - ${cifra.artista ?? ''}`;
         this.elements.editId.value = cifra.id || '';
         this.elements.editTitulo.value = cifra.titulo || '';
         this.elements.editArtista.value = cifra.artista || '';
@@ -116,10 +116,10 @@ class CifrasEditor {
         cifra.artista = this.elements.editArtista.value;
         cifra.cifra = this.elements.editCifra.value;
 
-        this.elements.cardTitle.textContent = `${cifra.titulo} - ${cifra.artista}`;
+        this.elements.cardTitle.textContent = `${cifra.titulo} - ${cifra.artista ?? ''}`;
 
         // Atualiza o Select2 para refletir a mudança no título
-        const newText = `${cifra.titulo} - ${cifra.artista}`;
+        const newText = `${cifra.titulo} - ${cifra.artista ?? ''}`;
         const option = $(this.elements.cifraSelect).find(`option[value='${this.selectedCifraIndex}']`);
         option.text(newText);
         // Dispara o evento Select2 para re-renderizar o texto selecionado
@@ -148,7 +148,7 @@ class CifrasEditor {
 
         // Atualiza Select2 com a nova cifra
         const newIndex = this.cifras.length - 1;
-        const newOption = new Option(`${newCifra.titulo} - ${newCifra.artista}`, newIndex, true, true);
+        const newOption = new Option(`${newCifra.titulo} - ${newCifra.artista ?? ''}`, newIndex, true, true);
         $(this.elements.cifraSelect).append(newOption).trigger('change');
 
         this.selectedCifraIndex = newIndex;
