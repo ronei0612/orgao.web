@@ -41,9 +41,7 @@ class CifrasEditor {
         this.elements.downloadBtn.addEventListener('click', this.downloadJson.bind(this));
         this.elements.importBtn.addEventListener('click', this.uploadJson.bind(this));
         this.elements.importFileInput.addEventListener('change', this.handleFileSelect.bind(this));
-
-        // Novo listener para capturar cliques nos botões de importação nos cards temporários
-        document.addEventListener('click', this.handleImportCardAction.bind(this));
+        this.elements.importContainer.addEventListener('click', this.handleImportCardAction.bind(this));
 
         // Listeners nos campos do Card para salvar automaticamente
         [this.elements.editTitulo, this.elements.editArtista, this.elements.editCifra].forEach(el => {
@@ -267,11 +265,11 @@ class CifrasEditor {
         this.elements.editCard.classList.add('d-none');
         this.elements.saveBtn.classList.add('d-none');
         this.elements.deleteBtn.classList.add('d-none');
-        $(this.elements.cifraSelect).select2('open'); // Mantém o Select2 no estado inicial
+        $(this.elements.cifraSelect).select2('open'); // Abre o Select2
 
         const cardListHTML = this.cifrasToImport.map((item, index) => {
             const title = item.titulo || 'Sem Título';
-            const artist = item.artista || 'Artista Desconhecido';
+            const artist = item.artista || '';
 
             // Gera o card de visualização para as cifras importadas
             return `
