@@ -1,7 +1,8 @@
 class App {
     constructor(elements) {
         this.elements = elements;
-        this.cifraPlayer = new CifraPlayer(this.elements);
+        this.musicTheory = new MusicTheory(); 
+        this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
 
@@ -166,12 +167,12 @@ class App {
     handleTocarClick() {
         this.uiController.exibirBotoesCifras();
         const texto = this.elements.cifraDisplay.textContent; // Mudança de value para textContent
-        let musicaCifrada = this.cifraPlayer.destacarCifras(texto);
-        const tom = this.cifraPlayer.descobrirTom(musicaCifrada);
+        const tom = this.cifraPlayer.descobrirTom(texto);
         musicaCifrada = this.cifraPlayer.destacarCifras(texto, tom);
         this.uiController.exibirBotoesTom();
         this.cifraPlayer.preencherSelect(tom);
         this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
+        this.uiController.injetarEstilosNoIframeCifra();
 
         if (!tom)
             this.elements.tomSelect.dispatchEvent(new Event('change'));
@@ -181,6 +182,7 @@ class App {
             textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
                 .replace("font-size: 12pt;", "font-size: 15pt;");
             this.elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
+            this.uiController.injetarEstilosNoIframeCifra();
         }
 
         this.uiController.exibirIframeCifra();
@@ -357,15 +359,15 @@ class App {
         if (selectItem && selectItem !== 'acordes__') {
             const saves = this.localStorageManager.getSaves();
             this.elements.editTextarea.value = saves[selectItem];
-            this.elements.searchModalLabel.textContent = selectItem;
             this.elements.savesSelect.style.color = 'black';
             const texto = this.elements.editTextarea.value;
-            const musicaCifrada = this.cifraPlayer.destacarCifras(texto);
+            const musicaCifrada = this.cifraPlayer.destacarCifras(texto, null);
             const tom = this.cifraPlayer.descobrirTom(musicaCifrada);
 
             // Re-renderiza com o tom descoberto para preencher o select
             const musicaCifradaFinal = this.cifraPlayer.destacarCifras(texto, tom);
             this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifradaFinal;
+            this.uiController.injetarEstilosNoIframeCifra();
 
             this.uiController.exibirBotoesTom();
             this.cifraPlayer.preencherSelect(tom);
