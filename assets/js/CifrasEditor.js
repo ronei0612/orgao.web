@@ -53,7 +53,7 @@ class CifrasEditor {
         // Inicializa Select2 com as opções (cifras)
         const data = this.cifras.map((cifra, index) => ({
             id: index, // Usamos o índice do array como ID (pois é temporário)
-            text: `${cifra.titulo} - ${cifra.artista}`
+            text: `${cifra.titulo} - ${cifra.artista ?? ''}`
         }));
 
         $(this.elements.cifraSelect).select2({
