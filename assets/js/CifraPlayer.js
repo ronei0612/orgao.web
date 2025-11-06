@@ -164,7 +164,7 @@ class CifraPlayer {
 
         acordeButtons.forEach(acordeButton => {
             const antesAcorde = acordeButton.value;
-            const antesAcordeSoNota = antesAcorde.replace('m', '');
+            const antesAcordeSoNota = antesAcorde.replace('m', '').replace('°', '');
 
             let novoAcorde = this.musicTheory.transposeAcorde(antesAcordeSoNota, steps, novoTom);
 
