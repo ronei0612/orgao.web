@@ -78,8 +78,12 @@
             <div class="d-inline-flex gap-2">
                 <button id="save-btn" class="btn btn-warning btn-action d-none"><i class="bi bi-save"></i> Salvar Edição</button>
                 <button id="download-btn" class="btn btn-primary btn-action"><i class="bi bi-download"></i> Baixar JSON Completo</button>
+                <button id="import-btn" class="btn btn-secondary btn-action ml-2"><i class="bi bi-upload"></i> Importar JSON</button>
             </div>
         </div>
+
+        <!-- NOVO: Input de arquivo oculto -->
+        <input type="file" id="import-file-input" accept="application/json" style="display: none;">
     </div>
 
     <!-- REINTRODUZIR: jQuery e Select2 -->
@@ -87,14 +91,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="./assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-    <!-- REMOVER/AJUSTAR: Remover os arquivos que a página não precisa -->
-    <!-- <script src="./assets/lib/js/Pizzicato/0.6.4/Pizzicato.js"></script>
-    <script src="./assets/js/CifraPlayer.js"></script>
-    <script src="./assets/js/MusicTheory.js"></script>
-    <script src="./assets/js/UIController.js"></script>
-    <script src="./assets/js/LocalStorageManager.js"></script>
-    <script src="./assets/js/script.js"></script> -->
 
     <script src="./assets/js/CifrasEditor.js"></script>
 

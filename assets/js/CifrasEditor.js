@@ -3,6 +3,7 @@
 class CifrasEditor {
     constructor() {
         this.cifras = [];
+        this.cifrasToImport = [];
         this.url = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
         this.LOCAL_KEY = 'cifras_local';
         this.selectedCifraIndex = -1; // Índice da cifra sendo editada
@@ -14,6 +15,8 @@ class CifrasEditor {
             deleteBtn: document.getElementById('delete-btn'),
             saveBtn: document.getElementById('save-btn'),
             downloadBtn: document.getElementById('download-btn'),
+            importBtn: document.getElementById('import-btn'),
+            importFileInput: document.getElementById('import-file-input'),
 
             // Card de Edição
             editCard: document.getElementById('cifra-edit-card'),
@@ -37,6 +40,8 @@ class CifrasEditor {
         this.elements.deleteBtn.addEventListener('click', this.deleteSelectedCifra.bind(this));
         this.elements.saveBtn.addEventListener('click', this.saveCurrentCifra.bind(this));
         this.elements.downloadBtn.addEventListener('click', this.downloadJson.bind(this));
+        this.elements.importBtn.addEventListener('click', () => this.elements.importFileInput.click());
+        this.elements.importFileInput.addEventListener('change', this.importJson.bind(this));
 
         // Listeners nos campos do Card para salvar automaticamente
         [this.elements.editTitulo, this.elements.editArtista, this.elements.editCifra].forEach(el => {
@@ -215,6 +220,74 @@ class CifrasEditor {
         } else {
             this.cifras = remoteCifras;
             this.saveLocalCifras();
+        }
+    }
+
+    importJson(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const importedData = JSON.parse(e.target.result);
+
+                if (!Array.isArray(importedData)) {
+                    alert('Erro na importação: O arquivo JSON não é uma lista (Array).');
+                    return;
+                }
+
+                this.processImportedCifras(importedData);
+
+            } catch (err) {
+                alert(`Erro ao processar arquivo: ${err.message}`);
+            } finally {
+                // Limpa o input file para permitir a importação do mesmo arquivo novamente
+                event.target.value = null;
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    processImportedCifras(importedCifras) {
+        const originalLength = this.cifras.length;
+        let maxId = originalLength > 0 ? Math.max(...this.cifras.map(c => c.id || 0)) : 0;
+
+        let newCifrasCount = 0;
+        let firstNewCifraIndex = -1;
+
+        importedCifras.forEach(importedCifra => {
+            // Garante um ID único e sequencial para a nova cifra
+            maxId += 1;
+            const newCifra = {
+                id: maxId,
+                artista: importedCifra.artista || 'Novo Artista Importado',
+                titulo: importedCifra.titulo || 'Nova Cifra Importada',
+                cifra: importedCifra.cifra || '// Cifra Vazia'
+            };
+
+            this.cifras.push(newCifra);
+            newCifrasCount++;
+
+            if (firstNewCifraIndex === -1) {
+                firstNewCifraIndex = this.cifras.length - 1;
+            }
+        });
+
+        if (newCifrasCount > 0) {
+            this.saveLocalCifras();
+
+            // 1. Destrói e Reconstroi o Select2 para incluir os novos itens
+            $(this.elements.cifraSelect).select2('destroy');
+            this.setupSelect2();
+
+            // 2. Seleciona a primeira cifra importada para visualização/edição imediata
+            if (firstNewCifraIndex !== -1) {
+                $(this.elements.cifraSelect).val(firstNewCifraIndex).trigger('change');
+                alert(`${newCifrasCount} cifras importadas com sucesso! A primeira está pronta para edição.`);
+            }
+        } else {
+            alert('Nenhuma cifra válida encontrada no arquivo para importação.');
         }
     }
 
