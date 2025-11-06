@@ -81,8 +81,6 @@ class UIController {
         this.elements.acorde10.classList.remove('d-none');
         this.elements.acorde11.classList.remove('d-none');
         
-        cifraPlayer.preencherSelect('C');
-        
         this.elements.acorde1.value = 'C';
         this.elements.acorde1.textContent = 'C';
         this.elements.acorde2.value = 'Am';
@@ -126,6 +124,16 @@ class UIController {
     habilitarSelectSaves() {
         this.elements.savesSelect.disabled = false;
         this.elements.addButton.disabled = false;
+    }
+
+    exibirBotaoPlay() {
+        this.elements.playButton.classList.remove('d-none', 'pressed'),
+        this.elements.stopButton.classList.add('d-none', 'pulse');
+    }
+
+    exibirBotaoStop() {
+        this.elements.playButton.classList.add('d-none');
+        this.elements.stopButton.classList.remove('d-none');
     }
 
     exibirListaSaves(saveSelected) {
@@ -269,20 +277,6 @@ class UIController {
         this.elements.oracoesFrame.classList.add('d-none');
     }
 
-    exibirTextoCifrasCarregado(tom = null) {
-        if (tom) {
-            this.exibirBotoesTom();
-            cifraPlayer.preencherSelect(tom);
-        }
-        else {
-            this.esconderBotoesTom();
-            let textoLetra = this.elements.iframeCifra.contentDocument.body.innerHTML;
-            textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
-                .replace("font-size: 12pt;", "font-size: 15pt;");
-            this.elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
-        }
-    }
-
     esconderEditDeleteButtons() {
         if (this.elements.deleteSavesSelect.classList.contains('show')) {
             this.elements.deleteSavesSelect.classList.remove('show');
@@ -316,10 +310,6 @@ class UIController {
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
 
         this.exibirBotoesAcordes();
-        
-        this.exibirTextoCifrasCarregado('C', elements.editTextarea.value);
-        cifraPlayer.preencherSelect('C');
-
         this.exibirBotoesTom();
 
         if (frameId) {
@@ -361,5 +351,121 @@ class UIController {
 
         this.elements.addButton.classList.toggle('rounded-0');
         this.elements.addButton.classList.toggle('rounded-right-custom');
+    }
+
+    async customAlert(message, title = "Aviso", buttonText = "OK") {
+        return new Promise((resolve) => {
+            const modal = new bootstrap.Modal(document.getElementById('customAlertModal'));
+            const modalTitle = document.getElementById('customAlertModalLabel');
+            const modalBody = document.getElementById('customAlertModalBody');
+            const btnOk = document.getElementById('btnAlertDialogOK');
+
+            modalTitle.textContent = title;
+            modalBody.textContent = message;
+            btnOk.textContent = buttonText;
+
+            btnOk.onclick = null;
+
+            const handleModalHidden = () => {
+                resolve();
+                document.getElementById('customAlertModal').removeEventListener('hidden.bs.modal', handleModalHidden);
+            };
+            document.getElementById('customAlertModal').addEventListener('hidden.bs.modal', handleModalHidden);
+
+            btnOk.onclick = () => {
+                modal.hide();
+            };
+
+            modal.show();
+        });
+    }
+
+    async customConfirm(message, title = "Confirmação") {
+        return new Promise((resolve) => {
+            const modal = new bootstrap.Modal(document.getElementById('customConfirmModal'));
+            const modalTitle = document.getElementById('customConfirmModalLabel');
+            const modalBody = document.getElementById('customConfirmModalBody');
+            const btnConfirmAction = document.getElementById('btnConfirmAction');
+            const btnCancelAction = document.getElementById('btnConfirmCancel');
+
+            modalTitle.textContent = title;
+            modalBody.textContent = message;
+
+            btnConfirmAction.onclick = null;
+            btnCancelAction.onclick = null;
+
+            btnConfirmAction.onclick = () => {
+                modal.hide();
+                resolve(true);
+            };
+
+            btnCancelAction.onclick = () => {
+                modal.hide();
+                resolve(false); // Retorna false se cancelar
+            };
+
+            const handleModalHidden = () => {
+                resolve(false);
+                document.getElementById('customConfirmModal').removeEventListener('hidden.bs.modal', handleModalHidden);
+            };
+            document.getElementById('customConfirmModal').addEventListener('hidden.bs.modal', handleModalHidden);
+
+            modal.show();
+        });
+    }
+
+    toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        this.aplicarModoEscuroIframe();
+    }
+
+    updateSwitchDarkMode() {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        if (isDarkMode) {
+            this.elements.darkModeToggle.checked = false;
+        } else {
+            this.elements.darkModeToggle.checked = true;
+        }
+    }
+
+    aplicarModoEscuroIframe() {
+        const scrollTop = localStorage.getItem('scrollTop');
+        if (scrollTop && !location.origin.includes('file:')) {
+            this.elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
+        }
+    }
+
+    injetarEstilosNoIframeCifra() {
+        const doc = this.elements.iframeCifra.contentDocument;
+        if (!doc) return;
+
+        if (!doc.getElementById('cifra-style')) {
+            const style = doc.createElement('style');
+
+            style.innerHTML = `
+                .cifraSelecionada {
+                    background-color: #DAA520;
+                }
+                pre {
+                    font-size: 12pt;
+                    font-family: Consolas, 'Courier New', Courier, monospace;
+                }
+                body {
+                    -webkit-user-select: none; /* Safari */
+                    -moz-user-select: none; /* Firefox */
+                    -ms-user-select: none; /* Internet Explorer/Edge */
+                    user-select: none; /* Padrão */
+                    -webkit-touch-callout: none; /* Safari */
+                    -webkit-user-drag: none; /* Safari */
+                    -khtml-user-drag: none; /* Konqueror HTML */
+                    -khtml-user-select: none; /* Konqueror HTML */
+                    -moz-user-drag: none; /* Firefox */
+                    -ms-user-drag: none; /* Internet Explorer/Edge */
+                    -o-user-drag: none; /* Opera */
+                }
+            `;
+            doc.head.appendChild(style);
+        }
     }
 }
