@@ -1,3 +1,4 @@
+<!-- NOVO editar-cifras.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,6 +9,11 @@
     <link href="./assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="./assets/css/styles.css">
+
+    <!-- REINTRODUZIR: CSS do Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
+
     <style>
         .cifras-card {
             background-color: #23272b;
@@ -36,25 +42,68 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="text-center flex-grow-1 mb-0">Editar Cifras.json</h1>
         </div>
-        <div class="mb-4">
-            <input id="search-bar" type="text" class="form-control" placeholder="Pesquisar">
+
+        <!-- NOVO: Select2 e Botões de Ação na Lista -->
+        <div class="mb-4 d-flex align-items-stretch">
+            <select id="cifra-select" class="form-control flex-grow-1 mr-2"></select>
+            <button id="add-btn" class="btn btn-add btn-action ml-2"><i class="bi bi-plus-square"></i></button>
+            <button id="delete-btn" class="btn btn-danger btn-action ml-2 d-none"><i class="bi bi-trash"></i></button>
         </div>
-        <div id="cifras-container"></div>
-        <div class="text-center mt-3">
+
+        <!-- NOVO: Card de Edição Único (Oculto inicialmente) -->
+        <div id="cifra-edit-card" class="card cifras-card shadow-sm d-none">
+            <div class="card-header">
+                <h5 id="card-title">Nova Cifra</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <input type="hidden" id="edit-id" value="">
+                    <div class="col-md-7 form-group">
+                        <label class="form-label">Título</label>
+                        <input type="text" class="form-control" id="edit-titulo">
+                    </div>
+                    <div class="col-md-5 form-group">
+                        <label class="form-label">Artista</label>
+                        <input type="text" class="form-control" id="edit-artista">
+                    </div>
+                    <div class="col-12 mt-2 form-group">
+                        <label class="form-label">Cifra</label>
+                        <textarea class="form-control" rows="10" id="edit-cifra"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
             <div class="d-inline-flex gap-2">
-                <button id="add-btn" class="btn btn-add btn-action"><i class="bi bi-plus-square"></i> Adicionar</button>
-                <button id="save-btn" class="btn btn-warning btn-action"><i class="bi bi-save"></i> Salvar</button>
-                <button id="download-btn" class="btn btn-primary btn-action"><i class="bi bi-download"></i> Baixar</button>
+                <button id="save-btn" class="btn btn-warning btn-action d-none"><i class="bi bi-save"></i> Salvar Edição</button>
+                <button id="download-btn" class="btn btn-primary btn-action"><i class="bi bi-download"></i> Baixar JSON Completo</button>
             </div>
         </div>
     </div>
 
-    <script src="./assets/lib/js/Pizzicato/0.6.4/Pizzicato.js"></script>
+    <!-- REINTRODUZIR: jQuery e Select2 -->
+    <script src="./assets/lib/js/Jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="./assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- REMOVER/AJUSTAR: Remover os arquivos que a página não precisa -->
+    <!-- <script src="./assets/lib/js/Pizzicato/0.6.4/Pizzicato.js"></script>
     <script src="./assets/js/CifraPlayer.js"></script>
-    <script src="./assets/js/CifrasEditor.js"></script>
     <script src="./assets/js/MusicTheory.js"></script>
     <script src="./assets/js/UIController.js"></script>
     <script src="./assets/js/LocalStorageManager.js"></script>
-    <script src="./assets/js/script.js"></script>
+    <script src="./assets/js/script.js"></script> -->
+
+    <script src="./assets/js/CifrasEditor.js"></script>
+
+    <script>
+        // Inicializa a página
+        document.addEventListener('DOMContentLoaded', () => {
+            // A instância da AppEditor agora precisa do Select2 carregado
+            new CifrasEditor().init();
+        });
+    </script>
 </body>
 </html>
