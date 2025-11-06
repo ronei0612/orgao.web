@@ -15,7 +15,8 @@ class CifrasEditor {
         };
 
         // Binds necessários
-        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleInputOrClick = this.handleInputOrClick.bind(this);
+        //this.handleInputChange = this.handleInputChange.bind(this);
     }
 
     // Ponto de entrada
@@ -29,8 +30,12 @@ class CifrasEditor {
         this.elements.saveBtn.addEventListener('click', this.handleSaveClick.bind(this));
         this.elements.downloadBtn.addEventListener('click', this.downloadJson.bind(this));
 
+        // Listener para INPUTS (digitação)
+        document.addEventListener('input', this.handleInputOrClick);
+        // NOVO: Listener para CLIQUES (Botão Excluir)
+        document.addEventListener('click', this.handleInputOrClick);
         // Listener principal para o input (usa delegação de eventos para performance)
-        document.addEventListener('input', this.handleInputChange);
+        //document.addEventListener('input', this.handleInputChange);
     }
 
     // Funções Utilitárias (Mantidas aqui por serem específicas ou movidas para uma classe Utils)
@@ -156,8 +161,9 @@ class CifrasEditor {
     }
 
     // Atualiza array ao editar campos (manipulador de eventos único)
-    handleInputChange(e) {
-        if (e.target === this.elements.searchBar) {
+    handleInputOrClick(e) {
+        // Lógica de pesquisa (apenas no evento 'input')
+        if (e.type === 'input' && e.target === this.elements.searchBar) {
             this.searchTerm = e.target.value;
             this.renderCifras();
             return;
@@ -167,14 +173,17 @@ class CifrasEditor {
         const field = e.target.getAttribute('data-field');
         const action = e.target.getAttribute('data-action');
 
-        if (action === 'delete') {
-            // Delegação do clique do botão de exclusão
-            e.preventDefault();
-            this.deleteCifra(parseInt(idx));
+        // Lógica de Exclusão (apenas no evento 'click' e com data-action="delete")
+        if (e.type === 'click' && action === 'delete') {
+            e.preventDefault(); // Evita qualquer ação de formulário
+            if (idx !== null) {
+                this.deleteCifra(parseInt(idx));
+            }
             return;
         }
 
-        if (idx !== null && field) {
+        // Lógica de Atualização de Campo (apenas no evento 'input')
+        if (e.type === 'input' && idx !== null && field) {
             this.cifras[parseInt(idx)][field] = e.target.value;
             this.saveLocalCifras();
         }
