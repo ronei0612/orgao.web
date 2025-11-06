@@ -1,6 +1,6 @@
 // Define um nome e uma versão para o cache.
 // Mudar a versão (ex: v2) no futuro forçará a atualização de todos os arquivos.
-const CACHE_NAME = '1.5';
+const version = '1.6';
 
 // Lista de todos os arquivos que seu site precisa para funcionar offline.
 // Eu analisei seu index.html e listei todos os recursos essenciais.
@@ -29,7 +29,7 @@ const urlsToCache = [
 // Evento de Instalação: Salva todos os arquivos listados no cache.
 self.addEventListener('install', event => {
     event.waitUntil(
-        caches.open(CACHE_NAME)
+        caches.open(version)
             .then(cache => {
                 console.log('Cache aberto. Adicionando arquivos essenciais para modo offline.');
                 return cache.addAll(urlsToCache);
@@ -44,7 +44,7 @@ self.addEventListener('activate', event => {
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    if (cacheName !== CACHE_NAME) {
+                    if (cacheName !== version) {
                         console.log('Cache antigo encontrado. Deletando:', cacheName);
                         return caches.delete(cacheName);
                     }
@@ -73,6 +73,6 @@ self.addEventListener('fetch', event => {
 
 self.addEventListener('message', event => {
     if (event.data && event.data.type === 'GET_VERSION') {
-        event.source.postMessage({ type: 'CACHE_NAME', version: CACHE_NAME });
+        event.source.postMessage({ type: 'version', version: version });
     }
 });
