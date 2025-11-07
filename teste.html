@@ -4,21 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Audio - Acordes Otimizados com Master Gain</title>
+
+    <!-- Melhoria: CSS Separado em um arquivo (conceitualmente) -->
     <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 30px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .play-button, #stopButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            background-color: #ffffff;
+            border-radius: 5px;
+            transition: all 0.2s ease-in-out;
+        }
+
+            .play-button:hover:not(:disabled) {
+                background-color: #e9ecef;
+                border-color: #007bff;
+            }
+
+            .play-button.active {
+                background-color: #28a745; /* Verde */
+                color: white;
+                border-color: #28a745;
+            }
+
+            .play-button:disabled, #stopButton:disabled {
+                cursor: not-allowed;
+                opacity: 0.6;
+            }
+
+        #statusMessage {
+            margin-top: 25px;
+            font-style: italic;
+            color: #555;
+            min-height: 20px; /* Para evitar saltos de layout */
+        }
+
+        .controls-group {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Controle de Acordes Otimizado</h1>
+    <h1>Controle de Acordes Otimizado (Web Audio)</h1>
 
-    <div class="button-group">
-        <button id="playCButton" class="play-button" disabled>Play C</button>
-        <button id="playGButton" class="play-button" disabled>Play G</button>
-        <button id="stopButton" disabled>Stop</button>
+    <div class="controls-group">
+
+        <div class="button-group">
+            <button id="playCButton" class="play-button" disabled>Play C</button>
+            <button id="playGButton" class="play-button" disabled>Play G</button>
+            <button id="stopButton" disabled>Stop</button>
+        </div>
     </div>
 
     <p id="statusMessage">Carregando recursos de áudio, por favor aguarde...</p>
 
+    <!-- Melhoria: JS Separado em um arquivo (conceitualmente) -->
     <script>
         // --- Configuração das URLs ---
         const audioConfigs = {
@@ -26,26 +98,25 @@
                 urls: [
                     'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_baixo.ogg'
                 ],
-                buffers: [],
                 sources: [] // Rastreamos apenas as SourceNodes para parada
             },
             'G': {
                 urls: [
                     'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d_baixo.ogg'
                 ],
-                buffers: [],
                 sources: []
             }
         };
 
         const ATTACK_TIME = 0.3;
-        const RELEASE_TIME = 0;
+        const RELEASE_TIME = 0.2;
         const PEAK_VOLUME = 0.5;
 
         // --- Variáveis Globais ---
         let audioContext;
         let masterGainNode;
         let currentAcorde = null;
+        let urlBufferMap = new Map(); // Melhoria: Mapa para armazenar buffers carregados (evita duplicação)
 
         // --- Elementos HTML ---
         const playCButton = document.getElementById('playCButton');
@@ -82,21 +153,26 @@
             }
         }
 
-        // Função principal de pré-carregamento
+        // Função principal de pré-carregamento (Melhorada para lidar com URLs únicas)
         async function preloadAllAudio() {
             initializeContext();
 
             try {
-                const allUrls = [...audioConfigs.C.urls, ...audioConfigs.G.urls];
-                const loadingPromises = allUrls.map(url => loadAudio(url));
+                // 1. Coleta todas as URLs únicas
+                const allUrlsSet = new Set();
+                for (const acorde in audioConfigs) {
+                    audioConfigs[acorde].urls.forEach(url => allUrlsSet.add(url));
+                }
+                const uniqueUrls = Array.from(allUrlsSet);
+
+                // 2. Cria e executa todas as promessas de carregamento
+                const loadingPromises = uniqueUrls.map(url => loadAudio(url));
                 const allBuffers = await Promise.all(loadingPromises);
 
-                let bufferIndex = 0;
-                for (const acorde in audioConfigs) {
-                    const config = audioConfigs[acorde];
-                    config.buffers = allBuffers.slice(bufferIndex, bufferIndex + config.urls.length);
-                    bufferIndex += config.urls.length;
-                }
+                // 3. Popula o mapa de buffers (URL -> AudioBuffer)
+                uniqueUrls.forEach((url, index) => {
+                    urlBufferMap.set(url, allBuffers[index]);
+                });
 
                 statusMessage.textContent = 'Carregamento concluído! Pronto para tocar.';
                 updateButtonStates(null, false);
@@ -108,18 +184,18 @@
         }
 
         // Função para atualizar o estado visual dos botões
-        function updateButtonStates(currentAcordeKey, isLoading = false) {
+        function updateButtonStates(currentAcordeKey, isTransitioning = false) {
             allPlayButtons.forEach(button => {
                 const acorde = buttonMap[button.id];
 
-                // O botão só é desabilitado se estiver em estado de transição/carregamento
-                const isDisabled = isLoading;
+                // Se estiver em transição (parando um e iniciando outro) ou carregando, desabilita
+                const isDisabled = isTransitioning || currentAcordeKey === acorde && isTransitioning;
 
                 button.disabled = isDisabled;
                 button.classList.remove('active');
 
-                if (isLoading) {
-                    button.textContent = 'Transição...';
+                if (isTransitioning) {
+                    button.textContent = currentAcordeKey ? 'Transição...' : `Play ${acorde}`;
                 } else if (acorde === currentAcordeKey) {
                     button.textContent = `Tocando ${acorde}...`;
                     button.classList.add('active');
@@ -127,7 +203,7 @@
                     button.textContent = `Play ${acorde}`;
                 }
             });
-            stopButton.disabled = currentAcordeKey === null;
+            stopButton.disabled = currentAcordeKey === null && !isTransitioning;
         }
 
         /**
@@ -148,6 +224,7 @@
                 masterGainNode.gain.linearRampToValueAtTime(0, stopTime);
 
                 // 2. Agenda a parada das SourceNodes e a limpeza do estado após o fade-out
+                // Nota: O uso de setTimeout é um hack para a limpeza de recursos após o fade-out.
                 setTimeout(() => {
                     // Pára todas as SourceNodes (importante para liberar recursos)
                     config.sources.forEach(source => {
@@ -184,10 +261,16 @@
             const config = audioConfigs[acorde];
 
             try {
-                // Limpa e recria as SourceNodes (buffers já estão prontos)
+                // Limpa e recria as SourceNodes
                 config.sources = [];
 
-                config.buffers.forEach(buffer => {
+                // Melhoria: Pega o buffer do mapa (urlBufferMap)
+                config.urls.forEach(url => {
+                    const buffer = urlBufferMap.get(url);
+                    if (!buffer) {
+                        throw new Error(`Buffer não encontrado para URL: ${url}`);
+                    }
+
                     const source = audioContext.createBufferSource();
                     source.buffer = buffer;
                     source.loop = true;
@@ -210,7 +293,7 @@
 
                 // 3. Gerenciar botões e status após iniciar
                 updateButtonStates(acorde, false);
-                statusMessage.textContent = `Acorde de ${acorde} tocando em loop (Attack: ${ATTACK_TIME}s, Release: ${RELEASE_TIME}s).`;
+                statusMessage.textContent = `Acorde de ${acorde} tocando em loop (Attack: ${ATTACK_TIME}s, Release: ${RELEASE_TIME}s). Volume: ${(PEAK_VOLUME * 100).toFixed(0)}%.`;
 
             } catch (error) {
                 // Em caso de erro
@@ -236,7 +319,7 @@
             // 3. Limpeza final e atualização do estado
             currentAcorde = null;
             updateButtonStates(null, false);
-            statusMessage.textContent = 'Reprodução parada.';
+            statusMessage.textContent = 'Reprodução parada. Contexto de áudio suspenso.';
 
             // Suspende o AudioContext para economizar recursos (opcional)
             if (audioContext && audioContext.state !== 'closed') {
