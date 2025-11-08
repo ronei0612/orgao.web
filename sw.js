@@ -12,6 +12,7 @@ const urlsToCache = [
     './assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css',
     './assets/js/script.js',
     './assets/js/CifraPlayer.js',
+    './assets/js/AudioContextManager.js',
     './assets/js/LocalStorageManager.js',
     './assets/js/MusicTheory.js',
     './assets/js/UIController.js',
