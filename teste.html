@@ -90,10 +90,17 @@
     </div>
 
     <p id="statusMessage">Carregando recursos de áudio, por favor aguarde...</p>
+    <script src="./assets/js/AudioContextManager.js"></script>
 
     <script>
-        // --- Configuração das URLs ---
-        const audioConfigs = {
+        // --- Lógica Principal da Aplicação ---
+
+        // 1. CONSTANTES E CONFIGURAÇÕES
+        const ATTACK_TIME = 0.2;
+        const RELEASE_TIME = 0.5;
+        const MASTER_VOLUME = 0.5;
+
+        const ACORDE_CONFIGS = {
             'C': {
                 urls: [
                     'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_baixo.ogg'
@@ -110,225 +117,108 @@
             }
         };
 
-        const ATTACK_TIME = 0.2;
-        const RELEASE_TIME = 0.5;
-        const PEAK_VOLUME = 0.5;
-
-        // --- Variáveis Globais ---
-        let audioContext;
-        let masterGainNode;
-        let currentAcorde = null;
-        let urlBufferMap = new Map();
-
-        // --- Elementos HTML ---
+        // 2. ELEMENTOS HTML
         const playCButton = document.getElementById('playCButton');
         const playGButton = document.getElementById('playGButton');
         const stopButton = document.getElementById('stopButton');
         const statusMessage = document.getElementById('statusMessage');
         const allPlayButtons = [playCButton, playGButton];
-
         const buttonMap = { 'playCButton': 'C', 'playGButton': 'G' };
 
-        // Inicializa o AudioContext e o Master Gain Node
-        function initializeContext() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                masterGainNode = audioContext.createGain();
-                masterGainNode.connect(audioContext.destination);
-                masterGainNode.gain.setValueAtTime(PEAK_VOLUME, audioContext.currentTime);
+        // 3. INSTÂNCIA PRINCIPAL DO PLAYER
+        let audioPlayer = null;
 
-                // Cria os Gain Nodes individuais e os conecta ao Master Gain
-                for (const acorde in audioConfigs) {
-                    const config = audioConfigs[acorde];
-                    config.gainNode = audioContext.createGain();
-                    config.gainNode.connect(masterGainNode);
-                    config.gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                }
-            }
-        }
-
-        // Função assíncrona para carregar e decodificar um arquivo de áudio
-        async function loadAudio(url) {
-            try {
-                const response = await fetch(url);
-                const arrayBuffer = await response.arrayBuffer();
-                if (!audioContext) initializeContext();
-                return audioContext.decodeAudioData(arrayBuffer);
-            } catch (error) {
-                console.error(`Falha ao carregar ou decodificar: ${url}`, error);
-                throw new Error(`Erro ao carregar o áudio de: ${url}`);
-            }
-        }
-
-        // Função principal de pré-carregamento (Otimizada para URLs únicas)
-        async function preloadAllAudio() {
-            initializeContext();
-
-            try {
-                // ... (lógica de carregamento de URLs únicas) ...
-                const allUrlsSet = new Set();
-                for (const acorde in audioConfigs) {
-                    audioConfigs[acorde].urls.forEach(url => allUrlsSet.add(url));
-                }
-                const uniqueUrls = Array.from(allUrlsSet);
-                const loadingPromises = uniqueUrls.map(url => loadAudio(url));
-                const allBuffers = await Promise.all(loadingPromises);
-
-                uniqueUrls.forEach((url, index) => {
-                    urlBufferMap.set(url, allBuffers[index]);
-                });
-
-                statusMessage.textContent = 'Carregamento concluído! Pronto para tocar.';
-                updateButtonStates(null, false);
-
-            } catch (error) {
-                statusMessage.textContent = `Erro fatal no carregamento: ${error.message}. Recarregue a página.`;
-                console.error(error);
-            }
-        }
 
         // Função para atualizar o estado visual dos botões
-        function updateButtonStates(currentAcordeKey, isTransitioning = false) {
+        function updateButtonStates(currentAcordeKey) {
+            const isPlaying = currentAcordeKey !== null;
             allPlayButtons.forEach(button => {
                 const acorde = buttonMap[button.id];
 
-                const isDisabled = isTransitioning;
-
-                button.disabled = isDisabled;
+                button.disabled = !audioPlayer; // Desabilitado se o player não estiver pronto
                 button.classList.remove('active');
 
-                if (acorde === currentAcordeKey && !isTransitioning) {
+                if (acorde === currentAcordeKey) {
                     button.textContent = `Tocando ${acorde}...`;
                     button.classList.add('active');
-                } else if (isTransitioning) {
-                    button.textContent = 'Transição...';
+                } else if (isPlaying) {
+                    button.textContent = `Play ${acorde} (Transição)`;
                 } else {
                     button.textContent = `Play ${acorde}`;
                 }
             });
-            stopButton.disabled = currentAcordeKey === null;
+            stopButton.disabled = !isPlaying;
         }
 
-        /**
-         * Para o som de um acorde específico com fade-out e liberação de recursos.
-         * @param {string} acorde - A chave do acorde ('C' ou 'G').
-         */
-        function stopAndCleanupAcorde(acorde) {
-            return new Promise(resolve => {
-                const config = audioConfigs[acorde];
-                if (!config.gainNode) return resolve();
+        // 4. FUNÇÕES DE ORQUESTRAÇÃO
+        async function handlePlay(acordeKey) {
+            if (!audioPlayer) return;
 
-                const stopTime = audioContext.currentTime + RELEASE_TIME;
-
-                // APLICA O FADE-OUT NO NÓ DE GANHO INDIVIDUAL
-                config.gainNode.gain.cancelScheduledValues(audioContext.currentTime);
-                config.gainNode.gain.linearRampToValueAtTime(0.0001, stopTime);
-
-                // Agenda a parada das SourceNodes e a limpeza do estado APÓS o fade-out
-                setTimeout(() => {
-                    config.sources.forEach(source => {
-                        try { source.stop(0); } catch (e) { /* ignore se já parou */ }
-                    });
-                    config.sources = [];
-                    resolve();
-                }, RELEASE_TIME * 1000);
-            });
-        }
-
-        // Função principal para iniciar a reprodução
-        async function startSound(acorde) {
-            // ** CORREÇÃO: Tenta resumir/iniciar o contexto IMEDIATAMENTE no clique **
-            if (!audioContext || audioContext.state === 'suspended') {
-                initializeContext(); // Cria o contexto e os nós se ainda não existirem
-                audioContext.resume().catch(e => console.error("Falha ao resumir o AudioContext:", e));
-            }
-
-            if (acorde === currentAcorde) {
-                return;
-            }
-
-            const previousAcorde = currentAcorde;
-            currentAcorde = acorde;
-
-            const newConfig = audioConfigs[acorde];
-            const newGainNode = newConfig.gainNode;
-            const now = audioContext.currentTime;
-
-            // 1. INICIAR O FADE-OUT NO ACORDE ANTERIOR (ocorre em paralelo - Cross-Fade)
-            if (previousAcorde) {
-                stopAndCleanupAcorde(previousAcorde);
-                statusMessage.textContent = `Transição Cross-Fade: ${previousAcorde} -> ${acorde}...`;
-            }
+            const previousAcorde = audioPlayer.currentAcordeKey;
 
             try {
-                // 2. INICIAR O NOVO SOM (se ainda não estiver rodando)
-                if (newConfig.sources.length === 0) {
-                    // ... (lógica de criação de sources) ...
-                    newConfig.sources = [];
-                    newConfig.urls.forEach(url => {
-                        const buffer = urlBufferMap.get(url);
-                        if (!buffer) { throw new Error(`Buffer não encontrado para URL: ${url}`); }
+                audioPlayer.play(acordeKey);
 
-                        const source = audioContext.createBufferSource();
-                        source.buffer = buffer;
-                        source.loop = true;
-                        source.connect(newGainNode);
-                        source.start(0);
-
-                        newConfig.sources.push(source);
-                    });
+                // Atualiza a interface (a transição acontece em paralelo dentro da classe)
+                updateButtonStates(acordeKey);
+                if (previousAcorde) {
+                    statusMessage.textContent = `Transição Cross-Fade: ${previousAcorde} -> ${acordeKey}...`;
+                } else {
+                    statusMessage.textContent = `Acorde de ${acordeKey} tocando.`;
                 }
+            } catch (error) {
+                console.error(error);
+                statusMessage.textContent = `Erro: ${error.message}`;
+                updateButtonStates(null);
+            }
+        }
 
-                // 3. Efeito Attack (Fade-in gradual) APLICADO NO GANHO INDIVIDUAL DO NOVO ACORDE
-                newGainNode.gain.cancelScheduledValues(now);
+        async function handleStop() {
+            if (!audioPlayer || !audioPlayer.currentAcordeKey) return;
 
-                // ** A CORREÇÃO: Garante que o valor inicial do fade-in seja 0, mesmo após resume **
-                newGainNode.gain.setValueAtTime(0, now);
+            const keyToStop = audioPlayer.currentAcordeKey;
 
-                // Rampa até o volume máximo (1.0 no nó individual, pois o Master Gain gerencia o volume global)
-                newGainNode.gain.linearRampToValueAtTime(1.0, now + ATTACK_TIME);
+            // Feedback visual
+            updateButtonStates(null);
+            statusMessage.textContent = `Parando reprodução de ${keyToStop}... (Fade-out em ${RELEASE_TIME}s)`;
 
-                // 4. Gerenciar botões e status
-                updateButtonStates(acorde, false);
-                statusMessage.textContent = `Cross-Fade completo. Acorde de ${acorde} tocando. Volume Mestre: ${(PEAK_VOLUME * 100).toFixed(0)}%.`;
+            await audioPlayer.stop();
+
+            statusMessage.textContent = 'Reprodução parada. Contexto de áudio suspenso.';
+            updateButtonStates(null);
+        }
+
+
+        // 5. INICIALIZAÇÃO DA APLICAÇÃO
+        async function initApp() {
+            try {
+                // A. Cria o Player
+                audioPlayer = new AudioContextManager(ATTACK_TIME, RELEASE_TIME, MASTER_VOLUME);
+
+                // B. Adiciona e Pré-carrega os acordes
+                for (const key in ACORDE_CONFIGS) {
+                    audioPlayer.addAcorde(key, ACORDE_CONFIGS[key].urls);
+                }
+                statusMessage.textContent = 'Inicializando e carregando áudios...';
+                await audioPlayer.preloadAll();
+
+                // C. Adiciona Listeners
+                playCButton.addEventListener('click', () => handlePlay('C'));
+                playGButton.addEventListener('click', () => handlePlay('G'));
+                stopButton.addEventListener('click', handleStop);
+
+                // D. Finaliza o Status
+                statusMessage.textContent = 'Carregamento concluído! Pronto para tocar.';
+                updateButtonStates(null);
 
             } catch (error) {
-                // Em caso de erro
+                statusMessage.textContent = `Erro fatal na inicialização: ${error.message}. Recarregue a página.`;
                 console.error(error);
-                updateButtonStates(null, false);
-                statusMessage.textContent = `Erro durante a reprodução: ${error.message}`;
-                currentAcorde = null;
             }
         }
 
-        // Função do botão Stop (parada total)
-        async function stopAll() {
-            if (!currentAcorde) return;
-
-            // 1. Feedback visual de parada
-            updateButtonStates(null, true);
-            statusMessage.textContent = `Parando reprodução... (Fade-out em ${RELEASE_TIME}s)`;
-
-            // 2. Executa o fade-out
-            await stopAndCleanupAcorde(currentAcorde);
-
-            // 3. Limpeza final e atualização do estado
-            currentAcorde = null;
-            updateButtonStates(null, false);
-            statusMessage.textContent = 'Reprodução parada. Contexto de áudio suspenso.';
-
-            // Suspende o AudioContext para economizar recursos (opcional)
-            if (audioContext && audioContext.state !== 'closed') {
-                audioContext.suspend();
-            }
-        }
-
-        // --- Listeners de Evento ---
-        window.addEventListener('load', preloadAllAudio);
-
-        playCButton.addEventListener('click', () => startSound('C'));
-        playGButton.addEventListener('click', () => startSound('G'));
-        stopButton.addEventListener('click', stopAll);
+        // --- Listener de Evento para Iniciar ---
+        window.addEventListener('load', initApp);
 
     </script>
 </body>
