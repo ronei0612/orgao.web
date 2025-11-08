@@ -143,7 +143,7 @@ class AudioContextManager {
         if (newConfig.sources.length === 0) {
             newConfig.urls.forEach(url => {
                 const buffer = this.urlBufferMap.get(url);
-                if (!buffer) { throw new Error(`Buffer não carregado: ${url}`); }
+                if (!buffer) { throw new Error(`Buffer não carregado: ${url}. Chamou preloadAll?`); } // Adicionado mensagem de erro
 
                 const source = this.context.createBufferSource();
                 source.buffer = buffer;
