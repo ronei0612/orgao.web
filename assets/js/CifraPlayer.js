@@ -5,7 +5,7 @@ class CifraPlayer {
         this.elements = elements;
 
         // NOVO: Inicialização do AudioContextManager
-        this.audioContextManager = new AudioContextManager(0.2, 0.5, 0.5);
+        this.audioContextManager = new AudioContextManager();
 
         this.parado = true;
         this.acordeTocando = '';
