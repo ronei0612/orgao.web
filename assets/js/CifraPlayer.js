@@ -4,7 +4,9 @@ class CifraPlayer {
         this.musicTheory = musicTheory; // Injetado
         this.elements = elements;
 
-        this.acordeGroup = null;
+        // NOVO: Inicialização do AudioContextManager
+        this.audioContextManager = new AudioContextManager(0.2, 0.5, 0.5);
+
         this.parado = true;
         this.acordeTocando = '';
         this.indiceAcorde = 0;
@@ -17,13 +19,60 @@ class CifraPlayer {
         this.acordesSustenidos = musicTheory.acordesSustenidos;
         this.acordesBemol = musicTheory.acordesBemol;
         this.acordesSustenidosBemol = musicTheory.acordesSustenidosBemol;
-        this.acordesMapCore = musicTheory.acordesMap; // Renomeado para não conflitar com this.acordeMap de áudio
+        this.acordesMapCore = musicTheory.acordesMap;
 
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
-        this.acordes = {};
-        this.carregarAcordes();
+        this.acordeUrls = new Map(); // Armazena a URL para cada arquivo de áudio
+        this.carregarTodosOsAudios(); // NOVO: Chamada para carregar todos os áudios
     }
 
+    // Método renomeado e alterado para incluir o pré-carregamento
+    carregarTodosOsAudios() {
+        const urlsSet = new Set();
+        const instrumentos = ['orgao', 'strings'];
+        const oitavas = ['grave', 'baixo', ''];
+        const notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
+
+        instrumentos.forEach(instrumento => {
+            notas.forEach(nota => {
+                oitavas.forEach(oitava => {
+                    const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
+                    const url = `${this.audioPath}${instrumento.charAt(0).toUpperCase() + instrumento.slice(1)}/${key}.ogg`;
+                    this.acordeUrls.set(key, url);
+                    urlsSet.add(url);
+                });
+            });
+        });
+
+        const allUniqueUrls = Array.from(urlsSet);
+
+        // 1. Registra um grupo dummy no AudioContextManager com TODAS as URLs.
+        // Isso permite que o preloadAll() encontre e carregue todos os buffers.
+        this.audioContextManager.addAcorde('__PRELOAD_ALL_KEYS__', allUniqueUrls);
+
+        // 2. Inicia o pré-carregamento.
+        this.audioContextManager.preloadAll().catch(error => {
+            console.error("Falha ao pré-carregar todos os áudios:", error);
+            // Implemente feedback para o usuário se necessário
+        });
+    }
+
+
+    // Método auxiliar para obter a URL do arquivo de áudio
+    _getUrl(instrumento, nota, oitava = '') {
+        nota = nota.toLowerCase();
+        nota = this.getNomeArquivoAudio(nota);
+        const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
+        return this.acordeUrls.get(key);
+    }
+
+    // Método auxiliar para obter a URL do arquivo de áudio
+    _getUrl(instrumento, nota, oitava = '') {
+        nota = nota.toLowerCase();
+        nota = this.getNomeArquivoAudio(nota);
+        const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
+        return this.acordeUrls.get(key);
+    }
 
     descobrirTom(textoHtml) {
         const tempDiv = document.createElement('div');
@@ -50,7 +99,6 @@ class CifraPlayer {
     destacarCifras(texto, tom) {
         const linhas = texto.split('\n');
         let cifraNum = 1;
-        const temPalavra = /[a-zA-Z]{4,}/;
         const temColchetes = /\[.*?\]/;
 
         const linhasDestacadas = linhas.map(linha => {
@@ -114,28 +162,7 @@ class CifraPlayer {
         return this.musicTheory.notasAcordes.includes(acorde.split('/')[0]) ? `<b id="cifra${cifraNum}">${acorde}</b>` : palavra;
     }
 
-    carregarAcordes() {
-        const instrumentos = ['orgao', 'strings'];
-        const oitavas = ['grave', 'baixo', ''];
-        const notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
-
-        instrumentos.forEach(instrumento => {
-            notas.forEach(nota => {
-                oitavas.forEach(oitava => {
-                    const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
-                    this.acordes[key] = new Pizzicato.Sound({
-                        source: 'file',
-                        options: {
-                            path: `${this.audioPath}${instrumento.charAt(0).toUpperCase() + instrumento.slice(1)}/${key}.ogg`,
-                            loop: true,
-                            release: 0.5,
-                            attack: 0.1
-                        }
-                    });
-                });
-            });
-        });
-    }
+    // REMOVIDO: carregarAcordes, substituído por _carregarAudioUrls
 
     transposeCifra() {
         if (this.elements.tomSelect.value) {
@@ -222,51 +249,61 @@ class CifraPlayer {
         }
     }
 
+
+    // ... (restante dos métodos omitidos para brevidade, exceto tocarAcorde)
+
+    // trecho de tocarAcorde com a mudança principal
     tocarAcorde(acorde) {
         this.pararAcorde();
-        acorde = this.musicTheory.getAcorde(acorde, this.tomAtual); // Usa MusicTheory para obter o acorde canônico
+        acorde = this.musicTheory.getAcorde(acorde, this.tomAtual);
         this.acordeTocando = acorde;
+        const acordeKey = acorde; // Chave para o AudioContextManager
 
         this.desabilitarSelectSaves();
 
-        if (!this.acordeGroup) {
-            this.acordeGroup = new Pizzicato.Group();
-            this.acordeGroup.attack = 0.1;
-        }
-
+        // 1. Coletar as URLs de áudio necessárias para este acorde
+        const urls = new Set();
         let [notaPrincipal, baixo] = acorde.split('/');
         let notas = this.musicTheory.getAcordeNotas(notaPrincipal);
         if (!notas) return;
 
-        //if (baixo && notas.includes(baixo.toLowerCase())) {
-        //notas = this.inversaoDeAcorde(notas, baixo.toLowerCase());
-        //}
-
         baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
 
-        this.adicionarSomAoGrupo('orgao', baixo, 'grave');
-        if (!this.elements.notesButton.classList.contains('notaSolo'))
-            this.adicionarSomAoGrupo('strings', baixo, 'grave', 0.9);
+        // Adiciona Baixo (Grave)
+        urls.add(this._getUrl('orgao', baixo, 'grave'));
+        if (!this.elements.notesButton.classList.contains('notaSolo')) {
+            urls.add(this._getUrl('strings', baixo, 'grave'));
+        }
 
+        // Adiciona Notas do Acorde (Baixo)
         notas.forEach(nota => {
-            this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'), 'baixo');
-            if (!this.elements.notesButton.classList.contains('notaSolo'))
-                this.adicionarSomAoGrupo('strings', nota.replace('#', '_'), 'baixo', 0.9);
+            const notaKey = nota.replace('#', '_');
 
+            urls.add(this._getUrl('orgao', notaKey, 'baixo'));
+            if (!this.elements.notesButton.classList.contains('notaSolo')) {
+                urls.add(this._getUrl('strings', notaKey, 'baixo'));
+            }
+
+            // Adiciona Notas do Acorde (Padrão, se botão "notes" estiver pressionado)
             if (this.elements.notesButton.classList.contains('pressed')) {
-                this.adicionarSomAoGrupo('orgao', nota.replace('#', '_', 0.5));
-                if (!this.elements.notesButton.classList.contains('notaSolo'))
-                    this.adicionarSomAoGrupo('strings', nota.replace('#', '_'));
+                urls.add(this._getUrl('orgao', notaKey));
+                if (!this.elements.notesButton.classList.contains('notaSolo')) {
+                    urls.add(this._getUrl('strings', notaKey));
+                }
             }
         });
 
-        setTimeout(() => {
-            if (!this.parado && this.acordeTocando) {
-                try {
-                    this.acordeGroup.play();
-                } catch { }
-            }
-        }, 60);
+        const uniqueUrls = Array.from(urls).filter(url => url);
+
+        // 2. Configurar o Acorde no AudioContextManager (essencial para criar o GainNode)
+        // Isso é feito em tempo de execução, mas os BUFFERS já estarão carregados
+        if (!this.audioContextManager.playerConfigs.has(acordeKey)) {
+            this.audioContextManager.addAcorde(acordeKey, uniqueUrls);
+        }
+
+        // 3. Iniciar a reprodução (IMEDIATAMENTE)
+        // A chamada a this.audioContextManager.preloadAll() foi removida daqui!
+        this.audioContextManager.play(acordeKey);
     }
 
     desabilitarSelectSaves() {
@@ -282,15 +319,12 @@ class CifraPlayer {
     pararAcorde() {
         this.habilitarSelectSaves();
 
-        if (this.acordeGroup) {
-            this.acordeGroup.stop();
-
-            const sons = this.acordeGroup.sounds.length;
-            if (sons === 0) return;
-            for (let i = sons - 1; i > -1; i--) {
-                this.acordeGroup.removeSound(this.acordeGroup.sounds[i]);
-            }
+        // NOVO: Parar o acorde usando AudioContextManager
+        if (this.acordeTocando) {
+            this.audioContextManager.stop(this.acordeTocando, true);
         }
+
+        // Lógica de Pizzicato.Group.stop() e remoção de sons REMOVIDA
     }
 
     inversaoDeAcorde(acorde, baixo) {
@@ -416,17 +450,7 @@ class CifraPlayer {
         return this.acordeMap[nota] || nota;
     }
 
-    adicionarSomAoGrupo(instrumento, nota, oitava = '', volume) {
-        nota = nota.toLowerCase();
-        nota = this.getNomeArquivoAudio(nota);
-        const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
-        if (this.acordes[key]) {
-            if (volume) {
-                this.acordes[key].volume = volume;
-            }
-            this.acordeGroup.addSound(this.acordes[key]);
-        }
-    }
+    // REMOVIDO: adicionarSomAoGrupo (substituído por _getUrl)
 
     removerClasseCifraSelecionada(iframeDoc, excecao = null) {
         const elementos = iframeDoc.querySelectorAll('.cifraSelecionada');
@@ -446,10 +470,10 @@ class CifraPlayer {
         this.elements.playButton.style.animationDuration = `${bpmValor}ms`;
         this.elements.stopButton.style.animationDuration = `${bpmValor}ms`;
 
-        if (this.acordeGroup) {
-            // Ajusta a velocidade de reprodução do acorde atual (se houver)
-            // ... (lógica para ajustar a velocidade com Pizzicato) ...
-        }
+        // Lógica de ajuste de velocidade de reprodução REMOVIDA, pois não era implementada no Pizzicato
+        // if (this.acordeGroup) {
+        //     // ... (lógica para ajustar a velocidade com Pizzicato) ...
+        // }
     }
 
     preencherSelect(tom) {

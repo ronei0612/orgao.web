@@ -1,22 +1,23 @@
-// Define um nome e uma versão para o cache.
-// Mudar a versão (ex: v2) no futuro forçará a atualização de todos os arquivos.
 const version = '1.7';
 
-// Lista de todos os arquivos que seu site precisa para funcionar offline.
-// Eu analisei seu index.html e listei todos os recursos essenciais.
 const urlsToCache = [
     // Arquivos principais
     './',
     './index.html',
-    './cifras.json', // Nosso banco de dados de cifras
+    './cifras.json',
     './assets/css/styles.css',
-    './assets/js/script.js',
-    './assets/lib/js/Pizzicato/0.6.4/Pizzicato.js',
-    './assets/lib/js/Jquery/3.5.1/jquery.min.js',
-    './assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css',
-    './assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js',
+    './assets/css/frames-styles.css',
     './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css',
     './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/fonts/bootstrap-icons.woff2',
+    './assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css',
+    './assets/js/script.js',
+    './assets/js/CifraPlayer.js',
+    './assets/js/LocalStorageManager.js',
+    './assets/js/MusicTheory.js',
+    './assets/js/UIController.js',
+    './assets/lib/js/Pizzicato/0.6.4/Pizzicato.js',
+    './assets/lib/js/Jquery/3.5.1/jquery.min.js',
+    './assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js',
 
     // Páginas dos iframes
     './santamissa.html',
