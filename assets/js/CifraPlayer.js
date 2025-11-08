@@ -249,14 +249,20 @@ class CifraPlayer {
         }
     }
 
+    // --- CifraPlayer.js (Apenas o método modificado) ---
 
-    // ... (restante dos métodos omitidos para brevidade, exceto tocarAcorde)
-
-    // trecho de tocarAcorde com a mudança principal
     tocarAcorde(acorde) {
-        this.pararAcorde();
+        // REMOVIDO: this.pararAcorde(); // <-- REMOVA ESTA LINHA
+
         acorde = this.musicTheory.getAcorde(acorde, this.tomAtual);
-        this.acordeTocando = acorde;
+
+        // Se o novo acorde for igual ao que está tocando, o AudioContextManager.play()
+        // irá retornar no início, mas precisamos garantir que 'acordeTocando' seja atualizado
+        // para que pararAcorde() funcione corretamente se for pressionado o botão de stop.
+        if (acorde === this.acordeTocando) return; // Nova verificação para evitar re-play do mesmo acorde
+
+        this.acordeTocando = acorde; // Move a atualização para cá
+
         const acordeKey = acorde; // Chave para o AudioContextManager
 
         this.desabilitarSelectSaves();
@@ -296,13 +302,12 @@ class CifraPlayer {
         const uniqueUrls = Array.from(urls).filter(url => url);
 
         // 2. Configurar o Acorde no AudioContextManager (essencial para criar o GainNode)
-        // Isso é feito em tempo de execução, mas os BUFFERS já estarão carregados
         if (!this.audioContextManager.playerConfigs.has(acordeKey)) {
             this.audioContextManager.addAcorde(acordeKey, uniqueUrls);
         }
 
-        // 3. Iniciar a reprodução (IMEDIATAMENTE)
-        // A chamada a this.audioContextManager.preloadAll() foi removida daqui!
+        // 3. Iniciar a reprodução. O AudioContextManager.play() irá parar o anterior
+        // e iniciar o novo com crossfade.
         this.audioContextManager.play(acordeKey);
     }
 
