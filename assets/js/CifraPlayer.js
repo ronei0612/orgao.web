@@ -23,10 +23,10 @@ class CifraPlayer {
 
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
         this.acordeUrls = new Map(); // Armazena a URL para cada arquivo de áudio
-        this.carregarTodosOsAudios(); // NOVO: Chamada para carregar todos os áudios
+        this.carregarTodosOsAudios(); // Chamada para carregar todos os áudios
     }
 
-    // Método renomeado e alterado para incluir o pré-carregamento
+    // Método renomeado e alterado para incluir o pré-carregamento (melhorado)
     carregarTodosOsAudios() {
         const urlsSet = new Set();
         const instrumentos = ['orgao', 'strings'];
@@ -46,17 +46,15 @@ class CifraPlayer {
 
         const allUniqueUrls = Array.from(urlsSet);
 
-        // 1. Registra um grupo dummy no AudioContextManager com TODAS as URLs.
-        // Isso permite que o preloadAll() encontre e carregue todos os buffers.
+        // 1. Registra um grupo dummy no AudioContextManager com TODAS as URLs (para pré-carregamento).
+        // Isso garante que todos os buffers de notas estejam em cache.
         this.audioContextManager.addAcorde('__PRELOAD_ALL_KEYS__', allUniqueUrls);
 
         // 2. Inicia o pré-carregamento.
         this.audioContextManager.preloadAll().catch(error => {
             console.error("Falha ao pré-carregar todos os áudios:", error);
-            // Implemente feedback para o usuário se necessário
         });
     }
-
 
     // Método auxiliar para obter a URL do arquivo de áudio
     _getUrl(instrumento, nota, oitava = '') {
@@ -65,6 +63,8 @@ class CifraPlayer {
         const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
         return this.acordeUrls.get(key);
     }
+
+
 
     // Método auxiliar para obter a URL do arquivo de áudio
     _getUrl(instrumento, nota, oitava = '') {
@@ -249,21 +249,17 @@ class CifraPlayer {
         }
     }
 
-    // --- CifraPlayer.js (Apenas o método modificado) ---
-
     tocarAcorde(acorde) {
-        // REMOVIDO: this.pararAcorde(); // <-- REMOVA ESTA LINHA
+        // CORREÇÃO ESSENCIAL: REMOVER A CHAMADA DE PARADA AQUI
+        // this.pararAcorde(); // <-- REMOVIDO! O AudioContextManager fará o crossfade.
 
         acorde = this.musicTheory.getAcorde(acorde, this.tomAtual);
+        const acordeKey = acorde;
 
-        // Se o novo acorde for igual ao que está tocando, o AudioContextManager.play()
-        // irá retornar no início, mas precisamos garantir que 'acordeTocando' seja atualizado
-        // para que pararAcorde() funcione corretamente se for pressionado o botão de stop.
-        if (acorde === this.acordeTocando) return; // Nova verificação para evitar re-play do mesmo acorde
+        // Se for o mesmo acorde, evita re-processar e re-tocar
+        if (acordeKey === this.acordeTocando) return;
 
-        this.acordeTocando = acorde; // Move a atualização para cá
-
-        const acordeKey = acorde; // Chave para o AudioContextManager
+        this.acordeTocando = acordeKey; // Atualiza o acorde tocando ANTES de chamar o play
 
         this.desabilitarSelectSaves();
 
@@ -301,13 +297,14 @@ class CifraPlayer {
 
         const uniqueUrls = Array.from(urls).filter(url => url);
 
-        // 2. Configurar o Acorde no AudioContextManager (essencial para criar o GainNode)
+        // 2. Configurar o Acorde no AudioContextManager (Cria o GainNode se ainda não existir)
+        // Isso é crucial, pois o play() precisa do playerConfigs[acordeKey].gainNode
         if (!this.audioContextManager.playerConfigs.has(acordeKey)) {
             this.audioContextManager.addAcorde(acordeKey, uniqueUrls);
         }
 
         // 3. Iniciar a reprodução. O AudioContextManager.play() irá parar o anterior
-        // e iniciar o novo com crossfade.
+        // e iniciar o novo com crossfade, usando os buffers já carregados.
         this.audioContextManager.play(acordeKey);
     }
 
@@ -324,17 +321,18 @@ class CifraPlayer {
     pararAcorde() {
         this.habilitarSelectSaves();
 
-        // NOVO: Parar o acorde usando AudioContextManager
+        // Garantir que a parada use a chave correta e seja uma parada TOTAL
         if (this.acordeTocando) {
+            // isTotalStop = true irá suspender o AudioContext
             this.audioContextManager.stop(this.acordeTocando, true);
         }
-
-        // Lógica de Pizzicato.Group.stop() e remoção de sons REMOVIDA
+        // NÃO RESETAMOS this.acordeTocando aqui, pois AudioContextManager.stop() fará isso internamente (setando currentAcordeKey = null)
+        // e ele será resetado em pararReproducao() de qualquer forma.
     }
 
     inversaoDeAcorde(acorde, baixo) {
         return this.musicTheory.inversaoDeAcorde(acorde, baixo);
-    }
+}
 
     removeCifras(musica) {
         let linhasFinal = [];
