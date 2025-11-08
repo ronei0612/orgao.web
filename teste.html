@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Audio - Acordes Otimizados com Master Gain</title>
+    <title>Web Audio</title>
 
-    <!-- Melhoria: CSS Separado em um arquivo (conceitualmente) -->
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -34,6 +33,7 @@
             background-color: #ffffff;
             border-radius: 5px;
             transition: all 0.2s ease-in-out;
+            min-width: 120px;
         }
 
             .play-button:hover:not(:disabled) {
@@ -42,7 +42,7 @@
             }
 
             .play-button.active {
-                background-color: #28a745; /* Verde */
+                background-color: #28a745;
                 color: white;
                 border-color: #28a745;
             }
@@ -56,7 +56,7 @@
             margin-top: 25px;
             font-style: italic;
             color: #555;
-            min-height: 20px; /* Para evitar saltos de layout */
+            min-height: 20px;
         }
 
         .controls-group {
@@ -70,6 +70,7 @@
         .volume-control {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
             margin-bottom: 10px;
         }
@@ -90,7 +91,6 @@
 
     <p id="statusMessage">Carregando recursos de áudio, por favor aguarde...</p>
 
-    <!-- Melhoria: JS Separado em um arquivo (conceitualmente) -->
     <script>
         // --- Configuração das URLs ---
         const audioConfigs = {
@@ -98,25 +98,27 @@
                 urls: [
                     'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_baixo.ogg'
                 ],
-                sources: [] // Rastreamos apenas as SourceNodes para parada
+                sources: [],
+                gainNode: null
             },
             'G': {
                 urls: [
                     'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d_baixo.ogg'
                 ],
-                sources: []
+                sources: [],
+                gainNode: null
             }
         };
 
-        const ATTACK_TIME = 0.3;
-        const RELEASE_TIME = 0.2;
+        const ATTACK_TIME = 0.2;
+        const RELEASE_TIME = 0.5;
         const PEAK_VOLUME = 0.5;
 
         // --- Variáveis Globais ---
         let audioContext;
         let masterGainNode;
         let currentAcorde = null;
-        let urlBufferMap = new Map(); // Melhoria: Mapa para armazenar buffers carregados (evita duplicação)
+        let urlBufferMap = new Map();
 
         // --- Elementos HTML ---
         const playCButton = document.getElementById('playCButton');
@@ -131,12 +133,17 @@
         function initializeContext() {
             if (!audioContext) {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                // CRIA O NÓ DE GANHO MESTRE
                 masterGainNode = audioContext.createGain();
-                // CONECTA O NÓ MESTRE AO DESTINO FINAL
                 masterGainNode.connect(audioContext.destination);
-                // Inicializa o volume Mestre em 0 para garantir que nada toque antes do Play
-                masterGainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                masterGainNode.gain.setValueAtTime(PEAK_VOLUME, audioContext.currentTime);
+
+                // Cria os Gain Nodes individuais e os conecta ao Master Gain
+                for (const acorde in audioConfigs) {
+                    const config = audioConfigs[acorde];
+                    config.gainNode = audioContext.createGain();
+                    config.gainNode.connect(masterGainNode);
+                    config.gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                }
             }
         }
 
@@ -153,23 +160,20 @@
             }
         }
 
-        // Função principal de pré-carregamento (Melhorada para lidar com URLs únicas)
+        // Função principal de pré-carregamento (Otimizada para URLs únicas)
         async function preloadAllAudio() {
             initializeContext();
 
             try {
-                // 1. Coleta todas as URLs únicas
+                // ... (lógica de carregamento de URLs únicas) ...
                 const allUrlsSet = new Set();
                 for (const acorde in audioConfigs) {
                     audioConfigs[acorde].urls.forEach(url => allUrlsSet.add(url));
                 }
                 const uniqueUrls = Array.from(allUrlsSet);
-
-                // 2. Cria e executa todas as promessas de carregamento
                 const loadingPromises = uniqueUrls.map(url => loadAudio(url));
                 const allBuffers = await Promise.all(loadingPromises);
 
-                // 3. Popula o mapa de buffers (URL -> AudioBuffer)
                 uniqueUrls.forEach((url, index) => {
                     urlBufferMap.set(url, allBuffers[index]);
                 });
@@ -188,49 +192,44 @@
             allPlayButtons.forEach(button => {
                 const acorde = buttonMap[button.id];
 
-                // Se estiver em transição (parando um e iniciando outro) ou carregando, desabilita
-                const isDisabled = isTransitioning || currentAcordeKey === acorde && isTransitioning;
+                const isDisabled = isTransitioning;
 
                 button.disabled = isDisabled;
                 button.classList.remove('active');
 
-                if (isTransitioning) {
-                    button.textContent = currentAcordeKey ? 'Transição...' : `Play ${acorde}`;
-                } else if (acorde === currentAcordeKey) {
+                if (acorde === currentAcordeKey && !isTransitioning) {
                     button.textContent = `Tocando ${acorde}...`;
                     button.classList.add('active');
+                } else if (isTransitioning) {
+                    button.textContent = 'Transição...';
                 } else {
                     button.textContent = `Play ${acorde}`;
                 }
             });
-            stopButton.disabled = currentAcordeKey === null && !isTransitioning;
+            stopButton.disabled = currentAcordeKey === null;
         }
 
         /**
-         * Para o som atualmente tocando com um fade-out suave.
-         * @returns {Promise<void>} - Resolve quando o fade-out estiver completo.
+         * Para o som de um acorde específico com fade-out e liberação de recursos.
+         * @param {string} acorde - A chave do acorde ('C' ou 'G').
          */
-        function stopCurrentSound() {
+        function stopAndCleanupAcorde(acorde) {
             return new Promise(resolve => {
-                if (!currentAcorde) {
-                    return resolve();
-                }
+                const config = audioConfigs[acorde];
+                if (!config.gainNode) return resolve();
 
-                const config = audioConfigs[currentAcorde];
                 const stopTime = audioContext.currentTime + RELEASE_TIME;
 
-                // 1. APLICA O FADE-OUT NO NÓ DE GANHO MESTRE (Master Gain Node)
-                masterGainNode.gain.cancelScheduledValues(audioContext.currentTime);
-                masterGainNode.gain.linearRampToValueAtTime(0, stopTime);
+                // APLICA O FADE-OUT NO NÓ DE GANHO INDIVIDUAL
+                config.gainNode.gain.cancelScheduledValues(audioContext.currentTime);
+                config.gainNode.gain.linearRampToValueAtTime(0.0001, stopTime);
 
-                // 2. Agenda a parada das SourceNodes e a limpeza do estado após o fade-out
-                // Nota: O uso de setTimeout é um hack para a limpeza de recursos após o fade-out.
+                // Agenda a parada das SourceNodes e a limpeza do estado APÓS o fade-out
                 setTimeout(() => {
-                    // Pára todas as SourceNodes (importante para liberar recursos)
                     config.sources.forEach(source => {
                         try { source.stop(0); } catch (e) { /* ignore se já parou */ }
                     });
-                    config.sources = []; // Limpa o array de sources
+                    config.sources = [];
                     resolve();
                 }, RELEASE_TIME * 1000);
             });
@@ -238,62 +237,60 @@
 
         // Função principal para iniciar a reprodução
         async function startSound(acorde) {
-            // Se o contexto estiver suspenso (por políticas de autoplay), tente resumir
-            if (audioContext && audioContext.state === 'suspended') {
+            // ** CORREÇÃO: Tenta resumir/iniciar o contexto IMEDIATAMENTE no clique **
+            if (!audioContext || audioContext.state === 'suspended') {
+                initializeContext(); // Cria o contexto e os nós se ainda não existirem
                 audioContext.resume().catch(e => console.error("Falha ao resumir o AudioContext:", e));
             }
 
             if (acorde === currentAcorde) {
-                return; // Já está tocando
+                return;
             }
 
-            // 1. Transição: Parar o som atual (com fade-out)
             const previousAcorde = currentAcorde;
-            if (previousAcorde) {
-                updateButtonStates(previousAcorde, true);
-                statusMessage.textContent = `Transição: Parando Acorde ${previousAcorde}...`;
-                // Espera o fade-out do acorde anterior
-                await stopCurrentSound();
-            }
-
-            // 2. Iniciar o novo som
             currentAcorde = acorde;
-            const config = audioConfigs[acorde];
+
+            const newConfig = audioConfigs[acorde];
+            const newGainNode = newConfig.gainNode;
+            const now = audioContext.currentTime;
+
+            // 1. INICIAR O FADE-OUT NO ACORDE ANTERIOR (ocorre em paralelo - Cross-Fade)
+            if (previousAcorde) {
+                stopAndCleanupAcorde(previousAcorde);
+                statusMessage.textContent = `Transição Cross-Fade: ${previousAcorde} -> ${acorde}...`;
+            }
 
             try {
-                // Limpa e recria as SourceNodes
-                config.sources = [];
+                // 2. INICIAR O NOVO SOM (se ainda não estiver rodando)
+                if (newConfig.sources.length === 0) {
+                    // ... (lógica de criação de sources) ...
+                    newConfig.sources = [];
+                    newConfig.urls.forEach(url => {
+                        const buffer = urlBufferMap.get(url);
+                        if (!buffer) { throw new Error(`Buffer não encontrado para URL: ${url}`); }
 
-                // Melhoria: Pega o buffer do mapa (urlBufferMap)
-                config.urls.forEach(url => {
-                    const buffer = urlBufferMap.get(url);
-                    if (!buffer) {
-                        throw new Error(`Buffer não encontrado para URL: ${url}`);
-                    }
+                        const source = audioContext.createBufferSource();
+                        source.buffer = buffer;
+                        source.loop = true;
+                        source.connect(newGainNode);
+                        source.start(0);
 
-                    const source = audioContext.createBufferSource();
-                    source.buffer = buffer;
-                    source.loop = true;
+                        newConfig.sources.push(source);
+                    });
+                }
 
-                    // Conecta a source DIRETAMENTE ao Master Gain Node
-                    source.connect(masterGainNode);
+                // 3. Efeito Attack (Fade-in gradual) APLICADO NO GANHO INDIVIDUAL DO NOVO ACORDE
+                newGainNode.gain.cancelScheduledValues(now);
 
-                    // Inicia o áudio
-                    source.start(0);
+                // ** A CORREÇÃO: Garante que o valor inicial do fade-in seja 0, mesmo após resume **
+                newGainNode.gain.setValueAtTime(0, now);
 
-                    // Armazena a SourceNode
-                    config.sources.push(source);
-                });
+                // Rampa até o volume máximo (1.0 no nó individual, pois o Master Gain gerencia o volume global)
+                newGainNode.gain.linearRampToValueAtTime(1.0, now + ATTACK_TIME);
 
-                // --- Efeito Attack (Fade-in gradual) APLICADO NO MASTER GAIN NODE ---
-                masterGainNode.gain.cancelScheduledValues(audioContext.currentTime); // Limpa agendamentos anteriores
-                masterGainNode.gain.setValueAtTime(0, audioContext.currentTime);
-                masterGainNode.gain.linearRampToValueAtTime(PEAK_VOLUME, audioContext.currentTime + ATTACK_TIME);
-
-
-                // 3. Gerenciar botões e status após iniciar
+                // 4. Gerenciar botões e status
                 updateButtonStates(acorde, false);
-                statusMessage.textContent = `Acorde de ${acorde} tocando em loop (Attack: ${ATTACK_TIME}s, Release: ${RELEASE_TIME}s). Volume: ${(PEAK_VOLUME * 100).toFixed(0)}%.`;
+                statusMessage.textContent = `Cross-Fade completo. Acorde de ${acorde} tocando. Volume Mestre: ${(PEAK_VOLUME * 100).toFixed(0)}%.`;
 
             } catch (error) {
                 // Em caso de erro
@@ -309,12 +306,11 @@
             if (!currentAcorde) return;
 
             // 1. Feedback visual de parada
-            allPlayButtons.forEach(btn => btn.disabled = true);
-            stopButton.disabled = true;
-            statusMessage.textContent = `Parando reprodução...`;
+            updateButtonStates(null, true);
+            statusMessage.textContent = `Parando reprodução... (Fade-out em ${RELEASE_TIME}s)`;
 
             // 2. Executa o fade-out
-            await stopCurrentSound();
+            await stopAndCleanupAcorde(currentAcorde);
 
             // 3. Limpeza final e atualização do estado
             currentAcorde = null;
