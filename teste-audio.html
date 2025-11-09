@@ -3,222 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Audio</title>
-
+    <title>Tocador de Acordes Simples</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            padding: 30px;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-
-        h1 {
-            color: #007bff;
-        }
-
-        .button-group {
+            font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .play-button, #stopButton {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 2px solid #ccc;
-            background-color: #ffffff;
-            border-radius: 5px;
-            transition: all 0.2s ease-in-out;
-            min-width: 120px;
-        }
-
-            .play-button:hover:not(:disabled) {
-                background-color: #e9ecef;
-                border-color: #007bff;
-            }
-
-            .play-button.active {
-                background-color: #28a745;
-                color: white;
-                border-color: #28a745;
-            }
-
-            .play-button:disabled, #stopButton:disabled {
-                cursor: not-allowed;
-                opacity: 0.6;
-            }
-
-        #statusMessage {
-            margin-top: 25px;
-            font-style: italic;
-            color: #555;
-            min-height: 20px;
-        }
-
-        .controls-group {
-            margin-top: 30px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            display: inline-block;
-        }
-
-        .volume-control {
-            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        button {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            transition: background-color 0.2s;
+        }
+
+            button:hover:not(:disabled) {
+                background-color: #ddd;
+            }
+
+            button:disabled {
+                background-color: #eee;
+                cursor: wait;
+            }
+
+        .loading-message {
+            margin-top: 20px;
+            color: #555;
         }
     </style>
 </head>
 <body>
 
-    <h1>Controle de Acordes Otimizado (Web Audio)</h1>
+    <h1>Tocador de Acordes</h1>
 
-    <div class="controls-group">
-
-        <div class="button-group">
-            <button id="playCButton" class="play-button" disabled>Play C</button>
-            <button id="playGButton" class="play-button" disabled>Play G</button>
-            <button id="stopButton" disabled>Stop</button>
-        </div>
+    <div class="controls">
+        <button id="play-c" disabled>Tocar Acorde C (C, E, G)</button>
+        <button id="play-g" disabled>Tocar Acorde G (G, B, D)</button>
+        <button id="stop">Parar</button>
     </div>
 
-    <p id="statusMessage">Carregando recursos de áudio, por favor aguarde...</p>
-    <script src="./assets/js/AudioContextManager.js"></script>
+    <p id="status-message" class="loading-message">Carregando instrumentos...</p>
 
     <script>
-        // --- Lógica Principal da Aplicação ---
+        /**
+         * Classe AudioContextManager
+         * Responsável por gerenciar o Web Audio API, carregar instrumentos e tocar acordes
+         * com efeitos de loop, attack e release.
+         */
+        class AudioContextManager {
+            constructor() {
+                // Cria uma nova instância do AudioContext
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.buffers = {}; // Armazena os buffers de áudio carregados (instrumentos)
+                this.sources = []; // Armazena os nós de fonte de áudio atualmente tocando
+                this.gainNodes = []; // Armazena os nós de ganho (volume) para controle de Attack/Release
 
-        // 1. CONSTANTES E CONFIGURAÇÕES
-        const ATTACK_TIME = 0.2;
-        const RELEASE_TIME = 0.5;
-        const MASTER_VOLUME = 0.5;
+                // Mapeamento das notas necessárias para as URLs de áudio (usando Orgao no registro padrão)
+                this.notesMap = {
+                    'c': 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c.ogg',
+                    'e': 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e.ogg',
+                    'g': 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg',
+                    'b': 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b.ogg',
+                    'd': 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d.ogg'
+                };
 
-        const ACORDE_CONFIGS = {
-            'C': {
-                urls: [
-                    'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_baixo.ogg'
-                ],
-                sources: [],
-                gainNode: null
-            },
-            'G': {
-                urls: [
-                    'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d_baixo.ogg'
-                ],
-                sources: [],
-                gainNode: null
+                this.currentNotes = []; // Notas a serem tocadas (setadas pelo setNotes)
             }
-        };
 
-        // 2. ELEMENTOS HTML
-        const playCButton = document.getElementById('playCButton');
-        const playGButton = document.getElementById('playGButton');
-        const stopButton = document.getElementById('stopButton');
-        const statusMessage = document.getElementById('statusMessage');
-        const allPlayButtons = [playCButton, playGButton];
-        const buttonMap = { 'playCButton': 'C', 'playGButton': 'G' };
+            /**
+             * Carrega todos os instrumentos (arquivos de áudio) na memória (buffers).
+             * @returns {Promise<void>} Uma Promise que resolve quando todos os arquivos são carregados.
+             */
+            async loadInstruments() {
+                const noteKeys = Object.keys(this.notesMap);
+                const loadingPromises = noteKeys.map(key => {
+                    const url = this.notesMap[key];
+                    return fetch(url)
+                        .then(response => response.arrayBuffer())
+                        .then(arrayBuffer => this.audioContext.decodeAudioData(arrayBuffer))
+                        .then(audioBuffer => {
+                            this.buffers[key] = audioBuffer;
+                        })
+                        .catch(error => {
+                            console.error(`Erro ao carregar o som para a nota ${key}:`, error);
+                            // Permite que outras notas continuem carregando mesmo com um erro
+                        });
+                });
 
-        // 3. INSTÂNCIA PRINCIPAL DO PLAYER
-        let audioPlayer = null;
+                await Promise.all(loadingPromises);
+                console.log("Todos os instrumentos carregados.");
+            }
 
+            /**
+             * Define as notas que serão tocadas no próximo método play().
+             * @param {string[]} notes Um array de strings com as notas, ex: ['c', 'e', 'g'].
+             */
+            setNotes(notes) {
+                this.currentNotes = notes;
+            }
 
-        // Função para atualizar o estado visual dos botões
-        function updateButtonStates(currentAcordeKey) {
-            const isPlaying = currentAcordeKey !== null;
-            allPlayButtons.forEach(button => {
-                const acorde = buttonMap[button.id];
-
-                button.disabled = !audioPlayer; // Desabilitado se o player não estiver pronto
-                button.classList.remove('active');
-
-                if (acorde === currentAcordeKey) {
-                    button.textContent = `Tocando ${acorde}...`;
-                    button.classList.add('active');
-                } else if (isPlaying) {
-                    button.textContent = `Play ${acorde} (Transição)`;
-                } else {
-                    button.textContent = `Play ${acorde}`;
+            /**
+             * Toca as notas definidas em currentNotes com loop e efeito Attack.
+             * @param {number} [attackTime=0.3] Duração do efeito Attack em segundos (entrada suave).
+             */
+            play(attackTime = 0.2) {
+                // Garante que o AudioContext esteja resumido após o clique do usuário
+                if (this.audioContext.state === 'suspended') {
+                    this.audioContext.resume();
                 }
-            });
-            stopButton.disabled = !isPlaying;
-        }
 
-        // 4. FUNÇÕES DE ORQUESTRAÇÃO
-        async function handlePlay(acordeKey) {
-            if (!audioPlayer) return;
+                // Parar qualquer som anterior imediatamente (release = 0)
+                this.stop(0);
 
-            const previousAcorde = audioPlayer.currentAcordeKey;
+                const now = this.audioContext.currentTime;
 
-            try {
-                audioPlayer.play(acordeKey);
+                this.currentNotes.forEach(note => {
+                    const buffer = this.buffers[note];
+                    if (!buffer) {
+                        console.warn(`Buffer para a nota ${note} não encontrado. Pulando.`);
+                        return;
+                    }
 
-                // Atualiza a interface (a transição acontece em paralelo dentro da classe)
-                updateButtonStates(acordeKey);
-                if (previousAcorde) {
-                    statusMessage.textContent = `Transição Cross-Fade: ${previousAcorde} -> ${acordeKey}...`;
-                } else {
-                    statusMessage.textContent = `Acorde de ${acordeKey} tocando.`;
-                }
-            } catch (error) {
-                console.error(error);
-                statusMessage.textContent = `Erro: ${error.message}`;
-                updateButtonStates(null);
+                    const source = this.audioContext.createBufferSource();
+                    const gainNode = this.audioContext.createGain();
+
+                    source.buffer = buffer;
+                    source.loop = true; // Efeito Loop
+
+                    // Conexões: Fonte -> Ganho (volume/envelope) -> Destino (alto-falantes)
+                    source.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+
+                    // Efeito Attack: Sobe o volume de 0 para 1 (máximo)
+                    gainNode.gain.setValueAtTime(0, now); // Começa em volume 0
+                    gainNode.gain.linearRampToValueAtTime(1, now + attackTime); // Sobe linearmente em 'attackTime' segundos
+
+                    source.start(0);
+
+                    this.sources.push(source);
+                    this.gainNodes.push(gainNode);
+                });
+            }
+
+            /**
+             * Para as notas que estão tocando com efeito Release.
+             * @param {number} [releaseTime=0.3] Duração do efeito Release em segundos (saída suave).
+             */
+            stop(releaseTime = 0.3) {
+                if (this.sources.length === 0) return;
+
+                const now = this.audioContext.currentTime;
+
+                this.gainNodes.forEach(gainNode => {
+                    // Cancela qualquer mudança de volume programada (ex: um Attack em andamento)
+                    gainNode.gain.cancelScheduledValues(now);
+                    // Define o valor inicial da rampa de parada para o valor atual do ganho
+                    gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+                    // Efeito Release: Desce o volume para 0
+                    gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
+                });
+
+                this.sources.forEach(source => {
+                    // Para o som após o efeito Release terminar
+                    source.stop(now + releaseTime);
+                });
+
+                // Limpa os arrays de controle
+                this.sources = [];
+                this.gainNodes = [];
             }
         }
 
-        async function handleStop() {
-            if (!audioPlayer || !audioPlayer.currentAcordeKey) return;
+        // --- Configuração da Página e Event Listeners ---
 
-            const keyToStop = audioPlayer.currentAcordeKey;
+        const C_MAJOR = ['c', 'e', 'g'];
+        const G_MAJOR = ['g', 'b', 'd'];
 
-            // Feedback visual
-            updateButtonStates(null);
-            statusMessage.textContent = `Parando reprodução de ${keyToStop}... (Fade-out em ${RELEASE_TIME}s)`;
+        const manager = new AudioContextManager();
 
-            await audioPlayer.stop();
+        const btnPlayC = document.getElementById('play-c');
+        const btnPlayG = document.getElementById('play-g');
+        const btnStop = document.getElementById('stop');
+        const statusMessage = document.getElementById('status-message');
 
-            statusMessage.textContent = 'Reprodução parada. Contexto de áudio suspenso.';
-            updateButtonStates(null);
-        }
+        // 1. Carregar os instrumentos ao iniciar
+        manager.loadInstruments().then(() => {
+            statusMessage.textContent = "Instrumentos carregados. Pronto para tocar!";
+            btnPlayC.disabled = false;
+            btnPlayG.disabled = false;
+        }).catch(err => {
+            statusMessage.textContent = "Erro ao carregar os instrumentos. Verifique o console.";
+            console.error(err);
+        });
 
+        // 2. Event Listener para Tocar C
+        btnPlayC.addEventListener('click', () => {
+            manager.setNotes(C_MAJOR);
+            manager.play(0.2); // Attack de 0.2 segundos
+        });
 
-        // 5. INICIALIZAÇÃO DA APLICAÇÃO
-        async function initApp() {
-            try {
-                // A. Cria o Player
-                audioPlayer = new AudioContextManager(ATTACK_TIME, RELEASE_TIME, MASTER_VOLUME);
+        // 3. Event Listener para Tocar G
+        btnPlayG.addEventListener('click', () => {
+            manager.setNotes(G_MAJOR);
+            manager.play(0.2); // Attack de 0.2 segundos
+        });
 
-                // B. Adiciona e Pré-carrega os acordes
-                for (const key in ACORDE_CONFIGS) {
-                    audioPlayer.addAcorde(key, ACORDE_CONFIGS[key].urls);
-                }
-                statusMessage.textContent = 'Inicializando e carregando áudios...';
-                await audioPlayer.preloadAll();
-
-                // C. Adiciona Listeners
-                playCButton.addEventListener('click', () => handlePlay('C'));
-                playGButton.addEventListener('click', () => handlePlay('G'));
-                stopButton.addEventListener('click', handleStop);
-
-                // D. Finaliza o Status
-                statusMessage.textContent = 'Carregamento concluído! Pronto para tocar.';
-                updateButtonStates(null);
-
-            } catch (error) {
-                statusMessage.textContent = `Erro fatal na inicialização: ${error.message}. Recarregue a página.`;
-                console.error(error);
-            }
-        }
-
-        // --- Listener de Evento para Iniciar ---
-        window.addEventListener('load', initApp);
+        // 4. Event Listener para Parar
+        btnStop.addEventListener('click', () => {
+            manager.stop(0.3); // Release de 0.3 segundo
+        });
 
     </script>
 </body>
