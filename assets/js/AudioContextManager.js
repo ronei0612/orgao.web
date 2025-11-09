@@ -1,5 +1,5 @@
 class AudioContextManager {
-    constructor(attackTime = 0.2, releaseTime = 0, masterVolume = 0.7) {
+    constructor(attackTime = 0.2, releaseTime = 0.5, masterVolume = 0.7) {
         // Configurações
         this.ATTACK_TIME = attackTime;
         this.RELEASE_TIME = releaseTime;
