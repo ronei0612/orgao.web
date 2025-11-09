@@ -1,225 +1,252 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Audio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Órgão.Web</title>
+    <link href="./assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css" rel="stylesheet">
+    <link href="./assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="./assets/css/styles.css">
 
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            padding: 30px;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-
-        h1 {
-            color: #007bff;
-        }
-
-        .button-group {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .play-button, #stopButton {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 2px solid #ccc;
-            background-color: #ffffff;
-            border-radius: 5px;
-            transition: all 0.2s ease-in-out;
-            min-width: 120px;
-        }
-
-            .play-button:hover:not(:disabled) {
-                background-color: #e9ecef;
-                border-color: #007bff;
-            }
-
-            .play-button.active {
-                background-color: #28a745;
-                color: white;
-                border-color: #28a745;
-            }
-
-            .play-button:disabled, #stopButton:disabled {
-                cursor: not-allowed;
-                opacity: 0.6;
-            }
-
-        #statusMessage {
-            margin-top: 25px;
-            font-style: italic;
-            color: #555;
-            min-height: 20px;
-        }
-
-        .controls-group {
-            margin-top: 30px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            display: inline-block;
-        }
-
-        .volume-control {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-    </style>
+    <!-- CSS do Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
 </head>
+
 <body>
+    <div class="container d-flex flex-column vh-100" id="container">
+        <div class="d-sm-flex mt-1 mb-1">
+            <div class="d-flex">
+                <i class="bi bi-list" id="menuButton" data-toggle="modal" data-target="#optionsModal"></i>
+                <div class="d-flex justify-content-center align-items-center flex-grow-1" id="tomContainer">
+                    <button class="btn btn-dark-cyan mx-1" id="decreaseTom"><i class="bi bi-dash-lg"></i></button>
+                    <select class="form-control mx-1 w-auto" id="tomSelect">
+                        <option value="">Letra</option>
+                        <option value="C" selected>C</option>
+                        <option value="C#">C#</option>
+                        <option value="D">D</option>
+                        <option value="Eb">Eb</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
+                        <option value="F#">F#</option>
+                        <option value="G">G</option>
+                        <option value="Ab">Ab</option>
+                        <option value="A">A</option>
+                        <option value="Bb">Bb</option>
+                        <option value="B">B</option>
+                    </select>
+                    <button class="btn btn-dark-cyan mx-1" id="increaseTom"><i class="bi bi-plus-lg"></i></button>
+                </div>
+            </div>
+            <div class="mx-1"></div>
+            <div class="d-flex flex-grow-1">
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <button id="selectedButton" class="btn btn-light d-none">
+                    </button>
+                    <div id="selectContainer">
+                        <select class="form-control" id="savesSelect">
+                        </select>
+                    </div>
+                    <input type="text" class="form-control d-none" id="itemNameInput" placeholder="Nome da Música...">
 
-    <h1>Controle de Acordes Otimizado (Web Audio)</h1>
+                    <button class="btn btn-primary btn-control-custom rounded-right d-none" id="saveButton">
+                        <i class="bi bi-check"></i>
+                    </button>
+                    <button class="btn btn-danger btn-control-custom rounded-right d-none" id="cancelButton">
+                        ×
+                    </button>
 
-    <div class="controls-group">
+                    <button class="btn btn-control-custom btn-add rounded-right" id="addButton">
+                        <i class="bi bi-plus-square"></i>
+                    </button>
+                    <button class="btn btn-control-custom btn-success rounded-0 fade d-none" id="editSavesSelect">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-danger rounded-right-custom fade d-none" id="deleteSavesSelect">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-        <div class="button-group">
-            <button id="playCButton" class="play-button" disabled>Play C</button>
-            <button id="playGButton" class="play-button" disabled>Play G</button>
-            <button id="stopButton" disabled>Stop</button>
+        <div class="mb-2 flex-grow-1">
+            <iframe class="w-100 border border-secondary rounded d-none" id="liturgiaDiariaFrame" src="https://liturgiadiaria.edicoescnbb.com.br/"></iframe>
+            <iframe class="w-100 border border-secondary rounded d-none" id="santamissaFrame" src="./santamissa.html"></iframe>
+            <iframe class="w-100 border border-secondary rounded d-none" id="oracoesFrame" src="./oracoes.html"></iframe>
+            <iframe class="w-100 border border-secondary rounded" id="iframeCifra"></iframe>
+
+            <textarea class="modal-textarea d-none" id="editTextarea" placeholder="Editar Cifra..."></textarea>
+        </div>
+
+        <div class="d-flex justify-content-center align-items-center" id="controlButtons">
+            <button class="btn btn-link d-none" id="prevButton">
+                <i class="bi bi-chevron-compact-left" style="font-size: larger;"></i>
+            </button>
+
+            <button class="btn btn-link btn-sm d-none" id="voltarButton">
+                <img src="./assets/icons/v2/voltar.svg" class="button-control" />
+            </button>
+            <button class="btn-custom btn-icons pulse mx-2" data-action="play" id="playButton"><i class="bi bi-play-fill"></i></button>
+            <button class="btn-custom btn-icons pulse mx-2 d-none" data-action="stop" id="stopButton"><i class="bi bi-stop-fill"></i></button>
+            <button class="btn btn-link btn-sm d-none" id="avancarButton">
+                <img src="./assets/icons/v2/avancar.svg" class="button-control" />
+            </button>
+
+            <button class="btn-custom btn-icons mx-2" data-action="notes" id="notesButton"><i class="bi bi-music-note-beamed"></i></button>
+
+            <button class="btn btn-link d-none" id="nextButton">
+                <i class="bi bi-chevron-compact-right" style="font-size: larger;"></i>
+            </button>
+        </div>
+
+        <div class="d-flex justify-content-center align-items-center" id="controlButtons">
+            <button class="btn btn-link d-none" id="prevButton">
+                <i class="bi bi-chevron-compact-left" style="font-size: larger;"></i>
+            </button>
+            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde9" value="Bb">Bb</button>
+            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde7" value="A">A</button>
+            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde11" value="B°">B°</button>
+            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde8" value="E">E</button>
+            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde10" value="D">D</button>
+        </div>
+
+        <div class="d-flex justify-content-center" id="acordesButtons">
+            <button class="btn-custom mx-1 botao-azul" data-action="acorde" id="acorde1" value="C">C</button>
+            <button class="btn-custom mx-1" data-action="acorde" id="acorde2" value="Am">Am</button>
+            <button class="btn-custom mx-1" data-action="acorde" id="acorde3" value="F">F</button>
+            <button class="btn-custom mx-1" data-action="acorde" id="acorde4" value="Dm">Dm</button>
+            <button class="btn-custom mx-1" data-action="acorde" id="acorde5" value="G">G</button>
+            <button class="btn-custom mx-1" data-action="acorde" id="acorde6" value="Em">Em</button>
+        </div>
+
+        <div class="mb-2"></div>
+    </div>
+
+    <!-- Modal options -->
+    <div class="modal fade modal-left" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="optionsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="optionsModalLabel">Menu</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <label class="switch mr-2 mb-0" for="darkModeToggle">
+                            <input type="checkbox" id="darkModeToggle" />
+                            <span class="slider"></span>
+                        </label>
+                    </p>
+                    <p><a href="#" id="oracoesEucaristicasLink">Orações Eucarísticas</a></p>
+                    <p><a href="#" id="missaOrdinarioLink">Ordinário Santa Missa</a></p>
+                    <p><a href="#" id="liturgiaDiariaLink">Liturgia Diária</a></p>
+                    <p><a href="#" id="oracoesLink">Orações</a></p>
+                    <p><a href="#" id="downloadSavesLink">Baixar meu Repertório</a></p>
+                    <p><a href="#" id="uploadSavesLink">Importar um Repertório</a></p>
+                    <p><a href="#" id="about">Sobre este site</a></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">× Fechar</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <p id="statusMessage">Carregando recursos de áudio, por favor aguarde...</p>
+    <!-- Modal para pesquisa -->
+    <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header d-flex justify-content-between align-items-center">
+                    <h5 class="modal-title flex-grow-1 text-truncate text-center mx-3" id="searchModalLabel">Música</h5>
+                    <button type="button" class="close ml-2" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <input class="form-control" placeholder="Pesquisar no CifraClub..." aria-label="Pesquisar" aria-describedby="basic-addon1" id="searchInput">
+                        <button class="btn btn-danger btn-sm rounded-0" type="button" tabindex="-1" id="clearButton">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                        <button class="btn btn-primary rounded-right-custom" type="button" id="searchButton">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            <i class="bi bi-search" id="searchIcon"></i>
+                        </button>
+                    </div>
+                    <textarea class="form-control mt-3 d-none" id="cifraDisplay" readonly></textarea>
+                    <ul class="list-group mt-3 d-none" id="searchResults"></ul>
+                    <ul class="list-group mt-3 d-none" id="saves"></ul>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeButton">× Fechar</button>
+                    <div>
+                        <button type="button" class="btn btn-primary" id="tocarButton">
+                            <i class="bi bi-check"></i> Tocar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Custom Confirm -->
+    <div class="modal fade" id="customConfirmModal" tabindex="-1" aria-labelledby="customConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customConfirmModalLabel">Confirmação</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="customConfirmModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btnConfirmCancel" data-bs-dismiss="modal">× Não</button>
+                    <button type="button" class="btn btn-primary" id="btnConfirmAction">✓ Sim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Custom Alert -->
+    <div class="modal fade" id="customAlertModal" tabindex="-1" aria-labelledby="customAlertModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customAlertModalLabel">Aviso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="customAlertModalBody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnAlertDialogOK">✓ OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMPORTANTE: Usar jQuery FULL, não a versão 'slim', para o Select2 funcionar corretamente -->
+    <script src="./assets/lib/js/Jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="./assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js"></script>
+
+    <!-- JS do Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script src="./assets/lib/js/Pizzicato/0.6.4/Pizzicato.js"></script>
     <script src="./assets/js/AudioContextManager.js"></script>
-
-    <script>
-        // --- Lógica Principal da Aplicação ---
-
-        // 1. CONSTANTES E CONFIGURAÇÕES
-        const ATTACK_TIME = 0.2;
-        const RELEASE_TIME = 0.5;
-        const MASTER_VOLUME = 0.5;
-
-        const ACORDE_CONFIGS = {
-            'C': {
-                urls: [
-                    'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_baixo.ogg'
-                ],
-                sources: [],
-                gainNode: null
-            },
-            'G': {
-                urls: [
-                    'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d_baixo.ogg'
-                ],
-                sources: [],
-                gainNode: null
-            }
-        };
-
-        // 2. ELEMENTOS HTML
-        const playCButton = document.getElementById('playCButton');
-        const playGButton = document.getElementById('playGButton');
-        const stopButton = document.getElementById('stopButton');
-        const statusMessage = document.getElementById('statusMessage');
-        const allPlayButtons = [playCButton, playGButton];
-        const buttonMap = { 'playCButton': 'C', 'playGButton': 'G' };
-
-        // 3. INSTÂNCIA PRINCIPAL DO PLAYER
-        let audioPlayer = null;
-
-
-        // Função para atualizar o estado visual dos botões
-        function updateButtonStates(currentAcordeKey) {
-            const isPlaying = currentAcordeKey !== null;
-            allPlayButtons.forEach(button => {
-                const acorde = buttonMap[button.id];
-
-                button.disabled = !audioPlayer; // Desabilitado se o player não estiver pronto
-                button.classList.remove('active');
-
-                if (acorde === currentAcordeKey) {
-                    button.textContent = `Tocando ${acorde}...`;
-                    button.classList.add('active');
-                } else if (isPlaying) {
-                    button.textContent = `Play ${acorde} (Transição)`;
-                } else {
-                    button.textContent = `Play ${acorde}`;
-                }
-            });
-            stopButton.disabled = !isPlaying;
-        }
-
-        // 4. FUNÇÕES DE ORQUESTRAÇÃO
-        async function handlePlay(acordeKey) {
-            if (!audioPlayer) return;
-
-            const previousAcorde = audioPlayer.currentAcordeKey;
-
-            try {
-                audioPlayer.play(acordeKey);
-
-                // Atualiza a interface (a transição acontece em paralelo dentro da classe)
-                updateButtonStates(acordeKey);
-                if (previousAcorde) {
-                    statusMessage.textContent = `Transição Cross-Fade: ${previousAcorde} -> ${acordeKey}...`;
-                } else {
-                    statusMessage.textContent = `Acorde de ${acordeKey} tocando.`;
-                }
-            } catch (error) {
-                console.error(error);
-                statusMessage.textContent = `Erro: ${error.message}`;
-                updateButtonStates(null);
-            }
-        }
-
-        async function handleStop() {
-            if (!audioPlayer || !audioPlayer.currentAcordeKey) return;
-
-            const keyToStop = audioPlayer.currentAcordeKey;
-
-            // Feedback visual
-            updateButtonStates(null);
-            statusMessage.textContent = `Parando reprodução de ${keyToStop}... (Fade-out em ${RELEASE_TIME}s)`;
-
-            await audioPlayer.stop();
-
-            statusMessage.textContent = 'Reprodução parada. Contexto de áudio suspenso.';
-            updateButtonStates(null);
-        }
-
-
-        // 5. INICIALIZAÇÃO DA APLICAÇÃO
-        async function initApp() {
-            try {
-                // A. Cria o Player
-                audioPlayer = new AudioContextManager(ATTACK_TIME, RELEASE_TIME, MASTER_VOLUME);
-
-                // B. Adiciona e Pré-carrega os acordes
-                for (const key in ACORDE_CONFIGS) {
-                    audioPlayer.addAcorde(key, ACORDE_CONFIGS[key].urls);
-                }
-                statusMessage.textContent = 'Inicializando e carregando áudios...';
-                await audioPlayer.preloadAll();
-
-                // C. Adiciona Listeners
-                playCButton.addEventListener('click', () => handlePlay('C'));
-                playGButton.addEventListener('click', () => handlePlay('G'));
-                stopButton.addEventListener('click', handleStop);
-
-                // D. Finaliza o Status
-                statusMessage.textContent = 'Carregamento concluído! Pronto para tocar.';
-                updateButtonStates(null);
-
-            } catch (error) {
-                statusMessage.textContent = `Erro fatal na inicialização: ${error.message}. Recarregue a página.`;
-                console.error(error);
-            }
-        }
-
-        // --- Listener de Evento para Iniciar ---
-        window.addEventListener('load', initApp);
-
-    </script>
+    <script src="./assets/js/CifraPlayer1.js"></script>
+    <script src="./assets/js/MusicTheory.js"></script>
+    <script src="./assets/js/UIController.js"></script>
+    <script src="./assets/js/LocalStorageManager.js"></script>
+    <script src="./assets/js/script.js"></script>
 </body>
+
 </html>
