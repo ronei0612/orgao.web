@@ -183,59 +183,28 @@ class AudioContextManager {
     }
 
     /**
- * Implementação da lógica de fade-out e limpeza.
- * CORRIGIDO: Usa exponentialRampToValueAtTime para fade suave e agenda source.stop(stopTime)
- * para sincronizar a parada da fonte com o fim do fade-out.
- * @private
- */
+     * Implementação da lógica de fade-out e limpeza.
+     * @private
+     */
     _stopAndCleanup(acordeKey, isTotalStop) {
         return new Promise(resolve => {
             const config = this.playerConfigs.get(acordeKey);
             if (!config || config.sources.length === 0) return resolve();
 
-            const now = this.context.currentTime;
-            const stopTime = now + this.RELEASE_TIME;
-            const gainNode = config.gainNode;
-            const currentGainValue = gainNode.gain.value;
+            const stopTime = this.context.currentTime + this.RELEASE_TIME;
 
-            // --- APLICA O FADE-OUT ---
-            gainNode.gain.cancelScheduledValues(now);
+            // APLICA O FADE-OUT
+            config.gainNode.gain.cancelScheduledValues(this.context.currentTime);
+            config.gainNode.gain.linearRampToValueAtTime(0.0001, stopTime);
 
-            // Garante que o valor inicial para a rampa exponencial está definido.
-            // Se já estiver muito baixo, usa linear para evitar problemas na rampa exponencial.
-            if (currentGainValue > 0.001) {
-                gainNode.gain.setValueAtTime(currentGainValue, now);
-                // Uso de rampa exponencial para um fade-out mais suave e natural.
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, stopTime);
-            } else {
-                // Se já estiver muito baixo, usa rampa linear para 0.
-                gainNode.gain.setValueAtTime(currentGainValue, now);
-                gainNode.gain.linearRampToValueAtTime(0.0001, stopTime);
-            }
-
-
-            // --- AGENDA O STOP DA FONTE ---
-            config.sources.forEach(source => {
-                try {
-                    // Agenda a parada da fonte para o mesmo momento em que o ganho atingirá 0
-                    source.stop(stopTime);
-                } catch (e) {
-                    // Em caso de crossfade rápido, a fonte pode já ter sido parada.
-                    console.warn("Erro ao agendar source.stop(), pode ser fonte já parada:", e);
-                }
-            });
-
-
-            // --- AGENDA A LIMPEZA NO JAVASCRIPT ---
-            // O setTimeout é usado APENAS para limpar o array de fontes (liberação de memória) e resolver a Promise,
-            // não para parar o áudio (que é feito acima).
+            // Agenda a limpeza (liberação de recursos) após o tempo de Release
             setTimeout(() => {
-                // Limpa o array de fontes (elas já pararam no tempo agendado)
+                config.sources.forEach(source => {
+                    try { source.stop(0); } catch (e) { /* ignore se já parou */ }
+                });
                 config.sources = [];
-                // Opcional: Define o ganho para 0 (garantindo que o nó esteja 'pronto' para o próximo uso)
-                gainNode.gain.setValueAtTime(0, this.context.currentTime);
                 resolve();
-            }, this.RELEASE_TIME * 1000 + 50); // Adiciona uma pequena margem (50ms) para garantir que o stop do áudio ocorreu antes da limpeza.
+            }, this.RELEASE_TIME * 1000);
         });
     }
 
