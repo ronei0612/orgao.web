@@ -376,7 +376,7 @@ class CifraPlayer {
     }
 
     pararReproducao() {
-        //this.pararAcorde();
+        this.pararAcorde();
         const frameContent = this.elements.iframeCifra.contentDocument;
         const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
 

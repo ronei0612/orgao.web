@@ -199,7 +199,7 @@ class App {
                 this.cifraPlayer.transporTom();
                 if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
                     const button = event.currentTarget;
-                    this.cifraPlayer.pararReproducao();
+                    //this.cifraPlayer.pararReproducao();
                     this.cifraPlayer.parado = false;
                     this.cifraPlayer.tocarAcorde(button.value);
                     button.classList.add('pressed');
@@ -544,7 +544,7 @@ class App {
             }
         } else {
             if (action === 'acorde') {
-                this.cifraPlayer.pararReproducao();
+                //this.cifraPlayer.pararReproducao();
                 this.cifraPlayer.parado = false;
                 this.cifraPlayer.tocarAcorde(button.value);
             }
