@@ -6,6 +6,7 @@ class CifraPlayer {
 
         // NOVO: Inicialização do AudioContextManager
         this.audioContextManager = new AudioContextManager();
+        this.audioContextManager.loadInstruments();
 
         this.parado = true;
         this.acordeTocando = '';
@@ -123,32 +124,32 @@ class CifraPlayer {
     }
 
     carregarAcordes() {
-        const urlsSet = new Set();
-        const instrumentos = ['orgao', 'strings'];
-        const oitavas = ['grave', 'baixo', ''];
-        const notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
+        //const urlsSet = new Set();
+        //const instrumentos = ['orgao', 'strings'];
+        //const oitavas = ['grave', 'baixo', ''];
+        //const notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
 
-        instrumentos.forEach(instrumento => {
-            notas.forEach(nota => {
-                oitavas.forEach(oitava => {
-                    const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
-                    const url = `${this.audioPath}${instrumento.charAt(0).toUpperCase() + instrumento.slice(1)}/${key}.ogg`;
-                    this.acordeUrls.set(key, url);
-                    urlsSet.add(url);
-                });
-            });
-        });
+        //instrumentos.forEach(instrumento => {
+        //    notas.forEach(nota => {
+        //        oitavas.forEach(oitava => {
+        //            const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
+        //            const url = `${this.audioPath}${instrumento.charAt(0).toUpperCase() + instrumento.slice(1)}/${key}.ogg`;
+        //            this.acordeUrls.set(key, url);
+        //            urlsSet.add(url);
+        //        });
+        //    });
+        //});
 
-        const allUniqueUrls = Array.from(urlsSet);
+        //const allUniqueUrls = Array.from(urlsSet);
 
-        // 1. Registra um grupo dummy no AudioContextManager com TODAS as URLs (para pré-carregamento).
-        // Isso garante que todos os buffers de notas estejam em cache.
-        this.audioContextManager.addAcorde('__PRELOAD_ALL_KEYS__', allUniqueUrls);
+        //// 1. Registra um grupo dummy no AudioContextManager com TODAS as URLs (para pré-carregamento).
+        //// Isso garante que todos os buffers de notas estejam em cache.
+        //this.audioContextManager.addAcorde('__PRELOAD_ALL_KEYS__', allUniqueUrls);
 
-        // 2. Inicia o pré-carregamento.
-        this.audioContextManager.preloadAll().catch(error => {
-            console.error("Falha ao pré-carregar todos os áudios:", error);
-        });
+        //// 2. Inicia o pré-carregamento.
+        //this.audioContextManager.preloadAll().catch(error => {
+        //    console.error("Falha ao pré-carregar todos os áudios:", error);
+        //});
     }
 
     transposeCifra() {
@@ -241,6 +242,7 @@ class CifraPlayer {
         // //this.pararAcorde(); // <-- REMOVIDO! O AudioContextManager fará o crossfade.
 
         acorde = this.musicTheory.getAcorde(acorde, this.tomAtual);
+
         const acordeKey = acorde;
 
         // Se for o mesmo acorde, evita re-processar e re-tocar
@@ -256,43 +258,46 @@ class CifraPlayer {
         let notas = this.musicTheory.getAcordeNotas(notaPrincipal);
         if (!notas) return;
 
-        baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
+        this.audioContextManager.setNotes(notas);
+        this.audioContextManager.play();
 
-        // Adiciona Baixo (Grave)
-        urls.add(this._getUrl('orgao', baixo, 'grave'));
-        if (!this.elements.notesButton.classList.contains('notaSolo')) {
-            urls.add(this._getUrl('strings', baixo, 'grave'));
-        }
+        //baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
 
-        // Adiciona Notas do Acorde (Baixo)
-        notas.forEach(nota => {
-            const notaKey = nota.replace('#', '_');
+        //// Adiciona Baixo (Grave)
+        //urls.add(this._getUrl('orgao', baixo, 'grave'));
+        //if (!this.elements.notesButton.classList.contains('notaSolo')) {
+        //    urls.add(this._getUrl('strings', baixo, 'grave'));
+        //}
 
-            urls.add(this._getUrl('orgao', notaKey, 'baixo'));
-            if (!this.elements.notesButton.classList.contains('notaSolo')) {
-                urls.add(this._getUrl('strings', notaKey, 'baixo'));
-            }
+        //// Adiciona Notas do Acorde (Baixo)
+        //notas.forEach(nota => {
+        //    const notaKey = nota.replace('#', '_');
 
-            // Adiciona Notas do Acorde (Padrão, se botão "notes" estiver pressionado)
-            if (this.elements.notesButton.classList.contains('pressed')) {
-                urls.add(this._getUrl('orgao', notaKey));
-                if (!this.elements.notesButton.classList.contains('notaSolo')) {
-                    urls.add(this._getUrl('strings', notaKey));
-                }
-            }
-        });
+        //    urls.add(this._getUrl('orgao', notaKey, 'baixo'));
+        //    if (!this.elements.notesButton.classList.contains('notaSolo')) {
+        //        urls.add(this._getUrl('strings', notaKey, 'baixo'));
+        //    }
 
-        const uniqueUrls = Array.from(urls).filter(url => url);
+        //    // Adiciona Notas do Acorde (Padrão, se botão "notes" estiver pressionado)
+        //    if (this.elements.notesButton.classList.contains('pressed')) {
+        //        urls.add(this._getUrl('orgao', notaKey));
+        //        if (!this.elements.notesButton.classList.contains('notaSolo')) {
+        //            urls.add(this._getUrl('strings', notaKey));
+        //        }
+        //    }
+        //});
 
-        // 2. Configurar o Acorde no AudioContextManager (Cria o GainNode se ainda não existir)
-        // Isso é crucial, pois o play() precisa do playerConfigs[acordeKey].gainNode
-        if (!this.audioContextManager.playerConfigs.has(acordeKey)) {
-            this.audioContextManager.addAcorde(acordeKey, uniqueUrls);
-        }
+        //const uniqueUrls = Array.from(urls).filter(url => url);
 
-        // 3. Iniciar a reprodução. O AudioContextManager.play() irá parar o anterior
-        // e iniciar o novo com crossfade, usando os buffers já carregados.
-        this.audioContextManager.play(acordeKey);
+        //// 2. Configurar o Acorde no AudioContextManager (Cria o GainNode se ainda não existir)
+        //// Isso é crucial, pois o play() precisa do playerConfigs[acordeKey].gainNode
+        //if (!this.audioContextManager.playerConfigs.has(acordeKey)) {
+        //    this.audioContextManager.addAcorde(acordeKey, uniqueUrls);
+        //}
+
+        //// 3. Iniciar a reprodução. O AudioContextManager.play() irá parar o anterior
+        //// e iniciar o novo com crossfade, usando os buffers já carregados.
+        //this.audioContextManager.play(acordeKey);
     }
 
     desabilitarSelectSaves() {
@@ -311,7 +316,8 @@ class CifraPlayer {
         // Garantir que a parada use a chave correta e seja uma parada TOTAL
         if (this.acordeTocando) {
             // isTotalStop = true irá suspender o AudioContext
-            this.audioContextManager.stop(this.acordeTocando, true);
+            //this.audioContextManager.stop(this.acordeTocando, true);
+            this.audioContextManager.stop();
         }
         // NÃO RESETAMOS this.acordeTocando aqui, pois AudioContextManager.stop() fará isso internamente (setando currentAcordeKey = null)
         // e ele será resetado em pararReproducao() de qualquer forma.

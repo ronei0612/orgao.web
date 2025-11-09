@@ -1,220 +1,128 @@
+/**
+         * Classe AudioContextManager
+         * Responsável por gerenciar o Web Audio API, carregar instrumentos e tocar acordes
+         * com efeitos de loop, attack e release.
+         */
 class AudioContextManager {
-    constructor(attackTime = 0.2, releaseTime = 0.5, masterVolume = 0.7) {
-        // Configurações
-        this.ATTACK_TIME = attackTime;
-        this.RELEASE_TIME = releaseTime;
+    constructor() {
+        // Cria uma nova instância do AudioContext
+        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        this.buffers = {}; // Armazena os buffers de áudio carregados (instrumentos)
+        this.sources = []; // Armazena os nós de fonte de áudio atualmente tocando
+        this.gainNodes = []; // Armazena os nós de ganho (volume) para controle de Attack/Release
 
-        // Variáveis de Estado
-        this.context = null;
-        this.masterGainNode = null;
-        this.urlBufferMap = new Map(); // Armazena buffers carregados (URL -> AudioBuffer)
-        this.playerConfigs = new Map(); // Armazena configurações de reprodução (Key -> { urls, gainNode, sources })
-        this.currentAcordeKey = null;
+        // Mapeamento das notas necessárias para as URLs de áudio (usando Orgao no registro padrão)
+        this.notesMap = {
+            'c': 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c.ogg',
+            'e': 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e.ogg',
+            'g': 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg',
+            'b': 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b.ogg',
+            'd': 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d.ogg'
+        };
 
-        // 1. Inicializa o AudioContext
-        this._initializeContext(masterVolume);
+        this.currentNotes = []; // Notas a serem tocadas (setadas pelo setNotes)
     }
 
     /**
-     * Inicializa o AudioContext e o Master Gain Node.
-     * @param {number} masterVolume - Volume inicial do Master Gain.
-     * @private
+     * Carrega todos os instrumentos (arquivos de áudio) na memória (buffers).
+     * @returns {Promise<void>} Uma Promise que resolve quando todos os arquivos são carregados.
      */
-    _initializeContext(masterVolume) {
-        if (!this.context) {
-            this.context = new (window.AudioContext || window.webkitAudioContext)();
-            this.masterGainNode = this.context.createGain();
-            this.masterGainNode.connect(this.context.destination);
-            this.masterGainNode.gain.setValueAtTime(masterVolume, this.context.currentTime);
-        }
-    }
-
-    /**
-     * Adiciona um novo grupo de áudio (acorde) à lista de reprodução.
-     * Deve ser chamado antes do preload.
-     * @param {string} key - Chave única do grupo (ex: 'C', 'G').
-     * @param {string[]} urls - Array de URLs dos arquivos de áudio que compõem o grupo.
-     */
-    addAcorde(key, urls) {
-        if (this.playerConfigs.has(key)) {
-            console.warn(`Acorde key "${key}" já existe. URLs serão sobrescritas.`);
-        }
-        // Cria um GainNode específico para o acorde para controlar o fade
-        const gainNode = this.context.createGain();
-        gainNode.connect(this.masterGainNode);
-        gainNode.gain.setValueAtTime(0, this.context.currentTime);
-
-        this.playerConfigs.set(key, {
-            urls: urls,
-            gainNode: gainNode,
-            sources: [] // Array para armazenar as AudioBufferSourceNodes ativas
-        });
-    }
-
-    /**
-     * Remove um acorde e seus nós de áudio do sistema.
-     * @param {string} key - Chave do acorde a ser removido.
-     */
-    removeAcorde(key) {
-        if (this.playerConfigs.has(key)) {
-            const config = this.playerConfigs.get(key);
-            // Pára e limpa as sources ativas
-            config.sources.forEach(source => {
-                try { source.stop(0); } catch (e) { /* ignore */ }
-            });
-            // Desconecta o GainNode
-            config.gainNode.disconnect();
-            this.playerConfigs.delete(key);
-
-            if (this.currentAcordeKey === key) {
-                this.currentAcordeKey = null;
-            }
-        }
-    }
-
-    /**
-     * Função auxiliar para carregar e decodificar um único áudio.
-     * @param {string} url
-     * @returns {Promise<AudioBuffer>}
-     */
-    async _loadAudio(url) {
-        if (this.urlBufferMap.has(url)) {
-            return this.urlBufferMap.get(url);
-        }
-
-        try {
-            const response = await fetch(url);
-            const arrayBuffer = await response.arrayBuffer();
-            const buffer = await this.context.decodeAudioData(arrayBuffer);
-            this.urlBufferMap.set(url, buffer);
-            return buffer;
-        } catch (error) {
-            console.error(`Falha ao carregar ou decodificar: ${url}`, error);
-            throw new Error(`Erro ao carregar o áudio de: ${url}`);
-        }
-    }
-
-    /**
-     * Pré-carrega todos os áudios de todos os grupos definidos.
-     * @returns {Promise<void>}
-     */
-    async preloadAll() {
-        const allUrlsSet = new Set();
-        this.playerConfigs.forEach(config => {
-            config.urls.forEach(url => allUrlsSet.add(url));
-        });
-        const uniqueUrls = Array.from(allUrlsSet);
-
-        const loadingPromises = uniqueUrls.map(url => this._loadAudio(url));
-        await Promise.all(loadingPromises);
-    }
-
-    /**
-     * Inicia a reprodução de um acorde com cross-fade.
-     * @param {string} acordeKey - Chave do acorde a ser tocado.
-     */
-    play(acordeKey) {
-        if (!this.playerConfigs.has(acordeKey)) {
-            console.error(`Acorde key "${acordeKey}" não encontrado.`);
-            return;
-        }
-
-        // Se for o mesmo acorde, ignora
-        if (acordeKey === this.currentAcordeKey) return;
-
-        // Tenta resumir o contexto no clique
-        if (this.context.state === 'suspended') {
-            this.context.resume().catch(e => console.error("Falha ao resumir o AudioContext:", e));
-        }
-
-        const previousAcordeKey = this.currentAcordeKey;
-        this.currentAcordeKey = acordeKey; // Define o novo acorde
-
-        const newConfig = this.playerConfigs.get(acordeKey);
-        const newGainNode = newConfig.gainNode;
-        const now = this.context.currentTime;
-
-        // 1. FADE-OUT DO ACORDE ANTERIOR (ocorre em paralelo)
-        if (previousAcordeKey) {
-            this._stopAndCleanup(previousAcordeKey, false); // O segundo parâmetro 'false' indica que não é parada total
-        }
-
-        // 2. INICIAR O NOVO SOM (Cria sources se necessário)
-        if (newConfig.sources.length === 0) {
-            newConfig.urls.forEach(url => {
-                const buffer = this.urlBufferMap.get(url);
-                if (!buffer) { throw new Error(`Buffer não carregado: ${url}. Chamou preloadAll?`); } // Adicionado mensagem de erro
-
-                const source = this.context.createBufferSource();
-                source.buffer = buffer;
-                source.loop = true;
-                source.connect(newGainNode);
-                source.start(0);
-                newConfig.sources.push(source);
-            });
-        }
-
-        // 3. FADE-IN (Attack)
-        newGainNode.gain.cancelScheduledValues(now);
-        newGainNode.gain.setValueAtTime(0, now);
-        newGainNode.gain.linearRampToValueAtTime(1.0, now + this.ATTACK_TIME);
-    }
-
-    /**
-     * Pára a reprodução atual ou um acorde específico com fade-out.
-     * @param {string|null} [acordeKey=this.currentAcordeKey] - Chave do acorde a ser parado. Se nulo, pára o atual.
-     * @param {boolean} [isTotalStop=true] - Se for parada total, suspende o contexto.
-     * @returns {Promise<void>}
-     */
-    stop(acordeKey = this.currentAcordeKey, isTotalStop = true) {
-        if (!acordeKey) return Promise.resolve();
-
-        // Pára e limpa o acorde
-        const promise = this._stopAndCleanup(acordeKey, isTotalStop);
-
-        if (isTotalStop) {
-            this.currentAcordeKey = null;
-            // Suspende o AudioContext após o fade-out
-            if (this.context.state !== 'closed') {
-                this.context.suspend();
-            }
-        }
-        return promise;
-    }
-
-    /**
-     * Implementação da lógica de fade-out e limpeza.
-     * @private
-     */
-    _stopAndCleanup(acordeKey, isTotalStop) {
-        return new Promise(resolve => {
-            const config = this.playerConfigs.get(acordeKey);
-            if (!config || config.sources.length === 0) return resolve();
-
-            const stopTime = this.context.currentTime + this.RELEASE_TIME;
-
-            // APLICA O FADE-OUT
-            config.gainNode.gain.cancelScheduledValues(this.context.currentTime);
-            config.gainNode.gain.linearRampToValueAtTime(0.0001, stopTime);
-
-            // Agenda a limpeza (liberação de recursos) após o tempo de Release
-            setTimeout(() => {
-                config.sources.forEach(source => {
-                    try { source.stop(0); } catch (e) { /* ignore se já parou */ }
+    async loadInstruments() {
+        const noteKeys = Object.keys(this.notesMap);
+        const loadingPromises = noteKeys.map(key => {
+            const url = this.notesMap[key];
+            return fetch(url)
+                .then(response => response.arrayBuffer())
+                .then(arrayBuffer => this.audioContext.decodeAudioData(arrayBuffer))
+                .then(audioBuffer => {
+                    this.buffers[key] = audioBuffer;
+                })
+                .catch(error => {
+                    console.error(`Erro ao carregar o som para a nota ${key}:`, error);
+                    // Permite que outras notas continuem carregando mesmo com um erro
                 });
-                config.sources = [];
-                resolve();
-            }, this.RELEASE_TIME * 1000);
+        });
+
+        await Promise.all(loadingPromises);
+        console.log("Todos os instrumentos carregados.");
+    }
+
+    /**
+     * Define as notas que serão tocadas no próximo método play().
+     * @param {string[]} notes Um array de strings com as notas, ex: ['c', 'e', 'g'].
+     */
+    setNotes(notes) {
+        this.currentNotes = notes;
+    }
+
+    /**
+     * Toca as notas definidas em currentNotes com loop e efeito Attack.
+     * @param {number} [attackTime=0.2] Duração do efeito Attack em segundos (entrada suave).
+     */
+    play(attackTime = 0.2) {
+        // Garante que o AudioContext esteja resumido após o clique do usuário
+        if (this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
+        }
+
+        // Parar qualquer som anterior imediatamente (release = 0)
+        this.stop(0);
+
+        const now = this.audioContext.currentTime;
+
+        this.currentNotes.forEach(note => {
+            const buffer = this.buffers[note];
+            if (!buffer) {
+                console.warn(`Buffer para a nota ${note} não encontrado. Pulando.`);
+                return;
+            }
+
+            const source = this.audioContext.createBufferSource();
+            const gainNode = this.audioContext.createGain();
+
+            source.buffer = buffer;
+            source.loop = true; // Efeito Loop
+
+            // Conexões: Fonte -> Ganho (volume/envelope) -> Destino (alto-falantes)
+            source.connect(gainNode);
+            gainNode.connect(this.audioContext.destination);
+
+            // Efeito Attack: Sobe o volume de 0 para 1 (máximo)
+            gainNode.gain.setValueAtTime(0, now); // Começa em volume 0
+            gainNode.gain.linearRampToValueAtTime(1, now + attackTime); // Sobe linearmente em 'attackTime' segundos
+
+            source.start(0);
+
+            this.sources.push(source);
+            this.gainNodes.push(gainNode);
         });
     }
 
     /**
-     * Define o volume mestre.
-     * @param {number} volume - Volume de 0.0 a 1.0.
+     * Para as notas que estão tocando com efeito Release.
+     * @param {number} [releaseTime=0.3] Duração do efeito Release em segundos (saída suave).
      */
-    setMasterVolume(volume) {
-        if (this.masterGainNode) {
-            this.masterGainNode.gain.setValueAtTime(volume, this.context.currentTime);
-        }
+    stop(releaseTime = 0.3) {
+        if (this.sources.length === 0) return;
+
+        const now = this.audioContext.currentTime;
+
+        this.gainNodes.forEach(gainNode => {
+            // Cancela qualquer mudança de volume programada (ex: um Attack em andamento)
+            gainNode.gain.cancelScheduledValues(now);
+            // Define o valor inicial da rampa de parada para o valor atual do ganho
+            gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+            // Efeito Release: Desce o volume para 0
+            gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
+        });
+
+        this.sources.forEach(source => {
+            // Para o som após o efeito Release terminar
+            source.stop(now + releaseTime);
+        });
+
+        // Limpa os arrays de controle
+        this.sources = [];
+        this.gainNodes = [];
     }
 }
