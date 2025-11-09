@@ -1,4 +1,4 @@
-const version = '1.8';
+const version = '1.9';
 
 const urlsToCache = [
     // Arquivos principais
@@ -16,7 +16,6 @@ const urlsToCache = [
     './assets/js/LocalStorageManager.js',
     './assets/js/MusicTheory.js',
     './assets/js/UIController.js',
-    './assets/lib/js/Pizzicato/0.6.4/Pizzicato.js',
     './assets/lib/js/Jquery/3.5.1/jquery.min.js',
     './assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js',
 
