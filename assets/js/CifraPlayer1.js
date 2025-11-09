@@ -164,7 +164,7 @@ class CifraPlayer {
             }
 
             if (!this.parado && this.acordeTocando) {
-                this.pararAcorde();
+                //this.pararAcorde();
                 this.avancarCifra();
             }
         }
@@ -238,7 +238,7 @@ class CifraPlayer {
 
     tocarAcorde(acorde) {
         // CORREÇÃO ESSENCIAL: REMOVER A CHAMADA DE PARADA AQUI
-        // this.pararAcorde(); // <-- REMOVIDO! O AudioContextManager fará o crossfade.
+        // //this.pararAcorde(); // <-- REMOVIDO! O AudioContextManager fará o crossfade.
 
         acorde = this.musicTheory.getAcorde(acorde, this.tomAtual);
         const acordeKey = acorde;
@@ -305,15 +305,13 @@ class CifraPlayer {
         this.elements.addButton.disabled = false;
     }
 
-    async pararAcorde() {
+    pararAcorde() {
         this.habilitarSelectSaves();
 
         // Garantir que a parada use a chave correta e seja uma parada TOTAL
         if (this.acordeTocando) {
             // isTotalStop = true irá suspender o AudioContext
-            //this.audioContextManager.stop(this.acordeTocando, true);
-
-            await this.audioContextManager.stop();
+            this.audioContextManager.stop(this.acordeTocando, true);
         }
         // NÃO RESETAMOS this.acordeTocando aqui, pois AudioContextManager.stop() fará isso internamente (setando currentAcordeKey = null)
         // e ele será resetado em pararReproducao() de qualquer forma.
@@ -361,7 +359,7 @@ class CifraPlayer {
 
     iniciarReproducao() {
         if (!this.parado && this.acordeTocando) {
-            this.pararAcorde();
+            //this.pararAcorde();
         }
         this.avancarCifra();
     }
@@ -372,13 +370,13 @@ class CifraPlayer {
         }
 
         if (!this.parado && this.acordeTocando) {
-            this.pararAcorde();
+            //this.pararAcorde();
             this.avancarCifra();
         }
     }
 
     pararReproducao() {
-        this.pararAcorde();
+        //this.pararAcorde();
         const frameContent = this.elements.iframeCifra.contentDocument;
         const cifraElems = frameContent.getElementsByClassName('cifraSelecionada');
 
