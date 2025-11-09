@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Audio</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 30px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .play-button, #stopButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            background-color: #ffffff;
+            border-radius: 5px;
+            transition: all 0.2s ease-in-out;
+            min-width: 120px;
+        }
+
+            .play-button:hover:not(:disabled) {
+                background-color: #e9ecef;
+                border-color: #007bff;
+            }
+
+            .play-button.active {
+                background-color: #28a745;
+                color: white;
+                border-color: #28a745;
+            }
+
+            .play-button:disabled, #stopButton:disabled {
+                cursor: not-allowed;
+                opacity: 0.6;
+            }
+
+        #statusMessage {
+            margin-top: 25px;
+            font-style: italic;
+            color: #555;
+            min-height: 20px;
+        }
+
+        .controls-group {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Controle de Acordes Otimizado (Web Audio)</h1>
+
+    <div class="controls-group">
+
+        <div class="button-group">
+            <button id="playCButton" class="play-button" disabled>Play C</button>
+            <button id="playGButton" class="play-button" disabled>Play G</button>
+            <button id="stopButton" disabled>Stop</button>
+        </div>
+    </div>
+
+    <p id="statusMessage">Carregando recursos de áudio, por favor aguarde...</p>
+    <script src="./assets/js/AudioContextManager.js"></script>
+
+    <script>
+        // --- Lógica Principal da Aplicação ---
+
+        // 1. CONSTANTES E CONFIGURAÇÕES
+        const ATTACK_TIME = 0.2;
+        const RELEASE_TIME = 0.5;
+        const MASTER_VOLUME = 0.5;
+
+        const ACORDE_CONFIGS = {
+            'C': {
+                urls: [
+                    'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_c_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_e_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_baixo.ogg'
+                ],
+                sources: [],
+                gainNode: null
+            },
+            'G': {
+                urls: [
+                    'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_b_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Orgao/orgao_d_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d_grave.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_g_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_b_baixo.ogg', 'https://roneicostasoares.com.br/orgao.web/assets/audio/Strings/strings_d_baixo.ogg'
+                ],
+                sources: [],
+                gainNode: null
+            }
+        };
+
+        // 2. ELEMENTOS HTML
+        const playCButton = document.getElementById('playCButton');
+        const playGButton = document.getElementById('playGButton');
+        const stopButton = document.getElementById('stopButton');
+        const statusMessage = document.getElementById('statusMessage');
+        const allPlayButtons = [playCButton, playGButton];
+        const buttonMap = { 'playCButton': 'C', 'playGButton': 'G' };
+
+        // 3. INSTÂNCIA PRINCIPAL DO PLAYER
+        let audioPlayer = null;
+
+
+        // Função para atualizar o estado visual dos botões
+        function updateButtonStates(currentAcordeKey) {
+            const isPlaying = currentAcordeKey !== null;
+            allPlayButtons.forEach(button => {
+                const acorde = buttonMap[button.id];
+
+                button.disabled = !audioPlayer; // Desabilitado se o player não estiver pronto
+                button.classList.remove('active');
+
+                if (acorde === currentAcordeKey) {
+                    button.textContent = `Tocando ${acorde}...`;
+                    button.classList.add('active');
+                } else if (isPlaying) {
+                    button.textContent = `Play ${acorde} (Transição)`;
+                } else {
+                    button.textContent = `Play ${acorde}`;
+                }
+            });
+            stopButton.disabled = !isPlaying;
+        }
+
+        // 4. FUNÇÕES DE ORQUESTRAÇÃO
+        async function handlePlay(acordeKey) {
+            if (!audioPlayer) return;
+
+            const previousAcorde = audioPlayer.currentAcordeKey;
+
+            try {
+                audioPlayer.play(acordeKey);
+
+                // Atualiza a interface (a transição acontece em paralelo dentro da classe)
+                updateButtonStates(acordeKey);
+                if (previousAcorde) {
+                    statusMessage.textContent = `Transição Cross-Fade: ${previousAcorde} -> ${acordeKey}...`;
+                } else {
+                    statusMessage.textContent = `Acorde de ${acordeKey} tocando.`;
+                }
+            } catch (error) {
+                console.error(error);
+                statusMessage.textContent = `Erro: ${error.message}`;
+                updateButtonStates(null);
+            }
+        }
+
+        async function handleStop() {
+            if (!audioPlayer || !audioPlayer.currentAcordeKey) return;
+
+            const keyToStop = audioPlayer.currentAcordeKey;
+
+            // Feedback visual
+            updateButtonStates(null);
+            statusMessage.textContent = `Parando reprodução de ${keyToStop}... (Fade-out em ${RELEASE_TIME}s)`;
+
+            await audioPlayer.stop();
+
+            statusMessage.textContent = 'Reprodução parada. Contexto de áudio suspenso.';
+            updateButtonStates(null);
+        }
+
+
+        // 5. INICIALIZAÇÃO DA APLICAÇÃO
+        async function initApp() {
+            try {
+                // A. Cria o Player
+                audioPlayer = new AudioContextManager(ATTACK_TIME, RELEASE_TIME, MASTER_VOLUME);
+
+                // B. Adiciona e Pré-carrega os acordes
+                for (const key in ACORDE_CONFIGS) {
+                    audioPlayer.addAcorde(key, ACORDE_CONFIGS[key].urls);
+                }
+                statusMessage.textContent = 'Inicializando e carregando áudios...';
+                await audioPlayer.preloadAll();
+
+                // C. Adiciona Listeners
+                playCButton.addEventListener('click', () => handlePlay('C'));
+                playGButton.addEventListener('click', () => handlePlay('G'));
+                stopButton.addEventListener('click', handleStop);
+
+                // D. Finaliza o Status
+                statusMessage.textContent = 'Carregamento concluído! Pronto para tocar.';
+                updateButtonStates(null);
+
+            } catch (error) {
+                statusMessage.textContent = `Erro fatal na inicialização: ${error.message}. Recarregue a página.`;
+                console.error(error);
+            }
+        }
+
+        // --- Listener de Evento para Iniciar ---
+        window.addEventListener('load', initApp);
+
+    </script>
+</body>
+</html>
