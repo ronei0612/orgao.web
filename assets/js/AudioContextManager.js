@@ -71,7 +71,6 @@ class AudioContextManager {
 		const now = this.audioContext.currentTime;
 
 		this.currentNotes.forEach(note => {
-			debugger;
 			const buffer = this.buffers[note];
 			if (!buffer) {
 				console.warn(`Buffer para a nota ${note} não encontrado no cache. Pulando.`);

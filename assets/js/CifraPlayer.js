@@ -1,10 +1,10 @@
 class CifraPlayer {
     constructor(elements, uiController, musicTheory) {
         this.uiController = uiController;
-        this.musicTheory = musicTheory; // Injetado
+        this.musicTheory = musicTheory;
         this.elements = elements;
 
-        this.acordeGroup = null;
+        this.acordeGroup = [];
         this.parado = true;
         this.acordeTocando = '';
         this.indiceAcorde = 0;
@@ -17,10 +17,11 @@ class CifraPlayer {
         this.acordesSustenidos = musicTheory.acordesSustenidos;
         this.acordesBemol = musicTheory.acordesBemol;
         this.acordesSustenidosBemol = musicTheory.acordesSustenidosBemol;
-        this.acordesMapCore = musicTheory.acordesMap; // Renomeado para não conflitar com this.acordeMap de áudio
+        this.acordesMapCore = musicTheory.acordesMap;
 
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
-        this.acordes = {};
+
+        this.audioContextManager = new AudioContextManager();
         this.carregarAcordes();
     }
 
@@ -50,7 +51,7 @@ class CifraPlayer {
     destacarCifras(texto, tom) {
         const linhas = texto.split('\n');
         let cifraNum = 1;
-        const temPalavra = /[a-zA-Z]{4,}/;
+        const temPalavra = /[a-zA-Z]{4,}/; // Não remover! Usar caso necessário
         const temColchetes = /\[.*?\]/;
 
         const linhasDestacadas = linhas.map(linha => {
@@ -115,6 +116,7 @@ class CifraPlayer {
     }
 
     carregarAcordes() {
+        const urlsDict = {};
         const instrumentos = ['orgao', 'strings'];
         const oitavas = ['grave', 'baixo', ''];
         const notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
@@ -123,18 +125,13 @@ class CifraPlayer {
             notas.forEach(nota => {
                 oitavas.forEach(oitava => {
                     const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
-                    this.acordes[key] = new Pizzicato.Sound({
-                        source: 'file',
-                        options: {
-                            path: `${this.audioPath}${instrumento.charAt(0).toUpperCase() + instrumento.slice(1)}/${key}.ogg`,
-                            loop: true,
-                            release: 0.5,
-                            attack: 0.1
-                        }
-                    });
+                    const url = `${this.audioPath}${instrumento.charAt(0).toUpperCase() + instrumento.slice(1)}/${key}.ogg`;
+                    urlsDict[key] = url;
                 });
             });
         });
+
+        this.audioContextManager.loadInstruments(urlsDict);
     }
 
     transposeCifra() {
@@ -150,7 +147,6 @@ class CifraPlayer {
             }
 
             if (!this.parado && this.acordeTocando) {
-                this.pararAcorde();
                 this.avancarCifra();
             }
         }
@@ -223,16 +219,10 @@ class CifraPlayer {
     }
 
     tocarAcorde(acorde) {
-        this.pararAcorde();
         acorde = this.musicTheory.getAcorde(acorde, this.tomAtual); // Usa MusicTheory para obter o acorde canônico
         this.acordeTocando = acorde;
 
         this.desabilitarSelectSaves();
-
-        if (!this.acordeGroup) {
-            this.acordeGroup = new Pizzicato.Group();
-            this.acordeGroup.attack = 0.1;
-        }
 
         let [notaPrincipal, baixo] = acorde.split('/');
         let notas = this.musicTheory.getAcordeNotas(notaPrincipal);
@@ -244,29 +234,34 @@ class CifraPlayer {
 
         baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
 
-        this.adicionarSomAoGrupo('orgao', baixo, 'grave');
+        this.acordeGroup = [];
+        this.adicionarSom('orgao', baixo, 'grave');
         if (!this.elements.notesButton.classList.contains('notaSolo'))
-            this.adicionarSomAoGrupo('strings', baixo, 'grave', 0.9);
+            this.adicionarSom('strings', baixo, 'grave', 0.9);
 
         notas.forEach(nota => {
-            this.adicionarSomAoGrupo('orgao', nota.replace('#', '_'), 'baixo');
+            this.adicionarSom('orgao', nota.replace('#', '_'), 'baixo');
             if (!this.elements.notesButton.classList.contains('notaSolo'))
-                this.adicionarSomAoGrupo('strings', nota.replace('#', '_'), 'baixo', 0.9);
+                this.adicionarSom('strings', nota.replace('#', '_'), 'baixo', 0.9);
 
             if (this.elements.notesButton.classList.contains('pressed')) {
-                this.adicionarSomAoGrupo('orgao', nota.replace('#', '_', 0.5));
+                this.adicionarSom('orgao', nota.replace('#', '_', 0.5));
                 if (!this.elements.notesButton.classList.contains('notaSolo'))
-                    this.adicionarSomAoGrupo('strings', nota.replace('#', '_'));
+                    this.adicionarSom('strings', nota.replace('#', '_'));
             }
         });
 
-        setTimeout(() => {
-            if (!this.parado && this.acordeTocando) {
-                try {
-                    this.acordeGroup.play();
-                } catch { }
-            }
-        }, 60);
+        //setTimeout(() => {
+        //    if (!this.parado && this.acordeTocando) {
+        //        try {
+        //            this.acordeGroup.play();
+        //        } catch { }
+        //    }
+        //}, 60);
+
+
+        this.audioContextManager.setNotes(this.acordeGroup);
+        this.audioContextManager.play();
     }
 
     desabilitarSelectSaves() {
@@ -282,15 +277,7 @@ class CifraPlayer {
     pararAcorde() {
         this.habilitarSelectSaves();
 
-        if (this.acordeGroup) {
-            this.acordeGroup.stop();
-
-            const sons = this.acordeGroup.sounds.length;
-            if (sons === 0) return;
-            for (let i = sons - 1; i > -1; i--) {
-                this.acordeGroup.removeSound(this.acordeGroup.sounds[i]);
-            }
-        }
+        this.audioContextManager.stop();
     }
 
     inversaoDeAcorde(acorde, baixo) {
@@ -334,9 +321,6 @@ class CifraPlayer {
     }
 
     iniciarReproducao() {
-        if (!this.parado && this.acordeTocando) {
-            this.pararAcorde();
-        }
         this.avancarCifra();
     }
 
@@ -346,7 +330,6 @@ class CifraPlayer {
         }
 
         if (!this.parado && this.acordeTocando) {
-            this.pararAcorde();
             this.avancarCifra();
         }
     }
@@ -416,16 +399,11 @@ class CifraPlayer {
         return this.acordeMap[nota] || nota;
     }
 
-    adicionarSomAoGrupo(instrumento, nota, oitava = '', volume) {
+    adicionarSom(instrumento, nota, oitava = '', volume) {
         nota = nota.toLowerCase();
         nota = this.getNomeArquivoAudio(nota);
         const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
-        if (this.acordes[key]) {
-            if (volume) {
-                this.acordes[key].volume = volume;
-            }
-            this.acordeGroup.addSound(this.acordes[key]);
-        }
+        this.acordeGroup.push(key);
     }
 
     removerClasseCifraSelecionada(iframeDoc, excecao = null) {
@@ -446,10 +424,10 @@ class CifraPlayer {
         this.elements.playButton.style.animationDuration = `${bpmValor}ms`;
         this.elements.stopButton.style.animationDuration = `${bpmValor}ms`;
 
-        if (this.acordeGroup) {
-            // Ajusta a velocidade de reprodução do acorde atual (se houver)
-            // ... (lógica para ajustar a velocidade com Pizzicato) ...
-        }
+        // Lógica de ajuste de velocidade de reprodução REMOVIDA, pois não era implementada no Pizzicato
+        // if (this.acordeGroup) {
+        //     // ... (lógica para ajustar a velocidade com Pizzicato) ...
+        // }
     }
 
     preencherSelect(tom) {
