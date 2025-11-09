@@ -57,9 +57,9 @@ class AudioContextManager {
 	/**
 	 * Toca as notas definidas em currentNotes com loop e efeito Attack.
 	 * Aplica o Release no acorde anterior, se houver, antes de iniciar o novo.
-	 * @param {number} [attackTime=0.2] Duração do efeito Attack em segundos (entrada suave).
+	 * @param {number} [attackTime=0.1] Duração do efeito Attack em segundos (entrada suave).
 	 */
-	play(attackTime = 0.2) {
+	play(attackTime = 0.1) {
 		// Garante que o AudioContext esteja resumido após o clique do usuário
 		if (this.audioContext.state === 'suspended') {
 			this.audioContext.resume();

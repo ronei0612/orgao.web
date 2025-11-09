@@ -6,7 +6,7 @@ class App {
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
 
-        this.version = '1.8';
+        this.version = '1.9';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
