@@ -1,4 +1,4 @@
-const version = '1.9';
+const version = '2.0';
 
 const urlsToCache = [
     // Arquivos principais
