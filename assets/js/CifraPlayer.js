@@ -121,12 +121,30 @@ class CifraPlayer {
         const oitavas = ['grave', 'baixo', ''];
         const notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
 
+        const VOLUME_CONFIG = {
+            'grave': {
+                'orgao': 1.0,
+                'strings': 0.9
+            },
+            'baixo': {
+                'orgao': 1.0,
+                'strings': 0.9
+            },
+            'agudo': {
+                'orgao': 0.5,
+                'strings': 1.0
+            }
+        };
+
         instrumentos.forEach(instrumento => {
             notas.forEach(nota => {
                 oitavas.forEach(oitava => {
                     const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
-                    const url = `${this.audioPath}${instrumento.charAt(0).toUpperCase() + instrumento.slice(1)}/${key}.ogg`;
-                    urlsDict[key] = url;
+                    const path = `${this.audioPath}${instrumento.charAt(0).toUpperCase() + instrumento.slice(1)}/${key}.ogg`;
+                    const oitavaKey = oitava === '' ? 'agudo' : oitava;
+                    const volume = VOLUME_CONFIG[oitavaKey]?.[instrumento] ?? 1.0;
+
+                    urlsDict[key] = { url: path, volume: volume };
                 });
             });
         });

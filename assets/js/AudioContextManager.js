@@ -8,6 +8,7 @@ class AudioContextManager {
 		// Cria uma nova instância do AudioContext
 		this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
 		this.buffers = {}; // Armazena os buffers de áudio carregados (instrumentos)
+		this.instrumentSettings = {};
 		this.sources = []; // Armazena os nós de fonte de áudio atualmente tocando
 		this.gainNodes = []; // Armazena os nós de ganho (volume) para controle de Attack/Release
 		this.currentNotes = []; // Notas a serem tocadas (setadas pelo setNotes)
@@ -16,17 +17,20 @@ class AudioContextManager {
 
 	/**
 	 * Carrega todos os instrumentos (arquivos de áudio) na memória (buffers).
-	 * @param {Object<string, string>} urlsMap Um objeto mapeando o nome da nota (ex: 'c') para a URL do arquivo de áudio.
+	 * @param {Object<string, {url: string, volume: number}>} urlsMap Um objeto mapeando o nome da nota para um objeto com a URL e o volume desejado (0.0 a 1.0).
 	 * @returns {Promise<void>} Uma Promise que resolve quando todos os arquivos são carregados.
 	 */
 	async loadInstruments(urlsMap) {
 		const noteKeys = Object.keys(urlsMap);
 
-		// Limpa buffers anteriores
+		// Limpa buffers e configurações anteriores
 		this.buffers = {};
+		this.instrumentSettings = {};
 
 		const loadingPromises = noteKeys.map(key => {
-			const url = urlsMap[key];
+			const { url, volume = 1 } = urlsMap[key];
+			this.instrumentSettings[key] = { volume };
+
 			return fetch(url)
 				.then(response => {
 					if (!response.ok) {
@@ -72,11 +76,14 @@ class AudioContextManager {
 
 		this.currentNotes.forEach(note => {
 			const buffer = this.buffers[note];
-			if (!buffer) {
+			const settings = this.instrumentSettings[note];
+
+			if (!buffer || !settings) {
 				console.warn(`Buffer para a nota ${note} não encontrado no cache. Pulando.`);
 				return;
 			}
 
+			const targetVolume = settings.volume;
 			const source = this.audioContext.createBufferSource();
 			const gainNode = this.audioContext.createGain();
 
@@ -89,7 +96,7 @@ class AudioContextManager {
 
 			// Efeito Attack: Sobe o volume de 0 para 1 (máximo)
 			gainNode.gain.setValueAtTime(0, now); // Começa em volume 0
-			gainNode.gain.linearRampToValueAtTime(1, now + attackTime); // Sobe linearmente em 'attackTime' segundos
+			gainNode.gain.linearRampToValueAtTime(targetVolume, now + attackTime); // Sobe linearmente em 'attackTime' segundos
 
 			source.start(0);
 
