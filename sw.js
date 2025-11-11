@@ -1,4 +1,5 @@
 const version = '2.1';
+const CACHE_NAME = 'cifra-app-cache-' + version; // Boa prática: usar o nome completo no cache
 
 const urlsToCache = [
     // Arquivos principais
@@ -29,51 +30,58 @@ const urlsToCache = [
 
 // Evento de Instalação: Salva todos os arquivos listados no cache.
 self.addEventListener('install', event => {
+    self.skipWaiting(); // Sugestão: Pula a fase waiting e tenta ativar imediatamente
+
     event.waitUntil(
-        caches.open(version)
+        caches.open(CACHE_NAME) // Use a variável CACHE_NAME
             .then(cache => {
-                console.log('Cache aberto. Adicionando arquivos essenciais para modo offline.');
+                console.log('[SW] Cache aberto. Adicionando arquivos essenciais para modo offline.');
                 return cache.addAll(urlsToCache);
+            })
+            .catch(error => {
+                // É importante saber se o addAll falhou, especialmente por causa de CDNs
+                console.error('[SW] Falha ao cachear ativos. Isso pode ser um problema de CDN.', error);
             })
     );
 });
 
-// Se o nome do cache não for o cache atual, ele será deletado.
+// Evento de Ativação: Limpeza de Caches Antigos
 self.addEventListener('activate', event => {
-    console.log('activate');
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
                 cacheNames.map(cacheName => {
-                    if (cacheName !== version) {
-                        console.log('Cache antigo encontrado. Deletando:', cacheName);
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('[SW] Cache antigo encontrado. Deletando:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
             );
         })
     );
+    return self.clients.claim(); // Sugestão: Assegura que o SW ativado controle os clientes imediatamente
 });
 
 // Evento de Fetch: Intercepta todas as requisições da página.
 self.addEventListener('fetch', event => {
+    // Apenas intercepta requisições GET
+    if (event.request.method !== 'GET') return;
+
     event.respondWith(
-        // 1. Tenta encontrar o recurso no cache.
         caches.match(event.request)
             .then(response => {
-                // Se encontrou no cache, retorna o arquivo salvo. A página carrega instantaneamente.
+                // Se encontrou no cache, retorna.
                 if (response) {
                     return response;
                 }
-                // Se não encontrou, vai para a internet buscar o recurso.
-                return fetch(event.request);
-            }
-        )
-    );
-});
 
-self.addEventListener('message', event => {
-    if (event.data && event.data.type === 'GET_VERSION') {
-        event.source.postMessage({ type: 'version', version: version });
-    }
+                // Se não encontrou, vai para a internet buscar.
+                return fetch(event.request).catch(error => {
+                    // Sugestão: Trata a falha de rede (usuário offline tentando um recurso não cacheado)
+                    console.warn('[SW] Falha ao buscar recurso na rede:', event.request.url, error);
+                    // Opcional: Aqui você pode retornar uma página de fallback, se necessário.
+                    // Ex: return caches.match('/offline.html');
+                });
+            })
+    );
 });

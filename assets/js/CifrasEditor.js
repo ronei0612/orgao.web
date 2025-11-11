@@ -213,7 +213,6 @@ class CifrasEditor {
     async loadCifras() {
         let remoteCifras = [];
         try {
-            debugger;
             const response = await fetch(this.url);
             if (!response.ok) throw new Error('Erro ao carregar cifras.json');
             remoteCifras = await response.json();
