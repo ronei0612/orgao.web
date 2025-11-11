@@ -1,252 +1,168 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Órgão.Web</title>
-    <link href="./assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css" rel="stylesheet">
-    <link href="./assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="./assets/css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botão Arrastável e Clicável (Mobile Otimizado)</title>
+    <style>
+        body {
+            /* Impede o zoom e scroll padrão ao tocar */
+            touch-action: none; 
+            overflow: hidden; 
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
 
-    <!-- CSS do Select2 -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
+        #botaoArrastavel {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+
+            /* Estilo */
+            padding: 20px 40px;
+            background-color: #28a745; 
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+            /* Propriedades de arrasto */
+            cursor: grab; 
+            user-select: none; 
+            transition: box-shadow 0.1s; 
+            text-align: center; 
+            display: block; 
+        }
+
+        #botaoArrastavel:hover {
+            opacity: 0.9;
+        }
+
+        #botaoArrastavel:active {
+            cursor: grabbing;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
-
 <body>
-    <div class="container d-flex flex-column vh-100" id="container">
-        <div class="d-sm-flex mt-1 mb-1">
-            <div class="d-flex">
-                <i class="bi bi-list" id="menuButton" data-toggle="modal" data-target="#optionsModal"></i>
-                <div class="d-flex justify-content-center align-items-center flex-grow-1" id="tomContainer">
-                    <button class="btn btn-dark-cyan mx-1" id="decreaseTom"><i class="bi bi-dash-lg"></i></button>
-                    <select class="form-control mx-1 w-auto" id="tomSelect">
-                        <option value="">Letra</option>
-                        <option value="C" selected>C</option>
-                        <option value="C#">C#</option>
-                        <option value="D">D</option>
-                        <option value="Eb">Eb</option>
-                        <option value="E">E</option>
-                        <option value="F">F</option>
-                        <option value="F#">F#</option>
-                        <option value="G">G</option>
-                        <option value="Ab">Ab</option>
-                        <option value="A">A</option>
-                        <option value="Bb">Bb</option>
-                        <option value="B">B</option>
-                    </select>
-                    <button class="btn btn-dark-cyan mx-1" id="increaseTom"><i class="bi bi-plus-lg"></i></button>
-                </div>
-            </div>
-            <div class="mx-1"></div>
-            <div class="d-flex flex-grow-1">
-                <div class="d-flex align-items-center justify-content-between w-100">
-                    <button id="selectedButton" class="btn btn-light d-none">
-                    </button>
-                    <div id="selectContainer">
-                        <select class="form-control" id="savesSelect">
-                        </select>
-                    </div>
-                    <input type="text" class="form-control d-none" id="itemNameInput" placeholder="Nome da Música...">
 
-                    <button class="btn btn-primary btn-control-custom rounded-right d-none" id="saveButton">
-                        <i class="bi bi-check"></i>
-                    </button>
-                    <button class="btn btn-danger btn-control-custom rounded-right d-none" id="cancelButton">
-                        ×
-                    </button>
+    <div id="botaoArrastavel">Mova-me e Clique!</div>
 
-                    <button class="btn btn-control-custom btn-add rounded-right" id="addButton">
-                        <i class="bi bi-plus-square"></i>
-                    </button>
-                    <button class="btn btn-control-custom btn-success rounded-0 fade d-none" id="editSavesSelect">
-                        <i class="bi bi-pencil"></i>
-                    </button>
-                    <button class="btn btn-danger rounded-right-custom fade d-none" id="deleteSavesSelect">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+    <script>
+        const dragItem = document.getElementById('botaoArrastavel');
 
-        <div class="mb-2 flex-grow-1">
-            <iframe class="w-100 border border-secondary rounded d-none" id="liturgiaDiariaFrame" src="https://liturgiadiaria.edicoescnbb.com.br/"></iframe>
-            <iframe class="w-100 border border-secondary rounded d-none" id="santamissaFrame" src="./santamissa.html"></iframe>
-            <iframe class="w-100 border border-secondary rounded d-none" id="oracoesFrame" src="./oracoes.html"></iframe>
-            <iframe class="w-100 border border-secondary rounded" id="iframeCifra"></iframe>
+        // Variáveis de controle
+        let active = false; // Indica se o arrasto está ativo
+        let initialX_ptr;   // Posição X inicial do ponteiro
+        let initialY_ptr;   // Posição Y inicial do ponteiro
+        let isDragging = false; // Flag para indicar que houve um arrasto significativo
+        let currentX;       
+        let currentY;       
+        let xOffset = 0;    
+        let yOffset = 0;
+        const CLICK_TOLERANCE = 5; // Limite de movimento em pixels
 
-            <textarea class="modal-textarea d-none" id="editTextarea" placeholder="Editar Cifra..."></textarea>
-        </div>
+        // --- Configuração dos Eventos (Igual ao anterior) ---
+        dragItem.addEventListener("mousedown", dragStart);
+        dragItem.addEventListener("touchstart", dragStart);
 
-        <div class="d-flex justify-content-center align-items-center" id="controlButtons">
-            <button class="btn btn-link d-none" id="prevButton">
-                <i class="bi bi-chevron-compact-left" style="font-size: larger;"></i>
-            </button>
+        document.addEventListener("mousemove", drag);
+        document.addEventListener("touchmove", drag);
+        
+        // **MUDANÇA AQUI:** A função dragEnd agora também lida com o clique.
+        document.addEventListener("mouseup", dragEnd);
+        document.addEventListener("touchend", dragEnd);
 
-            <button class="btn btn-link btn-sm d-none" id="voltarButton">
-                <img src="./assets/icons/v2/voltar.svg" class="button-control" />
-            </button>
-            <button class="btn-custom btn-icons pulse mx-2" data-action="play" id="playButton"><i class="bi bi-play-fill"></i></button>
-            <button class="btn-custom btn-icons pulse mx-2 d-none" data-action="stop" id="stopButton"><i class="bi bi-stop-fill"></i></button>
-            <button class="btn btn-link btn-sm d-none" id="avancarButton">
-                <img src="./assets/icons/v2/avancar.svg" class="button-control" />
-            </button>
+        // O evento 'click' no dragItem FOI REMOVIDO para evitar conflitos mobile.
+        
 
-            <button class="btn-custom btn-icons mx-2" data-action="notes" id="notesButton"><i class="bi bi-music-note-beamed"></i></button>
+        // --- Funções de Lógica ---
 
-            <button class="btn btn-link d-none" id="nextButton">
-                <i class="bi bi-chevron-compact-right" style="font-size: larger;"></i>
-            </button>
-        </div>
+        function dragStart(e) {
+            const isTouch = e.type.includes('touch');
+            
+            if (isTouch) {
+                // Impede o zoom/scroll, mas cuidado para não impedir o evento de clique posterior
+                // Para o arrasto, precisamos do preventDefault, mas o trataremos na função drag()
+            }
 
-        <div class="d-flex justify-content-center align-items-center" id="controlButtons">
-            <button class="btn btn-link d-none" id="prevButton">
-                <i class="bi bi-chevron-compact-left" style="font-size: larger;"></i>
-            </button>
-            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde9" value="Bb">Bb</button>
-            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde7" value="A">A</button>
-            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde11" value="B°">B°</button>
-            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde8" value="E">E</button>
-            <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde10" value="D">D</button>
-        </div>
+            // A. Captura as posições iniciais do ponteiro (mouse ou dedo)
+            initialX_ptr = isTouch ? e.touches[0].clientX : e.clientX;
+            initialY_ptr = isTouch ? e.touches[0].clientY : e.clientY;
 
-        <div class="d-flex justify-content-center" id="acordesButtons">
-            <button class="btn-custom mx-1 botao-azul" data-action="acorde" id="acorde1" value="C">C</button>
-            <button class="btn-custom mx-1" data-action="acorde" id="acorde2" value="Am">Am</button>
-            <button class="btn-custom mx-1" data-action="acorde" id="acorde3" value="F">F</button>
-            <button class="btn-custom mx-1" data-action="acorde" id="acorde4" value="Dm">Dm</button>
-            <button class="btn-custom mx-1" data-action="acorde" id="acorde5" value="G">G</button>
-            <button class="btn-custom mx-1" data-action="acorde" id="acorde6" value="Em">Em</button>
-        </div>
+            // B. Calcula o offset de posicionamento do elemento
+            const transform = window.getComputedStyle(dragItem).transform;
+            let currentLeft, currentTop;
 
-        <div class="mb-2"></div>
-    </div>
+            if (transform && transform !== 'none') {
+                const matrix = transform.match(/matrix.*\((.+)\)/)[1].split(', ');
+                currentLeft = parseInt(matrix[4]) || 0;
+                currentTop = parseInt(matrix[5]) || 0;
+            } else {
+                 currentLeft = dragItem.offsetLeft;
+                 currentTop = dragItem.offsetTop;
+            }
 
-    <!-- Modal options -->
-    <div class="modal fade modal-left" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="optionsModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="optionsModalLabel">Menu</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        <label class="switch mr-2 mb-0" for="darkModeToggle">
-                            <input type="checkbox" id="darkModeToggle" />
-                            <span class="slider"></span>
-                        </label>
-                    </p>
-                    <p><a href="#" id="oracoesEucaristicasLink">Orações Eucarísticas</a></p>
-                    <p><a href="#" id="missaOrdinarioLink">Ordinário Santa Missa</a></p>
-                    <p><a href="#" id="liturgiaDiariaLink">Liturgia Diária</a></p>
-                    <p><a href="#" id="oracoesLink">Orações</a></p>
-                    <p><a href="#" id="downloadSavesLink">Baixar meu Repertório</a></p>
-                    <p><a href="#" id="uploadSavesLink">Importar um Repertório</a></p>
-                    <p><a href="#" id="about">Sobre este site</a></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">× Fechar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+            // O offset é a diferença entre a posição do clique/toque e a posição atual do elemento
+            xOffset = initialX_ptr - currentLeft;
+            yOffset = initialY_ptr - currentTop;
+            
+            active = true;
+            isDragging = false; // Assume que é um clique, a menos que haja movimento
+        }
 
-    <!-- Modal para pesquisa -->
-    <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header d-flex justify-content-between align-items-center">
-                    <h5 class="modal-title flex-grow-1 text-truncate text-center mx-3" id="searchModalLabel">Música</h5>
-                    <button type="button" class="close ml-2" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="input-group">
-                        <input class="form-control" placeholder="Pesquisar no CifraClub..." aria-label="Pesquisar" aria-describedby="basic-addon1" id="searchInput">
-                        <button class="btn btn-danger btn-sm rounded-0" type="button" tabindex="-1" id="clearButton">
-                            <i class="bi bi-x-circle"></i>
-                        </button>
-                        <button class="btn btn-primary rounded-right-custom" type="button" id="searchButton">
-                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                            <i class="bi bi-search" id="searchIcon"></i>
-                        </button>
-                    </div>
-                    <textarea class="form-control mt-3 d-none" id="cifraDisplay" readonly></textarea>
-                    <ul class="list-group mt-3 d-none" id="searchResults"></ul>
-                    <ul class="list-group mt-3 d-none" id="saves"></ul>
-                </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeButton">× Fechar</button>
-                    <div>
-                        <button type="button" class="btn btn-primary" id="tocarButton">
-                            <i class="bi bi-check"></i> Tocar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        function drag(e) {
+            if (!active) return; // Só executa se o arrasto estiver ativo
 
-    <!-- Modal Custom Confirm -->
-    <div class="modal fade" id="customConfirmModal" tabindex="-1" aria-labelledby="customConfirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="customConfirmModalLabel">Confirmação</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="customConfirmModalBody">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btnConfirmCancel" data-bs-dismiss="modal">× Não</button>
-                    <button type="button" class="btn btn-primary" id="btnConfirmAction">✓ Sim</button>
-                </div>
-            </div>
-        </div>
-    </div>
+            const isTouch = e.type.includes('touch');
+            const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+            const clientY = isTouch ? e.touches[0].clientY : e.clientY;
 
-    <!-- Modal Custom Alert -->
-    <div class="modal fade" id="customAlertModal" tabindex="-1" aria-labelledby="customAlertModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="customAlertModalLabel">Aviso</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="customAlertModalBody">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btnAlertDialogOK">✓ OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
+            // C. Verifica se o movimento excedeu a tolerância para ser um arrasto
+            const dx = Math.abs(clientX - initialX_ptr);
+            const dy = Math.abs(clientY - initialY_ptr);
 
-    <!-- IMPORTANTE: Usar jQuery FULL, não a versão 'slim', para o Select2 funcionar corretamente -->
-    <script src="./assets/lib/js/Jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="./assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js"></script>
+            if (dx > CLICK_TOLERANCE || dy > CLICK_TOLERANCE) {
+                isDragging = true; // Se moveu mais que o limite, é um arrasto
+            }
 
-    <!-- JS do Select2 -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+            // D. Previna o comportamento padrão *apenas se estivermos arrastando*
+            if (isTouch && isDragging) {
+                 e.preventDefault(); 
+            }
+            
+            // E. Calcula e aplica a nova posição
+            currentX = clientX - xOffset;
+            currentY = clientY - yOffset;
 
-    <script src="./assets/lib/js/Pizzicato/0.6.4/Pizzicato.js"></script>
-    <script src="./assets/js/AudioContextManager.js"></script>
-    <script src="./assets/js/CifraPlayer1.js"></script>
-    <script src="./assets/js/MusicTheory.js"></script>
-    <script src="./assets/js/UIController.js"></script>
-    <script src="./assets/js/LocalStorageManager.js"></script>
-    <script src="./assets/js/script.js"></script>
+            setTranslate(currentX, currentY, dragItem);
+        }
+
+        function dragEnd(e) {
+            // F. Lógica do Clique: Verifica se o modo arrastar estava ativo e se não houve arrasto.
+            if (active && !isDragging) {
+                // Se o botão não foi arrastado, trate-o como um clique/toque.
+                handleTap(); 
+            }
+
+            active = false; // Desativa o modo arrastar
+            isDragging = false; // Reseta a flag
+        }
+
+        function setTranslate(xPos, yPos, el) {
+            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+        }
+
+        // Nova função para lidar com o toque/clique
+        function handleTap() {
+            alert('Parabéns! Você Clicou/Tocou no botão Arrastável!');
+            console.log('Botão clicado/tocado.');
+        }
+
+    </script>
+
 </body>
-
 </html>
