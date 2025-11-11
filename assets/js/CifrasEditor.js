@@ -13,6 +13,7 @@ class CifrasEditor {
             deleteBtn: document.getElementById('delete-btn'),
             saveBtn: document.getElementById('save-btn'),
             downloadBtn: document.getElementById('download-btn'),
+            clearBtn: document.getElementById('clear-btn'),
             importBtn: document.getElementById('import-btn'),
             importFileInput: document.getElementById('import-file-input'),
             importContainer: document.getElementById('import-cards-container'),
@@ -38,7 +39,9 @@ class CifrasEditor {
         this.elements.addBtn.addEventListener('click', this.addCifra.bind(this));
         this.elements.deleteBtn.addEventListener('click', this.deleteSelectedCifra.bind(this));
         this.elements.saveBtn.addEventListener('click', this.saveCurrentCifra.bind(this));
+        this.elements.clearBtn.addEventListener('click', this.clearCifras.bind(this)); 
         this.elements.downloadBtn.addEventListener('click', this.downloadJson.bind(this));
+        this.elements.downloadBtn.addEventListener('click', this.clearCifras.bind(this));
         this.elements.importBtn.addEventListener('click', this.uploadJson.bind(this));
         this.elements.importFileInput.addEventListener('change', this.handleFileSelect.bind(this));
         this.elements.importContainer.addEventListener('click', this.handleImportCardAction.bind(this));
@@ -50,6 +53,7 @@ class CifrasEditor {
     }
 
     setupSelect2() {
+        this.elements.cifraSelect.innerHTML = '';
         // Inicializa Select2 com as opções (cifras)
         const data = this.cifras.map((cifra, index) => ({
             id: index, // Usamos o índice do array como ID (pois é temporário)
@@ -60,9 +64,10 @@ class CifrasEditor {
             data: data,
             theme: 'bootstrap4',
             placeholder: "Selecione uma Cifra para Editar...",
-            allowClear: true // Permite deselecionar
+            allowClear: true
         });
 
+        $(this.elements.cifraSelect).val(null).trigger('change'); 
         // Evento Select2: Seleção de Cifra
         $(this.elements.cifraSelect).on('select2:select', this.handleCifraSelect.bind(this));
 
@@ -131,9 +136,22 @@ class CifrasEditor {
 
     saveCurrentCifra() {
         this.saveLocalCifras();
+        this.clearCard();
+        $(this.elements.cifraSelect).select2('destroy');
+        this.setupSelect2();
     }
 
-    // --- CRUD Ações ---
+    clearCifras() {
+        if (!confirm('Tem certeza que deseja excluir TODAS as cifras? Esta ação é irreversível e afetará APENAS seus dados locais (localStorage).')) {
+            return;
+        }
+
+        this.cifras = [];
+        this.saveLocalCifras();
+        this.clearCard();
+        $(this.elements.cifraSelect).select2('destroy');
+        this.setupSelect2();
+    }
 
     addCifra() {
         let maxId = this.cifras.length > 0 ? Math.max(...this.cifras.map(c => c.id || 0)) : 0;
@@ -144,7 +162,6 @@ class CifrasEditor {
             cifra: '// Insira sua cifra aqui'
         };
         this.cifras.push(newCifra);
-        this.saveLocalCifras();
 
         // Atualiza Select2 com a nova cifra
         const newIndex = this.cifras.length - 1;
@@ -154,10 +171,6 @@ class CifrasEditor {
         this.selectedCifraIndex = newIndex;
         this.loadCard(newCifra);
     }
-
-    // --- DENTRO DE CifrasEditor.js ---
-
-    // ... (Métodos anteriores)
 
     deleteSelectedCifra() {
         if (this.selectedCifraIndex === -1 || !confirm('Tem certeza que deseja excluir esta cifra?')) {
@@ -171,19 +184,15 @@ class CifrasEditor {
         this.cifras.splice(indexToRemove, 1);
         this.saveLocalCifras();
 
-        window.location.reload();
+        this.clearCard();
+        $(this.elements.cifraSelect).select2('destroy');
+        this.setupSelect2();
     }
-
-    // ... (Restante da classe)
-
-    // --- Utilitários ---
 
     removerAcentos(str) {
         if (!str) return "";
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     }
-
-    // ... (loadLocalCifras, saveLocalCifras, loadCifras, downloadJson permanecem)
 
     saveLocalCifras() {
         localStorage.setItem(this.LOCAL_KEY, JSON.stringify(this.cifras));
@@ -202,9 +211,9 @@ class CifrasEditor {
     }
 
     async loadCifras() {
-        // ... (lógica de carregamento de JSON)
         let remoteCifras = [];
         try {
+            debugger;
             const response = await fetch(this.url);
             if (!response.ok) throw new Error('Erro ao carregar cifras.json');
             remoteCifras = await response.json();
@@ -265,7 +274,6 @@ class CifrasEditor {
         this.elements.editCard.classList.add('d-none');
         this.elements.saveBtn.classList.add('d-none');
         this.elements.deleteBtn.classList.add('d-none');
-        $(this.elements.cifraSelect).select2('open'); // Abre o Select2
 
         const cardListHTML = this.cifrasToImport.map((item, index) => {
             const title = item.titulo || 'Sem Título';
