@@ -35,8 +35,6 @@ class App {
         this.elements.saveButton.addEventListener('click', this.handleSaveClick.bind(this));
         this.elements.darkModeToggle.addEventListener('change', this.uiController.toggleDarkMode.bind(this));
         this.elements.tocarButton.addEventListener('click', this.handleTocarClick.bind(this));
-        this.elements.prevButton.addEventListener('click', () => this.uiController.atualizarBotoesNavegacao('esquerda'));
-        this.elements.nextButton.addEventListener('click', () => this.uiController.atualizarBotoesNavegacao('direita'));
         this.elements.tomSelect.addEventListener('change', this.handleTomSelectChange.bind(this));
         this.elements.decreaseTom.addEventListener('click', this.handleDecreaseTomClick.bind(this));
         this.elements.increaseTom.addEventListener('click', this.handleIncreaseTomClick.bind(this));
@@ -850,8 +848,6 @@ document.addEventListener('DOMContentLoaded', () => {
         iframeCifra: document.getElementById('iframeCifra'),
         santamissaFrame: document.getElementById('santamissaFrame'),
         oracoesFrame: document.getElementById('oracoesFrame'),
-        prevButton: document.getElementById('prevButton'),
-        nextButton: document.getElementById('nextButton'),
         darkModeToggle: document.getElementById('darkModeToggle'),
         searchModalLabel: document.getElementById('searchModalLabel'),
         savesSelect: document.getElementById('savesSelect'),
