@@ -4,10 +4,9 @@ class UIController {
     }
 
     exibirBotoesCifras() {
+        this.elements.draggableControls.classList.add('draggable');
         this.elements.notesButton.classList.remove('d-none');
         this.elements.playButton.classList.remove('d-none');
-        this.elements.nextButton.classList.remove('d-none');
-        this.elements.prevButton.classList.remove('d-none');
         this.elements.notesButton.classList.remove('mx-2');
         this.elements.notesButton.classList.add('ml-4');
         this.esconderBotoesAcordes();
@@ -20,7 +19,6 @@ class UIController {
         this.elements.avancarButton.classList.add('d-none');
         this.elements.notesButton.classList.remove('mx-2');
         this.elements.notesButton.classList.add('ml-4');
-        this.atualizarBotoesNavegacao();
     }
 
     exibirBotoesAvancarVoltarCifra() {
@@ -28,8 +26,6 @@ class UIController {
         this.elements.voltarButton.classList.add('fade-in');
         this.elements.avancarButton.classList.remove('d-none');
         this.elements.avancarButton.classList.add('fade-in');
-        this.elements.nextButton.classList.add('d-none');
-        this.elements.prevButton.classList.add('d-none');
         this.elements.notesButton.classList.remove('ml-4');
     }
 
@@ -60,14 +56,12 @@ class UIController {
     }
 
     exibirBotoesAcordes() {
-        this.atualizarBotoesNavegacao('centralizado');
         this.exibirBotoesTom();
         this.elements.notesButton.classList.remove('d-none');
         this.elements.notesButton.classList.remove('ml-4');
         this.elements.notesButton.classList.add('mx-2');
-        //this.elements.playButton.classList.add('d-none');
-        this.elements.nextButton.classList.add('d-none');
-        this.elements.prevButton.classList.add('d-none');
+        this.elements.playButton.classList.remove('d-none');
+        this.elements.draggableControls.classList.remove('draggable');
 
         this.elements.acorde1.classList.remove('d-none');
         this.elements.acorde2.classList.remove('d-none');
@@ -177,38 +171,9 @@ class UIController {
     }
 
     esconderBotoesPlay() {
+        this.elements.draggableControls.classList.remove('draggable');
         this.elements.notesButton.classList.add('d-none');
         this.elements.playButton.classList.add('d-none');
-        this.elements.prevButton.classList.add('d-none');
-        this.elements.nextButton.classList.add('d-none');
-    }
-
-    atualizarBotoesNavegacao(direcao = '') {
-        if (direcao === 'esquerda' || this.elements.controlButtons.classList.contains('justify-content-left')) {
-            this.elements.nextButton.classList.remove('d-none');
-            if (this.elements.controlButtons.classList.contains('justify-content-center')) {
-                this.elements.controlButtons.classList.remove('justify-content-center');
-                this.elements.controlButtons.classList.add('justify-content-left');
-                this.elements.prevButton.classList.add('d-none');
-            } else if (this.elements.controlButtons.classList.contains('justify-content-end')) {
-                this.elements.controlButtons.classList.remove('justify-content-end');
-                this.elements.controlButtons.classList.add('justify-content-center');
-            }
-        } else if (direcao === 'direita' || this.elements.controlButtons.classList.contains('justify-content-end')) {
-            this.elements.prevButton.classList.remove('d-none');
-            if (this.elements.controlButtons.classList.contains('justify-content-center')) {
-                this.elements.controlButtons.classList.remove('justify-content-center');
-                this.elements.controlButtons.classList.add('justify-content-end');
-                this.elements.nextButton.classList.add('d-none');
-            } else if (this.elements.controlButtons.classList.contains('justify-content-left')) {
-                this.elements.controlButtons.classList.remove('justify-content-left');
-                this.elements.controlButtons.classList.add('justify-content-center');
-            }
-        } else if (direcao === 'centralizado' || this.elements.controlButtons.classList.contains('justify-content-center')) {
-            this.elements.controlButtons.classList.add('justify-content-center');
-            this.elements.prevButton.classList.remove('d-none');
-            this.elements.nextButton.classList.remove('d-none');
-        }
     }
 
     criarItemSelect(saveName, saveContent) {

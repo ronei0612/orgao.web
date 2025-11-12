@@ -211,22 +211,19 @@ class CifraPlayer {
                 const partes = acorde.split('/');
                 let acordePrincipal = partes[0];
 
-                // Usa as propriedades de MusicTheory
                 while (!this.musicTheory.acordesSustenidos.includes(acordePrincipal) && !this.musicTheory.acordesBemol.includes(acordePrincipal) && acordePrincipal) {
                     acordePrincipal = this.musicTheory.acordesMap[acordePrincipal] || acordePrincipal.slice(0, -1);
                 }
 
-                // Delega a transposição
                 let novoTomAcorde = this.musicTheory.transposeAcorde(acordePrincipal, steps, novoTom);
                 let novoAcorde = partes[0].replace(acordePrincipal, novoTomAcorde);
 
                 if (partes[1]) {
                     let acordeBaixo = partes[1];
-                    // Usa as propriedades de MusicTheory
                     while (!this.musicTheory.acordesSustenidos.includes(acordeBaixo) && !this.musicTheory.acordesBemol.includes(acordeBaixo) && acordeBaixo) {
                         acordeBaixo = this.musicTheory.acordesMap[acordeBaixo] || acordeBaixo.slice(0, -1);
                     }
-                    // Delega a transposição
+
                     novoTomAcorde = this.musicTheory.transposeAcorde(acordeBaixo, steps, novoTom);
                     novoAcorde = `${novoAcorde}/${partes[1].replace(acordeBaixo, novoTomAcorde)}`;
                 }
@@ -237,7 +234,7 @@ class CifraPlayer {
     }
 
     tocarAcorde(acorde) {
-        acorde = this.musicTheory.getAcorde(acorde, this.tomAtual); // Usa MusicTheory para obter o acorde canônico
+        acorde = this.musicTheory.getAcorde(acorde, this.tomAtual);
         this.acordeTocando = acorde;
 
         this.desabilitarSelectSaves();
@@ -255,28 +252,19 @@ class CifraPlayer {
         this.acordeGroup = [];
         this.adicionarSom('orgao', baixo, 'grave');
         if (!this.elements.notesButton.classList.contains('notaSolo'))
-            this.adicionarSom('strings', baixo, 'grave', 0.9);
+            this.adicionarSom('strings', baixo, 'grave');
 
         notas.forEach(nota => {
             this.adicionarSom('orgao', nota.replace('#', '_'), 'baixo');
             if (!this.elements.notesButton.classList.contains('notaSolo'))
-                this.adicionarSom('strings', nota.replace('#', '_'), 'baixo', 0.9);
+                this.adicionarSom('strings', nota.replace('#', '_'), 'baixo');
 
             if (this.elements.notesButton.classList.contains('pressed')) {
-                this.adicionarSom('orgao', nota.replace('#', '_', 0.5));
+                this.adicionarSom('orgao', nota.replace('#', '_'));
                 if (!this.elements.notesButton.classList.contains('notaSolo'))
                     this.adicionarSom('strings', nota.replace('#', '_'));
             }
         });
-
-        //setTimeout(() => {
-        //    if (!this.parado && this.acordeTocando) {
-        //        try {
-        //            this.acordeGroup.play();
-        //        } catch { }
-        //    }
-        //}, 60);
-
 
         this.audioContextManager.setNotes(this.acordeGroup);
         this.audioContextManager.play();
@@ -417,7 +405,7 @@ class CifraPlayer {
         return this.acordeMap[nota] || nota;
     }
 
-    adicionarSom(instrumento, nota, oitava = '', volume) {
+    adicionarSom(instrumento, nota, oitava = '') {
         nota = nota.toLowerCase();
         nota = this.getNomeArquivoAudio(nota);
         const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
@@ -431,21 +419,6 @@ class CifraPlayer {
                 elemento.classList.remove('cifraSelecionada');
             }
         });
-    }
-
-    mudarTempoCompasso(bpm) {
-        const tempo = parseInt(bpm.value);
-        const bpmValor = 60000 / tempo;
-        this.elements.bpmValue.textContent = tempo;
-
-        // Define a duração da animação nos botões de play e stop
-        this.elements.playButton.style.animationDuration = `${bpmValor}ms`;
-        this.elements.stopButton.style.animationDuration = `${bpmValor}ms`;
-
-        // Lógica de ajuste de velocidade de reprodução REMOVIDA, pois não era implementada no Pizzicato
-        // if (this.acordeGroup) {
-        //     // ... (lógica para ajustar a velocidade com Pizzicato) ...
-        // }
     }
 
     preencherSelect(tom) {

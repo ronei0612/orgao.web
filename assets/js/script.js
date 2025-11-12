@@ -5,8 +5,9 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
+        this.draggableController = new DraggableController(this.elements.draggableControls);
 
-        this.version = '2.1';
+        this.version = '2.2';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -35,8 +36,6 @@ class App {
         this.elements.saveButton.addEventListener('click', this.handleSaveClick.bind(this));
         this.elements.darkModeToggle.addEventListener('change', this.uiController.toggleDarkMode.bind(this));
         this.elements.tocarButton.addEventListener('click', this.handleTocarClick.bind(this));
-        this.elements.prevButton.addEventListener('click', () => this.uiController.atualizarBotoesNavegacao('esquerda'));
-        this.elements.nextButton.addEventListener('click', () => this.uiController.atualizarBotoesNavegacao('direita'));
         this.elements.tomSelect.addEventListener('change', this.handleTomSelectChange.bind(this));
         this.elements.decreaseTom.addEventListener('click', this.handleDecreaseTomClick.bind(this));
         this.elements.increaseTom.addEventListener('click', this.handleIncreaseTomClick.bind(this));
@@ -377,7 +376,6 @@ class App {
             this.cifraPlayer.indiceAcorde = 0;
         }
         else {
-            this.uiController.exibirBotoesTom();
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelect('C');
             this.elements.savesSelect.selectedIndex = 0;
@@ -764,8 +762,6 @@ class App {
         this.selectEscolhido(newSaveName);
     }
 
-    // --- Setup Methods ---
-
     setupServiceWorker() {
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -850,8 +846,6 @@ document.addEventListener('DOMContentLoaded', () => {
         iframeCifra: document.getElementById('iframeCifra'),
         santamissaFrame: document.getElementById('santamissaFrame'),
         oracoesFrame: document.getElementById('oracoesFrame'),
-        prevButton: document.getElementById('prevButton'),
-        nextButton: document.getElementById('nextButton'),
         darkModeToggle: document.getElementById('darkModeToggle'),
         searchModalLabel: document.getElementById('searchModalLabel'),
         savesSelect: document.getElementById('savesSelect'),
@@ -885,7 +879,8 @@ document.addEventListener('DOMContentLoaded', () => {
         acorde10: document.getElementById('acorde10'),
         acorde11: document.getElementById('acorde11'),
         borderRight: document.getElementById('borderRight'),
-        borderLeft: document.getElementById('borderLeft')
+        borderLeft: document.getElementById('borderLeft'),
+        draggableControls: document.getElementById('draggableControls')
     };
 
     const app = new App(elements);
