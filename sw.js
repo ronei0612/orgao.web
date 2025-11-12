@@ -1,4 +1,4 @@
-const version = '2.2';
+const version = '2.3';
 const CACHE_NAME = 'cifra-app-cache-' + version; // Boa prática: usar o nome completo no cache
 
 const urlsToCache = [
