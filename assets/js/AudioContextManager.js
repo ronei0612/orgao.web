@@ -107,9 +107,9 @@ class AudioContextManager {
 
 	/**
 	 * Para as notas que estão tocando com efeito Release.
-	 * @param {number} [releaseTime=0.3] Duração do efeito Release em segundos (saída suave).
+	 * @param {number} [releaseTime=0.2] Duração do efeito Release em segundos (saída suave).
 	 */
-	stop(releaseTime = 0.3) {
+	stop(releaseTime = 0.2) {
 		if (this.sources.length === 0) return;
 
 		const now = this.audioContext.currentTime;
