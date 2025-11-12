@@ -1,0 +1,148 @@
+class DraggableController {
+    constructor(element) {
+        this.element = element;
+        this.isDragging = false;
+        this.offset = { x: 0, y: 0 };
+        this.startX = 0;
+        this.startY = 0;
+        this.DRAG_THRESHOLD = 5;
+        this.isSetup = false;
+
+        this.onDragStart = this.onDragStart.bind(this);
+        this.onDragMove = this.onDragMove.bind(this);
+        this.onDragEnd = this.onDragEnd.bind(this);
+        this.setupListeners();
+        this.setupInitialStyles();
+        window.addEventListener('resize', this.resetStyles.bind(this));
+    }
+
+    setupInitialStyles() {
+        // Aplica touch-action: none para prevenir o scrolling padrão em mobile
+        this.element.style.touchAction = 'none';
+    }
+    
+    setupStyles() {
+        if (!this.isSetup) {
+            const rect = this.element.getBoundingClientRect();
+            
+            // Transfere o posicionamento de CSS para propriedades fixas
+            this.element.style.position = 'fixed';
+            this.element.style.left = `${rect.left}px`;
+            this.element.style.top = `${rect.top}px`;
+            this.element.style.transform = 'none'; // Remove a centralização via transform
+            this.isSetup = true;
+        }
+    }
+
+    resetStyles() {
+        if (this.isSetup && !this.isDragging) {
+            // Se foi um clique, remove os estilos injetados para que o CSS original retome o controle
+            this.element.style.position = '';
+            this.element.style.left = '';
+            this.element.style.top = '';
+            this.element.style.transform = ''; // O CSS original tem o transform: translateX(-50%)
+            this.isSetup = false;
+        }
+    }
+
+    setupListeners() {
+        this.element.addEventListener('mousedown', this.onDragStart);
+        this.element.addEventListener('touchstart', this.onDragStart);
+    }
+
+    onDragStart(event) {
+        if (!this.element.classList.contains('draggable')) {
+            return;
+        }
+
+        if (event.type === 'touchstart') {
+            event.preventDefault();
+        }
+
+        this.isDragging = false;
+        this.setupStyles();
+
+        const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+        const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+
+        this.startX = clientX;
+        this.startY = clientY;
+
+        const currentLeft = parseFloat(this.element.style.left);
+        const currentTop = parseFloat(this.element.style.top);
+
+        this.offset.x = clientX - currentLeft;
+        this.offset.y = clientY - currentTop;
+
+        document.addEventListener('mousemove', this.onDragMove);
+        document.addEventListener('mouseup', this.onDragEnd);
+        document.addEventListener('touchmove', this.onDragMove, { passive: false });
+        document.addEventListener('touchend', this.onDragEnd);
+    }
+
+    onDragMove(event) {
+        const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+        const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+
+        if (!this.isDragging) {
+            const dx = Math.abs(clientX - this.startX);
+            const dy = Math.abs(clientY - this.startY);
+            if (dx > this.DRAG_THRESHOLD || dy > this.DRAG_THRESHOLD) {
+                this.isDragging = true;
+                this.element.classList.add('dragging');
+            } else {
+                return;
+            }
+        }
+
+        event.preventDefault();
+
+        let newX = clientX - this.offset.x;
+        let newY = clientY - this.offset.y;
+
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const elementWidth = this.element.offsetWidth;
+        const elementHeight = this.element.offsetHeight;
+
+        newX = Math.max(0, Math.min(newX, viewportWidth - elementWidth));
+        newY = Math.max(0, Math.min(newY, viewportHeight - elementHeight));
+
+        this.element.style.left = `${newX}px`;
+        this.element.style.top = `${newY}px`;
+    }
+
+    onDragEnd(event) {
+        document.removeEventListener('mousemove', this.onDragMove);
+        document.removeEventListener('mouseup', this.onDragEnd);
+        document.removeEventListener('touchmove', this.onDragMove);
+        document.removeEventListener('touchend', this.onDragEnd);
+
+        if (this.isDragging) {
+            this.element.classList.remove('dragging');
+        } else {
+            console.log('a');
+
+            this.element.dispatchEvent(new Event('click'));
+
+            // Se foi um clique, restaura o CSS original (bottom: 10px; transform: translateX(-50%))
+            //this.resetStyles();
+
+            // Dispara um evento de clique se não foi arrastado
+            // if (event.type.includes('up') || event.type.includes('end')) {
+            //      const target = event.target;
+            //      if (target === this.element || this.element.contains(target)) {
+            //          setTimeout(() => {
+            //              const clickEvent = new MouseEvent('click', {
+            //                  bubbles: true,
+            //                  cancelable: true,
+            //                  view: window,
+            //              });
+            //              target.dispatchEvent(clickEvent);
+            //          }, 0);
+            //      }
+            //  }
+        }
+        this.isDragging = false;
+    }
+}

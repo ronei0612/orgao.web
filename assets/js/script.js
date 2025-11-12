@@ -5,6 +5,7 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
+        this.draggableController = new DraggableController(this.elements.draggableControls);
 
         this.version = '2.1';
         this.holdTime = 1000;
@@ -762,8 +763,6 @@ class App {
         this.selectEscolhido(newSaveName);
     }
 
-    // --- Setup Methods ---
-
     setupServiceWorker() {
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -881,7 +880,8 @@ document.addEventListener('DOMContentLoaded', () => {
         acorde10: document.getElementById('acorde10'),
         acorde11: document.getElementById('acorde11'),
         borderRight: document.getElementById('borderRight'),
-        borderLeft: document.getElementById('borderLeft')
+        borderLeft: document.getElementById('borderLeft'),
+        draggableControls: document.getElementById('draggableControls')
     };
 
     const app = new App(elements);

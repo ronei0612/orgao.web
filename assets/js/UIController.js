@@ -4,6 +4,7 @@ class UIController {
     }
 
     exibirBotoesCifras() {
+        this.elements.draggableControls.classList.add('draggable');
         this.elements.notesButton.classList.remove('d-none');
         this.elements.playButton.classList.remove('d-none');
         this.elements.notesButton.classList.remove('mx-2');
@@ -169,6 +170,7 @@ class UIController {
     }
 
     esconderBotoesPlay() {
+        this.elements.draggableControls.classList.remove('draggable');
         this.elements.notesButton.classList.add('d-none');
         this.elements.playButton.classList.add('d-none');
     }

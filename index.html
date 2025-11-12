@@ -80,17 +80,19 @@
             <textarea class="modal-textarea d-none" id="editTextarea" placeholder="Editar Cifra..."></textarea>
         </div>
 
-        <div class="d-flex justify-content-center align-items-center" id="controlButtons">
-            <button class="btn btn-link btn-sm d-none" id="voltarButton">
-                <img src="./assets/icons/v2/voltar.svg" class="button-control" />
-            </button>
-            <button class="btn-custom btn-icons pulse mx-2" data-action="play" id="playButton"><i class="bi bi-play-fill"></i></button>
-            <button class="btn-custom btn-icons pulse mx-2 d-none" data-action="stop" id="stopButton"><i class="bi bi-stop-fill"></i></button>
-            <button class="btn btn-link btn-sm d-none" id="avancarButton">
-                <img src="./assets/icons/v2/avancar.svg" class="button-control" />
-            </button>
+        <div id="draggableControls">
+            <div class="d-flex justify-content-center align-items-center" id="controlButtons">
+                <button class="btn btn-link btn-sm d-none" id="voltarButton">
+                    <img src="./assets/icons/v2/voltar.svg" class="button-control" />
+                </button>
+                <button class="btn-custom btn-icons pulse mx-2" data-action="play" id="playButton"><i class="bi bi-play-fill"></i></button>
+                <button class="btn-custom btn-icons pulse mx-2 d-none" data-action="stop" id="stopButton"><i class="bi bi-stop-fill"></i></button>
+                <button class="btn btn-link btn-sm d-none" id="avancarButton">
+                    <img src="./assets/icons/v2/avancar.svg" class="button-control" />
+                </button>
 
-            <button class="btn-custom btn-icons mx-2" data-action="notes" id="notesButton"><i class="bi bi-music-note-beamed"></i></button>
+                <button class="btn-custom btn-icons mx-2" data-action="notes" id="notesButton"><i class="bi bi-music-note-beamed"></i></button>
+            </div>
         </div>
 
         <div class="d-flex justify-content-center align-items-center">
@@ -230,6 +232,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script src="./assets/js/AudioContextManager.js"></script>
+    <script src="./assets/js/DraggableController.js"></script>
     <script src="./assets/js/CifraPlayer.js"></script>
     <script src="./assets/js/MusicTheory.js"></script>
     <script src="./assets/js/UIController.js"></script>
