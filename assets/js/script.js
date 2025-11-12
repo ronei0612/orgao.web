@@ -376,7 +376,6 @@ class App {
             this.cifraPlayer.indiceAcorde = 0;
         }
         else {
-            this.uiController.exibirBotoesTom();
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelect('C');
             this.elements.savesSelect.selectedIndex = 0;

@@ -13,35 +13,22 @@ class DraggableController {
         this.onDragEnd = this.onDragEnd.bind(this);
         this.setupListeners();
         this.setupInitialStyles();
-        window.addEventListener('resize', this.resetStyles.bind(this));
     }
 
     setupInitialStyles() {
         // Aplica touch-action: none para prevenir o scrolling padrão em mobile
         this.element.style.touchAction = 'none';
     }
-    
+
     setupStyles() {
         if (!this.isSetup) {
             const rect = this.element.getBoundingClientRect();
-            
-            // Transfere o posicionamento de CSS para propriedades fixas
-            this.element.style.position = 'fixed';
-            this.element.style.left = `${rect.left}px`;
-            this.element.style.top = `${rect.top}px`;
-            this.element.style.transform = 'none'; // Remove a centralização via transform
-            this.isSetup = true;
-        }
-    }
 
-    resetStyles() {
-        if (this.isSetup && !this.isDragging) {
-            // Se foi um clique, remove os estilos injetados para que o CSS original retome o controle
-            this.element.style.position = '';
-            this.element.style.left = '';
-            this.element.style.top = '';
-            this.element.style.transform = ''; // O CSS original tem o transform: translateX(-50%)
-            this.isSetup = false;
+            this.element.style.left = `${rect.left}px`;
+            this.element.style.transform = 'none';
+            this.element.style.top = `${rect.top}px`;
+
+            this.isSetup = true;
         }
     }
 
@@ -116,7 +103,7 @@ class DraggableController {
 
         if (this.isDragging) {
             this.element.classList.remove('dragging');
-        } 
+        }
         this.isDragging = false;
     }
 }
