@@ -60,6 +60,7 @@ class UIController {
         this.elements.notesButton.classList.remove('d-none');
         this.elements.notesButton.classList.remove('ml-4');
         this.elements.notesButton.classList.add('mx-2');
+        this.elements.playButton.classList.remove('d-none');
         this.elements.draggableControls.classList.remove('draggable');
 
         this.elements.acorde1.classList.remove('d-none');
