@@ -1,168 +1,138 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Botão Arrastável e Clicável (Mobile Otimizado)</title>
+    <title>Tela Cheia e Tela Ligada</title>
     <style>
+        /* Estilos básicos para cobrir a tela inteira */
         body {
-            /* Impede o zoom e scroll padrão ao tocar */
-            touch-action: none; 
-            overflow: hidden; 
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
-        }
-
-        #botaoArrastavel {
-            position: absolute;
-            top: 50px;
-            left: 50px;
-
-            /* Estilo */
-            padding: 20px 40px;
-            background-color: #28a745; 
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #2c3e50;
             color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-            /* Propriedades de arrasto */
-            cursor: grab; 
-            user-select: none; 
-            transition: box-shadow 0.1s; 
-            text-align: center; 
-            display: block; 
+            text-align: center;
+            cursor: pointer; /* Indica que é clicável */
         }
 
-        #botaoArrastavel:hover {
-            opacity: 0.9;
+        h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
         }
 
-        #botaoArrastavel:active {
-            cursor: grabbing;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        p {
+            font-size: 1em;
+            color: #bdc3c7;
+        }
+
+        /* Estilo para quando estiver em tela cheia (opcional) */
+        :fullscreen {
+            background-color: #34495e;
+        }
+
+        :-webkit-full-screen {
+            background-color: #34495e;
         }
     </style>
 </head>
 <body>
-
-    <div id="botaoArrastavel">Mova-me e Clique!</div>
+    <h1 id="status-message">Clique em Qualquer Lugar para Tela Cheia e Manter a Tela Ligada</h1>
+    <p id="sub-status"></p>
 
     <script>
-        const dragItem = document.getElementById('botaoArrastavel');
+        let wakeLock = null;
+        const statusMessage = document.getElementById('status-message');
+        const subStatus = document.getElementById('sub-status');
+        const rootElement = document.documentElement;
 
-        // Variáveis de controle
-        let active = false; // Indica se o arrasto está ativo
-        let initialX_ptr;   // Posição X inicial do ponteiro
-        let initialY_ptr;   // Posição Y inicial do ponteiro
-        let isDragging = false; // Flag para indicar que houve um arrasto significativo
-        let currentX;       
-        let currentY;       
-        let xOffset = 0;    
-        let yOffset = 0;
-        const CLICK_TOLERANCE = 5; // Limite de movimento em pixels
-
-        // --- Configuração dos Eventos (Igual ao anterior) ---
-        dragItem.addEventListener("mousedown", dragStart);
-        dragItem.addEventListener("touchstart", dragStart);
-
-        document.addEventListener("mousemove", drag);
-        document.addEventListener("touchmove", drag);
-        
-        // **MUDANÇA AQUI:** A função dragEnd agora também lida com o clique.
-        document.addEventListener("mouseup", dragEnd);
-        document.addEventListener("touchend", dragEnd);
-
-        // O evento 'click' no dragItem FOI REMOVIDO para evitar conflitos mobile.
-        
-
-        // --- Funções de Lógica ---
-
-        function dragStart(e) {
-            const isTouch = e.type.includes('touch');
-            
-            if (isTouch) {
-                // Impede o zoom/scroll, mas cuidado para não impedir o evento de clique posterior
-                // Para o arrasto, precisamos do preventDefault, mas o trataremos na função drag()
+        /**
+         * 1. Função para solicitar o modo Tela Cheia (Fullscreen API).
+         * É necessário lidar com prefixos de navegador.
+         */
+        function goFullScreen() {
+            if (rootElement.requestFullscreen) {
+                rootElement.requestFullscreen();
+            } else if (rootElement.webkitRequestFullscreen) { /* Safari */
+                rootElement.webkitRequestFullscreen();
+            } else if (rootElement.msRequestFullscreen) { /* IE11 */
+                rootElement.msRequestFullscreen();
             }
+        }
 
-            // A. Captura as posições iniciais do ponteiro (mouse ou dedo)
-            initialX_ptr = isTouch ? e.touches[0].clientX : e.clientX;
-            initialY_ptr = isTouch ? e.touches[0].clientY : e.clientY;
+        /**
+         * 2. Função para solicitar o bloqueio de despertar (Wake Lock API).
+         * Mantém a tela ativa (não escurece nem desliga).
+         */
+        async function keepScreenAwake() {
+            if ('wakeLock' in navigator) {
+                try {
+                    // Tenta solicitar o bloqueio de despertar para a tela
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    statusMessage.textContent = 'Tela Cheia ATIVA!';
+                    subStatus.textContent = 'A tela será mantida ligada.';
+                    console.log('Wake Lock Ativo!');
 
-            // B. Calcula o offset de posicionamento do elemento
-            const transform = window.getComputedStyle(dragItem).transform;
-            let currentLeft, currentTop;
+                    // Opcional: Adiciona um listener para reativar o wake lock se a página for minimizada e restaurada
+                    wakeLock.addEventListener('release', () => {
+                        console.log('Wake Lock liberado pelo sistema.');
+                        subStatus.textContent += ' | Wake Lock Liberado.';
+                    });
 
-            if (transform && transform !== 'none') {
-                const matrix = transform.match(/matrix.*\((.+)\)/)[1].split(', ');
-                currentLeft = parseInt(matrix[4]) || 0;
-                currentTop = parseInt(matrix[5]) || 0;
+                } catch (err) {
+                    // O Wake Lock falhou (pode ser negado pelo usuário ou restrito pelo navegador)
+                    console.error(`Falha ao ativar Wake Lock: ${err.name}, ${err.message}`);
+                    subStatus.textContent = 'Erro ao ativar Wake Lock. (A tela cheia pode ter sido ativada)';
+                }
             } else {
-                 currentLeft = dragItem.offsetLeft;
-                 currentTop = dragItem.offsetTop;
+                console.warn('Wake Lock API não suportada neste navegador.');
+                subStatus.textContent = 'Wake Lock API não suportada.';
             }
-
-            // O offset é a diferença entre a posição do clique/toque e a posição atual do elemento
-            xOffset = initialX_ptr - currentLeft;
-            yOffset = initialY_ptr - currentTop;
-            
-            active = true;
-            isDragging = false; // Assume que é um clique, a menos que haja movimento
         }
 
-        function drag(e) {
-            if (!active) return; // Só executa se o arrasto estiver ativo
+        /**
+         * 3. Função principal acionada pelo clique do usuário.
+         * Ambos (Tela Cheia e Wake Lock) exigem um GESTO do usuário.
+         */
+        function activateFeatures() {
+            // Tenta ativar a Tela Cheia
+            goFullScreen();
 
-            const isTouch = e.type.includes('touch');
-            const clientX = isTouch ? e.touches[0].clientX : e.clientX;
-            const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+            // Tenta ativar o Bloqueio de Despertar
+            keepScreenAwake();
 
-            // C. Verifica se o movimento excedeu a tolerância para ser um arrasto
-            const dx = Math.abs(clientX - initialX_ptr);
-            const dy = Math.abs(clientY - initialY_ptr);
+            // Remove o listener de clique para que as funções não sejam chamadas repetidamente
+            document.body.removeEventListener('click', activateFeatures);
+        }
 
-            if (dx > CLICK_TOLERANCE || dy > CLICK_TOLERANCE) {
-                isDragging = true; // Se moveu mais que o limite, é um arrasto
+        // Adiciona o listener de evento ao corpo do documento
+        document.body.addEventListener('click', activateFeatures);
+
+        // Listener para sair da tela cheia, caso o usuário use ESC ou gestos
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                console.log('Saiu da Tela Cheia.');
+                // Tenta liberar o wake lock se sair da tela cheia
+                if (wakeLock !== null) {
+                    wakeLock.release()
+                        .then(() => {
+                            wakeLock = null;
+                            statusMessage.textContent = 'Clique em Qualquer Lugar para Iniciar Novamente';
+                            subStatus.textContent = 'Tela Cheia Desativada.';
+                        });
+                } else {
+                    statusMessage.textContent = 'Clique em Qualquer Lugar para Iniciar Novamente';
+                    subStatus.textContent = 'Tela Cheia Desativada.';
+                }
             }
-
-            // D. Previna o comportamento padrão *apenas se estivermos arrastando*
-            if (isTouch && isDragging) {
-                 e.preventDefault(); 
-            }
-            
-            // E. Calcula e aplica a nova posição
-            currentX = clientX - xOffset;
-            currentY = clientY - yOffset;
-
-            setTranslate(currentX, currentY, dragItem);
-        }
-
-        function dragEnd(e) {
-            // F. Lógica do Clique: Verifica se o modo arrastar estava ativo e se não houve arrasto.
-            if (active && !isDragging) {
-                // Se o botão não foi arrastado, trate-o como um clique/toque.
-                handleTap(); 
-            }
-
-            active = false; // Desativa o modo arrastar
-            isDragging = false; // Reseta a flag
-        }
-
-        function setTranslate(xPos, yPos, el) {
-            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-        }
-
-        // Nova função para lidar com o toque/clique
-        function handleTap() {
-            alert('Parabéns! Você Clicou/Tocou no botão Arrastável!');
-            console.log('Botão clicado/tocado.');
-        }
+        });
 
     </script>
-
 </body>
 </html>
