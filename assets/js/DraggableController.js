@@ -55,10 +55,6 @@ class DraggableController {
             return;
         }
 
-        if (event.type === 'touchstart') {
-            event.preventDefault();
-        }
-
         this.isDragging = false;
         this.setupStyles();
 
@@ -76,7 +72,7 @@ class DraggableController {
 
         document.addEventListener('mousemove', this.onDragMove);
         document.addEventListener('mouseup', this.onDragEnd);
-        document.addEventListener('touchmove', this.onDragMove, { passive: false });
+        document.addEventListener('touchmove', this.onDragMove);
         document.addEventListener('touchend', this.onDragEnd);
     }
 
@@ -120,29 +116,7 @@ class DraggableController {
 
         if (this.isDragging) {
             this.element.classList.remove('dragging');
-        } else {
-            console.log('a');
-
-            this.element.dispatchEvent(new Event('click'));
-
-            // Se foi um clique, restaura o CSS original (bottom: 10px; transform: translateX(-50%))
-            //this.resetStyles();
-
-            // Dispara um evento de clique se não foi arrastado
-            // if (event.type.includes('up') || event.type.includes('end')) {
-            //      const target = event.target;
-            //      if (target === this.element || this.element.contains(target)) {
-            //          setTimeout(() => {
-            //              const clickEvent = new MouseEvent('click', {
-            //                  bubbles: true,
-            //                  cancelable: true,
-            //                  view: window,
-            //              });
-            //              target.dispatchEvent(clickEvent);
-            //          }, 0);
-            //      }
-            //  }
-        }
+        } 
         this.isDragging = false;
     }
 }
