@@ -348,9 +348,8 @@ class App {
             this.elements.tomSelect.dispatchEvent(new Event('change'));
         }
         else {
-            this.uiController.esconderBotoesAcordes();
-            this.uiController.esconderBotoesPlay();
-            this.uiController.esconderBotoesTom();
+            this.uiController.exibirTextoLetra();
+            this.uiController.exibirBotoesAcordes();
         }
     }
 

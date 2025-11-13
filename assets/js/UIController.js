@@ -242,6 +242,10 @@ class UIController {
         this.elements.oracoesFrame.classList.add('d-none');
     }
 
+    exibirTextoLetra() {
+        this.injetarEstilosNoIframeCifra(15, "'Roboto', sans-serif");
+    }
+
     esconderEditDeleteButtons() {
         if (this.elements.deleteSavesSelect.classList.contains('show')) {
             this.elements.deleteSavesSelect.classList.remove('show');
@@ -401,20 +405,24 @@ class UIController {
         }
     }
 
-    injetarEstilosNoIframeCifra() {
+    injetarEstilosNoIframeCifra(fontSize = 12, fontFamily = "Consolas, 'Courier New', Courier, monospace") {
         const doc = this.elements.iframeCifra.contentDocument;
         if (!doc) return;
 
         if (!doc.getElementById('cifra-style')) {
             const style = doc.createElement('style');
 
+            doc.head.querySelectorAll('style').forEach(style => {
+                style.remove();
+            });
+
             style.innerHTML = `
                 .cifraSelecionada {
                     background-color: #DAA520;
                 }
                 pre {
-                    font-size: 12pt;
-                    font-family: Consolas, 'Courier New', Courier, monospace;
+                    font-size: ${fontSize}pt;
+                    font-family: ${fontFamily};
                 }
                 body {
                     -webkit-user-select: none; /* Safari */

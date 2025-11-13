@@ -422,8 +422,12 @@ class CifraPlayer {
     }
 
     preencherSelect(tom) {
-        this.elements.tomSelect.innerHTML = '<option value="">Letra</option>';
-
+        var option = '<option value="">Letra</option>';
+        if (tom === '') {
+            option = '';
+            tom = 'C';
+        }
+        this.elements.tomSelect.innerHTML = option;
         const tons = this.tonsMaiores.includes(tom) ? this.tonsMaiores : this.tonsMenores.includes(tom) ? this.tonsMenores : [];
 
         tons.forEach(t => {
