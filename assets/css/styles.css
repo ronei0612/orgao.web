@@ -471,25 +471,11 @@ img.button-control {
     animation: fadeIn 0.5s;
 }
 
-/* Estilos estáticos */
 pre {
     font-size: 12pt;
     font-family: Consolas, 'Courier New', Courier, monospace;
 }
 
-/* Prevenção de seleção de texto (no body do iframe) */
-.iframe-cifra-body { /* Uma classe que será adicionada ao body do iframe */
-    font-size: 12pt;
-    font-family: Consolas, 'Courier New', Courier, monospace;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
-    /* ... outros user-drag/select ... */
-}
-
-/* Estilo que é mais "dinâmico" mas que é bom deixar aqui */
 .cifraSelecionada {
     background-color: #DAA520;
 }
