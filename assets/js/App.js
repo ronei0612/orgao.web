@@ -318,12 +318,12 @@ class App {
             this.cifraPlayer.preencherSelect(tom);
             this.uiController.exibirBotoesCifras();
             this.elements.tomSelect.dispatchEvent(new Event('change'));
-            this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
+            this.editarIframeCifra(musicaCifrada);
         }
         else {
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelect('');
-            this.elements.iframeCifra.contentDocument.body.innerHTML = texto;
+            this.editarIframeCifra(texto);
         }
     }
 
@@ -347,8 +347,12 @@ class App {
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelect('C');
             this.elements.savesSelect.selectedIndex = 0;
-            this.elements.iframeCifra.contentDocument.body.innerHTML = '';
+            this.editarIframeCifra('');
         }
+    }
+
+    editarIframeCifra(texto) {
+        this.elements.iframeCifra.contentDocument.body.innerHTML = texto;
     }
 
     removerAcentosEcaracteres(str) {
