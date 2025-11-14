@@ -7,7 +7,7 @@ class App {
         this.localStorageManager = new LocalStorageManager();
         this.draggableController = new DraggableController(this.elements.draggableControls);
 
-        this.version = '2.3';
+        this.version = '2.4';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -221,7 +221,6 @@ class App {
         if (!this.elements.deleteSavesSelect.classList.contains('d-none')) {
             this.elements.itemNameInput.value = '';
             $('#savesSelect').val('').trigger('change');
-            //$('#savesSelect').trigger('change');
 
             this.uiController.editarMusica();
             this.uiController.exibirBotoesTom();
@@ -273,7 +272,6 @@ class App {
     }
 
     handleClearSearchClick() {
-        // refatorado
         this.elements.searchInput.value = '';
         this.elements.searchInput.focus();
     }
@@ -309,11 +307,7 @@ class App {
 
         if (this.pesquisarNaWeb) {
             this.pesquisarNaWeb = false;
-            this.elements.searchIcon.classList.add('d-none');
-            this.elements.spinner.classList.remove('d-none');
-            this.elements.editTextarea.classList.add('d-none');
-            this.elements.cifraDisplay.classList.add('d-none');
-            this.elements.searchResultsList.classList.remove('d-none');
+            this.uiController.exibirInterfaceDePesquisaPesquisando();
         }
     }
 

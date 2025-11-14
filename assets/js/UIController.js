@@ -186,6 +186,14 @@ class UIController {
         return option;
     }
 
+    exibirInterfaceDePesquisaPesquisando() {
+        this.elements.cifraDisplay.classList.add('d-none');
+        this.elements.searchIcon.classList.add('d-none');
+        this.elements.spinner.classList.remove('d-none');
+        this.elements.editTextarea.classList.add('d-none');
+        this.elements.searchResultsList.classList.remove('d-none');
+    }
+
     exibirInterfaceDePesquisa() {
         this.elements.cifraDisplay.classList.add('d-none');
         this.elements.searchIcon.classList.add('d-none');
