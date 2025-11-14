@@ -36,5 +36,11 @@ class LocalStorageManager {
             return false;
         }
     }
+
+    getText(item) {
+        const saves = this.getSaves();
+        const texto = saves[item];
+        return texto ?? '';
+    }
 }
 

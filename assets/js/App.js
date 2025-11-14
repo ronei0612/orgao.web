@@ -164,29 +164,7 @@ class App {
     }
 
     handleTocarClick() {
-        this.uiController.exibirBotoesCifras();
-        const texto = this.elements.cifraDisplay.textContent; // Mudança de value para textContent
-        const tom = this.cifraPlayer.descobrirTom(texto);
-        musicaCifrada = this.cifraPlayer.destacarCifras(texto, tom);
-        this.uiController.exibirBotoesTom();
-        this.cifraPlayer.preencherSelect(tom);
-        this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
-        this.uiController.injetarEstilosNoIframeCifra();
-
-        if (!tom)
-            this.elements.tomSelect.dispatchEvent(new Event('change'));
-
-        if (tom === '') {
-            let textoLetra = this.elements.iframeCifra.contentDocument.body.innerHTML;
-            textoLetra = textoLetra.replace("font-family: Consolas, 'Courier New', Courier, monospace;", "font-family: 'Roboto', sans-serif;")
-                .replace("font-size: 12pt;", "font-size: 15pt;");
-            this.elements.iframeCifra.contentDocument.body.innerHTML = textoLetra;
-            this.uiController.injetarEstilosNoIframeCifra();
-        }
-
-        this.uiController.exibirIframeCifra();
-        this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
-        this.cifraPlayer.indiceAcorde = 0;
+        this.showLetraCifra(this.elements.cifraDisplay.textContent);
         $('#searchModal').modal('hide');
     }
 
@@ -198,7 +176,6 @@ class App {
                 this.cifraPlayer.transporTom();
                 if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
                     const button = event.currentTarget;
-                    //this.cifraPlayer.pararReproducao();
                     this.cifraPlayer.parado = false;
                     this.cifraPlayer.tocarAcorde(button.value);
                     button.classList.add('pressed');
@@ -330,8 +307,6 @@ class App {
         if (this.elements.savesSelect.value !== '')
             this.elements.searchModalLabel.textContent = this.elements.savesSelect.value;
 
-        this.uiController.exibirBotaoTocar();
-
         if (this.pesquisarNaWeb) {
             this.pesquisarNaWeb = false;
             this.elements.searchIcon.classList.add('d-none');
@@ -353,26 +328,27 @@ class App {
         }
     }
 
+    showLetraCifra(texto) {
+        const musicaCifrada = this.cifraPlayer.destacarCifras(texto, null);
+        const tom = this.cifraPlayer.descobrirTom(musicaCifrada);
+
+        // Re-renderiza com o tom descoberto para preencher o select
+        const musicaCifradaFinal = this.cifraPlayer.destacarCifras(texto, tom);
+        this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifradaFinal;
+        this.uiController.injetarEstilosNoIframeCifra();
+
+        this.uiController.exibirBotoesTom();
+        this.cifraPlayer.preencherSelect(tom);
+        this.escolhidoLetraOuCifra(tom);
+        this.uiController.exibirIframeCifra();
+        this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
+        this.cifraPlayer.indiceAcorde = 0;
+    }
+
     selectEscolhido(selectItem) {
         if (selectItem && selectItem !== 'acordes__') {
-            const saves = this.localStorageManager.getSaves();
-            this.elements.editTextarea.value = saves[selectItem];
-            this.elements.savesSelect.style.color = 'black';
-            const texto = this.elements.editTextarea.value;
-            const musicaCifrada = this.cifraPlayer.destacarCifras(texto, null);
-            const tom = this.cifraPlayer.descobrirTom(musicaCifrada);
-
-            // Re-renderiza com o tom descoberto para preencher o select
-            const musicaCifradaFinal = this.cifraPlayer.destacarCifras(texto, tom);
-            this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifradaFinal;
-            this.uiController.injetarEstilosNoIframeCifra();
-
-            this.uiController.exibirBotoesTom();
-            this.cifraPlayer.preencherSelect(tom);
-            this.escolhidoLetraOuCifra(tom);
-            this.uiController.exibirIframeCifra();
-            this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
-            this.cifraPlayer.indiceAcorde = 0;
+            const texto = this.localStorageManager.getText(selectItem);
+            this.showLetraCifra(texto);
         }
         else {
             this.uiController.exibirBotoesAcordes();
@@ -412,7 +388,7 @@ class App {
             const max = 4;
             const topTitles = musicasLocais.slice(0, max);
             topTitles.forEach((cifra) => {
-                const title = `${newCifra.titulo} - ${newCifra.artista ?? ''}`;
+                const title = `${cifra.titulo} - ${cifra.artista ?? ''}`;
                 const listItem = document.createElement('li');
                 listItem.className = 'list-group-item';
                 const link = document.createElement('a');
@@ -541,7 +517,6 @@ class App {
             }
         } else {
             if (action === 'acorde') {
-                //this.cifraPlayer.pararReproducao();
                 this.cifraPlayer.parado = false;
                 this.cifraPlayer.tocarAcorde(button.value);
             }
