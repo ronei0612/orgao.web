@@ -53,6 +53,7 @@ class CifraPlayer {
         let cifraNum = 1;
         const temPalavra = /[a-zA-Z]{4,}/; // Não remover! Usar caso necessário
         const temColchetes = /\[.*?\]/;
+        var musicaCifrada = false;
 
         const linhasDestacadas = linhas.map(linha => {
             if (linha) {
@@ -77,16 +78,23 @@ class CifraPlayer {
 
                         return espacos[index] + acorde;
                     }).join('');
-                    if (cifraNum > 1)
+                    if (cifraNum > 1) {
+                        musicaCifrada = true;
                         return `<span><b></b>${linhaProcessada}<b></b></span>`;
-                    else
+                    }
+                    else {
                         return `${linhaProcessada}`;
+                    }
                 }
             }
             return linha;
         });
 
-        return `<pre>${linhasDestacadas.join('\n')}</pre>`;
+        if (musicaCifrada) {
+            return `<pre>${linhasDestacadas.join('\n')}</pre>`;
+        } else {
+            return linhasDestacadas.join('\n');
+        }
     }
 
     processarAcorde(palavra, cifraNum, tom) {

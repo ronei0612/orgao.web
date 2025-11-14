@@ -250,10 +250,6 @@ class UIController {
         this.elements.oracoesFrame.classList.add('d-none');
     }
 
-    exibirTextoLetra() {
-        this.injetarEstilosNoIframeCifra(15, "'Roboto', sans-serif");
-    }
-
     esconderEditDeleteButtons() {
         if (this.elements.deleteSavesSelect.classList.contains('show')) {
             this.elements.deleteSavesSelect.classList.remove('show');
@@ -413,7 +409,7 @@ class UIController {
         }
     }
 
-    injetarEstilosNoIframeCifra(fontSize = 12, fontFamily = "Consolas, 'Courier New', Courier, monospace") {
+    injetarEstilosNoIframeCifra() {
         const doc = this.elements.iframeCifra.contentDocument;
         if (!doc) return;
 
@@ -429,21 +425,12 @@ class UIController {
                     background-color: #DAA520;
                 }
                 pre {
-                    font-size: ${fontSize}pt;
-                    font-family: ${fontFamily};
+                    font-size: 12pt;
+                    font-family: Consolas, 'Courier New', Courier, monospace;
                 }
                 body {
-                    -webkit-user-select: none; /* Safari */
-                    -moz-user-select: none; /* Firefox */
-                    -ms-user-select: none; /* Internet Explorer/Edge */
-                    user-select: none; /* Padrão */
-                    -webkit-touch-callout: none; /* Safari */
-                    -webkit-user-drag: none; /* Safari */
-                    -khtml-user-drag: none; /* Konqueror HTML */
-                    -khtml-user-select: none; /* Konqueror HTML */
-                    -moz-user-drag: none; /* Firefox */
-                    -ms-user-drag: none; /* Internet Explorer/Edge */
-                    -o-user-drag: none; /* Opera */
+                    font-size: 15pt;
+                    font-family: 'Roboto', sans-serif;
                 }
             `;
             doc.head.appendChild(style);

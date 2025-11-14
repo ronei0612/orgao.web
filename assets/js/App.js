@@ -311,29 +311,28 @@ class App {
         }
     }
 
-    escolhidoLetraOuCifra(tom) {
-        if (tom !== '') {
+    verifyLetraOuCifra(texto) {
+        if (texto.includes('<pre>')) {
+            const tom = this.cifraPlayer.descobrirTom(texto);
+            const musicaCifrada = this.cifraPlayer.destacarCifras(texto, tom);
+            this.cifraPlayer.preencherSelect(tom);
             this.uiController.exibirBotoesCifras();
             this.elements.tomSelect.dispatchEvent(new Event('change'));
+            this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifrada;
         }
         else {
-            this.uiController.exibirTextoLetra();
             this.uiController.exibirBotoesAcordes();
+            this.cifraPlayer.preencherSelect('');
+            this.elements.iframeCifra.contentDocument.body.innerHTML = texto;
         }
     }
 
     showLetraCifra(texto) {
-        const musicaCifrada = this.cifraPlayer.destacarCifras(texto, null);
-        const tom = this.cifraPlayer.descobrirTom(musicaCifrada);
+        var textoMusica = this.cifraPlayer.destacarCifras(texto, null);
+        this.verifyLetraOuCifra(textoMusica);
 
-        // Re-renderiza com o tom descoberto para preencher o select
-        const musicaCifradaFinal = this.cifraPlayer.destacarCifras(texto, tom);
-        this.elements.iframeCifra.contentDocument.body.innerHTML = musicaCifradaFinal;
         this.uiController.injetarEstilosNoIframeCifra();
-
         this.uiController.exibirBotoesTom();
-        this.cifraPlayer.preencherSelect(tom);
-        this.escolhidoLetraOuCifra(tom);
         this.uiController.exibirIframeCifra();
         this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
         this.cifraPlayer.indiceAcorde = 0;
