@@ -11,7 +11,7 @@ const urlsToCache = [
     './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css',
     './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/fonts/bootstrap-icons.woff2',
     './assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css',
-    './assets/js/script.js',
+    './assets/js/App.js',
     './assets/js/CifraPlayer.js',
     './assets/js/AudioContextManager.js',
     './assets/js/LocalStorageManager.js',
