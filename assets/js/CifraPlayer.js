@@ -180,7 +180,7 @@ class CifraPlayer {
     transporTom(novoTom) {
         const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
 
-        const steps = this.musicTheory.tonsMaiores.indexOf(novoTom) - this.musicTheory.tonsMaiores.indexOf(this.tomAtual);
+        const steps = this.musicTheory.tonsMaiores.indexOf(this.musicTheory.acordesMap[novoTom] ?? novoTom) - this.musicTheory.tonsMaiores.indexOf(this.musicTheory.acordesMap[this.tomAtual] ?? this.tomAtual);
 
         acordeButtons.forEach(acordeButton => {
             const antesAcorde = acordeButton.value;
