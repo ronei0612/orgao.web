@@ -2,9 +2,9 @@ class App {
     constructor(elements) {
         this.elements = elements;
         this.musicTheory = new MusicTheory(); 
-        this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
+        this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
         this.draggableController = new DraggableController(this.elements.draggableControls);
 
         this.version = '2.7';
