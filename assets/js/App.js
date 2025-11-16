@@ -1,7 +1,7 @@
 class App {
     constructor(elements) {
         this.elements = elements;
-        this.musicTheory = new MusicTheory(); 
+        this.musicTheory = new MusicTheory();
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
@@ -15,6 +15,7 @@ class App {
         this.timer = null;
         this.todasAsCifras = [];
         this.musicaEscolhida = false;
+        this.selectItemAntes = null;
     }
 
     init() {
@@ -345,7 +346,20 @@ class App {
         this.cifraPlayer.indiceAcorde = 0;
     }
 
-    selectEscolhido(selectItem) {
+    async verificarTrocouTom() {
+        if (this.cifraPlayer.tomOriginal && this.cifraPlayer.tomOriginal !== this.cifraPlayer.tomAtual) {
+            const confirmed = await this.uiController.customConfirm(`Você trocou de tom de ${this.cifraPlayer.tomOriginal} para ${this.cifraPlayer.tomAtual}. Substituir novo tom?`);
+            if (confirmed) {
+                var saveContent = this.elements.iframeCifra.contentDocument.body.innerText;
+                this.localStorageManager.save(this.selectItemAntes, saveContent);
+            }
+        }
+    }
+
+    async selectEscolhido(selectItem) {
+        await this.verificarTrocouTom();
+        this.selectItemAntes = selectItem;
+
         if (selectItem && selectItem !== 'acordes__') {
             const texto = this.localStorageManager.getText(selectItem);
             this.showLetraCifra(texto);

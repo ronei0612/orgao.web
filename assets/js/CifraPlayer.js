@@ -9,6 +9,7 @@ class CifraPlayer {
         this.acordeTocando = '';
         this.indiceAcorde = 0;
         this.tomAtual = 'C';
+        this.tomOriginal = null;
 
         this.acordeMap = musicTheory.acordeMap;
         this.notasAcordes = musicTheory.notasAcordes;
@@ -165,8 +166,6 @@ class CifraPlayer {
             const novoTom = this.elements.tomSelect.value;
             this.transporCifraNoIframe(novoTom);
             this.tomAtual = novoTom;
-
-            this.preencherSelect(novoTom);
 
             if (this.indiceAcorde > 0) {
                 this.indiceAcorde--;
@@ -447,6 +446,7 @@ class CifraPlayer {
 
         this.elements.tomSelect.value = tom;
         this.tomAtual = tom;
+        this.tomOriginal = tom;
     }
 
     tocarCifraManualmente(cifraElem) {
