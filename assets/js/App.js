@@ -7,7 +7,7 @@ class App {
         this.localStorageManager = new LocalStorageManager();
         this.draggableController = new DraggableController(this.elements.draggableControls);
 
-        this.version = '2.5';
+        this.version = '2.6';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -23,6 +23,7 @@ class App {
         this.warmupApi();
         this.setupDarkMode();
         this.uiController.exibirListaSaves();
+        this.uiController.injetarEstilosNoIframeCifra();
 
         this.bindEvents();
         this.setupSelect2();
@@ -155,7 +156,8 @@ class App {
             const confirmed = await this.uiController.customConfirm(`Salvar "${saveName}"?`);
             if (confirmed) {
                 this.salvarSave(saveName, this.elements.savesSelect.value);
-                // A transposição é tratada dentro de salvarSave ou logo após
+            } else {
+                this.editing = true;
             }
         }
         else {
@@ -169,8 +171,10 @@ class App {
     }
 
     handleTomSelectChange(event) {
-        if (this.elements.tomSelect.value) { // Selecionado um Tom (não "Letra")
-            if (this.elements.acorde1.classList.contains('d-none')) {
+        const selectedTom = this.elements.tomSelect.value;
+        if (selectedTom) {
+            const acordesMode = this.elements.acorde1.classList.contains('d-none');
+            if (acordesMode) {
                 this.cifraPlayer.transposeCifra();
             } else {
                 this.cifraPlayer.transporTom();
@@ -181,11 +185,10 @@ class App {
                     button.classList.add('pressed');
                 }
             }
-        } else { // Selecionado "Letra"
+        } else {
             this.cifraPlayer.removeCifras(this.elements.iframeCifra.contentDocument.body.innerHTML);
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelect('C');
-            this.uiController.esconderBotoesTom();
         }
     }
 
@@ -221,6 +224,7 @@ class App {
         if (!this.elements.deleteSavesSelect.classList.contains('d-none')) {
             this.elements.itemNameInput.value = '';
             $('#savesSelect').val('').trigger('change');
+            this.elements.editTextarea.value = this.elements.iframeCifra.contentDocument.body.innerText;
 
             this.uiController.editarMusica();
             this.uiController.exibirBotoesTom();
@@ -312,18 +316,19 @@ class App {
     }
 
     verifyLetraOuCifra(texto) {
-        if (texto.includes('<pre>')) {
+        if (texto.includes('<pre class="cifra">')) {
             const tom = this.cifraPlayer.descobrirTom(texto);
             const musicaCifrada = this.cifraPlayer.destacarCifras(texto, tom);
             this.cifraPlayer.preencherSelect(tom);
             this.uiController.exibirBotoesCifras();
             this.elements.tomSelect.dispatchEvent(new Event('change'));
-            this.editarIframeCifra(musicaCifrada);
+            this.cifraPlayer.preencherIframeCifra(musicaCifrada);
+            this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
         }
         else {
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelect('');
-            this.editarIframeCifra(texto);
+            this.cifraPlayer.preencherIframeCifra(texto);
         }
     }
 
@@ -331,10 +336,8 @@ class App {
         var textoMusica = this.cifraPlayer.destacarCifras(texto, null);
         this.verifyLetraOuCifra(textoMusica);
 
-        this.uiController.injetarEstilosNoIframeCifra();
         this.uiController.exibirBotoesTom();
         this.uiController.exibirIframeCifra();
-        this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
         this.cifraPlayer.indiceAcorde = 0;
     }
 
@@ -347,12 +350,8 @@ class App {
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelect('C');
             this.elements.savesSelect.selectedIndex = 0;
-            this.editarIframeCifra('');
+            this.cifraPlayer.preencherIframeCifra('');
         }
-    }
-
-    editarIframeCifra(texto) {
-        this.elements.iframeCifra.contentDocument.body.innerHTML = texto;
     }
 
     removerAcentosEcaracteres(str) {
@@ -478,7 +477,7 @@ class App {
             });
             const data = await response.json();
             if (data.success) {
-                var texto = this.cifraPlayer.filtrarLetraCifra(data.message);
+                var texto = this.cifraPlayer.removerTagsDaCifra(data.message);
                 this.elements.cifraDisplay.textContent = texto;
                 this.uiController.exibirBotaoTocar();
             } else {
@@ -686,6 +685,7 @@ class App {
                 !document.webkitFullscreenElement && // Old WebKit
                 !document.mozFullScreenElement && // Old Firefox
                 !document.msFullscreenElement) {  // IE/Edge
+
                 var el = document.documentElement;
                 var requestMethod = el.requestFullscreen || el.webkitRequestFullscreen ||
                     el.mozRequestFullScreen || el.msRequestFullscreen;
@@ -719,7 +719,6 @@ class App {
         }
 
         if (oldSaveName && oldSaveName !== newSaveName) {
-            // Edição de nome
             this.localStorageManager.editarNome(oldSaveName, newSaveName);
         }
 
