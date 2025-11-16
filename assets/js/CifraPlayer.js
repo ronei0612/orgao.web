@@ -9,6 +9,7 @@ class CifraPlayer {
         this.acordeTocando = '';
         this.indiceAcorde = 0;
         this.tomAtual = 'C';
+        this.tomOriginal = null;
 
         this.acordeMap = musicTheory.acordeMap;
         this.notasAcordes = musicTheory.notasAcordes;
@@ -166,8 +167,6 @@ class CifraPlayer {
             this.transporCifraNoIframe(novoTom);
             this.tomAtual = novoTom;
 
-            this.preencherSelect(novoTom);
-
             if (this.indiceAcorde > 0) {
                 this.indiceAcorde--;
             }
@@ -178,11 +177,10 @@ class CifraPlayer {
         }
     }
 
-    transporTom() {
-        const novoTom = this.elements.tomSelect.value;
+    transporTom(novoTom) {
         const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
 
-        const steps = this.musicTheory.tonsMaiores.indexOf(novoTom) - this.musicTheory.tonsMaiores.indexOf(this.tomAtual);
+        const steps = this.musicTheory.tonsMaiores.indexOf(this.musicTheory.acordesMap[novoTom] ?? novoTom) - this.musicTheory.tonsMaiores.indexOf(this.musicTheory.acordesMap[this.tomAtual] ?? this.tomAtual);
 
         acordeButtons.forEach(acordeButton => {
             const antesAcorde = acordeButton.value;
@@ -448,6 +446,7 @@ class CifraPlayer {
 
         this.elements.tomSelect.value = tom;
         this.tomAtual = tom;
+        this.tomOriginal = tom;
     }
 
     tocarCifraManualmente(cifraElem) {

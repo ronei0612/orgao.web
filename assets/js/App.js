@@ -1,13 +1,13 @@
 class App {
     constructor(elements) {
         this.elements = elements;
-        this.musicTheory = new MusicTheory(); 
-        this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
+        this.musicTheory = new MusicTheory();
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
+        this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
         this.draggableController = new DraggableController(this.elements.draggableControls);
 
-        this.version = '2.7';
+        this.version = '2.8';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -15,6 +15,7 @@ class App {
         this.timer = null;
         this.todasAsCifras = [];
         this.musicaEscolhida = false;
+        this.selectItemAntes = null;
     }
 
     init() {
@@ -177,7 +178,7 @@ class App {
             if (acordesMode) {
                 this.cifraPlayer.transposeCifra();
             } else {
-                this.cifraPlayer.transporTom();
+                this.cifraPlayer.transporTom(selectedTom);
                 if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
                     const button = event.currentTarget;
                     this.cifraPlayer.parado = false;
@@ -194,10 +195,12 @@ class App {
 
     handleDecreaseTomClick() {
         if (this.elements.tomSelect.value) {
-            const acordeIndex_B_Bm = 13;
+            const acordeIndex_B = this.elements.tomSelect.innerHTML.includes('Letra') ? 13 : 12;
+            const acordeIndex_C = this.elements.tomSelect.innerHTML.includes('Letra') ? 1 : 0;
+
             let tomIndex = parseInt(this.elements.tomSelect.selectedIndex);
-            if (tomIndex === 1)
-                tomIndex = acordeIndex_B_Bm;
+            if (tomIndex === acordeIndex_C)
+                tomIndex = acordeIndex_B;
             this.elements.tomSelect.value = this.elements.tomSelect.options[tomIndex - 1].value;
             this.elements.tomSelect.dispatchEvent(new Event('change'));
         }
@@ -205,10 +208,12 @@ class App {
 
     handleIncreaseTomClick() {
         if (this.elements.tomSelect.value) {
-            const acordeIndex_C_Cm = 0;
+            const acordeIndex_B = this.elements.tomSelect.innerHTML.includes('Letra') ? 12 : 11;
+            const acordeIndex_C = this.elements.tomSelect.innerHTML.includes('Letra') ? 0 : -1;
+
             let tomIndex = parseInt(this.elements.tomSelect.selectedIndex);
-            if (tomIndex === 12)
-                tomIndex = acordeIndex_C_Cm;
+            if (tomIndex === acordeIndex_B)
+                tomIndex = acordeIndex_C;
             this.elements.tomSelect.value = this.elements.tomSelect.options[tomIndex + 1].value;
             this.elements.tomSelect.dispatchEvent(new Event('change'));
         }
@@ -341,7 +346,20 @@ class App {
         this.cifraPlayer.indiceAcorde = 0;
     }
 
-    selectEscolhido(selectItem) {
+    async verificarTrocouTom() {
+        if (this.cifraPlayer.tomOriginal && this.cifraPlayer.tomOriginal !== this.cifraPlayer.tomAtual) {
+            const confirmed = await this.uiController.customConfirm(`Você trocou de tom de ${this.cifraPlayer.tomOriginal} para ${this.cifraPlayer.tomAtual}. Substituir novo tom?`);
+            if (confirmed) {
+                var saveContent = this.elements.iframeCifra.contentDocument.body.innerText;
+                this.localStorageManager.save(this.selectItemAntes, saveContent);
+            }
+        }
+    }
+
+    async selectEscolhido(selectItem) {
+        await this.verificarTrocouTom();
+        this.selectItemAntes = selectItem;
+
         if (selectItem && selectItem !== 'acordes__') {
             const texto = this.localStorageManager.getText(selectItem);
             this.showLetraCifra(texto);
