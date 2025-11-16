@@ -7,7 +7,7 @@ class App {
         this.localStorageManager = new LocalStorageManager();
         this.draggableController = new DraggableController(this.elements.draggableControls);
 
-        this.version = '2.5';
+        this.version = '2.6';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;

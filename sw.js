@@ -1,8 +1,7 @@
-const version = '2.5';
-const CACHE_NAME = 'cifra-app-cache-' + version; // Boa prática: usar o nome completo no cache
+const version = '2.6';
+const CACHE_NAME = 'cifra-app-cache-' + version;
 
 const urlsToCache = [
-    // Arquivos principais
     './',
     './index.html',
     './cifras.json',
@@ -20,7 +19,6 @@ const urlsToCache = [
     './assets/lib/js/Jquery/3.5.1/jquery.min.js',
     './assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js',
 
-    // Páginas dos iframes
     './santamissa.html',
     './oracoes.html',
 
