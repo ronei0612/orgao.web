@@ -224,6 +224,7 @@ class App {
         if (!this.elements.deleteSavesSelect.classList.contains('d-none')) {
             this.elements.itemNameInput.value = '';
             $('#savesSelect').val('').trigger('change');
+            this.elements.editTextarea.value = this.elements.iframeCifra.contentDocument.body.innerText;
 
             this.uiController.editarMusica();
             this.uiController.exibirBotoesTom();
