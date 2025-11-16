@@ -23,6 +23,7 @@ class App {
         this.warmupApi();
         this.setupDarkMode();
         this.uiController.exibirListaSaves();
+        this.uiController.injetarEstilosNoIframeCifra();
 
         this.bindEvents();
         this.setupSelect2();
@@ -312,18 +313,19 @@ class App {
     }
 
     verifyLetraOuCifra(texto) {
-        if (texto.includes('<pre>')) {
+        if (texto.includes('<pre class="cifra">')) {
             const tom = this.cifraPlayer.descobrirTom(texto);
             const musicaCifrada = this.cifraPlayer.destacarCifras(texto, tom);
             this.cifraPlayer.preencherSelect(tom);
             this.uiController.exibirBotoesCifras();
             this.elements.tomSelect.dispatchEvent(new Event('change'));
-            this.editarIframeCifra(musicaCifrada);
+            this.cifraPlayer.preencherIframeCifra(musicaCifrada);
+            this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
         }
         else {
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelect('');
-            this.editarIframeCifra(texto);
+            this.cifraPlayer.preencherIframeCifra(texto);
         }
     }
 
@@ -331,10 +333,8 @@ class App {
         var textoMusica = this.cifraPlayer.destacarCifras(texto, null);
         this.verifyLetraOuCifra(textoMusica);
 
-        this.uiController.injetarEstilosNoIframeCifra();
         this.uiController.exibirBotoesTom();
         this.uiController.exibirIframeCifra();
-        this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
         this.cifraPlayer.indiceAcorde = 0;
     }
 
@@ -347,12 +347,8 @@ class App {
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelect('C');
             this.elements.savesSelect.selectedIndex = 0;
-            this.editarIframeCifra('');
+            this.cifraPlayer.preencherIframeCifra('');
         }
-    }
-
-    editarIframeCifra(texto) {
-        this.elements.iframeCifra.contentDocument.body.innerHTML = texto;
     }
 
     removerAcentosEcaracteres(str) {
@@ -478,7 +474,7 @@ class App {
             });
             const data = await response.json();
             if (data.success) {
-                var texto = this.cifraPlayer.filtrarLetraCifra(data.message);
+                var texto = this.cifraPlayer.removerTagsDaCifra(data.message);
                 this.elements.cifraDisplay.textContent = texto;
                 this.uiController.exibirBotaoTocar();
             } else {
@@ -686,6 +682,7 @@ class App {
                 !document.webkitFullscreenElement && // Old WebKit
                 !document.mozFullScreenElement && // Old Firefox
                 !document.msFullscreenElement) {  // IE/Edge
+
                 var el = document.documentElement;
                 var requestMethod = el.requestFullscreen || el.webkitRequestFullscreen ||
                     el.mozRequestFullScreen || el.msRequestFullscreen;

@@ -424,13 +424,14 @@ class UIController {
                 .cifraSelecionada {
                     background-color: #DAA520;
                 }
-                pre {
+                pre.cifra {
                     font-size: 12pt;
                     font-family: Consolas, 'Courier New', Courier, monospace;
                 }
-                body {
+                pre.letra {
                     font-size: 15pt;
                     font-family: 'Roboto', sans-serif;
+                    white-space: pre-wrap;
                 }
             `;
             doc.head.appendChild(style);

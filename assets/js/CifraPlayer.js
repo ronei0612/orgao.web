@@ -36,7 +36,7 @@ class CifraPlayer {
         return this.musicTheory.descobrirTom(cifras);
     }
 
-    filtrarLetraCifra(texto) {
+    removerTagsDaCifra(texto) {
         if (texto) {
             if (texto.includes('<pre>')) {
                 return texto.split('<pre>')[1].split('</pre>')[0].replace(/<\/?[^>]+(>|$)/g, "");
@@ -91,9 +91,9 @@ class CifraPlayer {
         });
 
         if (musicaCifrada) {
-            return `<pre>${linhasDestacadas.join('\n')}</pre>`;
+            return `<pre class="cifra">${linhasDestacadas.join('\n')}</pre>`;
         } else {
-            return linhasDestacadas.join('\n');
+            return `<pre class="letra">${linhasDestacadas.join('\n')}</pre>`;
         }
     }
 
@@ -298,9 +298,13 @@ class CifraPlayer {
         return this.musicTheory.inversaoDeAcorde(acorde, baixo);
     }
 
+    preencherIframeCifra(texto) {
+        this.elements.iframeCifra.contentDocument.body.innerHTML = texto;
+    }
+
     removeCifras(musica) {
         let linhasFinal = [];
-        const conteudoPre = musica.split('<pre>')[1]?.split('</pre>')[0];
+        const conteudoPre = musica.split('<pre class="cifra">')[1]?.split('</pre>')[0];
 
         if (conteudoPre) {
             let linhas = conteudoPre.split('\n');
@@ -311,11 +315,8 @@ class CifraPlayer {
             });
         }
 
-        let final = linhasFinal.join('\n');
-
-        this.elements.iframeCifra.contentDocument.body.innerText = final;
-        this.elements.iframeCifra.contentDocument.body.style.fontSize = '15pt';
-        this.elements.iframeCifra.contentDocument.body.style.fontFamily = "'Roboto', sans-serif";
+        let final = `<pre class="letra">${linhasFinal.join('\n')}</pre>`;
+        this.preencherIframeCifra(final);
     }
 
     addEventCifrasIframe(frame) {
