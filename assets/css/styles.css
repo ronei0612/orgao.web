@@ -471,15 +471,6 @@ img.button-control {
     animation: fadeIn 0.5s;
 }
 
-pre {
-    font-size: 12pt;
-    font-family: Consolas, 'Courier New', Courier, monospace;
-}
-
-.cifraSelecionada {
-    background-color: #DAA520;
-}
-
 @keyframes fadeIn {
     from {
         opacity: 0;
