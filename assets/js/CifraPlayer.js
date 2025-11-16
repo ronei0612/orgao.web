@@ -92,7 +92,9 @@ class CifraPlayer {
         });
 
         if (musicaCifrada) {
-            return `<pre class="cifra">${linhasDestacadas.join('\n')}</pre>`;
+            const numQuebrasDeLinha = 70;
+            const quebrasDeLinha = '\n'.repeat(numQuebrasDeLinha);
+            return `<pre class="cifra">${linhasDestacadas.join('\n')}${quebrasDeLinha}</pre>`;
         } else {
             return `<pre class="letra">${linhasDestacadas.join('\n')}</pre>`;
         }

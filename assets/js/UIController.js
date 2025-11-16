@@ -429,7 +429,6 @@ class UIController {
                 pre.cifra {
                     font-size: 12pt;
                     font-family: Consolas, 'Courier New', Courier, monospace;
-                    min-height: 900px;
                 }
                 pre.letra {
                     font-size: 15pt;
