@@ -156,7 +156,8 @@ class App {
             const confirmed = await this.uiController.customConfirm(`Salvar "${saveName}"?`);
             if (confirmed) {
                 this.salvarSave(saveName, this.elements.savesSelect.value);
-                // A transposição é tratada dentro de salvarSave ou logo após
+            } else {
+                this.editing = true;
             }
         }
         else {
@@ -170,8 +171,10 @@ class App {
     }
 
     handleTomSelectChange(event) {
-        if (this.elements.tomSelect.value) { // Selecionado um Tom (não "Letra")
-            if (this.elements.acorde1.classList.contains('d-none')) {
+        const selectedTom = this.elements.tomSelect.value;
+        if (selectedTom) {
+            const acordesMode = this.elements.acorde1.classList.contains('d-none');
+            if (acordesMode) {
                 this.cifraPlayer.transposeCifra();
             } else {
                 this.cifraPlayer.transporTom();
@@ -182,11 +185,10 @@ class App {
                     button.classList.add('pressed');
                 }
             }
-        } else { // Selecionado "Letra"
+        } else {
             this.cifraPlayer.removeCifras(this.elements.iframeCifra.contentDocument.body.innerHTML);
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelect('C');
-            this.uiController.esconderBotoesTom();
         }
     }
 
@@ -716,7 +718,6 @@ class App {
         }
 
         if (oldSaveName && oldSaveName !== newSaveName) {
-            // Edição de nome
             this.localStorageManager.editarNome(oldSaveName, newSaveName);
         }
 
