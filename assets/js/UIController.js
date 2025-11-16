@@ -423,6 +423,8 @@ class UIController {
             style.innerHTML = `
                 .cifraSelecionada {
                     background-color: #DAA520;
+                    padding: 1px 2px;
+                    border-radius:3px;
                 }
                 pre.cifra {
                     font-size: 12pt;
