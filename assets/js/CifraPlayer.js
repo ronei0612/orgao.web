@@ -378,10 +378,16 @@ class CifraPlayer {
 
         this.parado = false;
 
+        // Reiniciar cifra do início se chegar ao fim
+        if (this.indiceAcorde === elements_b.length - 1) {
+            this.indiceAcorde = 0;
+        }
+
         if (this.indiceAcorde < elements_b.length) {
             this.removerClasseCifraSelecionada(frameContent);
 
             const cifraElem = elements_b[this.indiceAcorde];
+
             if (cifraElem) {
                 const cifra = cifraElem.innerHTML.trim();
                 const proximacifra = cifraElem.nextElementSibling?.innerHTML.trim() ?? '';
