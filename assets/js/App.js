@@ -194,10 +194,12 @@ class App {
 
     handleDecreaseTomClick() {
         if (this.elements.tomSelect.value) {
-            const acordeIndex_B_Bm = 13;
+            const acordeIndex_B = this.elements.tomSelect.innerHTML.includes('Letra') ? 13 : 12;
+            const acordeIndex_C = this.elements.tomSelect.innerHTML.includes('Letra') ? 1 : 0;
+
             let tomIndex = parseInt(this.elements.tomSelect.selectedIndex);
-            if (tomIndex === 1)
-                tomIndex = acordeIndex_B_Bm;
+            if (tomIndex === acordeIndex_C)
+                tomIndex = acordeIndex_B;
             this.elements.tomSelect.value = this.elements.tomSelect.options[tomIndex - 1].value;
             this.elements.tomSelect.dispatchEvent(new Event('change'));
         }
@@ -205,10 +207,12 @@ class App {
 
     handleIncreaseTomClick() {
         if (this.elements.tomSelect.value) {
-            const acordeIndex_C_Cm = 0;
+            const acordeIndex_B = this.elements.tomSelect.innerHTML.includes('Letra') ? 12 : 11;
+            const acordeIndex_C = this.elements.tomSelect.innerHTML.includes('Letra') ? 0 : -1;
+
             let tomIndex = parseInt(this.elements.tomSelect.selectedIndex);
-            if (tomIndex === 12)
-                tomIndex = acordeIndex_C_Cm;
+            if (tomIndex === acordeIndex_B)
+                tomIndex = acordeIndex_C;
             this.elements.tomSelect.value = this.elements.tomSelect.options[tomIndex + 1].value;
             this.elements.tomSelect.dispatchEvent(new Event('change'));
         }
