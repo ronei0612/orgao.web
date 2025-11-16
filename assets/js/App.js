@@ -348,6 +348,7 @@ class App {
 
     async verificarTrocouTom() {
         if (this.cifraPlayer.tomOriginal && this.cifraPlayer.tomOriginal !== this.cifraPlayer.tomAtual) {
+            this.cifraPlayer.tomOriginal = null;
             const confirmed = await this.uiController.customConfirm(`Você trocou de tom de ${this.cifraPlayer.tomOriginal} para ${this.cifraPlayer.tomAtual}. Substituir novo tom?`);
             if (confirmed) {
                 var saveContent = this.elements.iframeCifra.contentDocument.body.innerText;
