@@ -177,7 +177,7 @@ class App {
             if (acordesMode) {
                 this.cifraPlayer.transposeCifra();
             } else {
-                this.cifraPlayer.transporTom();
+                this.cifraPlayer.transporTom(selectedTom);
                 if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
                     const button = event.currentTarget;
                     this.cifraPlayer.parado = false;

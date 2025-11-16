@@ -178,8 +178,7 @@ class CifraPlayer {
         }
     }
 
-    transporTom() {
-        const novoTom = this.elements.tomSelect.value;
+    transporTom(novoTom) {
         const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
 
         const steps = this.musicTheory.tonsMaiores.indexOf(novoTom) - this.musicTheory.tonsMaiores.indexOf(this.tomAtual);
