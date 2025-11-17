@@ -260,7 +260,7 @@ class App {
         if (this.elements.savesSelect.selectedIndex !== 0) {
             const confirmed = await this.uiController.customConfirm(`Deseja excluir "${saveName}"?`, 'Deletar!');
             if (confirmed) {
-                this.localStorageManager.delete(saveName);
+                this.localStorageManager.deleteJson('saves', saveName);
                 this.uiController.resetInterface();
                 this.uiController.exibirListaSaves();
                 this.selectEscolhido('acordes__');
@@ -352,7 +352,7 @@ class App {
             const confirmed = await this.uiController.customConfirm(`Você trocou de tom de ${this.cifraPlayer.tomOriginal} para ${this.cifraPlayer.tomAtual}. Substituir novo tom?`);
             if (confirmed) {
                 var saveContent = this.elements.iframeCifra.contentDocument.body.innerText;
-                this.localStorageManager.save(this.selectItemAntes, saveContent);
+                this.localStorageManager.saveJson('saves', this.selectItemAntes, saveContent);
             }
         }
     }
@@ -364,14 +364,14 @@ class App {
         this.selectItemAntes = selectItem;
 
         if (selectItem && selectItem !== 'acordes__') {
-            const texto = this.localStorageManager.getText(selectItem);
+            const texto = this.localStorageManager.getTextJson('saves', selectItem);
             this.showLetraCifra(texto);
         }
         else {
+            this.uiController.resetInterface();
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelect('C');
             this.elements.savesSelect.selectedIndex = 0;
-            this.cifraPlayer.preencherIframeCifra('');
         }
     }
 
@@ -623,7 +623,7 @@ class App {
                     }
 
                     // 2. Mescla com os saves existentes
-                    const currentSaves = this.localStorageManager.getSaves();
+                    const currentSaves = this.localStorageManager.getSavesJson('saves');
                     // O operador spread ( ... ) irá sobrescrever chaves duplicadas
                     const mergedSaves = { ...currentSaves, ...newSaves };
                     localStorage.setItem('saves', JSON.stringify(mergedSaves));
@@ -647,7 +647,7 @@ class App {
     // --- DENTRO DA CLASSE App no script.js ---
 
     downloadSaves() {
-        const saves = this.localStorageManager.getSaves();
+        const saves = this.localStorageManager.getSavesJson('saves');
         const nomeDoArquivo = 'repertorio-orgao-web.json';
 
         if (Object.keys(saves).length === 0) {
@@ -729,7 +729,7 @@ class App {
             newSaveName = "Música " + count;
         }
 
-        let saves = this.localStorageManager.getSaves();
+        let saves = this.localStorageManager.getSavesJson('saves');
 
         newSaveName = newSaveName.trim();
         let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
