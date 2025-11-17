@@ -179,6 +179,17 @@ class CifraPlayer {
         }
     }
 
+    preencherAcordes(tom) {
+        const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
+
+        this.musicTheory.campoHarmonicoAcordes[tom].forEach((acorde, index) => {
+            acordeButtons[index].value = acorde;
+            acordeButtons[index].textContent = acorde;
+        });
+
+        this.tomAtual = tom;
+    }
+
     transporTom(novoTom) {
         const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
 

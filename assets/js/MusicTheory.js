@@ -356,6 +356,21 @@ class MusicTheory {
             'Abm': ['Abm', 'Cb', 'Dbm', 'Ebm', 'Fb', 'Gb'],
             'A#m': ['A#m', 'D', 'E#m', 'F#m', 'G', 'A']
         };
+
+        this.campoHarmonicoAcordes = {
+            'C': ['Bb', 'A', 'B°', 'E', 'D', 'C', 'Am', 'F', 'Dm', 'G', 'Em'],
+            'C#': ['B', 'Bb', 'C°', 'F', 'Eb', 'C#', 'Bbm', 'F#', 'Ebm', 'Ab', 'Fm'],
+            'D': ['C', 'B', 'C#°', 'F#', 'E', 'D', 'Bm', 'G', 'Em', 'A', 'F#m'],
+            'Eb': ['C#', 'C', 'D°', 'G', 'F', 'Eb', 'Cm', 'Ab', 'Fm', 'Bb', 'Gm'],
+            'E': ['D', 'C#', 'Eb°', 'Ab', 'F#', 'E', 'C#m', 'A', 'F#m', 'B', 'Abm'],
+            'F': ['Eb', 'D', 'E°', 'A', 'G', 'F', 'Dm', 'Bb', 'Gm', 'C', 'Am'],
+            'F#': ['E', 'Eb', 'F°', 'Bb', 'Ab', 'F#', 'Ebm', 'B', 'Abm', 'C#', 'Bbm'],
+            'G': ['F', 'E', 'F#°', 'B', 'A', 'G', 'Em', 'C', 'Am', 'D', 'Bm'],
+            'Ab': ['F#', 'F', 'G°', 'C', 'Bb', 'Ab', 'Fm', 'C#', 'Bbm', 'Eb', 'Cm'],
+            'A': ['G', 'F#', 'Ab°', 'C#', 'B', 'A', 'F#m', 'D', 'Bm', 'E', 'C#m'],
+            'Bb': ['Ab', 'G', 'A°', 'D', 'C', 'Bb', 'Gm', 'Eb', 'Cm', 'F', 'Dm'],
+            'B': ['A', 'Ab', 'Bb°', 'Eb', 'C#', 'B', 'Abm', 'E', 'C#m', 'F#', 'Ebm']
+        };
     }
 
     getAcordeNotas(acordeNome) {
