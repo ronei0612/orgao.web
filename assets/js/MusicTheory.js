@@ -310,12 +310,16 @@ class MusicTheory {
         this.acordesMap = {
             'B#': 'C', 'E#': 'F', 'Cb': 'B', 'Fb': 'E', 'Bb': 'A#', 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#'
         };
+        this.acordesTomMap = {
+            'D#': 'Eb', 'G#': 'Ab', 'A#': 'Bb', 'Db': 'C#', 'Gb': 'F#'
+        };
         this.acordesSustenidoMap = {
             'Bb': 'A#', 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#'
         };
         this.acordesBemolMap = {
             'A#': 'Bb', 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab'
         };
+        this.tonsAcordes = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
         this.tonsPreferemSustenido = new Set(['C#', 'D', 'E', 'F#', 'G', 'A', 'B']);
         this.tonsPreferemBemol = new Set(['C', 'D#', 'Eb', 'F', 'G#', 'Ab', 'A#', 'Bb']);
 

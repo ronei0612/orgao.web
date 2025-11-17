@@ -177,8 +177,6 @@ class CifraPlayer {
             acordeButtons[index].value = acorde;
             acordeButtons[index].textContent = acorde;
         });
-
-        this.tomAtual = tom;
     }
 
     transporTom(novoTom) {
@@ -438,19 +436,30 @@ class CifraPlayer {
         });
     }
 
-    preencherSelect(tom) {
+    preencherSelectAcordes(tom = 'C') {
+        tom = this.musicTheory.acordesMap[tom] ?? tom;
+        this.elements.tomSelect.innerHTML = '';
+
+        this.musicTheory.tonsAcordes.forEach(tom => {
+            const option = document.createElement('option');
+            option.value = this.musicTheory.acordesTomMap[tom] ?? tom;
+            option.text = this.musicTheory.acordesTomMap[tom] ?? tom;
+            this.elements.tomSelect.appendChild(option);
+        });
+
+        this.elements.tomSelect.value = tom;
+    }
+
+    preencherSelectCifras(tom) {
         var option = '<option value="">Letra</option>';
-        if (tom === '') {
-            option = '';
-            tom = 'C';
-        }
+
         this.elements.tomSelect.innerHTML = option;
         const tons = this.musicTheory.tonsMaiores.includes(tom) ? this.musicTheory.tonsMaiores : this.musicTheory.tonsMenores.includes(tom) ? this.musicTheory.tonsMenores : [];
 
-        tons.forEach(t => {
+        tons.forEach(tom => {
             const option = document.createElement('option');
-            option.value = t;
-            option.text = t;
+            option.value = tom;
+            option.text = tom;
             this.elements.tomSelect.appendChild(option);
         });
 

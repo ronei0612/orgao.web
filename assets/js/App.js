@@ -190,7 +190,6 @@ class App {
                 this.cifraPlayer.preencherAcordes(selectedTom);
             }
             else {
-                this.localStorageManager.save('TomLetra', selectedTom);
                 this.cifraPlayer.transposeCifra();
 
                 if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
@@ -200,10 +199,11 @@ class App {
                     button.classList.add('pressed');
                 }
             }
-        } else {
+        }
+        else { // Selecionou Letra
             this.cifraPlayer.removeCifras(this.elements.iframeCifra.contentDocument.body.innerHTML);
             this.uiController.exibirBotoesAcordes();
-            this.cifraPlayer.preencherSelect('C');
+            this.cifraPlayer.preencherSelectAcordes('C');
         }
     }
 
@@ -248,7 +248,7 @@ class App {
             this.uiController.editarMusica();
             this.uiController.exibirBotoesTom();
             this.uiController.exibirBotoesAcordes();
-            this.cifraPlayer.preencherSelect('C');
+            this.cifraPlayer.preencherSelectCifras('C');
             this.elements.itemNameInput.click();
         }
 
@@ -266,7 +266,7 @@ class App {
         this.uiController.editarMusica();
         this.uiController.exibirBotoesTom();
         this.uiController.exibirBotoesAcordes();
-        this.cifraPlayer.preencherSelect('C');
+        this.cifraPlayer.preencherSelectCifras('C');
     }
 
     async handleDeleteSaveClick() {
@@ -338,7 +338,7 @@ class App {
         if (texto.includes('<pre class="cifra">')) {
             const tom = this.cifraPlayer.descobrirTom(texto);
             const musicaCifrada = this.cifraPlayer.destacarCifras(texto, tom);
-            this.cifraPlayer.preencherSelect(tom);
+            this.cifraPlayer.preencherSelectCifras(tom);
             this.uiController.exibirBotoesCifras();
             this.elements.tomSelect.dispatchEvent(new Event('change'));
             this.cifraPlayer.preencherIframeCifra(musicaCifrada);
@@ -346,7 +346,7 @@ class App {
         }
         else {
             this.uiController.exibirBotoesAcordes();
-            this.cifraPlayer.preencherSelect('');
+            this.cifraPlayer.preencherSelectAcordes('C');
             this.cifraPlayer.preencherIframeCifra(texto);
         }
     }
@@ -388,9 +388,10 @@ class App {
             if (tom === '')
                 tom = 'C';
 
-            this.cifraPlayer.preencherSelect(tom);
+            this.cifraPlayer.preencherSelectAcordes(tom);
             this.cifraPlayer.preencherAcordes(tom);
             this.elements.savesSelect.selectedIndex = 0;
+            this.cifraPlayer.preencherIframeCifra('');
         }
     }
 
@@ -581,7 +582,7 @@ class App {
             tom = 'C';
         this.uiController.exibirBotoesTom();
         this.cifraPlayer.preencherAcordes(tom);
-        this.cifraPlayer.preencherSelect(tom);
+        this.cifraPlayer.preencherSelectCifras(tom);
         this.uiController.exibirFrame(frameId);
     }
 
