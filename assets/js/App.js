@@ -767,7 +767,7 @@ class App {
         }
 
         var saveContent = this.elements.editTextarea.value;
-        this.localStorageManager.save(newSaveName, saveContent);
+        this.localStorageManager.saveJson('saves', newSaveName, saveContent);
         this.elements.savesSelect.value = newSaveName;
 
         this.uiController.exibirIframeCifra();
