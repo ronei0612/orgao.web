@@ -7,7 +7,7 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
         this.draggableController = new DraggableController(this.elements.draggableControls);
 
-        this.version = '2.8';
+        this.version = '2.9';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -174,11 +174,24 @@ class App {
     handleTomSelectChange(event) {
         const selectedTom = this.elements.tomSelect.value;
         if (selectedTom) {
-            const acordesMode = this.elements.acorde1.classList.contains('d-none');
+            const acordesMode = !this.elements.acorde1.classList.contains('d-none');
+
             if (acordesMode) {
+                var localStorageSalvar = 'TomAcordes';
+                if (!this.elements.liturgiaDiariaFrame.classList.contains('d-none')) {
+                    localStorageSalvar = 'Tom' + 'liturgiaDiariaFrame';
+                } else if (!this.elements.santamissaFrame.classList.contains('d-none')) {
+                    localStorageSalvar = 'Tom' + 'santamissaFrame';
+                } else if (!this.elements.oracoesFrame.classList.contains('d-none')) {
+                    localStorageSalvar = 'Tom' + 'oracoesFrame';
+                }
+
+                this.localStorageManager.save(localStorageSalvar, selectedTom);
+                this.cifraPlayer.preencherAcordes(selectedTom);
+            }
+            else {
                 this.cifraPlayer.transposeCifra();
-            } else {
-                this.cifraPlayer.transporTom(selectedTom);
+
                 if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
                     const button = event.currentTarget;
                     this.cifraPlayer.parado = false;
@@ -186,10 +199,11 @@ class App {
                     button.classList.add('pressed');
                 }
             }
-        } else {
+        }
+        else { // Selecionou Letra
             this.cifraPlayer.removeCifras(this.elements.iframeCifra.contentDocument.body.innerHTML);
             this.uiController.exibirBotoesAcordes();
-            this.cifraPlayer.preencherSelect('C');
+            this.cifraPlayer.preencherSelectAcordes('C');
         }
     }
 
@@ -234,7 +248,7 @@ class App {
             this.uiController.editarMusica();
             this.uiController.exibirBotoesTom();
             this.uiController.exibirBotoesAcordes();
-            this.cifraPlayer.preencherSelect('C');
+            this.cifraPlayer.preencherSelectCifras('C');
             this.elements.itemNameInput.click();
         }
 
@@ -252,7 +266,7 @@ class App {
         this.uiController.editarMusica();
         this.uiController.exibirBotoesTom();
         this.uiController.exibirBotoesAcordes();
-        this.cifraPlayer.preencherSelect('C');
+        this.cifraPlayer.preencherSelectCifras('C');
     }
 
     async handleDeleteSaveClick() {
@@ -260,7 +274,7 @@ class App {
         if (this.elements.savesSelect.selectedIndex !== 0) {
             const confirmed = await this.uiController.customConfirm(`Deseja excluir "${saveName}"?`, 'Deletar!');
             if (confirmed) {
-                this.localStorageManager.delete(saveName);
+                this.localStorageManager.deleteJson('saves', saveName);
                 this.uiController.resetInterface();
                 this.uiController.exibirListaSaves();
                 this.selectEscolhido('acordes__');
@@ -324,7 +338,7 @@ class App {
         if (texto.includes('<pre class="cifra">')) {
             const tom = this.cifraPlayer.descobrirTom(texto);
             const musicaCifrada = this.cifraPlayer.destacarCifras(texto, tom);
-            this.cifraPlayer.preencherSelect(tom);
+            this.cifraPlayer.preencherSelectCifras(tom);
             this.uiController.exibirBotoesCifras();
             this.elements.tomSelect.dispatchEvent(new Event('change'));
             this.cifraPlayer.preencherIframeCifra(musicaCifrada);
@@ -332,7 +346,7 @@ class App {
         }
         else {
             this.uiController.exibirBotoesAcordes();
-            this.cifraPlayer.preencherSelect('');
+            this.cifraPlayer.preencherSelectAcordes('C');
             this.cifraPlayer.preencherIframeCifra(texto);
         }
     }
@@ -352,22 +366,30 @@ class App {
             const confirmed = await this.uiController.customConfirm(`Você trocou de tom de ${this.cifraPlayer.tomOriginal} para ${this.cifraPlayer.tomAtual}. Substituir novo tom?`);
             if (confirmed) {
                 var saveContent = this.elements.iframeCifra.contentDocument.body.innerText;
-                this.localStorageManager.save(this.selectItemAntes, saveContent);
+                this.localStorageManager.saveJson('saves', this.selectItemAntes, saveContent);
             }
         }
     }
 
     async selectEscolhido(selectItem) {
-        await this.verificarTrocouTom();
+        if (this.selectItemAntes && this.selectItemAntes !== 'acordes__' && this.selectItemAntes !== '')
+            await this.verificarTrocouTom();
+
         this.selectItemAntes = selectItem;
 
         if (selectItem && selectItem !== 'acordes__') {
-            const texto = this.localStorageManager.getText(selectItem);
+            const texto = this.localStorageManager.getTextJson('saves', selectItem);
             this.showLetraCifra(texto);
         }
         else {
+            this.uiController.resetInterface();
             this.uiController.exibirBotoesAcordes();
-            this.cifraPlayer.preencherSelect('C');
+            var tom = this.localStorageManager.getText('TomAcordes');
+            if (tom === '')
+                tom = 'C';
+
+            this.cifraPlayer.preencherSelectAcordes(tom);
+            this.cifraPlayer.preencherAcordes(tom);
             this.elements.savesSelect.selectedIndex = 0;
             this.cifraPlayer.preencherIframeCifra('');
         }
@@ -555,8 +577,12 @@ class App {
     }
 
     exibirFrame(frameId) {
+        var tom = this.localStorageManager.getText('Tom' + frameId);
+        if (tom === '')
+            tom = 'C';
         this.uiController.exibirBotoesTom();
-        this.cifraPlayer.preencherSelect('C');
+        this.cifraPlayer.preencherAcordes(tom);
+        this.cifraPlayer.preencherSelectCifras(tom);
         this.uiController.exibirFrame(frameId);
     }
 
@@ -621,7 +647,7 @@ class App {
                     }
 
                     // 2. Mescla com os saves existentes
-                    const currentSaves = this.localStorageManager.getSaves();
+                    const currentSaves = this.localStorageManager.getSavesJson('saves');
                     // O operador spread ( ... ) irá sobrescrever chaves duplicadas
                     const mergedSaves = { ...currentSaves, ...newSaves };
                     localStorage.setItem('saves', JSON.stringify(mergedSaves));
@@ -645,7 +671,7 @@ class App {
     // --- DENTRO DA CLASSE App no script.js ---
 
     downloadSaves() {
-        const saves = this.localStorageManager.getSaves();
+        const saves = this.localStorageManager.getSavesJson('saves');
         const nomeDoArquivo = 'repertorio-orgao-web.json';
 
         if (Object.keys(saves).length === 0) {
@@ -727,7 +753,7 @@ class App {
             newSaveName = "Música " + count;
         }
 
-        let saves = this.localStorageManager.getSaves();
+        let saves = this.localStorageManager.getSavesJson('saves');
 
         newSaveName = newSaveName.trim();
         let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
@@ -742,7 +768,7 @@ class App {
         }
 
         var saveContent = this.elements.editTextarea.value;
-        this.localStorageManager.save(newSaveName, saveContent);
+        this.localStorageManager.saveJson('saves', newSaveName, saveContent);
         this.elements.savesSelect.value = newSaveName;
 
         this.uiController.exibirIframeCifra();

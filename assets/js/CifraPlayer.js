@@ -11,15 +11,6 @@ class CifraPlayer {
         this.tomAtual = 'C';
         this.tomOriginal = null;
 
-        this.acordeMap = musicTheory.acordeMap;
-        this.notasAcordes = musicTheory.notasAcordes;
-        this.tonsMaiores = musicTheory.tonsMaiores;
-        this.tonsMenores = musicTheory.tonsMenores;
-        this.acordesSustenidos = musicTheory.acordesSustenidos;
-        this.acordesBemol = musicTheory.acordesBemol;
-        this.acordesSustenidosBemol = musicTheory.acordesSustenidosBemol;
-        this.acordesMapCore = musicTheory.acordesMap;
-
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
 
         this.audioContextManager = new AudioContextManager();
@@ -177,6 +168,15 @@ class CifraPlayer {
                 this.avancarCifra();
             }
         }
+    }
+
+    preencherAcordes(tom) {
+        const acordeButtons = document.querySelectorAll('button[data-action="acorde"]');
+
+        this.musicTheory.campoHarmonicoAcordes[tom].forEach((acorde, index) => {
+            acordeButtons[index].value = acorde;
+            acordeButtons[index].textContent = acorde;
+        });
     }
 
     transporTom(novoTom) {
@@ -417,7 +417,7 @@ class CifraPlayer {
     }
 
     getNomeArquivoAudio(nota) {
-        return this.acordeMap[nota] || nota;
+        return this.musicTheory.acordeMap[nota] || nota;
     }
 
     adicionarSom(instrumento, nota, oitava = '') {
@@ -436,19 +436,30 @@ class CifraPlayer {
         });
     }
 
-    preencherSelect(tom) {
-        var option = '<option value="">Letra</option>';
-        if (tom === '') {
-            option = '';
-            tom = 'C';
-        }
-        this.elements.tomSelect.innerHTML = option;
-        const tons = this.tonsMaiores.includes(tom) ? this.tonsMaiores : this.tonsMenores.includes(tom) ? this.tonsMenores : [];
+    preencherSelectAcordes(tom = 'C') {
+        tom = this.musicTheory.acordesMap[tom] ?? tom;
+        this.elements.tomSelect.innerHTML = '';
 
-        tons.forEach(t => {
+        this.musicTheory.tonsAcordes.forEach(tom => {
             const option = document.createElement('option');
-            option.value = t;
-            option.text = t;
+            option.value = this.musicTheory.acordesTomMap[tom] ?? tom;
+            option.text = this.musicTheory.acordesTomMap[tom] ?? tom;
+            this.elements.tomSelect.appendChild(option);
+        });
+
+        this.elements.tomSelect.value = tom;
+    }
+
+    preencherSelectCifras(tom) {
+        var option = '<option value="">Letra</option>';
+
+        this.elements.tomSelect.innerHTML = option;
+        const tons = this.musicTheory.tonsMaiores.includes(tom) ? this.musicTheory.tonsMaiores : this.musicTheory.tonsMenores.includes(tom) ? this.musicTheory.tonsMenores : [];
+
+        tons.forEach(tom => {
+            const option = document.createElement('option');
+            option.value = tom;
+            option.text = tom;
             this.elements.tomSelect.appendChild(option);
         });
 

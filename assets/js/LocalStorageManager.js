@@ -1,9 +1,9 @@
 class LocalStorageManager {
     constructor() { }
 
-    getSaves() {
+    getSavesJson(name) {
         try {
-            const savesString = localStorage.getItem('saves');
+            const savesString = localStorage.getItem(name);
             return savesString ? JSON.parse(savesString) : {};
         } catch (error) {
             console.error("Erro ao ler saves do localStorage:", error);
@@ -11,25 +11,29 @@ class LocalStorageManager {
         }
     }
 
-    save(nome, conteudo) {
-        const saves = this.getSaves();
-        saves[nome] = conteudo;
-        localStorage.setItem('saves', JSON.stringify(saves));
+    saveJson(name, item, conteudo) {
+        const saves = this.getSavesJson(name);
+        saves[item] = conteudo;
+        this.save(name, JSON.stringify(saves));
     }
 
-    delete(nome) {
-        const saves = this.getSaves();
-        delete saves[nome];
-        localStorage.setItem('saves', JSON.stringify(saves));
+    save(name, conteudo) {
+        localStorage.setItem(name, conteudo);
+    }
+
+    deleteJson(name, item) {
+        const saves = this.getSavesJson();
+        delete saves[item];
+        this.save(name, JSON.stringify(saves));
     }
 
     editarNome(oldName, newName) {
-        const saves = this.getSaves();
+        const saves = this.getSavesJson();
         if (saves.hasOwnProperty(oldName)) {
             const content = saves[oldName];
             delete saves[oldName];
             saves[newName] = content;
-            localStorage.setItem('saves', JSON.stringify(saves));
+            this.save('saves', JSON.stringify(saves));
             return true;
         } else {
             console.warn(`editarNomeSaveLocalStorage: Save com o nome "${oldName}" não encontrado.`);
@@ -37,8 +41,13 @@ class LocalStorageManager {
         }
     }
 
-    getText(item) {
-        const saves = this.getSaves();
+    getText(name) {
+        const texto = localStorage.getItem(name);
+        return texto ?? '';
+    }
+
+    getTextJson(name, item) {
+        const saves = this.getSavesJson(name);
         const texto = saves[item];
         return texto ?? '';
     }

@@ -240,6 +240,9 @@ class UIController {
         this.elements.selectContainer.classList.remove('d-none');
         this.elements.addButton.classList.remove('d-none');
         this.elements.iframeCifra.classList.remove('d-none');
+        this.elements.oracoesFrame.classList.add('d-none');
+        this.elements.santamissaFrame.classList.add('d-none');
+        this.elements.liturgiaDiariaFrame.classList.add('d-none');
     }
 
     exibirIframeCifra() {
@@ -281,9 +284,6 @@ class UIController {
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.iframeCifra.classList.add('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
-
-        this.exibirBotoesAcordes();
-        this.exibirBotoesTom();
 
         if (frameId) {
             const frame = this.elements[frameId];
