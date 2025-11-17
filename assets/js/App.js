@@ -174,11 +174,11 @@ class App {
     handleTomSelectChange(event) {
         const selectedTom = this.elements.tomSelect.value;
         if (selectedTom) {
-            const acordesMode = this.elements.acorde1.classList.contains('d-none');
+            const acordesMode = !this.elements.acorde1.classList.contains('d-none');
             if (acordesMode) {
-                this.cifraPlayer.transposeCifra();
-            } else {
                 this.cifraPlayer.preencherAcordes(selectedTom);
+            } else {
+                this.cifraPlayer.transposeCifra();
                 if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
                     const button = event.currentTarget;
                     this.cifraPlayer.parado = false;
