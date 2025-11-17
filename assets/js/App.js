@@ -7,7 +7,7 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
         this.draggableController = new DraggableController(this.elements.draggableControls);
 
-        this.version = '2.8';
+        this.version = '2.9';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
