@@ -175,10 +175,24 @@ class App {
         const selectedTom = this.elements.tomSelect.value;
         if (selectedTom) {
             const acordesMode = !this.elements.acorde1.classList.contains('d-none');
+
             if (acordesMode) {
+                var localStorageSalvar = 'TomAcordes';
+                if (!this.elements.liturgiaDiariaFrame.classList.contains('d-none')) {
+                    localStorageSalvar = 'Tom' + 'liturgiaDiariaFrame';
+                } else if (!this.elements.santamissaFrame.classList.contains('d-none')) {
+                    localStorageSalvar = 'Tom' + 'santamissaFrame';
+                } else if (!this.elements.oracoesFrame.classList.contains('d-none')) {
+                    localStorageSalvar = 'Tom' + 'oracoesFrame';
+                }
+
+                this.localStorageManager.save(localStorageSalvar, selectedTom);
                 this.cifraPlayer.preencherAcordes(selectedTom);
-            } else {
+            }
+            else {
+                this.localStorageManager.save('TomLetra', selectedTom);
                 this.cifraPlayer.transposeCifra();
+
                 if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
                     const button = event.currentTarget;
                     this.cifraPlayer.parado = false;
@@ -359,7 +373,7 @@ class App {
 
     async selectEscolhido(selectItem) {
         if (this.selectItemAntes && this.selectItemAntes !== 'acordes__' && this.selectItemAntes !== '')
-        await this.verificarTrocouTom();
+            await this.verificarTrocouTom();
 
         this.selectItemAntes = selectItem;
 
@@ -370,7 +384,12 @@ class App {
         else {
             this.uiController.resetInterface();
             this.uiController.exibirBotoesAcordes();
-            this.cifraPlayer.preencherSelect('C');
+            var tom = this.localStorageManager.getText('TomAcordes');
+            if (tom === '')
+                tom = 'C';
+
+            this.cifraPlayer.preencherSelect(tom);
+            this.cifraPlayer.preencherAcordes(tom);
             this.elements.savesSelect.selectedIndex = 0;
         }
     }
@@ -557,8 +576,12 @@ class App {
     }
 
     exibirFrame(frameId) {
+        var tom = this.localStorageManager.getText('Tom' + frameId);
+        if (tom === '')
+            tom = 'C';
         this.uiController.exibirBotoesTom();
-        this.cifraPlayer.preencherSelect('C');
+        this.cifraPlayer.preencherAcordes(tom);
+        this.cifraPlayer.preencherSelect(tom);
         this.uiController.exibirFrame(frameId);
     }
 
