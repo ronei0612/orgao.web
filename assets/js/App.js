@@ -358,7 +358,9 @@ class App {
     }
 
     async selectEscolhido(selectItem) {
+        if (this.selectItemAntes && this.selectItemAntes !== 'acordes__' && this.selectItemAntes !== '')
         await this.verificarTrocouTom();
+
         this.selectItemAntes = selectItem;
 
         if (selectItem && selectItem !== 'acordes__') {
