@@ -12,12 +12,6 @@ class DraggableController {
         this.onDragMove = this.onDragMove.bind(this);
         this.onDragEnd = this.onDragEnd.bind(this);
         this.setupListeners();
-        this.setupInitialStyles();
-    }
-
-    setupInitialStyles() {
-        // Aplica touch-action: none para prevenir o scrolling padrão em mobile
-        this.element.style.touchAction = 'none';
     }
 
     setupStyles() {

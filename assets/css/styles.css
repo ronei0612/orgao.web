@@ -510,35 +510,13 @@ img.button-control {
 }
 
 .draggable {
-    /* Define o valor padrão (fallback) para a variável --pos-left */
-    position: fixed;
-    bottom: 10px;
-    /* Usa a variável CSS */
-    left: var(--pos-left);
-    transform: var(--pos-transform);
-    z-index: 1000;
-    /* ... outras propriedades ... */
-}
-
-/* CLASSE AUXILIAR para indicar que a posição foi alterada manualmente */
-.draggable-manual {
-    /* Por exemplo, um cursor diferente */
-    cursor: grabbing;
-}
-
-.draggable {
     --pos-left: 50%;
     --pos-transform: translateX(-50%);
-    position: fixed; /* Essencial para que possa ser movido livremente no viewport */
-    bottom: 10px;
+    position: fixed;
+    top: 86%;
     left: var(--pos-left);
     transform: var(--pos-transform);
     z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 5px;
-    border-radius: 10px;
-    cursor: grab;
     touch-action: none; /* Previne o scrolling da página ao arrastar em dispositivos móveis */
+    cursor: grab;
 }
