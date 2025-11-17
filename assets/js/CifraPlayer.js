@@ -11,15 +11,6 @@ class CifraPlayer {
         this.tomAtual = 'C';
         this.tomOriginal = null;
 
-        this.acordeMap = musicTheory.acordeMap;
-        this.notasAcordes = musicTheory.notasAcordes;
-        this.tonsMaiores = musicTheory.tonsMaiores;
-        this.tonsMenores = musicTheory.tonsMenores;
-        this.acordesSustenidos = musicTheory.acordesSustenidos;
-        this.acordesBemol = musicTheory.acordesBemol;
-        this.acordesSustenidosBemol = musicTheory.acordesSustenidosBemol;
-        this.acordesMapCore = musicTheory.acordesMap;
-
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
 
         this.audioContextManager = new AudioContextManager();
@@ -428,7 +419,7 @@ class CifraPlayer {
     }
 
     getNomeArquivoAudio(nota) {
-        return this.acordeMap[nota] || nota;
+        return this.musicTheory.acordeMap[nota] || nota;
     }
 
     adicionarSom(instrumento, nota, oitava = '') {
@@ -454,7 +445,7 @@ class CifraPlayer {
             tom = 'C';
         }
         this.elements.tomSelect.innerHTML = option;
-        const tons = this.tonsMaiores.includes(tom) ? this.tonsMaiores : this.tonsMenores.includes(tom) ? this.tonsMenores : [];
+        const tons = this.musicTheory.tonsMaiores.includes(tom) ? this.musicTheory.tonsMaiores : this.musicTheory.tonsMenores.includes(tom) ? this.musicTheory.tonsMenores : [];
 
         tons.forEach(t => {
             const option = document.createElement('option');
