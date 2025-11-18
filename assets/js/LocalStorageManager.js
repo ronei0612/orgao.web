@@ -22,13 +22,13 @@ class LocalStorageManager {
     }
 
     deleteJson(name, item) {
-        const saves = this.getSavesJson();
+        const saves = this.getSavesJson(name);
         delete saves[item];
         this.save(name, JSON.stringify(saves));
     }
 
-    editarNome(oldName, newName) {
-        const saves = this.getSavesJson();
+    editarNome(name, oldName, newName) {
+        const saves = this.getSavesJson(name);
         if (saves.hasOwnProperty(oldName)) {
             const content = saves[oldName];
             delete saves[oldName];

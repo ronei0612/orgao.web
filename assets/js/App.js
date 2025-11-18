@@ -7,7 +7,7 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
         this.draggableController = new DraggableController(this.elements.draggableControls);
 
-        this.version = '2.9';
+        this.version = '3.0';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -764,7 +764,7 @@ class App {
         }
 
         if (oldSaveName && oldSaveName !== newSaveName) {
-            this.localStorageManager.editarNome(oldSaveName, newSaveName);
+            this.localStorageManager.editarNome('saves',oldSaveName, newSaveName);
         }
 
         var saveContent = this.elements.editTextarea.value;
