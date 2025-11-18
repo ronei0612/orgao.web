@@ -764,7 +764,7 @@ class App {
         }
 
         if (oldSaveName && oldSaveName !== newSaveName) {
-            this.localStorageManager.editarNome(oldSaveName, newSaveName);
+            this.localStorageManager.editarNome('saves',oldSaveName, newSaveName);
         }
 
         var saveContent = this.elements.editTextarea.value;
