@@ -5,10 +5,12 @@ class UIController {
 
     exibirBotoesCifras() {
         this.elements.draggableControls.classList.add('draggable');
+        this.elements.draggableControls.classList.add('control-panel');
         this.elements.notesButton.classList.remove('d-none');
         this.elements.playButton.classList.remove('d-none');
         this.elements.notesButton.classList.remove('mx-2');
-        this.elements.notesButton.classList.add('ml-4');
+        this.elements.notesButton.classList.add('ml-3');
+        this.elements.playButton.classList.add('mx-5');
         this.esconderBotoesAcordes();
     }
 
@@ -18,7 +20,9 @@ class UIController {
         this.elements.avancarButton.classList.remove('fade-in');
         this.elements.avancarButton.classList.add('d-none');
         this.elements.notesButton.classList.remove('mx-2');
-        this.elements.notesButton.classList.add('ml-4');
+        this.elements.notesButton.classList.add('ml-3');
+        this.elements.playButton.classList.add('mx-5');
+        this.elements.draggableControls.classList.add('control-panel');
     }
 
     exibirBotoesAvancarVoltarCifra() {
@@ -26,7 +30,8 @@ class UIController {
         this.elements.voltarButton.classList.add('fade-in');
         this.elements.avancarButton.classList.remove('d-none');
         this.elements.avancarButton.classList.add('fade-in');
-        this.elements.notesButton.classList.remove('ml-4');
+        this.elements.notesButton.classList.remove('ml-3');
+        this.elements.playButton.classList.remove('mx-5');
     }
 
     esconderBotoesAcordes() {
@@ -58,10 +63,12 @@ class UIController {
     exibirBotoesAcordes() {
         this.exibirBotoesTom();
         this.elements.notesButton.classList.remove('d-none');
-        this.elements.notesButton.classList.remove('ml-4');
+        this.elements.notesButton.classList.remove('ml-5');
+        this.elements.playButton.classList.remove('mx-5');
         this.elements.notesButton.classList.add('mx-2');
         this.elements.playButton.classList.remove('d-none');
         this.elements.draggableControls.classList.remove('draggable');
+        this.elements.draggableControls.classList.remove('control-panel');
 
         this.elements.acorde1.classList.remove('d-none');
         this.elements.acorde2.classList.remove('d-none');

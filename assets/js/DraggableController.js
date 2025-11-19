@@ -1,6 +1,6 @@
 class DraggableController {
     constructor(element) {
-        this.element = element;
+        this.draggableControls = element;
         this.isDragging = false;
         this.offset = { x: 0, y: 0 };
         this.startX = 0;
@@ -16,23 +16,22 @@ class DraggableController {
 
     setupStyles() {
         if (!this.isSetup) {
-            const rect = this.element.getBoundingClientRect();
+            const rect = this.draggableControls.getBoundingClientRect();
 
-            this.element.style.left = `${rect.left}px`;
-            this.element.style.transform = 'none';
-            this.element.style.top = `${rect.top}px`;
+            this.draggableControls.style.left = `${rect.left}px`;
+            this.draggableControls.style.top = `${rect.top}px`;
 
             this.isSetup = true;
         }
     }
 
     setupListeners() {
-        this.element.addEventListener('mousedown', this.onDragStart);
-        this.element.addEventListener('touchstart', this.onDragStart);
+        this.draggableControls.addEventListener('mousedown', this.onDragStart);
+        this.draggableControls.addEventListener('touchstart', this.onDragStart);
     }
 
     onDragStart(event) {
-        if (!this.element.classList.contains('draggable')) {
+        if (!this.draggableControls.classList.contains('draggable')) {
             return;
         }
 
@@ -45,8 +44,8 @@ class DraggableController {
         this.startX = clientX;
         this.startY = clientY;
 
-        const currentLeft = parseFloat(this.element.style.left);
-        const currentTop = parseFloat(this.element.style.top);
+        const currentLeft = parseFloat(this.draggableControls.style.left);
+        const currentTop = parseFloat(this.draggableControls.style.top);
 
         this.offset.x = clientX - currentLeft;
         this.offset.y = clientY - currentTop;
@@ -66,7 +65,7 @@ class DraggableController {
             const dy = Math.abs(clientY - this.startY);
             if (dx > this.DRAG_THRESHOLD || dy > this.DRAG_THRESHOLD) {
                 this.isDragging = true;
-                this.element.classList.add('dragging');
+                this.draggableControls.classList.add('dragging');
             } else {
                 return;
             }
@@ -79,14 +78,14 @@ class DraggableController {
 
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-        const elementWidth = this.element.offsetWidth;
-        const elementHeight = this.element.offsetHeight;
+        const elementWidth = this.draggableControls.offsetWidth;
+        const elementHeight = this.draggableControls.offsetHeight;
 
         newX = Math.max(0, Math.min(newX, viewportWidth - elementWidth));
         newY = Math.max(0, Math.min(newY, viewportHeight - elementHeight));
 
-        this.element.style.left = `${newX}px`;
-        this.element.style.top = `${newY}px`;
+        this.draggableControls.style.left = `${newX}px`;
+        this.draggableControls.style.top = `${newY}px`;
     }
 
     onDragEnd(event) {
@@ -96,7 +95,7 @@ class DraggableController {
         document.removeEventListener('touchend', this.onDragEnd);
 
         if (this.isDragging) {
-            this.element.classList.remove('dragging');
+            this.draggableControls.classList.remove('dragging');
         }
         this.isDragging = false;
     }
