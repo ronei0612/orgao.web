@@ -81,7 +81,7 @@ class UIController {
         this.elements.acorde9.classList.remove('d-none');
         this.elements.acorde10.classList.remove('d-none');
         this.elements.acorde11.classList.remove('d-none');
-        
+
         this.elements.acorde1.value = 'C';
         this.elements.acorde1.textContent = 'C';
         this.elements.acorde2.value = 'Am';
@@ -104,6 +104,11 @@ class UIController {
         this.elements.acorde10.textContent = 'D';
         this.elements.acorde11.value = 'B°';
         this.elements.acorde11.textContent = 'B°';
+    }
+
+    exibirBateria() {
+        this.elements.bateriaFrame.classList.remove('d-none');
+        this.elements.iframeCifra.classList.add('d-none');
     }
 
     esconderBotoesTom() {
@@ -129,7 +134,7 @@ class UIController {
 
     exibirBotaoPlay() {
         this.elements.playButton.classList.remove('d-none', 'pressed'),
-        this.elements.stopButton.classList.add('d-none', 'pulse');
+            this.elements.stopButton.classList.add('d-none', 'pulse');
     }
 
     exibirBotaoStop() {
@@ -156,6 +161,11 @@ class UIController {
         emptyOption.value = 'acordes__';
         emptyOption.text = 'Acordes';
         this.elements.savesSelect.appendChild(emptyOption);
+
+        const bateriaOption = document.createElement('option');
+        bateriaOption.value = 'bateria__';
+        bateriaOption.text = 'Bateria';
+        this.elements.savesSelect.appendChild(bateriaOption);
 
         this.elements.savesSelect.style.color = '';
 
@@ -233,7 +243,7 @@ class UIController {
         this.elements.spinner.classList.add('d-none');
         this.elements.searchIcon.classList.remove('d-none');
         this.elements.searchResultsList.classList.add('d-none');
-        
+
         this.elements.tocarButton.classList.remove('d-none');
         this.elements.addButton.classList.remove('d-none');
         this.elements.cifraDisplay.classList.remove('d-none');
@@ -248,6 +258,7 @@ class UIController {
         this.elements.addButton.classList.remove('d-none');
         this.elements.iframeCifra.classList.remove('d-none');
         this.elements.oracoesFrame.classList.add('d-none');
+        this.elements.bateriaFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
     }
@@ -258,6 +269,7 @@ class UIController {
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.oracoesFrame.classList.add('d-none');
+        this.elements.bateriaFrame.classList.add('d-none');
     }
 
     esconderEditDeleteButtons() {
@@ -288,6 +300,7 @@ class UIController {
             this.elements.selectedButton.innerText = this.elements.savesSelect.value;
         }
         this.elements.oracoesFrame.classList.add('d-none');
+        this.elements.bateriaFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.iframeCifra.classList.add('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
