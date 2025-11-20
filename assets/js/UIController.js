@@ -15,8 +15,8 @@ class UIController {
     }
 
     esconderBotoesAvancarVoltarCifra() {
-        this.elements.voltarButton.classList.remove('fade-in');
-        this.elements.voltarButton.classList.add('d-none');
+        this.elements.retrocederButton.classList.remove('fade-in');
+        this.elements.retrocederButton.classList.add('d-none');
         this.elements.avancarButton.classList.remove('fade-in');
         this.elements.avancarButton.classList.add('d-none');
         this.elements.notesButton.classList.remove('mx-2');
@@ -26,8 +26,8 @@ class UIController {
     }
 
     exibirBotoesAvancarVoltarCifra() {
-        this.elements.voltarButton.classList.remove('d-none');
-        this.elements.voltarButton.classList.add('fade-in');
+        this.elements.retrocederButton.classList.remove('d-none');
+        this.elements.retrocederButton.classList.add('fade-in');
         this.elements.avancarButton.classList.remove('d-none');
         this.elements.avancarButton.classList.add('fade-in');
         this.elements.notesButton.classList.remove('ml-3');

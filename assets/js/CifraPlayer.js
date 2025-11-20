@@ -10,6 +10,7 @@ class CifraPlayer {
         this.indiceAcorde = 0;
         this.tomAtual = 'C';
         this.tomOriginal = null;
+        this.elements_b = null;
 
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
 
@@ -128,10 +129,10 @@ class CifraPlayer {
             },
             'baixo': {
                 'orgao': 1.0,
-                'strings': 0.9
+                'strings': 0.8
             },
             'agudo': {
-                'orgao': 0.5,
+                'orgao': 0.6,
                 'strings': 1.0
             }
         };
@@ -334,6 +335,8 @@ class CifraPlayer {
     }
 
     iniciarReproducao() {
+        const frameContent = this.elements.iframeCifra.contentDocument;
+        this.elements_b = frameContent.getElementsByTagName('b');
         this.avancarCifra();
     }
 
@@ -370,21 +373,31 @@ class CifraPlayer {
         this.acordeTocando = '';
     }
 
-    avancarCifra(inicioLinha) {
-        const frameContent = this.elements.iframeCifra.contentDocument;
-        const elements_b = frameContent.getElementsByTagName('b');
+    retrocederCifra() {
+        if (this.indiceAcorde > 2 && this.parado === false) {
+            const cifraElem = this.elements_b[this.indiceAcorde];
+            if (cifraElem.nextElementSibling?.innerHTML === '')
+                this.indiceAcorde -= 4;
+            else
+                this.indiceAcorde -= 2;
 
+            this.avancarCifra();
+        }
+    }
+
+    avancarCifra(inicioLinha) {
         this.parado = false;
+        const frameContent = this.elements.iframeCifra.contentDocument;
 
         // Reiniciar cifra do início se chegar ao fim
-        if (this.indiceAcorde === elements_b.length - 1) {
+        if (this.indiceAcorde === this.elements_b.length - 1) {
             this.indiceAcorde = 0;
         }
 
-        if (this.indiceAcorde < elements_b.length) {
+        if (this.indiceAcorde < this.elements_b.length) {
             this.removerClasseCifraSelecionada(frameContent);
 
-            const cifraElem = elements_b[this.indiceAcorde];
+            const cifraElem = this.elements_b[this.indiceAcorde];
 
             if (cifraElem) {
                 const cifra = cifraElem.innerHTML.trim();
