@@ -10,6 +10,7 @@ class CifraPlayer {
         this.indiceAcorde = 0;
         this.tomAtual = 'C';
         this.tomOriginal = null;
+        this.elements_b = null;
 
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
 
@@ -334,6 +335,8 @@ class CifraPlayer {
     }
 
     iniciarReproducao() {
+        const frameContent = this.elements.iframeCifra.contentDocument;
+        this.elements_b = frameContent.getElementsByTagName('b');
         this.avancarCifra();
     }
 
@@ -372,9 +375,7 @@ class CifraPlayer {
 
     retrocederCifra() {
         if (this.indiceAcorde > 2 && this.parado === false) {
-            const frameContent = this.elements.iframeCifra.contentDocument;
-            const elements_b = frameContent.getElementsByTagName('b');
-            const cifraElem = elements_b[this.indiceAcorde];
+            const cifraElem = this.elements_b[this.indiceAcorde];
             if (cifraElem.nextElementSibling?.innerHTML === '')
                 this.indiceAcorde -= 4;
             else
@@ -385,20 +386,18 @@ class CifraPlayer {
     }
 
     avancarCifra(inicioLinha) {
-        const frameContent = this.elements.iframeCifra.contentDocument;
-        const elements_b = frameContent.getElementsByTagName('b');
-
         this.parado = false;
+        const frameContent = this.elements.iframeCifra.contentDocument;
 
         // Reiniciar cifra do início se chegar ao fim
-        if (this.indiceAcorde === elements_b.length - 1) {
+        if (this.indiceAcorde === this.elements_b.length - 1) {
             this.indiceAcorde = 0;
         }
 
-        if (this.indiceAcorde < elements_b.length) {
+        if (this.indiceAcorde < this.elements_b.length) {
             this.removerClasseCifraSelecionada(frameContent);
 
-            const cifraElem = elements_b[this.indiceAcorde];
+            const cifraElem = this.elements_b[this.indiceAcorde];
 
             if (cifraElem) {
                 const cifra = cifraElem.innerHTML.trim();
