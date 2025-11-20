@@ -10,14 +10,10 @@
 </head>
 
 <body>
-    <div class="container-lg">
-        <h1>Bateria Online</h1>
-
+    <main class="container-lg my-3" id="bateria-app" role="application" aria-label="Bateria Online">
         <div class="form-group">
-            <label for="style">Estilos:</label>
             <div class="input-group">
-                <select class="form-control" id="style">
-                </select>
+                <select class="form-control" id="style" aria-label="Estilo"></select>
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="button" id="addStyle">Adicionar</button>
                     <button class="btn btn-outline-secondary" type="button" id="editStyle">Editar</button>
@@ -26,51 +22,47 @@
             </div>
         </div>
 
-        <div class="rhythm-buttons">
-            <button id="rhythm-a" class="btn btn-secondary rhythm-button">A</button>
-            <button id="rhythm-b" class="btn btn-secondary rhythm-button">B</button>
-            <button id="rhythm-c" class="btn btn-secondary rhythm-button">C</button>
-            <button id="rhythm-d" class="btn btn-secondary rhythm-button">D</button>
+        <div class="rhythm-buttons mb-3" role="tablist" aria-label="Ritmos">
+            <button id="rhythm-a" class="btn btn-secondary rhythm-button" role="tab" aria-selected="true">A</button>
+            <button id="rhythm-b" class="btn btn-secondary rhythm-button" role="tab" aria-selected="false">B</button>
+            <button id="rhythm-c" class="btn btn-secondary rhythm-button" role="tab" aria-selected="false">C</button>
+            <button id="rhythm-d" class="btn btn-secondary rhythm-button" role="tab" aria-selected="false">D</button>
         </div>
 
-        <div class="copy-paste-save-buttons">
-            <button id="copy-rhythm" class="btn btn-info">Copiar</button>
-            <button id="paste-rhythm" class="btn btn-warning">Colar</button>
+        <div class="copy-paste-save-buttons mb-3" role="toolbar" aria-label="Copiar Colar Salvar">
+            <button id="copy-rhythm" class="btn btn-info mr-2">Copiar</button>
+            <button id="paste-rhythm" class="btn btn-warning mr-2">Colar</button>
             <button id="save-rhythm" class="btn btn-primary">Salvar</button>
         </div>
 
-        <br />
+        <div class="controls mb-3" role="region" aria-label="Controles">
+            <button id="play-pause" class="btn btn-success mr-2" aria-pressed="false">Play</button>
 
-        <div class="controls">
-            <button id="play-pause" class="btn btn-success">Play</button>
-
-            <div class="input-group" style="width: 120px;">
+            <div class="input-group mr-2" style="width: 120px;">
                 <div class="input-group-prepend">
-                    <button class="btn btn-outline-secondary decrement-bpm" type="button">-</button>
+                    <button class="btn btn-outline-secondary decrement-bpm" type="button" aria-label="Diminuir BPM">-</button>
                 </div>
-                <input type="text" id="bpm" value="90" class="form-control text-center" aria-label="BPM"
-                       aria-describedby="basic-addon1">
+                <input type="number" id="bpm" value="90" class="form-control text-center" aria-label="BPM"
+                       min="1" inputmode="numeric">
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary increment-bpm" type="button">+</button>
+                    <button class="btn btn-outline-secondary increment-bpm" type="button" aria-label="Aumentar BPM">+</button>
                 </div>
             </div>
 
             <div class="input-group" style="width: 120px;">
                 <div class="input-group-prepend">
-                    <button class="btn btn-outline-secondary decrement-steps" type="button">-</button>
+                    <button class="btn btn-outline-secondary decrement-steps" type="button" aria-label="Diminuir passos">-</button>
                 </div>
-                <input type="text" id="num-steps" value="4" class="form-control text-center" aria-label="Num Steps"
-                       aria-describedby="basic-addon1">
+                <input type="number" id="num-steps" value="4" class="form-control text-center" aria-label="Número de passos"
+                       min="1" inputmode="numeric">
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary increment-steps" type="button">+</button>
+                    <button class="btn btn-outline-secondary increment-steps" type="button" aria-label="Aumentar passos">+</button>
                 </div>
             </div>
         </div>
 
-        <div id="tracks">
-        </div>
-
-    </div>
+        <section id="tracks" aria-label="Tracks da bateria"></section>
+    </main>
 
     <script src="assets/js/DrumMachine.js"></script>
     <script src="assets/js/bateria.js"></script>

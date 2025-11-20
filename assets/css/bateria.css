@@ -1,6 +1,7 @@
 body {
-    font-family: sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     background-color: #f8f9fa;
+    color: #222;
 }
 
 .controls {
@@ -8,61 +9,79 @@ body {
     gap: 10px;
     margin-bottom: 20px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .track {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    gap: 8px;
+    white-space: nowrap;
 }
 
-    .track label {
-        width: auto;
-        text-align: left;
-        margin-right: 10px;
-        margin-bottom: 0px;
-    }
-
-.step {
-    width: 35px;
-    height: 35px;
-    border: 1px solid #ccc;
-    margin-right: 5px;
-    cursor: pointer;
+.track label {
+    width: 48px;
     text-align: center;
-    line-height: 35px;
-    box-sizing: border-box; /* Garante que o padding/border não afete o tamanho total */
-    flex-shrink: 0; /* Impede que os steps encolham */
+    margin-right: 6px;
+    margin-bottom: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #tracks {
-    overflow-x: auto; /* Adiciona scroll horizontal */
-    white-space: nowrap; /* Impede quebras de linha */
-    padding-bottom: 10px; /* Espaço para a barra de rolagem não cobrir os steps */
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+/* Steps */
+.step {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #ccc;
+    margin-right: 6px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 36px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    border-radius: 4px;
+    background: #fff;
+    transition: background-color 0.12s ease, color 0.12s ease;
 }
 
 .step.active {
     background-color: #198754;
-    color: white;
+    color: #fff;
 }
 
 .step.playing {
     background-color: #ffc107;
+    color: #111;
 }
 
 .step.active.playing {
     background-color: #28a745;
+    color: #fff;
 }
 
 .step.third-volume {
     background-color: #ff69b4;
-    color: white;
+    color: #fff;
 }
 
+.step.low-volume {
+    background-color: #8fbc8f;
+    color: #fff;
+}
+
+/* Rhythm buttons */
 .rhythm-buttons {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
 }
 
 .rhythm-buttons button {
@@ -83,47 +102,43 @@ body {
     color: black;
 }
 
-.step.low-volume {
-    background-color: #8fbc8f;
-    color: white;
-}
-
-.instrument-icon {
-    vertical-align: middle;
-}
-
+/* Instrument button */
 .instrument-button {
-    width: 35px;
-    height: 35px;
+    width: 44px;
+    height: 44px;
     border: none;
     background-color: #eee;
     cursor: pointer;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, box-shadow 0.12s ease;
+    border-radius: 6px;
 }
 
-    .instrument-button:hover {
-        background-color: #ddd;
-    }
+.instrument-button:hover {
+    background-color: #ddd;
+}
 
-    .instrument-button img {
-        width: 80%;
-        height: 80%;
-        pointer-events: none;
-    }
+.instrument-button img {
+    width: 80%;
+    height: 80%;
+    pointer-events: none;
+}
 
-    .instrument-button.selected {
-        background-color: #007bff;
-    }
-
-        .instrument-button.selected img {
-            filter: brightness(0) invert(1);
-        }
+.instrument-button.selected {
+    background-color: #007bff;
+    box-shadow: 0 0 6px rgba(0,123,255,0.3);
+}
 
 @keyframes blinker {
-    50% {
-        opacity: 0;
-    }
+    50% { opacity: 0; }
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+    .controls { gap: 6px; }
+    .step { width: 30px; height: 30px; line-height: 30px; }/*36px*/
+    .instrument-button { width: 40px; height: 40px; }
 }
