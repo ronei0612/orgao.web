@@ -79,12 +79,6 @@ class App {
         // 1. Salva a referência 'this' da instância da App porque senão o valor de this dentro dessa função é definido pelo jQuery e geralmente aponta para o elemento DOM 
         const appInstance = this;
 
-        // Garante que o jQuery esteja carregado antes de usar
-        if (typeof $ === 'undefined' || typeof $.fn.select2 === 'undefined') {
-            this.uiController.customAlert('jQuery ou Select2 não carregados.', 'Erro!');
-            return;
-        }
-
         var $select = $('#savesSelect').select2({
             theme: 'bootstrap4',
             placeholder: "Escolha a Música...",
