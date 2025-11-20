@@ -12,10 +12,8 @@ class DrumMachine {
             { name: 'Bumbo', icon: 'bumbo.svg', file: audioPath + 'bumbo.ogg', file3: null },
             { name: 'Meia-Lua', icon: 'meiaLua.svg', file: audioPath + 'meialua.ogg', file3: null },
             { name: 'Violao', icon: 'violao.svg', file: audioPath + 'bumbo.ogg', file3: null },
-            { name: 'Guitarra', icon: 'guitarra.svg', file: audioPath + 'bumbo.ogg', file3: null },
-            { name: 'Strings', icon: 'strings.svg', file: audioPath + 'bumbo.ogg', file3: null },
-            { name: 'Baixo', icon: 'baixo.svg', file: audioPath + 'bumbo.ogg', file3: null },
-            { name: 'E-Piano', icon: 'piano.svg', file: audioPath + 'bumbo.ogg', file3: null }
+            /*{ name: 'Guitarra', icon: 'guitarra.svg', file: audioPath + 'bumbo.ogg', file3: null },*/
+            { name: 'Baixo', icon: 'baixo.svg', file: audioPath + 'bumbo.ogg', file3: null }
         ];
         this.isPlaying = false;
         this.currentStep = 1;
