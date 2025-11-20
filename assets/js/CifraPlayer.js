@@ -375,8 +375,8 @@ class CifraPlayer {
 
     retrocederCifra() {
         if (this.indiceAcorde > 2 && this.parado === false) {
-            const cifraElem = this.elements_b[this.indiceAcorde];
-            if (cifraElem.nextElementSibling?.innerHTML === '')
+            const cifraElem = this.elements_b[this.indiceAcorde - 2];
+            if (cifraElem.innerHTML === '')
                 this.indiceAcorde -= 4;
             else
                 this.indiceAcorde -= 2;
