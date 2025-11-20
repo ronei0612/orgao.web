@@ -83,9 +83,7 @@ class CifraPlayer {
         });
 
         if (musicaCifrada) {
-            const numQuebrasDeLinha = 50;
-            const quebrasDeLinha = '\n'.repeat(numQuebrasDeLinha);
-            return `<pre class="cifra">${linhasDestacadas.join('\n')}${quebrasDeLinha}</pre>`;
+            return `<pre class="cifra">${linhasDestacadas.join('\n')}</pre>`;
         } else {
             return `<pre class="letra">${linhasDestacadas.join('\n')}</pre>`;
         }
