@@ -56,7 +56,8 @@ class App {
         this.elements.missaOrdinarioLink.addEventListener('click', () => this.exibirFrame('santamissaFrame'));
         this.elements.stopButton.addEventListener('mousedown', this.handleStopMousedown.bind(this));
         this.elements.playButton.addEventListener('mousedown', this.handlePlayMousedown.bind(this));
-        this.elements.avancarButton.addEventListener('mousedown', () => this.cifraPlayer.iniciarReproducao());
+        this.elements.avancarButton.addEventListener('mousedown', () => this.cifraPlayer.avancarCifra());
+        this.elements.retrocederButton.addEventListener('mousedown', () => this.cifraPlayer.retrocederCifra());
         document.addEventListener('mousedown', this.fullScreen.bind(this));
         document.addEventListener('click', this.handleDocumentClick.bind(this));
         $('#searchModal').on('shown.bs.modal', this.handleSearchModalShown.bind(this));
@@ -852,7 +853,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addButton: document.getElementById('addButton'),
         playButton: document.getElementById('playButton'),
         avancarButton: document.getElementById('avancarButton'),
-        voltarButton: document.getElementById('voltarButton'),
+        retrocederButton: document.getElementById('retrocederButton'),
         notesButton: document.getElementById('notesButton'),
         stopButton: document.getElementById('stopButton'),
         searchButton: document.getElementById('searchButton'),

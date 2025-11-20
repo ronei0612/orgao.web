@@ -370,6 +370,20 @@ class CifraPlayer {
         this.acordeTocando = '';
     }
 
+    retrocederCifra() {
+        if (this.indiceAcorde > 2 && this.parado === false) {
+            const frameContent = this.elements.iframeCifra.contentDocument;
+            const elements_b = frameContent.getElementsByTagName('b');
+            const cifraElem = elements_b[this.indiceAcorde];
+            if (cifraElem.nextElementSibling?.innerHTML === '')
+                this.indiceAcorde -= 4;
+            else
+                this.indiceAcorde -= 2;
+
+            this.avancarCifra();
+        }
+    }
+
     avancarCifra(inicioLinha) {
         const frameContent = this.elements.iframeCifra.contentDocument;
         const elements_b = frameContent.getElementsByTagName('b');
