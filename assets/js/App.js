@@ -367,7 +367,6 @@ class App {
     }
 
     async selectEscolhido(selectItem) {
-        debugger;
         if (this.selectItemAntes && this.selectItemAntes !== 'acordes__' && this.selectItemAntes !== '' && this.selectItemAntes !== 'bateria__')
             await this.verificarTrocouTom();
 
