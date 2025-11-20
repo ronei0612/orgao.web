@@ -2,8 +2,6 @@ class BateriaUI {
     constructor(drumMachine) {
         this.drumMachine = drumMachine;
 
-        // Cached DOM
-        this.playPauseButton = document.getElementById('play-pause');
         this.bpmInput = document.getElementById('bpm');
         this.numStepsInput = document.getElementById('num-steps');
         this.tracksContainer = document.getElementById('tracks');
@@ -41,9 +39,41 @@ class BateriaUI {
         this.initializeTracks();
         this.bindEvents();
 
+        // Add message listener for parent-frame control (play/stop/toggle)
+        window.addEventListener('message', this.handleIncomingMessage.bind(this), false);
+
         // Load the initially selected rhythm for the selected style
         const initialStyle = this.styleSelect.value || this.defaultStyle;
         this.loadRhythmForStyleAndRhythm(initialStyle, this.selectedRhythm);
+    }
+
+    // Handle messages from parent window (index.html)
+    handleIncomingMessage(event) {
+        // Optional: verify origin if needed: if (event.origin !== expectedOrigin) return;
+        const msg = event.data;
+        if (!msg) return;
+
+        switch (msg) {
+            case 'bateria-toggle':
+                this.togglePlay();
+                break;
+            case 'bateria-play':
+                if (!this.drumMachine.isPlaying) this.togglePlay();
+                break;
+            case 'bateria-stop':
+                if (this.drumMachine.isPlaying) this.togglePlay();
+                break;
+            default:
+                // allow structured messages in future
+                if (typeof msg === 'object' && msg?.action === 'bateria-play-style') {
+                    // e.g. { action: 'bateria-play-style', style: 'MeuEstilo', rhythm: 'A' }
+                    const style = msg.style || this.styleSelect.value;
+                    const rhythm = msg.rhythm || this.selectedRhythm;
+                    this.loadRhythm(`${style}-${rhythm}`);
+                    if (!this.drumMachine.isPlaying) this.togglePlay();
+                }
+                break;
+        }
     }
 
     // Utilities
@@ -423,12 +453,8 @@ class BateriaUI {
             // remove lighter when starting
             this.rhythmButtons.forEach(button => button.classList.remove('lighter'));
             this.drumMachine.start();
-            this.playPauseButton.textContent = 'Stop';
-            this.playPauseButton.setAttribute('aria-pressed', 'true');
         } else {
             this.drumMachine.stop();
-            this.playPauseButton.textContent = 'Play';
-            this.playPauseButton.setAttribute('aria-pressed', 'false');
         }
     }
 
@@ -451,9 +477,6 @@ class BateriaUI {
         this.copyRhythmButton.addEventListener('click', () => this.copyRhythm());
         this.pasteRhythmButton.addEventListener('click', () => this.pasteRhythm());
         this.saveRhythmButton.addEventListener('click', () => this.saveRhythm());
-
-        // Play / Pause
-        this.playPauseButton.addEventListener('click', () => this.togglePlay());
 
         // BPM / Steps inputs + increment/decrement
         document.querySelector('.increment-bpm').addEventListener('click', () => {

@@ -300,12 +300,20 @@ class App {
             this.uiController.esconderBotoesAvancarVoltarCifra();
         }
         this.cifraPlayer.pararReproducao();
+
+        if (this.elements.bateriaFrame.classList.contains('d-none') === false) {
+            this.elements.bateriaFrame.contentWindow.postMessage('bateria-stop', '*');
+        }
     }
 
     handlePlayMousedown() {
         if (this.elements.acorde1.classList.contains('d-none')) {
             this.cifraPlayer.iniciarReproducao();
             this.uiController.exibirBotoesAvancarVoltarCifra();
+        }
+
+        if (this.elements.bateriaFrame.classList.contains('d-none') === false) {
+            this.elements.bateriaFrame.contentWindow.postMessage('bateria-toggle', '*');
         }
     }
 
@@ -352,6 +360,7 @@ class App {
 
         this.uiController.exibirBotoesTom();
         this.uiController.exibirIframeCifra();
+        //this.uiController.exibirBotoesAcordes();
         this.cifraPlayer.indiceAcorde = 0;
     }
 
