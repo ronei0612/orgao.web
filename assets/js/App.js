@@ -28,10 +28,10 @@ class App {
 
         this.bindEvents();
         this.setupSelect2();
+        this.getUrlParam();
     }
 
     bindEvents() {
-        // Centralização do addEventListener
         this.elements.santamissaFrame.addEventListener('load', this.handleSantaMissaLoad.bind(this));
         this.elements.selectedButton.addEventListener("click", this.handleSelectedButtonClick.bind(this));
         this.elements.cancelButton.addEventListener("click", this.handleCancelClick.bind(this));
@@ -392,6 +392,17 @@ class App {
             this.cifraPlayer.preencherAcordes(tom);
             this.elements.savesSelect.selectedIndex = 0;
             this.cifraPlayer.preencherIframeCifra('');
+        }
+    }
+
+    getUrlParam(param = 'selecao') {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const selecaoString = urlParams.get(param);
+
+        if (selecaoString) {
+            $('#savesSelect').val(selecaoString).trigger('change');
+            this.selectEscolhido(selecaoString);
         }
     }
 
