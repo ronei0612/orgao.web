@@ -581,6 +581,7 @@ class App {
         if (tom === '')
             tom = 'C';
         this.uiController.exibirBotoesTom();
+        this.uiController.exibirBotoesAcordes();
         this.cifraPlayer.preencherAcordes(tom);
         this.cifraPlayer.preencherSelectCifras(tom);
         this.uiController.exibirFrame(frameId);
