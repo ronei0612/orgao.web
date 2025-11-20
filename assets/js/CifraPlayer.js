@@ -129,10 +129,10 @@ class CifraPlayer {
             },
             'baixo': {
                 'orgao': 1.0,
-                'strings': 0.9
+                'strings': 0.8
             },
             'agudo': {
-                'orgao': 0.5,
+                'orgao': 0.6,
                 'strings': 1.0
             }
         };
