@@ -115,7 +115,7 @@ class App {
             var selectedValue = e.params.data.id;
             appInstance.selectEscolhido(selectedValue);
 
-            if (selectedValue === 'acordes__') {
+            if (selectedValue === 'acordes__' || selectedValue === 'bateria__') {
                 $(this).val(null).trigger('change');
             }
         });
@@ -300,12 +300,20 @@ class App {
             this.uiController.esconderBotoesAvancarVoltarCifra();
         }
         this.cifraPlayer.pararReproducao();
+
+        if (this.elements.bateriaFrame.classList.contains('d-none') === false) {
+            this.elements.bateriaFrame.contentWindow.postMessage('bateria-stop', '*');
+        }
     }
 
     handlePlayMousedown() {
         if (this.elements.acorde1.classList.contains('d-none')) {
             this.cifraPlayer.iniciarReproducao();
             this.uiController.exibirBotoesAvancarVoltarCifra();
+        }
+
+        if (this.elements.bateriaFrame.classList.contains('d-none') === false) {
+            this.elements.bateriaFrame.contentWindow.postMessage('bateria-toggle', '*');
         }
     }
 
@@ -352,6 +360,7 @@ class App {
 
         this.uiController.exibirBotoesTom();
         this.uiController.exibirIframeCifra();
+        //this.uiController.exibirBotoesAcordes();
         this.cifraPlayer.indiceAcorde = 0;
     }
 
@@ -367,12 +376,12 @@ class App {
     }
 
     async selectEscolhido(selectItem) {
-        if (this.selectItemAntes && this.selectItemAntes !== 'acordes__' && this.selectItemAntes !== '')
+        if (this.selectItemAntes && this.selectItemAntes !== 'acordes__' && this.selectItemAntes !== '' && this.selectItemAntes !== 'bateria__')
             await this.verificarTrocouTom();
 
         this.selectItemAntes = selectItem;
 
-        if (selectItem && selectItem !== 'acordes__') {
+        if (selectItem && selectItem !== 'acordes__' && selectItem !== 'bateria__') {
             const texto = this.localStorageManager.getTextJson('saves', selectItem);
             this.showLetraCifra(texto);
         }
@@ -386,7 +395,13 @@ class App {
             this.cifraPlayer.preencherSelectAcordes(tom);
             this.cifraPlayer.preencherAcordes(tom);
             this.elements.savesSelect.selectedIndex = 0;
-            this.cifraPlayer.preencherIframeCifra('');
+
+            if (selectItem === 'bateria__') {
+                this.uiController.exibirBateria();
+            }
+            else {
+                this.cifraPlayer.preencherIframeCifra('');
+            }
         }
     }
 
@@ -866,6 +881,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pulseRange: document.getElementById('pulseRange'),
         bpmValue: document.getElementById('bpmValue'),
         iframeCifra: document.getElementById('iframeCifra'),
+        bateriaFrame: document.getElementById('bateriaFrame'),
         santamissaFrame: document.getElementById('santamissaFrame'),
         oracoesFrame: document.getElementById('oracoesFrame'),
         darkModeToggle: document.getElementById('darkModeToggle'),

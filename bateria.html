@@ -6,22 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bateria Online</title>
     <link rel="stylesheet" href="./assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="assets/css/bateria.css">
 </head>
 
 <body>
     <div class="container-lg">
-        <h1>Bateria Online</h1>
-
         <div class="form-group">
-            <label for="style">Estilos:</label>
             <div class="input-group">
                 <select class="form-control" id="style">
                 </select>
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="addStyle">Adicionar</button>
-                    <button class="btn btn-outline-secondary" type="button" id="editStyle">Editar</button>
-                    <button class="btn btn-outline-secondary" type="button" id="deleteStyle">Excluir</button>
+
+                    <button class="btn btn-outline-secondary" type="button" id="addStyle" title="Adicionar Estilo"><i class="bi bi-plus-lg"></i></button>
+                    <button class="btn btn-outline-secondary" type="button" id="editStyle" title="Editar Estilo"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-outline-secondary" type="button" id="deleteStyle" title="Excluir Estilo"><i class="bi bi-trash"></i></button>
                 </div>
             </div>
         </div>
@@ -31,19 +30,11 @@
             <button id="rhythm-b" class="btn btn-secondary rhythm-button">B</button>
             <button id="rhythm-c" class="btn btn-secondary rhythm-button">C</button>
             <button id="rhythm-d" class="btn btn-secondary rhythm-button">D</button>
+            <button id="rhythm-e" class="btn btn-secondary rhythm-button">E</button>
+            <button id="save-rhythm" class="btn btn-primary" title="Salvar Ritmo"><i class="bi bi-save"></i></button>
         </div>
-
-        <div class="copy-paste-save-buttons">
-            <button id="copy-rhythm" class="btn btn-info">Copiar</button>
-            <button id="paste-rhythm" class="btn btn-warning">Colar</button>
-            <button id="save-rhythm" class="btn btn-primary">Salvar</button>
-        </div>
-
-        <br />
 
         <div class="controls">
-            <button id="play-pause" class="btn btn-success">Play</button>
-
             <div class="input-group" style="width: 120px;">
                 <div class="input-group-prepend">
                     <button class="btn btn-outline-secondary decrement-bpm" type="button">-</button>
@@ -65,6 +56,9 @@
                     <button class="btn btn-outline-secondary increment-steps" type="button">+</button>
                 </div>
             </div>
+
+            <button id="copy-rhythm" class="btn btn-info" title="Copiar Ritmo"><i class="bi bi-files"></i></button>
+            <button id="paste-rhythm" class="btn btn-warning" title="Colar Ritmo"><i class="bi bi-clipboard"></i></button>
         </div>
 
         <div id="tracks">
