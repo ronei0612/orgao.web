@@ -58,6 +58,7 @@ class App {
         this.elements.playButton.addEventListener('mousedown', this.handlePlayMousedown.bind(this));
         this.elements.avancarButton.addEventListener('mousedown', () => this.cifraPlayer.avancarCifra());
         this.elements.retrocederButton.addEventListener('mousedown', () => this.cifraPlayer.retrocederCifra());
+        this.elements.orgaoInstrumentButton.addEventListener('click', () => this.handleOrgaoInstrumentClick());
         document.addEventListener('mousedown', this.fullScreen.bind(this));
         document.addEventListener('click', this.handleDocumentClick.bind(this));
         $('#searchModal').on('shown.bs.modal', this.handleSearchModalShown.bind(this));
@@ -334,6 +335,17 @@ class App {
         if (this.pesquisarNaWeb) {
             this.pesquisarNaWeb = false;
             this.uiController.exibirInterfaceDePesquisaPesquisando();
+        }
+    }
+
+    handleOrgaoInstrumentClick() {
+        if (this.cifraPlayer.instrumento = 'orgao') {
+            this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/piano.svg';
+            this.cifraPlayer.instrumento = 'epiano';
+        }
+        else {
+            this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/teclado.svg';
+            this.cifraPlayer.instrumento = 'orgao';
         }
     }
 
@@ -918,7 +930,8 @@ document.addEventListener('DOMContentLoaded', () => {
         acorde11: document.getElementById('acorde11'),
         borderRight: document.getElementById('borderRight'),
         borderLeft: document.getElementById('borderLeft'),
-        draggableControls: document.getElementById('draggableControls')
+        draggableControls: document.getElementById('draggableControls'),
+        orgaoInstrumentButton: document.getElementById('orgaoInstrumentButton')
     };
 
     const app = new App(elements);

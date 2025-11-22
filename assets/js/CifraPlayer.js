@@ -11,6 +11,7 @@ class CifraPlayer {
         this.tomAtual = 'C';
         this.tomOriginal = null;
         this.elements_b = null;
+        this.instrumento = 'orgao';
 
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
 
@@ -118,7 +119,7 @@ class CifraPlayer {
 
     carregarAcordes() {
         const urlsDict = {};
-        const instrumentos = ['orgao', 'strings'];
+        const instrumentos = ['orgao', 'strings', 'epiano'];
         const oitavas = ['grave', 'baixo', ''];
         const notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
 
@@ -257,17 +258,17 @@ class CifraPlayer {
         baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
 
         this.acordeGroup = [];
-        this.adicionarSom('orgao', baixo, 'grave');
+        this.adicionarSom(this.instrumento, baixo, 'grave');
         if (!this.elements.notesButton.classList.contains('notaSolo'))
             this.adicionarSom('strings', baixo, 'grave');
 
         notas.forEach(nota => {
-            this.adicionarSom('orgao', nota.replace('#', '_'), 'baixo');
+            this.adicionarSom(this.instrumento, nota.replace('#', '_'), 'baixo');
             if (!this.elements.notesButton.classList.contains('notaSolo'))
                 this.adicionarSom('strings', nota.replace('#', '_'), 'baixo');
 
             if (this.elements.notesButton.classList.contains('pressed')) {
-                this.adicionarSom('orgao', nota.replace('#', '_'));
+                this.adicionarSom(this.instrumento, nota.replace('#', '_'));
                 if (!this.elements.notesButton.classList.contains('notaSolo'))
                     this.adicionarSom('strings', nota.replace('#', '_'));
             }

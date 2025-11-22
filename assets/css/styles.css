@@ -539,3 +539,34 @@ body.dark-mode .control-panel {
     background: rgba(120, 124, 139, 0.3);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
+
+.btn-instrument {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    background-color: #ffffff;
+    transition: background-color .12s ease, box-shadow .12s ease, transform .08s ease, border-color .12s ease;
+    cursor: pointer;
+    margin: 0 .25rem;
+    outline: none;
+}
+
+.btn-instrument img {
+    width: 28px;
+    height: 28px;
+    display: block;
+    pointer-events: none;
+}
+
+.btn-instrument:active {
+    transform: translateY(2px);
+}
+
+body.dark-mode .btn-instrument {
+    background-color: #6c757d;
+}
