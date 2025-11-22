@@ -339,9 +339,10 @@ class App {
     }
 
     handleOrgaoInstrumentClick() {
-        if (this.cifraPlayer.instrumento = 'orgao') {
+        if (this.cifraPlayer.instrumento === 'orgao') {
             this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/piano.svg';
             this.cifraPlayer.instrumento = 'epiano';
+            this.cifraPlayer.attack = 0;
         }
         else {
             this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/teclado.svg';
