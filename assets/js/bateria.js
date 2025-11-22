@@ -222,7 +222,6 @@ class BateriaUI {
         rhythmData.bpm = parseInt(this.bpmInput.value, 10) || 90;
         rhythmData.numSteps = parseInt(this.numStepsInput.value, 10) || 4;
         this.saveRhythmToStyle(styleName, rhythmKey, rhythmData);
-        alert('Ritmo salvo.');
     }
 
     loadRhythmForStyleAndRhythm(styleName, rhythm) {
