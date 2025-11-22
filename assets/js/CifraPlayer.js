@@ -267,8 +267,13 @@ class CifraPlayer {
             if (!this.elements.notesButton.classList.contains('notaSolo'))
                 this.adicionarSom('strings', nota.replace('#', '_'), 'baixo');
 
-            if (this.elements.notesButton.classList.contains('pressed')) {
+            if (this.instrumento === 'epiano') {
                 this.adicionarSom(this.instrumento, nota.replace('#', '_'));
+            }
+
+            if (this.elements.notesButton.classList.contains('pressed')) {
+                if (this.instrumento === 'orgao')
+                    this.adicionarSom(this.instrumento, nota.replace('#', '_'));
                 if (!this.elements.notesButton.classList.contains('notaSolo'))
                     this.adicionarSom('strings', nota.replace('#', '_'));
             }
