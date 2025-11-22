@@ -12,7 +12,8 @@
     --btn-custom-active-bg: #8A2BE2;
     --btn-dark-cyan: #008B8B;
     --btn-dark-cyan-hover: #005F5F;
-    --select2-bg: #ecf0f1;
+    --select2-acordes-bg: #ecf0f1;
+    --select2-bateria-bg: #f5f7f8;
     --select2-text: gray;
 }
 
@@ -136,11 +137,21 @@ iframe {
 
 .select2-results__options > li[aria-selected="false"][data-select2-id*="acordes"] {
     color: gray;
-    background-color: var(--select2-bg);
+    background-color: var(--select2-acordes-bg);
     font-style: italic;
 }
 
 .select2-results__options > li[aria-selected="true"][data-select2-id*="acordes"] {
+    font-style: italic;
+}
+
+.select2-results__options > li[aria-selected="false"][data-select2-id*="bateria"] {
+    color: gray;
+    background-color: var(--select2-bateria-bg);
+    font-style: italic;
+}
+
+.select2-results__options > li[aria-selected="true"][data-select2-id*="bateria"] {
     font-style: italic;
 }
 
