@@ -12,6 +12,8 @@ class CifraPlayer {
         this.tomOriginal = null;
         this.elements_b = null;
         this.instrumento = 'orgao';
+        this.attack = 0.2;
+        this.release = 0.2;
 
         this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
 
@@ -280,7 +282,7 @@ class CifraPlayer {
         });
 
         this.audioContextManager.setNotes(this.acordeGroup);
-        this.audioContextManager.play();
+        this.audioContextManager.play(this.attack);
     }
 
     desabilitarSelectSaves() {
@@ -296,7 +298,7 @@ class CifraPlayer {
     pararAcorde() {
         this.habilitarSelectSaves();
 
-        this.audioContextManager.stop();
+        this.audioContextManager.stop(this.release);
     }
 
     inversaoDeAcorde(acorde, baixo) {
