@@ -347,6 +347,7 @@ class App {
         else {
             this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/teclado.svg';
             this.cifraPlayer.instrumento = 'orgao';
+            this.cifraPlayer.attack = 0.2;
         }
     }
 
