@@ -193,6 +193,6 @@ class DrumMachine {
 
     setNumSteps(steps) {
         this.numSteps = steps;
-        this.currentStep = 1;
+        //this.currentStep = 1;
     }
 }
