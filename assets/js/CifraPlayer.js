@@ -261,23 +261,33 @@ class CifraPlayer {
 
         this.acordeGroup = [];
         this.adicionarSom(this.instrumento, baixo, 'grave');
-        if (!this.elements.notesButton.classList.contains('notaSolo'))
+        if (!this.elements.notesButton.classList.contains('notaSolo') && this.instrumento === 'orgao')
+            this.adicionarSom('strings', baixo, 'grave');
+        else if (this.elements.notesButton.classList.contains('pressed') && this.instrumento === 'epiano')
             this.adicionarSom('strings', baixo, 'grave');
 
         notas.forEach(nota => {
-            this.adicionarSom(this.instrumento, nota.replace('#', '_'), 'baixo');
-            if (!this.elements.notesButton.classList.contains('notaSolo'))
-                this.adicionarSom('strings', nota.replace('#', '_'), 'baixo');
-
-            if (this.instrumento === 'epiano') {
-                this.adicionarSom(this.instrumento, nota.replace('#', '_'));
-            }
-
-            if (this.elements.notesButton.classList.contains('pressed')) {
-                if (this.instrumento === 'orgao')
-                    this.adicionarSom(this.instrumento, nota.replace('#', '_'));
+            if (this.instrumento === 'orgao') {
+                this.adicionarSom(this.instrumento, nota.replace('#', '_'), 'baixo');
                 if (!this.elements.notesButton.classList.contains('notaSolo'))
+                    this.adicionarSom('strings', nota.replace('#', '_'), 'baixo');
+
+                if (this.elements.notesButton.classList.contains('pressed')) {
+                    this.adicionarSom(this.instrumento, nota.replace('#', '_'));
+                    if (!this.elements.notesButton.classList.contains('notaSolo'))
+                        this.adicionarSom('strings', nota.replace('#', '_'));
+                }
+            }
+            else if (this.instrumento === 'epiano') {
+                this.adicionarSom('epiano', nota.replace('#', '_'), 'baixo');
+
+                if (!this.elements.notesButton.classList.contains('notaSolo'))
+                    this.adicionarSom('epiano', nota.replace('#', '_'));
+
+                if (this.elements.notesButton.classList.contains('pressed')) {
+                    this.adicionarSom('strings', nota.replace('#', '_'), 'baixo');
                     this.adicionarSom('strings', nota.replace('#', '_'));
+                }
             }
         });
 
