@@ -58,6 +58,7 @@ class App {
         this.elements.playButton.addEventListener('mousedown', this.handlePlayMousedown.bind(this));
         this.elements.avancarButton.addEventListener('mousedown', () => this.cifraPlayer.avancarCifra());
         this.elements.retrocederButton.addEventListener('mousedown', () => this.cifraPlayer.retrocederCifra());
+        this.elements.orgaoInstrumentButton.addEventListener('click', () => this.handleOrgaoInstrumentClick());
         document.addEventListener('mousedown', this.fullScreen.bind(this));
         document.addEventListener('click', this.handleDocumentClick.bind(this));
         $('#searchModal').on('shown.bs.modal', this.handleSearchModalShown.bind(this));
@@ -337,6 +338,17 @@ class App {
         }
     }
 
+    handleOrgaoInstrumentClick() {
+        if (this.cifraPlayer.instrumento = 'orgao') {
+            this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/piano.svg';
+            this.cifraPlayer.instrumento = 'epiano';
+        }
+        else {
+            this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/teclado.svg';
+            this.cifraPlayer.instrumento = 'orgao';
+        }
+    }
+
     verifyLetraOuCifra(texto) {
         if (texto.includes('<pre class="cifra">')) {
             const tom = this.cifraPlayer.descobrirTom(texto);
@@ -366,12 +378,12 @@ class App {
 
     async verificarTrocouTom() {
         if (this.cifraPlayer.tomOriginal && this.cifraPlayer.tomOriginal !== this.cifraPlayer.tomAtual) {
-            this.cifraPlayer.tomOriginal = null;
             const confirmed = await this.uiController.customConfirm(`Você trocou de tom de ${this.cifraPlayer.tomOriginal} para ${this.cifraPlayer.tomAtual}. Substituir novo tom?`);
             if (confirmed) {
                 var saveContent = this.elements.iframeCifra.contentDocument.body.innerText;
                 this.localStorageManager.saveJson('saves', this.selectItemAntes, saveContent);
             }
+            this.cifraPlayer.tomOriginal = null;
         }
     }
 
@@ -918,7 +930,8 @@ document.addEventListener('DOMContentLoaded', () => {
         acorde11: document.getElementById('acorde11'),
         borderRight: document.getElementById('borderRight'),
         borderLeft: document.getElementById('borderLeft'),
-        draggableControls: document.getElementById('draggableControls')
+        draggableControls: document.getElementById('draggableControls'),
+        orgaoInstrumentButton: document.getElementById('orgaoInstrumentButton')
     };
 
     const app = new App(elements);
