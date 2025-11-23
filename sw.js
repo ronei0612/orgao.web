@@ -19,6 +19,8 @@ const urlsToCache = [
     './assets/lib/js/Jquery/3.5.1/jquery.min.js',
     './assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js',
 
+    //adicionar icons
+
     './santamissa.html',
     './oracoes.html',
 
