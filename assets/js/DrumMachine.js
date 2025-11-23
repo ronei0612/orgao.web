@@ -103,6 +103,21 @@ class DrumMachine {
         }
     }
 
+    fecharChimbal(instrument, volume) {
+        if (instrument !== 'chimbal') return;
+
+        if (volume === 1 || volume === 2) {
+            if (this.lastChimbalAbertoSource) {
+                try {
+                    this.lastChimbalAbertoSource.stop(0);
+                } catch (e) {
+                    // Ignore se já parou
+                }
+                this.lastChimbalAbertoSource = null;
+            }
+        }
+    }
+
     scheduleCurrentStep() {
         document.querySelectorAll('.track').forEach(track => {
             const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
@@ -113,36 +128,7 @@ class DrumMachine {
             const volume = parseInt(step.dataset.volume);
             if (isNaN(volume) || volume <= 0) return;
 
-            if (instrument === 'chimbal') {
-                // Se o volume atual for 1 (Fechado) ou 2 (Semi-Aberto), silencia o Aberto
-                if (volume === 1 || volume === 2) {
-                    if (this.lastChimbalAbertoSource) {
-                        try {
-                            // Parar imediatamente (time 0)
-                            this.lastChimbalAbertoSource.stop(0);
-                        } catch (e) {
-                            // Ignore se já parou
-                        }
-                        this.lastChimbalAbertoSource = null;
-                    }
-                }
-                // O volume 3 (Aberto) é tratado dentro de playSound para rastrear a fonte
-            }
-
-            // OLD LOGIC (removida ou comentada):
-            // if (instrument === 'chimbal') {
-            //     const prevStepNum = this.currentStep === 1 ? this.numSteps : this.currentStep - 1;
-            //     const prevStep = track.querySelector(`.step[data-step="${prevStepNum}"]`);
-            //     if (prevStep) {
-            //         const prevVolume = parseInt(prevStep.dataset.volume);
-            //         if (prevVolume === 3 && (volume === 1 || volume === 2)) {
-            //             if (this.lastChimbalAbertoSource) {
-            //                 try { this.lastChimbalAbertoSource.stop(); } catch { }
-            //                 this.lastChimbalAbertoSource = null;
-            //             }
-            //         }
-            //     }
-            // }
+            this.fecharChimbal(instrument, volume);
 
             this.scheduleNote(instrument, this.currentStep, this.nextNoteTime, volume);
             step.classList.add('playing');
