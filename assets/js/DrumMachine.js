@@ -4,16 +4,16 @@ class DrumMachine {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.buffers = new Map();
         this.instruments = [
-            { name: 'Prato', icon: 'prato.svg', file: audioPath + 'ride.ogg', file3: audioPath + 'prato2.ogg' },
-            { name: 'Tom', icon: 'tom.svg', file: audioPath + 'tom-03.ogg', file3: audioPath + 'tom-02.ogg' },
-            { name: 'Surdo', icon: 'surdo.svg', file: audioPath + 'tom.ogg', file3: audioPath + 'prato1.ogg' },
-            { name: 'Chimbal', icon: 'chimbal.svg', file: audioPath + 'chimbal.ogg', file3: audioPath + 'aberto.ogg' },
-            { name: 'Caixa', icon: 'caixa.svg', file: audioPath + 'caixa.ogg', file3: audioPath + 'aro.ogg' },
-            { name: 'Bumbo', icon: 'bumbo.svg', file: audioPath + 'bumbo.ogg', file3: null },
-            { name: 'Meia-Lua', icon: 'meiaLua.svg', file: audioPath + 'meialua.ogg', file3: null },
-            { name: 'Violao', icon: 'violao.svg', file: audioPath + 'bumbo.ogg', file3: null },
-            /*{ name: 'Guitarra', icon: 'guitarra.svg', file: audioPath + 'bumbo.ogg', file3: null },*/
-            { name: 'Baixo', icon: 'baixo.svg', file: audioPath + 'bumbo.ogg', file3: null }
+            { name: 'Prato', icon: 'prato.svg', file: audioPath + 'ride.ogg', somAlternativo: audioPath + 'prato2.ogg' },
+            { name: 'Tom', icon: 'tom.svg', file: audioPath + 'tom-03.ogg', somAlternativo: audioPath + 'tom-02.ogg' },
+            { name: 'Surdo', icon: 'surdo.svg', file: audioPath + 'tom.ogg', somAlternativo: audioPath + 'prato1.ogg' },
+            { name: 'Chimbal', icon: 'chimbal.svg', file: audioPath + 'chimbal.ogg', somAlternativo: audioPath + 'aberto.ogg' },
+            { name: 'Caixa', icon: 'caixa.svg', file: audioPath + 'caixa.ogg', somAlternativo: audioPath + 'aro.ogg' },
+            { name: 'Bumbo', icon: 'bumbo.svg', file: audioPath + 'bumbo.ogg', somAlternativo: null },
+            { name: 'Meia-Lua', icon: 'meiaLua.svg', file: audioPath + 'meialua.ogg', somAlternativo: audioPath + 'meialua2.ogg' },
+            { name: 'Violao', icon: 'violao.svg', file: audioPath + 'bumbo.ogg', somAlternativo: null },
+            /*{ name: 'Guitarra', icon: 'guitarra.svg', file: audioPath + 'bumbo.ogg', somAlternativo: null },*/
+            { name: 'Baixo', icon: 'baixo.svg', file: audioPath + 'bumbo.ogg', somAlternativo: null }
         ];
         this.isPlaying = false;
         this.currentStep = 1;
@@ -39,12 +39,12 @@ class DrumMachine {
             const arrayBuffer = await response.arrayBuffer();
             const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
             this.buffers.set(instrument.name.toLowerCase(), audioBuffer);
-            // Carrega o terceiro som se existir
-            if (instrument.file3) {
-                const response3 = await fetch(instrument.file3);
+
+            if (instrument.somAlternativo) {
+                const response3 = await fetch(instrument.somAlternativo);
                 const arrayBuffer3 = await response3.arrayBuffer();
                 const audioBuffer3 = await this.audioContext.decodeAudioData(arrayBuffer3);
-                this.buffers.set(instrument.name.toLowerCase() + '-3', audioBuffer3);
+                this.buffers.set(instrument.name.toLowerCase() + '-alt', audioBuffer3);
             }
         });
 
@@ -70,18 +70,9 @@ class DrumMachine {
 
     scheduleNote(instrument, step, time, volume) {
         if (volume === 3) {
-            // Terceiro som
-            if (instrument === 'chimbal') {
-                const buffer = this.buffers.get('chimbal-3');
-                if (buffer) this.playSound(buffer, time, 1, true);
-            } else if (instrument === 'caixa') {
-                const buffer = this.buffers.get('caixa-3');
-                if (buffer) this.playSound(buffer, time, 1);
-            } else if (instrument === 'bumbo') {
-                // Não faz nada
-            } else if (instrument === 'prato') {
-                const buffer = this.buffers.get('prato-3');
-                if (buffer) this.playSound(buffer, time, 1);
+            const buffer = this.buffers.get(instrument + '-alt');
+            if (buffer) {
+                this.playSound(buffer, time, 1, true);
             }
         } else {
             const buffer = this.buffers.get(instrument);
