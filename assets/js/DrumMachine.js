@@ -83,9 +83,11 @@ class DrumMachine {
     }
 
     nextNote() {
-        const secondsPerBeat = 60.0 / this.bpm;
-        this.nextNoteTime += secondsPerBeat;
+        const secondsPerQuarterNote = 60.0 / this.bpm;
+        const secondsPerStep = secondsPerQuarterNote / 2;
+        this.nextNoteTime += secondsPerStep;
         this.currentStep++;
+
         if (this.currentStep > this.numSteps) {
             this.currentStep = 1;
             if (this.onMeasureEnd) {
@@ -179,7 +181,7 @@ class DrumMachine {
     }
 
     setBPM(bpm) {
-        this.bpm = bpm * 2;
+        this.bpm = bpm;
     }
 
     setNumSteps(steps) {
