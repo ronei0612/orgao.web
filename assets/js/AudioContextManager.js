@@ -43,7 +43,7 @@ class AudioContextManager {
 					this.buffers[key] = audioBuffer;
 				})
 				.catch(error => {
-					alert(`Erro ao carregar ${key} (URL: ${url}): ${error}`);
+					console.error(`Erro ao carregar ${key} (URL: ${url}): ${error}`);
 				});
 		});
 
