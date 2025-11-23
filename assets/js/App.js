@@ -16,6 +16,7 @@ class App {
         this.todasAsCifras = [];
         this.musicaEscolhida = false;
         this.selectItemAntes = null;
+        this.LOCAL_STORAGE_SAVES_KEY = 'saves';
     }
 
     init() {
@@ -270,7 +271,7 @@ class App {
         if (this.elements.savesSelect.selectedIndex !== 0) {
             const confirmed = await this.uiController.customConfirm(`Deseja excluir "${saveName}"?`, 'Deletar!');
             if (confirmed) {
-                this.localStorageManager.deleteJson('saves', saveName);
+                this.localStorageManager.deleteJson(this.LOCAL_STORAGE_SAVES_KEY, saveName);
                 this.uiController.resetInterface();
                 this.uiController.exibirListaSaves();
                 this.selectEscolhido('acordes__');
@@ -382,7 +383,7 @@ class App {
             const confirmed = await this.uiController.customConfirm(`Você trocou de tom de ${this.cifraPlayer.tomOriginal} para ${this.cifraPlayer.tomAtual}. Substituir novo tom?`);
             if (confirmed) {
                 var saveContent = this.elements.iframeCifra.contentDocument.body.innerText;
-                this.localStorageManager.saveJson('saves', this.selectItemAntes, saveContent);
+                this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_KEY, this.selectItemAntes, saveContent);
             }
             this.cifraPlayer.tomOriginal = null;
         }
@@ -395,7 +396,7 @@ class App {
         this.selectItemAntes = selectItem;
 
         if (selectItem && selectItem !== 'acordes__' && selectItem !== 'bateria__') {
-            const texto = this.localStorageManager.getTextJson('saves', selectItem);
+            const texto = this.localStorageManager.getTextJson(this.LOCAL_STORAGE_SAVES_KEY, selectItem);
             this.showLetraCifra(texto);
         }
         else {
@@ -682,10 +683,10 @@ class App {
                     }
 
                     // 2. Mescla com os saves existentes
-                    const currentSaves = this.localStorageManager.getSavesJson('saves');
+                    const currentSaves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
                     // O operador spread ( ... ) irá sobrescrever chaves duplicadas
                     const mergedSaves = { ...currentSaves, ...newSaves };
-                    localStorage.setItem('saves', JSON.stringify(mergedSaves));
+                    localStorage.setItem(this.LOCAL_STORAGE_SAVES_KEY, JSON.stringify(mergedSaves));
 
                     // 3. Atualiza a interface
                     this.uiController.exibirListaSaves();
@@ -706,7 +707,7 @@ class App {
     // --- DENTRO DA CLASSE App no script.js ---
 
     downloadSaves() {
-        const saves = this.localStorageManager.getSavesJson('saves');
+        const saves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
         const nomeDoArquivo = 'repertorio-orgao-web.json';
 
         if (Object.keys(saves).length === 0) {
@@ -788,7 +789,7 @@ class App {
             newSaveName = "Música " + count;
         }
 
-        let saves = this.localStorageManager.getSavesJson('saves');
+        let saves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
 
         newSaveName = newSaveName.trim();
         let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
@@ -799,11 +800,11 @@ class App {
         }
 
         if (oldSaveName && oldSaveName !== newSaveName) {
-            this.localStorageManager.editarNome('saves',oldSaveName, newSaveName);
+            this.localStorageManager.editarNome(this.LOCAL_STORAGE_SAVES_KEY,oldSaveName, newSaveName);
         }
 
         var saveContent = this.elements.editTextarea.value;
-        this.localStorageManager.saveJson('saves', newSaveName, saveContent);
+        this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_KEY, newSaveName, saveContent);
         this.elements.savesSelect.value = newSaveName;
 
         this.uiController.exibirIframeCifra();
@@ -890,7 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
         spinner: document.querySelector('.spinner-border'),
         searchIcon: document.getElementById('searchIcon'),
         searchResultsList: document.getElementById('searchResults'),
-        savesList: document.getElementById('saves'),
+        savesList: document.getElementById(this.LOCAL_STORAGE_SAVES_KEY),
         pulseRange: document.getElementById('pulseRange'),
         bpmValue: document.getElementById('bpmValue'),
         iframeCifra: document.getElementById('iframeCifra'),
