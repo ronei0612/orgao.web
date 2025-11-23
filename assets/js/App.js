@@ -374,7 +374,6 @@ class App {
 
         this.uiController.exibirBotoesTom();
         this.uiController.exibirIframeCifra();
-        //this.uiController.exibirBotoesAcordes();
         this.cifraPlayer.indiceAcorde = 0;
     }
 

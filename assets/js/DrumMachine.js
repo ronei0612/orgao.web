@@ -107,28 +107,42 @@ class DrumMachine {
         document.querySelectorAll('.track').forEach(track => {
             const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
             const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
-            const instrumentButton = track.querySelector('.instrument-button'); // Pega o botão do instrumento
-            if (!step) return;
+            const instrumentButton = track.querySelector('.instrument-button');
+            if (!step || !instrumentButton.classList.contains('selected')) return;
+
             const volume = parseInt(step.dataset.volume);
             if (isNaN(volume) || volume <= 0) return;
 
-            // Verifica se o instrumento está selecionado (adicione esta linha!)
-            if (!instrumentButton.classList.contains('selected')) return;
-
-            // Chimbal: se o anterior foi aberto e o atual for fechado, pare o som aberto
             if (instrument === 'chimbal') {
-                const prevStepNum = this.currentStep === 1 ? this.numSteps : this.currentStep - 1;
-                const prevStep = track.querySelector(`.step[data-step="${prevStepNum}"]`);
-                if (prevStep) {
-                    const prevVolume = parseInt(prevStep.dataset.volume);
-                    if (prevVolume === 3 && (volume === 1 || volume === 2)) {
-                        if (this.lastChimbalAbertoSource) {
-                            try { this.lastChimbalAbertoSource.stop(); } catch { }
-                            this.lastChimbalAbertoSource = null;
+                // Se o volume atual for 1 (Fechado) ou 2 (Semi-Aberto), silencia o Aberto
+                if (volume === 1 || volume === 2) {
+                    if (this.lastChimbalAbertoSource) {
+                        try {
+                            // Parar imediatamente (time 0)
+                            this.lastChimbalAbertoSource.stop(0);
+                        } catch (e) {
+                            // Ignore se já parou
                         }
+                        this.lastChimbalAbertoSource = null;
                     }
                 }
+                // O volume 3 (Aberto) é tratado dentro de playSound para rastrear a fonte
             }
+
+            // OLD LOGIC (removida ou comentada):
+            // if (instrument === 'chimbal') {
+            //     const prevStepNum = this.currentStep === 1 ? this.numSteps : this.currentStep - 1;
+            //     const prevStep = track.querySelector(`.step[data-step="${prevStepNum}"]`);
+            //     if (prevStep) {
+            //         const prevVolume = parseInt(prevStep.dataset.volume);
+            //         if (prevVolume === 3 && (volume === 1 || volume === 2)) {
+            //             if (this.lastChimbalAbertoSource) {
+            //                 try { this.lastChimbalAbertoSource.stop(); } catch { }
+            //                 this.lastChimbalAbertoSource = null;
+            //             }
+            //         }
+            //     }
+            // }
 
             this.scheduleNote(instrument, this.currentStep, this.nextNoteTime, volume);
             step.classList.add('playing');
