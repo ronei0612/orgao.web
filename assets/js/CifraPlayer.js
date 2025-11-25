@@ -1,5 +1,6 @@
 class CifraPlayer {
-    constructor(elements, uiController, musicTheory) {
+    constructor(elements, uiController, musicTheory, baseUrl) {
+        this.audioPath = `${baseUrl}/assets/audio/`;
         this.uiController = uiController;
         this.musicTheory = musicTheory;
         this.elements = elements;
@@ -14,8 +15,6 @@ class CifraPlayer {
         this.instrumento = 'orgao';
         this.attack = 0.2;
         this.release = 0.2;
-
-        this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
 
         this.audioContextManager = new AudioContextManager();
         this.carregarAcordes();

@@ -4,8 +4,9 @@ class App {
         this.musicTheory = new MusicTheory();
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
-        this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
         this.draggableController = new DraggableController(this.elements.draggableControls);
+        this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web' : '.';
+        this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.version = '3.8';
         this.holdTime = 1000;
@@ -17,6 +18,7 @@ class App {
         this.musicaEscolhida = false;
         this.selectItemAntes = null;
         this.LOCAL_STORAGE_SAVES_KEY = 'saves';
+        this.API_BASE_URL = 'https://apinode-h4wt.onrender.com';
     }
 
     init() {
@@ -476,7 +478,7 @@ class App {
 
         // Lógica de pesquisa na Web (mantida igual, com ajuste para `this`)
         try {
-            const response = await fetch('https://apinode-h4wt.onrender.com/pesquisar', {
+            const response = await fetch(`${this.API_BASE_URL}/pesquisar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ texto: textoPesquisa }),
@@ -546,7 +548,7 @@ class App {
         this.uiController.limparResultados();
 
         try {
-            const response = await fetch('https://apinode-h4wt.onrender.com/downloadsite', {
+            const response = await fetch(`${this.API_BASE_URL}/downloadsite`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: urlLink }),
@@ -828,10 +830,7 @@ class App {
     }
 
     loadCifrasLocal() {
-        var cifrasLocal = './cifras.json';
-        if (location.origin.includes('file:')) {
-            cifrasLocal = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
-        }
+        var cifrasLocal = `${this.BASE_URL}/cifras.json`;
 
         fetch(cifrasLocal)
             .then(response => {
@@ -851,7 +850,7 @@ class App {
 
     warmupApi() {
         // acorda a api
-        fetch('https://apinode-h4wt.onrender.com/')
+        fetch(this.API_BASE_URL + '/')
             .then(response => response.json())
             .catch(() => console.log("API Warmup failed/ignored."));
     }
