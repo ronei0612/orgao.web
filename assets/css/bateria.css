@@ -78,7 +78,7 @@ body {
     animation: blinker 1s linear infinite;
 }
 
-.rhythm-buttons button.lighter {
+.rhythm-buttons button.fill {
     background-color: #ADD8E6;
     color: black;
 }
