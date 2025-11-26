@@ -1,27 +1,49 @@
-body {
-    font-family: sans-serif;
-    background-color: #f8f9fa;
+#bateriaWrapper {
 }
 
-.controls {
+body.dark-mode #bateriaWrapper {
+}
+
+/* Container de controles da bateria */
+.drum-controls-container {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 20px;
     align-items: center;
+    justify-content: space-between;
 }
 
+/* Ajuste para inputs de BPM e Steps */
+.drum-input-group {
+    display: flex;
+    align-items: center;
+}
+
+    .drum-input-group input {
+        width: 50px;
+        text-align: center;
+        margin: 0 5px;
+    }
+
+/* Área dos trilhos (Tracks) */
 .track {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 
     .track label {
-        width: auto;
+        width: 40px; /* Largura fixa para os ícones/labels */
         text-align: left;
         margin-right: 10px;
         margin-bottom: 0px;
+        color: #333;
     }
+
+body.dark-mode .track label {
+    color: white;
+}
 
 .step {
     width: 35px;
@@ -31,99 +53,137 @@ body {
     cursor: pointer;
     text-align: center;
     line-height: 35px;
-    box-sizing: border-box; /* Garante que o padding/border não afete o tamanho total */
-    flex-shrink: 0; /* Impede que os steps encolham */
+    box-sizing: border-box;
+    flex-shrink: 0;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: all 0.1s;
+}
+
+body.dark-mode .step {
+    background-color: #2c3e50;
+    border-color: #555;
+    color: #eee;
 }
 
 #tracks {
-    overflow-x: auto; /* Adiciona scroll horizontal */
-    white-space: nowrap; /* Impede quebras de linha */
-    padding-bottom: 10px; /* Espaço para a barra de rolagem não cobrir os steps */
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+}
+
+    /* Scrollbar estilizada para Webkit (Chrome/Safari) */
+    #tracks::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    #tracks::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+    }
+
+body.dark-mode #tracks::-webkit-scrollbar-thumb {
+    background-color: #555;
 }
 
 .step.active {
-    background-color: #198754;
+    background-color: #198754; /* Verde Bootstrap */
     color: white;
+    border-color: #198754;
 }
 
 .step.playing {
-    background-color: #ffc107;
+    border: 2px solid #ffc107; /* Amarelo destaque */
+    transform: scale(1.1);
+    z-index: 1; /* Garante que o efeito de zoom fique por cima */
 }
 
 .step.active.playing {
     background-color: #28a745;
+    border-color: #ffc107;
+}
+
+.step.low-volume {
+    background-color: #8fbc8f; /* Verde claro */
+    color: white;
 }
 
 .step.third-volume {
-    background-color: #ff69b4;
+    background-color: #ff69b4; /* Rosa */
     color: white;
 }
 
 .rhythm-buttons {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
 }
 
-.rhythm-buttons button {
-    width: 50px;
-}
+    .rhythm-buttons button {
+        min-width: 45px;
+    }
 
-.rhythm-buttons button.selected {
-    background-color: #007bff;
-    color: white;
-}
+        .rhythm-buttons button.selected {
+            background-color: #007bff;
+            color: white;
+        }
 
 .rhythm-button.pending {
     animation: blinker 1s linear infinite;
 }
 
 .rhythm-buttons button.fill {
-    background-color: #ADD8E6;
-    color: black;
-}
-
-.step.low-volume {
-    background-color: #8fbc8f;
+    background-color: #17a2b8; /* Info cyan */
     color: white;
-}
-
-.instrument-icon {
-    vertical-align: middle;
 }
 
 .instrument-button {
     width: 35px;
     height: 35px;
-    border: none;
-    background-color: #eee;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
     cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    transition: background-color 0.2s ease;
 }
 
-    .instrument-button:hover {
-        background-color: #ddd;
-    }
+body.dark-mode .instrument-button {
+    background-color: #343a40;
+    border-color: #555;
+}
 
-    .instrument-button img {
-        width: 80%;
-        height: 80%;
-        pointer-events: none;
-    }
+.instrument-button:hover {
+    background-color: #e2e6ea;
+}
 
-    .instrument-button.selected {
-        background-color: #007bff;
-    }
+body.dark-mode .instrument-button:hover {
+    background-color: #495057;
+}
 
-        .instrument-button.selected img {
-            filter: brightness(0) invert(1);
-        }
+.instrument-button img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+body.dark-mode .instrument-button img {
+    filter: invert(1);
+}
+
+.instrument-button.selected {
+    background-color: #007bff;
+    border-color: #007bff;
+}
 
 @keyframes blinker {
     50% {
-        opacity: 0;
+        opacity: 0.5;
     }
 }

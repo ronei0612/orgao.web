@@ -9,6 +9,7 @@
     <link href="./assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="./assets/css/styles.css">
+    <link rel="stylesheet" href="./assets/css/bateria.css">
 
     <!-- CSS do Select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -78,11 +79,66 @@
             <iframe class="w-100 border border-secondary rounded d-none" id="liturgiaDiariaFrame" src="https://liturgiadiaria.edicoescnbb.com.br/"></iframe>
             <iframe class="w-100 border border-secondary rounded d-none" id="santamissaFrame" src="./santamissa.html"></iframe>
             <iframe class="w-100 border border-secondary rounded d-none" id="oracoesFrame" src="./oracoes.html"></iframe>
-            <iframe class="w-100 border border-secondary rounded d-none" id="bateriaFrame" src="./bateria.html"></iframe>
+            <!-- O iframe bateriaFrame foi removido e substituído pelo #bateriaWrapper abaixo -->
             <iframe class="w-100 border border-secondary rounded" id="iframeCifra"></iframe>
 
             <textarea class="modal-textarea d-none" id="editTextarea" placeholder="Editar Cifra..."></textarea>
         </div>
+
+        <!-- BATERIA INTEGRADA -->
+        <!-- Adicione a classe 'd-none' aqui se quiser que inicie oculto, e remova via JS quando clicar no menu -->
+        <div id="bateriaWrapper">
+            <div class="form-group mb-2">
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Estilo</span>
+                    </div>
+                    <select class="form-control" id="style">
+                        <!-- Options carregadas via JS -->
+                    </select>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="addStyle" title="Adicionar Estilo"><i class="bi bi-plus-lg"></i></button>
+                        <button class="btn btn-outline-secondary" type="button" id="editStyle" title="Editar Estilo"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-outline-secondary" type="button" id="deleteStyle" title="Excluir Estilo"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rhythm-buttons">
+                <button id="rhythm-a" class="btn btn-sm btn-secondary rhythm-button">A</button>
+                <button id="rhythm-b" class="btn btn-sm btn-secondary rhythm-button">B</button>
+                <button id="rhythm-c" class="btn btn-sm btn-secondary rhythm-button">C</button>
+                <button id="rhythm-d" class="btn btn-sm btn-secondary rhythm-button">D</button>
+                <button id="rhythm-e" class="btn btn-sm btn-secondary rhythm-button">E</button>
+                <button id="save-rhythm" class="btn btn-sm btn-primary" title="Salvar Ritmo"><i class="bi bi-save"></i></button>
+            </div>
+
+            <div class="drum-controls-container">
+                <div class="drum-input-group">
+                    <button class="btn btn-sm btn-outline-secondary decrement-bpm" type="button">-</button>
+                    <input type="text" id="bpm" value="90" class="form-control form-control-sm" aria-label="BPM">
+                    <button class="btn btn-sm btn-outline-secondary increment-bpm" type="button">+</button>
+                    <small class="ml-1 text-muted">BPM</small>
+                </div>
+
+                <div class="drum-input-group">
+                    <button class="btn btn-sm btn-outline-secondary decrement-steps" type="button">-</button>
+                    <input type="text" id="num-steps" value="4" class="form-control form-control-sm" aria-label="Steps">
+                    <button class="btn btn-sm btn-outline-secondary increment-steps" type="button">+</button>
+                    <small class="ml-1 text-muted">Steps</small>
+                </div>
+
+                <div class="btn-group btn-group-sm">
+                    <button id="copy-rhythm" class="btn btn-info" title="Copiar Ritmo"><i class="bi bi-files"></i></button>
+                    <button id="paste-rhythm" class="btn btn-warning" title="Colar Ritmo"><i class="bi bi-clipboard"></i></button>
+                </div>
+            </div>
+
+            <div id="tracks">
+                <!-- Tracks geradas via JS -->
+            </div>
+        </div>
+        <!-- FIM BATERIA INTEGRADA -->
 
         <div id="draggableControls" style="transform: none; left: 25%; ">
             <div class="d-flex justify-content-center align-items-center" id="controlButtons">
@@ -140,6 +196,10 @@
                     <p><a href="#" id="missaOrdinarioLink">⛪ Ordinário Santa Missa</a></p>
                     <p><a href="#" id="liturgiaDiariaLink">📖 Liturgia Diária</a></p>
                     <p><a href="#" id="oracoesLink">🙏 Orações</a></p>
+
+                    <!-- Link da bateria pode precisar de ajuste no JS para abrir a div #bateriaWrapper ao invés do iframe -->
+                    <p><a href="#" id="bateriaLink">🥁 Bateria</a></p>
+
                     <p><a href="#" id="downloadSavesLink">Baixar meu Repertório</a></p>
                     <p><a href="#" id="uploadSavesLink">Importar um Repertório</a></p>
                     <p><a href="#" id="about">Sobre este site</a></p>
@@ -241,6 +301,10 @@
     <script src="./assets/js/UIController.js"></script>
     <script src="./assets/js/LocalStorageManager.js"></script>
     <script src="./assets/js/App.js"></script>
+
+    <!-- Scripts da Bateria Integrada -->
+    <script src="assets/js/DrumMachine.js"></script>
+    <script src="assets/js/BateriaUI.js"></script>
 </body>
 
 </html>
