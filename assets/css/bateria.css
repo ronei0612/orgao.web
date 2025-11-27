@@ -1,29 +1,79 @@
+:root {
+    /* ... suas variáveis existentes ... */
+    --acorde-botao-azul: #4682B4;
+    /* ... */
+    /* VARIÁVEIS DA BATERIA */
+    --drum-bg: #ffffff;
+    --drum-border: #ced4da;
+    --drum-text: #333333;
+    --drum-step-bg: #ffffff;
+    --drum-step-border: #cccccc;
+    --drum-step-active: #198754; /* Verde Bootstrap */
+    --drum-step-playing: #ffc107; /* Amarelo */
+    --drum-step-low: #8fbc8f; /* Verde claro */
+    --drum-step-ghost: #ff69b4; /* Rosa (3rd vol) */
+    --drum-btn-bg: #f8f9fa;
+    --drum-btn-border: #ced4da;
+    --drum-btn-hover: #e2e6ea;
+    --drum-highlight: #007bff; /* Azul destaque */
+    --drum-fill: #17a2b8; /* Ciano */
+    --drum-scrollbar: #cccccc;
+}
+
+body.dark-mode {
+    background-color: #0C101C;
+    color: #fff;
+    /* REAPLICAR VARIÁVEIS DA BATERIA PARA DARK MODE */
+    --drum-bg: #1D2439;
+    --drum-border: #444444;
+    --drum-text: #ffffff;
+    --drum-step-bg: #2c3e50;
+    --drum-step-border: #555555;
+    --drum-btn-bg: #343a40;
+    --drum-btn-border: #555555;
+    --drum-btn-hover: #495057;
+    --drum-scrollbar: #555555;
+}
+
+/* --- START BATERIA STYLES INTEGRATION --- */
+
 #bateriaWrapper {
 }
 
-body.dark-mode #bateriaWrapper {
-}
-
-/* Container de controles da bateria */
+/* Container dos inputs de controle (caso ainda seja usado, mas agora usamos d-flex direto no HTML) */
 .drum-controls-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-    align-items: center;
-    justify-content: space-between;
-}
-
-/* Ajuste para inputs de BPM e Steps */
-.drum-input-group {
-    display: flex;
+    gap: 15px;
     align-items: center;
 }
 
-    .drum-input-group input {
-        width: 50px;
-        text-align: center;
-        margin: 0 5px;
+/* Estilo para os grupos de input unificados */
+.drum-unified-group {
+    /* Removemos a largura fixa global para controlar via inline style no HTML conforme a necessidade (BPM vs Steps) */
+}
+
+/* Ajustes Específicos para Dark Mode nos Inputs do Bootstrap */
+body.dark-mode #bateriaWrapper .input-group-text {
+    background-color: var(--drum-btn-bg);
+    border-color: var(--drum-btn-border);
+    color: var(--drum-text);
+}
+
+body.dark-mode #bateriaWrapper .form-control {
+    background-color: #2c3e50;
+    border-color: var(--drum-btn-border);
+    color: white;
+}
+
+body.dark-mode #bateriaWrapper .btn-outline-secondary {
+    color: #ccc;
+    border-color: var(--drum-btn-border);
+}
+
+    body.dark-mode #bateriaWrapper .btn-outline-secondary:hover {
+        background-color: var(--drum-btn-hover);
+        color: white;
     }
 
 /* Área dos trilhos (Tracks) */
@@ -34,21 +84,18 @@ body.dark-mode #bateriaWrapper {
 }
 
     .track label {
-        width: 40px; /* Largura fixa para os ícones/labels */
+        width: 40px;
         text-align: left;
         margin-right: 10px;
         margin-bottom: 0px;
-        color: #333;
+        color: var(--drum-text);
     }
-
-body.dark-mode .track label {
-    color: white;
-}
 
 .step {
     width: 35px;
     height: 35px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--drum-step-border);
+    background-color: var(--drum-step-bg);
     margin-right: 5px;
     cursor: pointer;
     text-align: center;
@@ -56,14 +103,8 @@ body.dark-mode .track label {
     box-sizing: border-box;
     flex-shrink: 0;
     border-radius: 4px;
-    background-color: #fff;
     transition: all 0.1s;
-}
-
-body.dark-mode .step {
-    background-color: #2c3e50;
-    border-color: #555;
-    color: #eee;
+    color: var(--drum-text);
 }
 
 #tracks {
@@ -73,77 +114,72 @@ body.dark-mode .step {
     scrollbar-width: thin;
 }
 
-    /* Scrollbar estilizada para Webkit (Chrome/Safari) */
     #tracks::-webkit-scrollbar {
         height: 8px;
     }
 
     #tracks::-webkit-scrollbar-thumb {
-        background-color: #ccc;
+        background-color: var(--drum-scrollbar);
         border-radius: 4px;
     }
 
-body.dark-mode #tracks::-webkit-scrollbar-thumb {
-    background-color: #555;
-}
-
+/* Estados dos Steps */
 .step.active {
-    background-color: #198754; /* Verde Bootstrap */
+    background-color: var(--drum-step-active);
     color: white;
-    border-color: #198754;
+    border-color: var(--drum-step-active);
 }
 
 .step.playing {
-    border: 2px solid #ffc107; /* Amarelo destaque */
+    border: 2px solid var(--drum-step-playing);
     transform: scale(1.1);
-    z-index: 1; /* Garante que o efeito de zoom fique por cima */
+    z-index: 1;
 }
 
 .step.active.playing {
     background-color: #28a745;
-    border-color: #ffc107;
+    border-color: var(--drum-step-playing);
 }
 
 .step.low-volume {
-    background-color: #8fbc8f; /* Verde claro */
+    background-color: var(--drum-step-low);
     color: white;
 }
 
 .step.third-volume {
-    background-color: #ff69b4; /* Rosa */
+    background-color: var(--drum-step-ghost);
     color: white;
 }
 
+/* Botões de Ritmo */
 .rhythm-buttons {
     display: flex;
     gap: 8px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     flex-wrap: wrap;
 }
 
     .rhythm-buttons button {
-        min-width: 45px;
+        min-width: 55px;
+        /*min-height: 35px;*/
     }
 
         .rhythm-buttons button.selected {
-            background-color: #007bff;
+            background-color: var(--drum-highlight);
             color: white;
+            border-color: var(--drum-highlight);
         }
 
 .rhythm-button.pending {
     animation: blinker 1s linear infinite;
 }
 
-.rhythm-buttons button.fill {
-    background-color: #17a2b8; /* Info cyan */
-    color: white;
-}
-
+/* Botões de Instrumentos */
 .instrument-button {
     width: 35px;
     height: 35px;
-    border: 1px solid #ced4da;
-    background-color: #f8f9fa;
+    border: 1px solid var(--drum-btn-border);
+    background-color: var(--drum-btn-bg);
     cursor: pointer;
     padding: 4px;
     border-radius: 4px;
@@ -153,34 +189,29 @@ body.dark-mode #tracks::-webkit-scrollbar-thumb {
     justify-content: center;
 }
 
-body.dark-mode .instrument-button {
-    background-color: #343a40;
-    border-color: #555;
-}
+    .instrument-button:hover {
+        background-color: var(--drum-btn-hover);
+    }
 
-.instrument-button:hover {
-    background-color: #e2e6ea;
-}
-
-body.dark-mode .instrument-button:hover {
-    background-color: #495057;
-}
-
-.instrument-button img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    pointer-events: none;
-}
+    .instrument-button img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        pointer-events: none;
+    }
 
 body.dark-mode .instrument-button img {
     filter: invert(1);
 }
 
 .instrument-button.selected {
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: var(--drum-highlight);
+    border-color: var(--drum-highlight);
 }
+
+    .instrument-button.selected img {
+        filter: brightness(0) invert(1);
+    }
 
 @keyframes blinker {
     50% {

@@ -86,59 +86,83 @@
         </div>
 
         <!-- BATERIA INTEGRADA -->
-        <!-- Adicione a classe 'd-none' aqui se quiser que inicie oculto, e remova via JS quando clicar no menu -->
         <div id="bateriaWrapper">
-            <div class="form-group mb-2">
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Estilo</span>
-                    </div>
+
+            <!-- LINHA 1: Estilo (Esquerda) e BPM (Direita) -->
+            <div class="d-flex align-items-center mb-1">
+                <!-- Grupo do Estilo (Ocupa o espaço restante) -->
+                <div class="input-group flex-grow-1 mr-1">
                     <select class="form-control" id="style">
                         <!-- Options carregadas via JS -->
                     </select>
                     <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" id="addStyle" title="Adicionar Estilo"><i class="bi bi-plus-lg"></i></button>
-                        <button class="btn btn-outline-secondary" type="button" id="editStyle" title="Editar Estilo"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-outline-secondary" type="button" id="deleteStyle" title="Excluir Estilo"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-outline-secondary" type="button" id="addStyle" title="Adicionar"><i class="bi bi-plus-lg"></i></button>
+                        <button class="btn btn-outline-secondary d-none" type="button" id="editStyle" title="Editar"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-outline-secondary d-none" type="button" id="deleteStyle" title="Excluir"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>
+
+                <!-- Grupo do BPM (Largura fixa ajustada) -->
+                <div class="input-group drum-unified-group" style="width: 260px;">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-secondary decrement-bpm" type="button"><i class="bi bi-dash"></i></button>
+                    </div>
+                    <input type="text" id="bpm" value="90" class="form-control text-center px-1" aria-label="BPM">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary increment-bpm" type="button"><i class="bi bi-plus"></i></button>
+                        <span class="input-group-text px-1"><small>BPM</small></span>
                     </div>
                 </div>
             </div>
 
-            <div class="rhythm-buttons">
-                <button id="rhythm-a" class="btn btn-sm btn-secondary rhythm-button">A</button>
-                <button id="rhythm-b" class="btn btn-sm btn-secondary rhythm-button">B</button>
-                <button id="rhythm-c" class="btn btn-sm btn-secondary rhythm-button">C</button>
-                <button id="rhythm-d" class="btn btn-sm btn-secondary rhythm-button">D</button>
-                <button id="rhythm-e" class="btn btn-sm btn-secondary rhythm-button">E</button>
-                <button id="save-rhythm" class="btn btn-sm btn-primary" title="Salvar Ritmo"><i class="bi bi-save"></i></button>
+            <!-- LINHA 2: Variações de Ritmo (Sempre visível) -->
+            <div class="rhythm-buttons d-flex justify-content-center mb-2">
+                <button id="rhythm-a" class="btn btn-secondary rhythm-button">A</button>
+                <button id="rhythm-b" class="btn btn-secondary rhythm-button">B</button>
+                <button id="rhythm-c" class="btn btn-secondary rhythm-button">C</button>
+                <button id="rhythm-d" class="btn btn-secondary rhythm-button">D</button>
+                <button id="rhythm-e" class="btn btn-secondary rhythm-button">E</button>
             </div>
 
-            <div class="drum-controls-container">
-                <div class="drum-input-group">
-                    <button class="btn btn-sm btn-outline-secondary decrement-bpm" type="button">-</button>
-                    <input type="text" id="bpm" value="90" class="form-control form-control-sm" aria-label="BPM">
-                    <button class="btn btn-sm btn-outline-secondary increment-bpm" type="button">+</button>
-                    <small class="ml-1 text-muted">BPM</small>
+            <!-- ÁREA DE EDIÇÃO (Steps, Ações e Tracks) - INICIALMENTE OCULTA -->
+            <div id="drumEditor" class="d-none">
+
+                <!-- LINHA 3: Steps (Esquerda) e Ações (Direita) -->
+                <div class="d-flex justify-content-between align-items-center mb-2 border-top pt-2" style="border-color: var(--drum-border) !important;">
+
+                    <!-- Steps Input Group -->
+                    <div class="input-group input-group-sm drum-unified-group" style="width: 150px;">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary decrement-steps" type="button"><i class="bi bi-dash"></i></button>
+                        </div>
+                        <input type="text" id="num-steps" value="4" class="form-control text-center px-1" aria-label="Steps">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary increment-steps" type="button"><i class="bi bi-plus"></i></button>
+                            <span class="input-group-text px-1"><small>Steps</small></span>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button id="save-rhythm" class="btn btn-primary" title="Salvar Ritmo">
+                            <i class="bi bi-save"></i> Salvar
+                        </button>
+                        <button id="copy-rhythm" class="btn btn-info" title="Copiar Ritmo">
+                            <i class="bi bi-files"></i> Copiar
+                        </button>
+                        <button id="paste-rhythm" class="btn btn-warning" title="Colar Ritmo">
+                            <i class="bi bi-clipboard"></i> Colar
+                        </button>
+                    </div>
                 </div>
 
-                <div class="drum-input-group">
-                    <button class="btn btn-sm btn-outline-secondary decrement-steps" type="button">-</button>
-                    <input type="text" id="num-steps" value="4" class="form-control form-control-sm" aria-label="Steps">
-                    <button class="btn btn-sm btn-outline-secondary increment-steps" type="button">+</button>
-                    <small class="ml-1 text-muted">Steps</small>
-                </div>
-
-                <div class="btn-group btn-group-sm">
-                    <button id="copy-rhythm" class="btn btn-info" title="Copiar Ritmo"><i class="bi bi-files"></i></button>
-                    <button id="paste-rhythm" class="btn btn-warning" title="Colar Ritmo"><i class="bi bi-clipboard"></i></button>
+                <!-- LINHA 4: Trilhas -->
+                <div id="tracks">
+                    <!-- Tracks geradas via JS -->
                 </div>
             </div>
 
-            <div id="tracks">
-                <!-- Tracks geradas via JS -->
-            </div>
         </div>
-        <!-- FIM BATERIA INTEGRADA -->
 
         <div id="draggableControls" style="transform: none; left: 25%; ">
             <div class="d-flex justify-content-center align-items-center" id="controlButtons">
