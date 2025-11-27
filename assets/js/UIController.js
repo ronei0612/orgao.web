@@ -133,8 +133,8 @@ class UIController {
     }
 
     exibirBotaoPlay() {
-        this.elements.playButton.classList.remove('d-none', 'pressed'),
-            this.elements.stopButton.classList.add('d-none', 'pulse');
+        this.elements.playButton.classList.remove('d-none', 'pressed');
+        this.elements.stopButton.classList.add('d-none', 'pulse');
     }
 
     exibirBotaoStop() {

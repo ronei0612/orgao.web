@@ -1,5 +1,6 @@
 class BateriaUI {
-    constructor(drumMachine) {
+    constructor(drumMachine, uiController) {
+        this.uiController = uiController;
         this.drumMachine = drumMachine;
 
         this.bpmInput = document.getElementById('bpm');
@@ -397,8 +398,8 @@ class BateriaUI {
                 const baseKey = `${styleName}-${rhythmCode}`;
                 const keyToLoad = isFill && localStorage.getItem(fillKey) ? fillKey : baseKey;
                 this.loadRhythm(keyToLoad);
-            return;
-        }
+                return;
+            }
         }
 
         // Resetar cliques dos outros botões e remover 'fill' dos outros
@@ -445,7 +446,9 @@ class BateriaUI {
                 this.fillLoaded = false;
             }
         }
-        }
+
+        this.play();
+    }
 
     // Corrigir onMeasureEnd para lidar com o estado 'fill'
     onMeasureEnd() {
@@ -474,6 +477,22 @@ class BateriaUI {
                 this.fillLoaded = false;
                 selectedButton.classList.remove('fill');
             }
+        }
+    }
+
+    play() {
+        if (!this.drumMachine.isPlaying) {
+            // remove fill when starting
+            this.rhythmButtons.forEach(button => button.classList.remove('fill'));
+            this.drumMachine.start();
+            this.uiController.exibirBotaoStop();
+        }
+    }
+
+    stop() {
+        if (this.drumMachine.isPlaying) {
+            this.drumMachine.stop();
+            this.uiController.exibirBotaoPlay();
         }
     }
 
@@ -566,11 +585,3 @@ class BateriaUI {
         }
     }
 }
-
-// Initialize after DOM and DrumMachine are ready
-document.addEventListener('DOMContentLoaded', async () => {
-    const drumMachine = new DrumMachine();
-    if (typeof drumMachine.init === 'function') await drumMachine.init();
-    const ui = new BateriaUI(drumMachine);
-    await ui.init();
-});

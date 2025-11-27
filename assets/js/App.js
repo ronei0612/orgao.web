@@ -21,7 +21,7 @@ class App {
         this.API_BASE_URL = 'https://apinode-h4wt.onrender.com';
     }
 
-    init() {
+    async init() {
         this.setupServiceWorker();
         this.loadCifrasLocal();
         this.warmupApi();
@@ -32,6 +32,13 @@ class App {
         this.bindEvents();
         this.setupSelect2();
         this.getUrlParam();
+
+        const drumMachine = new DrumMachine(this.BASE_URL);
+        if (typeof drumMachine.init === 'function')
+            await drumMachine.init();
+
+        this.bateriaUI = new BateriaUI(drumMachine, this.uiController);
+        await this.bateriaUI.init();
     }
 
     bindEvents() {
@@ -304,6 +311,7 @@ class App {
             this.uiController.esconderBotoesAvancarVoltarCifra();
         }
         this.cifraPlayer.pararReproducao();
+        this.bateriaUI.stop();
 
         if (this.elements.bateriaFrame.classList.contains('d-none') === false) {
             this.elements.bateriaFrame.contentWindow.postMessage('bateria-stop', '*');
@@ -314,10 +322,6 @@ class App {
         if (this.elements.acorde1.classList.contains('d-none')) {
             this.cifraPlayer.iniciarReproducao();
             this.uiController.exibirBotoesAvancarVoltarCifra();
-        }
-
-        if (this.elements.bateriaFrame.classList.contains('d-none') === false) {
-            this.elements.bateriaFrame.contentWindow.postMessage('bateria-toggle', '*');
         }
     }
 

@@ -1,8 +1,9 @@
-var audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/studio/Drums/' : './assets/audio/studio/Drums/';
 class DrumMachine {
-    constructor() {
+    constructor(baseUrl) {
+        this.baseUrl = baseUrl;
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.buffers = new Map();
+        const audioPath = this.baseUrl + '/assets/audio/studio/Drums/';
         this.instruments = [
             { name: 'Prato', icon: 'prato.svg', file: audioPath + 'ride.ogg', somAlternativo: audioPath + 'prato2.ogg' },
             { name: 'Tom', icon: 'tom.svg', file: audioPath + 'tom-03.ogg', somAlternativo: audioPath + 'tom-02.ogg' },
