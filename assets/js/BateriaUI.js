@@ -48,42 +48,22 @@ class BateriaUI {
         this.loadRhythmForStyleAndRhythm(initialStyle, this.selectedRhythm);
     }
 
-    // Handle messages from parent window (index.html)
-    handleIncomingMessage(event) {
-        // Optional: verify origin if needed: if (event.origin !== expectedOrigin) return;
-        const msg = event.data;
-        if (!msg) return;
-
-        switch (msg) {
-            case 'bateria-toggle':
-                this.togglePlay();
-                break;
-            case 'bateria-play':
-                if (!this.drumMachine.isPlaying) this.togglePlay();
-                break;
-            case 'bateria-stop':
-                if (this.drumMachine.isPlaying) this.togglePlay();
-                break;
-            default:
-                // allow structured messages in future
-                if (typeof msg === 'object' && msg?.action === 'bateria-play-style') {
-                    // e.g. { action: 'bateria-play-style', style: 'MeuEstilo', rhythm: 'A' }
-                    const style = msg.style || this.styleSelect.value;
-                    const rhythm = msg.rhythm || this.selectedRhythm;
-                    this.loadRhythm(`${style}-${rhythm}`);
-                    if (!this.drumMachine.isPlaying) this.togglePlay();
-                }
-                break;
-        }
-    }
-
-    // Utilities
+    /**
+     * Extrai a chave do instrumento a partir do elemento track fornecido.
+     * Ele procura a imagem dentro do rótulo do track e usa o título da imagem
+     * para gerar a chave do instrumento, convertendo para minúsculas e removendo espaços.
+     * Se a imagem ou o título não estiverem presentes, retorna null.
+     */
     getInstrumentKeyFromTrack(track) {
         const img = track.querySelector('label img');
         if (!img || !img.title) return null;
         return img.title.toLowerCase().replace(/ /g, '');
     }
 
+    /**
+     * Garantir que o estilo padrão exista no localStorage
+     * Se não existir, criar o estilo padrão e ritmos vazios para A, B, C, D
+     */
     ensureDefaultStyleExists() {
         const styles = JSON.parse(localStorage.getItem('styles') || '[]');
         if (!styles || styles.length === 0) {
@@ -102,6 +82,11 @@ class BateriaUI {
         }
     }
 
+    /**
+     * Cria um objeto de ritmo vazio com o BPM e número de passos fornecidos.
+     * Cada instrumento terá uma matriz de passos preenchida com zeros.
+     * Retorna o objeto de dados do ritmo.
+     */
     createEmptyRhythm(bpm, numSteps) {
         const rhythmData = {};
         (this.drumMachine.instruments || []).forEach(inst => {
@@ -112,7 +97,11 @@ class BateriaUI {
         return rhythmData;
     }
 
-    // Styles (localStorage)
+    /**
+     * Carrega os estilos salvos do localStorage e popula o seletor de estilos na UI.
+     * Se nenhum estilo existir, adiciona o estilo padrão.
+     * Ordena os estilos alfabeticamente antes de adicioná-los ao seletor.
+     */
     loadStyles() {
         const styles = JSON.parse(localStorage.getItem('styles') || '[]');
         this.styleSelect.innerHTML = '';
@@ -139,6 +128,10 @@ class BateriaUI {
         localStorage.setItem('styles', JSON.stringify(styles));
     }
 
+    /**
+     * Adiciona um novo estilo após solicitar o nome ao usuário.
+     * Cria ritmos vazios para A, B, C, D e seus respectivos fills.
+     */
     addStyle() {
         const newName = prompt('Digite o nome do novo estilo:');
         if (!newName) return;
@@ -161,6 +154,11 @@ class BateriaUI {
         this.styleSelect.value = newName;
     }
 
+    /**
+     * Edita o nome do estilo atualmente selecionado.
+     * Solicita o novo nome ao usuário e atualiza o localStorage.
+     * Também renomeia os ritmos associados ao estilo.
+     */
     editStyle() {
         const current = this.styleSelect.value;
         const newName = prompt('Digite o novo nome para o estilo:', current);
@@ -188,6 +186,10 @@ class BateriaUI {
         this.styleSelect.value = newName;
     }
 
+    /**
+     * Exclui o estilo atualmente selecionado após confirmação do usuário.
+     * Remove o estilo do localStorage e também exclui os ritmos associados.
+     */
     deleteStyle() {
         const current = this.styleSelect.value;
         if (!confirm(`Tem certeza que deseja excluir o estilo "${current}"?`)) return;
@@ -201,11 +203,17 @@ class BateriaUI {
         this.loadStyles();
     }
 
+    /**
+     * Salva o ritmo atual no estilo e chave de ritmo fornecidos.
+     */
     saveRhythmToStyle(styleName, rhythmKey, rhythmData) {
         const key = `${styleName}-${rhythmKey}`;
         localStorage.setItem(key, JSON.stringify(rhythmData));
     }
 
+    /**
+     * Salva o ritmo atual no localStorage para o estilo e ritmo selecionados.
+     */
     saveRhythm() {
         const styleName = this.styleSelect.value || this.defaultStyle;
         let rhythmKey = this.selectedRhythm;
@@ -225,10 +233,16 @@ class BateriaUI {
         this.saveRhythmToStyle(styleName, rhythmKey, rhythmData);
     }
 
+    /**
+     * Carrega o ritmo salvo para o estilo e ritmo fornecidos.
+     */
     loadRhythmForStyleAndRhythm(styleName, rhythm) {
         this.loadRhythm(`${styleName}-${rhythm}`);
     }
 
+    /**
+     * Carrega o ritmo salvo do localStorage usando a chave fornecida.
+     */
     loadRhythm(rhythmKey) {
         const saved = localStorage.getItem(rhythmKey);
         if (!saved) {
@@ -270,6 +284,10 @@ class BateriaUI {
         }
     }
 
+    /**
+     * Inicializa as faixas na interface do usuário com base nos instrumentos disponíveis na drumMachine.
+     * Cria um elemento de faixa para cada instrumento e os adiciona ao contêiner de faixas.
+     */
     initializeTracks() {
         const frag = document.createDocumentFragment();
         (this.drumMachine.instruments || []).forEach(inst => {
@@ -279,6 +297,11 @@ class BateriaUI {
         this.tracksContainer.appendChild(frag);
     }
 
+    /**
+     * Cria um elemento de faixa para o instrumento fornecido.
+     * O elemento de faixa inclui um botão para o instrumento e os passos correspondentes.
+     * Retorna o elemento de faixa criado.
+     */
     createTrack(instrument) {
         const track = document.createElement('div');
         track.className = 'track';
@@ -313,6 +336,9 @@ class BateriaUI {
         return track;
     }
 
+    /**
+     * Alterna o estado do passo fornecido entre inativo, volume baixo, volume médio e volume alto.
+     */
     toggleStep(step) {
         let volume = parseInt(step.dataset.volume || '0', 10);
         volume = (volume + 1) % 4;
@@ -330,6 +356,9 @@ class BateriaUI {
         if (isEmpty) instrumentButton.classList.remove('selected'); else instrumentButton.classList.add('selected');
     }
 
+    /**
+     * Limpa todos os passos em todas as faixas, definindo-os como inativos e removendo quaisquer classes de volume.
+     */
     clearSteps() {
         this.tracksContainer.querySelectorAll('.step').forEach(step => {
             step.classList.remove('active', 'low-volume', 'third-volume');
@@ -339,7 +368,10 @@ class BateriaUI {
         this.tracksContainer.querySelectorAll('.instrument-button').forEach(btn => btn.classList.remove('selected'));
     }
 
-    // Copy / Paste
+    /**
+     * Copia o ritmo atual para a área de transferência interna.
+     * Armazena os dados do ritmo em this.copiedRhythmData.
+     */
     copyRhythm() {
         const rhythmData = {};
         this.tracksContainer.querySelectorAll('.track').forEach(track => {
@@ -352,6 +384,10 @@ class BateriaUI {
         this.copiedRhythmData = rhythmData;
     }
 
+    /**
+     * Copia o ritmo salvo para a área de transferência interna.
+     * Aplica os dados do ritmo armazenados em this.copiedRhythmData às faixas atuais.
+     */
     pasteRhythm() {
         if (!this.copiedRhythmData) {
             alert('Nenhum ritmo copiado.');
@@ -377,7 +413,9 @@ class BateriaUI {
         });
     }
 
-    // Rhythm selection / fill logic
+    /**
+     * Seleciona o ritmo com base no botão clicado e na chave do ritmo.
+     */
     selectRhythm(rhythmButton, rhythmKey) {
         const id = rhythmButton.id;
         this.rhythmButtonClicks[id] = (this.rhythmButtonClicks[id] || 0) + 1;
@@ -450,7 +488,11 @@ class BateriaUI {
         this.play();
     }
 
-    // Corrigir onMeasureEnd para lidar com o estado 'fill'
+    /**
+     * Corrigir onMeasureEnd para lidar com o estado 'fill' corretamente.
+     * Quando a medida termina, verifica se há um ritmo pendente.
+     * Se houver, carrega o ritmo apropriado com base no estado do botão (fill ou não).
+     */
     onMeasureEnd() {
         if (this.pendingRhythm && this.drumMachine.isPlaying) {
             const selectedButton = document.getElementById(`rhythm-${this.pendingRhythm.toLowerCase()}`);
@@ -506,6 +548,9 @@ class BateriaUI {
         }
     }
 
+    /**
+     * Vincula os eventos da interface do usuário aos manipuladores apropriados.
+     */
     bindEvents() {
         // Steps via delegation
         this.tracksContainer.addEventListener('click', (ev) => {
