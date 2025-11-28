@@ -316,10 +316,6 @@ class App {
         }
         this.cifraPlayer.pararReproducao();
         this.bateriaUI.stop();
-
-        if (this.elements.bateriaFrame.classList.contains('d-none') === false) {
-            this.elements.bateriaFrame.contentWindow.postMessage('bateria-stop', '*');
-        }
     }
 
     handlePlayMousedown() {
@@ -902,7 +898,6 @@ document.addEventListener('DOMContentLoaded', () => {
         pulseRange: document.getElementById('pulseRange'),
         bpmValue: document.getElementById('bpmValue'),
         iframeCifra: document.getElementById('iframeCifra'),
-        bateriaFrame: document.getElementById('bateriaFrame'),
         santamissaFrame: document.getElementById('santamissaFrame'),
         oracoesFrame: document.getElementById('oracoesFrame'),
         darkModeToggle: document.getElementById('darkModeToggle'),
