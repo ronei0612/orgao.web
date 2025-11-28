@@ -9,7 +9,7 @@ const urlsToCache = [
     './assets/css/frames-styles.css',
     './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css',
     './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/fonts/bootstrap-icons.woff2',
-    './assets/lib/css/Bootstrap/4.5.2/bootstrap.min.css',
+    './assets/lib/css/Bootstrap/4.6.2/bootstrap.min.css',
     './assets/js/App.js',
     './assets/js/CifraPlayer.js',
     './assets/js/AudioContextManager.js',
@@ -17,7 +17,7 @@ const urlsToCache = [
     './assets/js/MusicTheory.js',
     './assets/js/UIController.js',
     './assets/lib/js/Jquery/3.5.1/jquery.min.js',
-    './assets/lib/js/Bootstrap/4.3.1/bootstrap.min.js',
+    './assets/lib/js/Bootstrap/4.6.1/bootstrap.min.js',
 
     //adicionar icons
 
