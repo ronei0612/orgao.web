@@ -40,9 +40,6 @@ class BateriaUI {
         this.initializeTracks();
         this.bindEvents();
 
-        // Add message listener for parent-frame control (play/stop/toggle)
-        window.addEventListener('message', this.handleIncomingMessage.bind(this), false);
-
         // Load the initially selected rhythm for the selected style
         const initialStyle = this.styleSelect.value || this.defaultStyle;
         this.loadRhythmForStyleAndRhythm(initialStyle, this.selectedRhythm);
