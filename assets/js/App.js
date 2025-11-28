@@ -39,6 +39,10 @@ class App {
 
         this.bateriaUI = new BateriaUI(drumMachine, this.uiController);
         await this.bateriaUI.init();
+
+        if (this.BASE_URL.includes('http')) {
+            document.getElementById('styleButtons').classList.remove('d-none');
+        }
     }
 
     bindEvents() {
