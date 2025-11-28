@@ -107,7 +107,6 @@ class UIController {
     }
 
     exibirBateria() {
-        this.elements.bateriaFrame.classList.remove('d-none');
         this.elements.iframeCifra.classList.add('d-none');
     }
 
@@ -133,8 +132,8 @@ class UIController {
     }
 
     exibirBotaoPlay() {
-        this.elements.playButton.classList.remove('d-none', 'pressed'),
-            this.elements.stopButton.classList.add('d-none', 'pulse');
+        this.elements.playButton.classList.remove('d-none', 'pressed');
+        this.elements.stopButton.classList.add('d-none', 'pulse');
     }
 
     exibirBotaoStop() {
@@ -258,7 +257,6 @@ class UIController {
         this.elements.addButton.classList.remove('d-none');
         this.elements.iframeCifra.classList.remove('d-none');
         this.elements.oracoesFrame.classList.add('d-none');
-        this.elements.bateriaFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
     }
@@ -269,7 +267,6 @@ class UIController {
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.oracoesFrame.classList.add('d-none');
-        this.elements.bateriaFrame.classList.add('d-none');
     }
 
     esconderEditDeleteButtons() {
@@ -300,7 +297,6 @@ class UIController {
             this.elements.selectedButton.innerText = this.elements.savesSelect.value;
         }
         this.elements.oracoesFrame.classList.add('d-none');
-        this.elements.bateriaFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.iframeCifra.classList.add('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');

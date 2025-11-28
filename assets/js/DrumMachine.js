@@ -1,8 +1,9 @@
-var audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/studio/Drums/' : './assets/audio/studio/Drums/';
 class DrumMachine {
-    constructor() {
+    constructor(baseUrl) {
+        this.baseUrl = baseUrl;
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.buffers = new Map();
+        const audioPath = this.baseUrl + '/assets/audio/studio/Drums/';
         this.instruments = [
             { name: 'Prato', icon: 'prato.svg', file: audioPath + 'ride.ogg', somAlternativo: audioPath + 'prato2.ogg' },
             { name: 'Tom', icon: 'tom.svg', file: audioPath + 'tom-03.ogg', somAlternativo: audioPath + 'tom-02.ogg' },
@@ -83,9 +84,11 @@ class DrumMachine {
     }
 
     nextNote() {
-        const secondsPerBeat = 60.0 / this.bpm;
-        this.nextNoteTime += secondsPerBeat;
+        const secondsPerQuarterNote = 60.0 / this.bpm;
+        const secondsPerStep = secondsPerQuarterNote / 2;
+        this.nextNoteTime += secondsPerStep;
         this.currentStep++;
+
         if (this.currentStep > this.numSteps) {
             this.currentStep = 1;
             if (this.onMeasureEnd) {
@@ -101,32 +104,32 @@ class DrumMachine {
         }
     }
 
+    fecharChimbal(instrument, volume) {
+        if (instrument !== 'chimbal') return;
+
+        if (volume === 1 || volume === 2) {
+            if (this.lastChimbalAbertoSource) {
+                try {
+                    this.lastChimbalAbertoSource.stop(0);
+                } catch (e) {
+                    // Ignore se já parou
+                }
+                this.lastChimbalAbertoSource = null;
+            }
+        }
+    }
+
     scheduleCurrentStep() {
         document.querySelectorAll('.track').forEach(track => {
             const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
             const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
-            const instrumentButton = track.querySelector('.instrument-button'); // Pega o botão do instrumento
-            if (!step) return;
+            const instrumentButton = track.querySelector('.instrument-button');
+            if (!step || !instrumentButton.classList.contains('selected')) return;
+
             const volume = parseInt(step.dataset.volume);
             if (isNaN(volume) || volume <= 0) return;
 
-            // Verifica se o instrumento está selecionado (adicione esta linha!)
-            if (!instrumentButton.classList.contains('selected')) return;
-
-            // Chimbal: se o anterior foi aberto e o atual for fechado, pare o som aberto
-            if (instrument === 'chimbal') {
-                const prevStepNum = this.currentStep === 1 ? this.numSteps : this.currentStep - 1;
-                const prevStep = track.querySelector(`.step[data-step="${prevStepNum}"]`);
-                if (prevStep) {
-                    const prevVolume = parseInt(prevStep.dataset.volume);
-                    if (prevVolume === 3 && (volume === 1 || volume === 2)) {
-                        if (this.lastChimbalAbertoSource) {
-                            try { this.lastChimbalAbertoSource.stop(); } catch { }
-                            this.lastChimbalAbertoSource = null;
-                        }
-                    }
-                }
-            }
+            this.fecharChimbal(instrument, volume);
 
             this.scheduleNote(instrument, this.currentStep, this.nextNoteTime, volume);
             step.classList.add('playing');
@@ -179,7 +182,7 @@ class DrumMachine {
     }
 
     setBPM(bpm) {
-        this.bpm = bpm * 2;
+        this.bpm = bpm;
     }
 
     setNumSteps(steps) {

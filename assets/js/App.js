@@ -4,8 +4,9 @@ class App {
         this.musicTheory = new MusicTheory();
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
-        this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory);
         this.draggableController = new DraggableController(this.elements.draggableControls);
+        this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web' : '.';
+        this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.version = '3.8';
         this.holdTime = 1000;
@@ -16,9 +17,11 @@ class App {
         this.todasAsCifras = [];
         this.musicaEscolhida = false;
         this.selectItemAntes = null;
+        this.LOCAL_STORAGE_SAVES_KEY = 'saves';
+        this.API_BASE_URL = 'https://apinode-h4wt.onrender.com';
     }
 
-    init() {
+    async init() {
         this.setupServiceWorker();
         this.loadCifrasLocal();
         this.warmupApi();
@@ -29,6 +32,17 @@ class App {
         this.bindEvents();
         this.setupSelect2();
         this.getUrlParam();
+
+        const drumMachine = new DrumMachine(this.BASE_URL);
+        if (typeof drumMachine.init === 'function')
+            await drumMachine.init();
+
+        this.bateriaUI = new BateriaUI(drumMachine, this.uiController);
+        await this.bateriaUI.init();
+
+        if (this.BASE_URL.includes('http')) {
+            document.getElementById('styleButtons').classList.remove('d-none');
+        }
     }
 
     bindEvents() {
@@ -36,7 +50,7 @@ class App {
         this.elements.selectedButton.addEventListener("click", this.handleSelectedButtonClick.bind(this));
         this.elements.cancelButton.addEventListener("click", this.handleCancelClick.bind(this));
         this.elements.saveButton.addEventListener('click', this.handleSaveClick.bind(this));
-        this.elements.darkModeToggle.addEventListener('change', this.uiController.toggleDarkMode.bind(this));
+        this.elements.darkModeToggle.addEventListener('change', this.uiController.toggleDarkMode.bind(this.uiController));
         this.elements.tocarButton.addEventListener('click', this.handleTocarClick.bind(this));
         this.elements.tomSelect.addEventListener('change', this.handleTomSelectChange.bind(this));
         this.elements.decreaseTom.addEventListener('click', this.handleDecreaseTomClick.bind(this));
@@ -270,7 +284,7 @@ class App {
         if (this.elements.savesSelect.selectedIndex !== 0) {
             const confirmed = await this.uiController.customConfirm(`Deseja excluir "${saveName}"?`, 'Deletar!');
             if (confirmed) {
-                this.localStorageManager.deleteJson('saves', saveName);
+                this.localStorageManager.deleteJson(this.LOCAL_STORAGE_SAVES_KEY, saveName);
                 this.uiController.resetInterface();
                 this.uiController.exibirListaSaves();
                 this.selectEscolhido('acordes__');
@@ -301,20 +315,13 @@ class App {
             this.uiController.esconderBotoesAvancarVoltarCifra();
         }
         this.cifraPlayer.pararReproducao();
-
-        if (this.elements.bateriaFrame.classList.contains('d-none') === false) {
-            this.elements.bateriaFrame.contentWindow.postMessage('bateria-stop', '*');
-        }
+        this.bateriaUI.stop();
     }
 
     handlePlayMousedown() {
         if (this.elements.acorde1.classList.contains('d-none')) {
             this.cifraPlayer.iniciarReproducao();
             this.uiController.exibirBotoesAvancarVoltarCifra();
-        }
-
-        if (this.elements.bateriaFrame.classList.contains('d-none') === false) {
-            this.elements.bateriaFrame.contentWindow.postMessage('bateria-toggle', '*');
         }
     }
 
@@ -374,7 +381,6 @@ class App {
 
         this.uiController.exibirBotoesTom();
         this.uiController.exibirIframeCifra();
-        //this.uiController.exibirBotoesAcordes();
         this.cifraPlayer.indiceAcorde = 0;
     }
 
@@ -383,7 +389,7 @@ class App {
             const confirmed = await this.uiController.customConfirm(`Você trocou de tom de ${this.cifraPlayer.tomOriginal} para ${this.cifraPlayer.tomAtual}. Substituir novo tom?`);
             if (confirmed) {
                 var saveContent = this.elements.iframeCifra.contentDocument.body.innerText;
-                this.localStorageManager.saveJson('saves', this.selectItemAntes, saveContent);
+                this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_KEY, this.selectItemAntes, saveContent);
             }
             this.cifraPlayer.tomOriginal = null;
         }
@@ -396,7 +402,7 @@ class App {
         this.selectItemAntes = selectItem;
 
         if (selectItem && selectItem !== 'acordes__' && selectItem !== 'bateria__') {
-            const texto = this.localStorageManager.getTextJson('saves', selectItem);
+            const texto = this.localStorageManager.getTextJson(this.LOCAL_STORAGE_SAVES_KEY, selectItem);
             this.showLetraCifra(texto);
         }
         else {
@@ -476,7 +482,7 @@ class App {
 
         // Lógica de pesquisa na Web (mantida igual, com ajuste para `this`)
         try {
-            const response = await fetch('https://apinode-h4wt.onrender.com/pesquisar', {
+            const response = await fetch(`${this.API_BASE_URL}/pesquisar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ texto: textoPesquisa }),
@@ -546,7 +552,7 @@ class App {
         this.uiController.limparResultados();
 
         try {
-            const response = await fetch('https://apinode-h4wt.onrender.com/downloadsite', {
+            const response = await fetch(`${this.API_BASE_URL}/downloadsite`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ url: urlLink }),
@@ -683,10 +689,10 @@ class App {
                     }
 
                     // 2. Mescla com os saves existentes
-                    const currentSaves = this.localStorageManager.getSavesJson('saves');
+                    const currentSaves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
                     // O operador spread ( ... ) irá sobrescrever chaves duplicadas
                     const mergedSaves = { ...currentSaves, ...newSaves };
-                    localStorage.setItem('saves', JSON.stringify(mergedSaves));
+                    localStorage.setItem(this.LOCAL_STORAGE_SAVES_KEY, JSON.stringify(mergedSaves));
 
                     // 3. Atualiza a interface
                     this.uiController.exibirListaSaves();
@@ -707,7 +713,7 @@ class App {
     // --- DENTRO DA CLASSE App no script.js ---
 
     downloadSaves() {
-        const saves = this.localStorageManager.getSavesJson('saves');
+        const saves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
         const nomeDoArquivo = 'repertorio-orgao-web.json';
 
         if (Object.keys(saves).length === 0) {
@@ -789,7 +795,7 @@ class App {
             newSaveName = "Música " + count;
         }
 
-        let saves = this.localStorageManager.getSavesJson('saves');
+        let saves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
 
         newSaveName = newSaveName.trim();
         let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
@@ -800,11 +806,11 @@ class App {
         }
 
         if (oldSaveName && oldSaveName !== newSaveName) {
-            this.localStorageManager.editarNome('saves',oldSaveName, newSaveName);
+            this.localStorageManager.editarNome(this.LOCAL_STORAGE_SAVES_KEY,oldSaveName, newSaveName);
         }
 
         var saveContent = this.elements.editTextarea.value;
-        this.localStorageManager.saveJson('saves', newSaveName, saveContent);
+        this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_KEY, newSaveName, saveContent);
         this.elements.savesSelect.value = newSaveName;
 
         this.uiController.exibirIframeCifra();
@@ -828,10 +834,7 @@ class App {
     }
 
     loadCifrasLocal() {
-        var cifrasLocal = './cifras.json';
-        if (location.origin.includes('file:')) {
-            cifrasLocal = 'https://roneicostasoares.com.br/orgao.web/cifras.json';
-        }
+        var cifrasLocal = `${this.BASE_URL}/cifras.json`;
 
         fetch(cifrasLocal)
             .then(response => {
@@ -851,7 +854,7 @@ class App {
 
     warmupApi() {
         // acorda a api
-        fetch('https://apinode-h4wt.onrender.com/')
+        fetch(this.API_BASE_URL + '/')
             .then(response => response.json())
             .catch(() => console.log("API Warmup failed/ignored."));
     }
@@ -891,11 +894,10 @@ document.addEventListener('DOMContentLoaded', () => {
         spinner: document.querySelector('.spinner-border'),
         searchIcon: document.getElementById('searchIcon'),
         searchResultsList: document.getElementById('searchResults'),
-        savesList: document.getElementById('saves'),
+        savesList: document.getElementById(this.LOCAL_STORAGE_SAVES_KEY),
         pulseRange: document.getElementById('pulseRange'),
         bpmValue: document.getElementById('bpmValue'),
         iframeCifra: document.getElementById('iframeCifra'),
-        bateriaFrame: document.getElementById('bateriaFrame'),
         santamissaFrame: document.getElementById('santamissaFrame'),
         oracoesFrame: document.getElementById('oracoesFrame'),
         darkModeToggle: document.getElementById('darkModeToggle'),

@@ -1,5 +1,6 @@
 class CifraPlayer {
-    constructor(elements, uiController, musicTheory) {
+    constructor(elements, uiController, musicTheory, baseUrl) {
+        this.audioPath = `${baseUrl}/assets/audio/`;
         this.uiController = uiController;
         this.musicTheory = musicTheory;
         this.elements = elements;
@@ -15,13 +16,15 @@ class CifraPlayer {
         this.attack = 0.2;
         this.release = 0.2;
 
-        this.audioPath = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web/assets/audio/' : './assets/audio/';
-
         this.audioContextManager = new AudioContextManager();
         this.carregarAcordes();
     }
 
-
+    /**
+     * Descobre o tom da música a partir do HTML fornecido.
+     * @param {string} textoHtml - O conteúdo HTML da música.
+     * @returns {string} - O tom descoberto ou uma string vazia se não for possível determinar.
+     */
     descobrirTom(textoHtml) {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = textoHtml;
@@ -32,6 +35,11 @@ class CifraPlayer {
         return this.musicTheory.descobrirTom(cifras);
     }
 
+    /**
+     * Remove tags HTML do texto da cifra.
+     * @param {string} texto - O texto da cifra com possíveis tags HTML.
+     * @returns {string} - O texto da cifra sem tags HTML.
+     */
     removerTagsDaCifra(texto) {
         if (texto) {
             if (texto.includes('<pre>')) {
