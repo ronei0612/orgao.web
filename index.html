@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="./assets/css/styles.css">
     <link rel="stylesheet" href="./assets/css/bateria.css">
 
-    <!-- CSS do Select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@x.x.x/dist/select2-bootstrap4.min.css">
 </head>
@@ -79,18 +78,14 @@
             <iframe class="w-100 border border-secondary rounded d-none" id="liturgiaDiariaFrame" src="https://liturgiadiaria.edicoescnbb.com.br/"></iframe>
             <iframe class="w-100 border border-secondary rounded d-none" id="santamissaFrame" src="./santamissa.html"></iframe>
             <iframe class="w-100 border border-secondary rounded d-none" id="oracoesFrame" src="./oracoes.html"></iframe>
-            <!-- O iframe bateriaFrame foi removido e substituído pelo #bateriaWrapper abaixo -->
             <iframe class="w-100 border border-secondary rounded" id="iframeCifra"></iframe>
 
             <textarea class="modal-textarea d-none" id="editTextarea" placeholder="Editar Cifra..."></textarea>
         </div>
 
-        <!-- BATERIA INTEGRADA -->
         <div id="bateriaWrapper">
 
-            <!-- LINHA 1: Estilo (Esquerda) e BPM (Direita) -->
             <div class="d-flex align-items-center mb-1">
-                <!-- Grupo do Estilo (Ocupa o espaço restante) -->
                 <div class="input-group flex-grow-1 mr-1">
                     <select class="form-control" id="style">
                     </select>
@@ -101,7 +96,6 @@
                     </div>
                 </div>
 
-                <!-- Grupo do BPM (Largura fixa ajustada) -->
                 <div class="input-group drum-unified-group" style="width: 290px;">
                     <div class="input-group-prepend">
                         <button class="btn btn-outline-secondary decrement-bpm" type="button"><i class="bi bi-dash"></i></button>
@@ -114,7 +108,6 @@
                 </div>
             </div>
 
-            <!-- LINHA 2: Variações de Ritmo (Sempre visível) -->
             <div class="rhythm-buttons d-flex justify-content-center mb-2">
                 <button id="rhythm-a" class="btn btn-secondary rhythm-button">A</button>
                 <button id="rhythm-b" class="btn btn-secondary rhythm-button">B</button>
@@ -123,13 +116,8 @@
                 <button id="rhythm-e" class="btn btn-secondary rhythm-button">E</button>
             </div>
 
-            <!-- ÁREA DE EDIÇÃO (Steps, Ações e Tracks) - INICIALMENTE OCULTA -->
             <div id="drumEditor" class="d-none">
-
-                <!-- LINHA 3: Steps (Esquerda) e Ações (Direita) -->
                 <div class="d-flex justify-content-between align-items-center mb-2 border-top pt-2" style="border-color: var(--drum-border) !important;">
-
-                    <!-- Steps Input Group -->
                     <div class="input-group input-group-sm drum-unified-group" style="width: 150px;">
                         <div class="input-group-prepend">
                             <button class="btn btn-outline-secondary decrement-steps" type="button"><i class="bi bi-dash"></i></button>
@@ -141,7 +129,6 @@
                         </div>
                     </div>
 
-                    <!-- Botões de Ação -->
                     <div class="btn-group btn-group-sm" role="group">
                         <button id="save-rhythm" class="btn btn-primary" title="Salvar Ritmo">
                             <i class="bi bi-save"></i> Salvar
@@ -155,9 +142,7 @@
                     </div>
                 </div>
 
-                <!-- LINHA 4: Trilhas -->
                 <div id="tracks">
-                    <!-- Tracks geradas via JS -->
                 </div>
             </div>
 
@@ -219,9 +204,6 @@
                     <p><a href="#" id="missaOrdinarioLink">⛪ Ordinário Santa Missa</a></p>
                     <p><a href="#" id="liturgiaDiariaLink">📖 Liturgia Diária</a></p>
                     <p><a href="#" id="oracoesLink">🙏 Orações</a></p>
-
-                    <!-- Link da bateria pode precisar de ajuste no JS para abrir a div #bateriaWrapper ao invés do iframe -->
-                    <p><a href="#" id="bateriaLink">🥁 Bateria</a></p>
 
                     <p><a href="#" id="downloadSavesLink">Baixar meu Repertório</a></p>
                     <p><a href="#" id="uploadSavesLink">Importar um Repertório</a></p>
@@ -324,8 +306,6 @@
     <script src="./assets/js/UIController.js"></script>
     <script src="./assets/js/LocalStorageManager.js"></script>
     <script src="./assets/js/App.js"></script>
-
-    <!-- Scripts da Bateria Integrada -->
     <script src="assets/js/DrumMachine.js"></script>
     <script src="assets/js/BateriaUI.js"></script>
 </body>
