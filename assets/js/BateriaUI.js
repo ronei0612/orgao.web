@@ -251,7 +251,6 @@ class BateriaUI {
             else btn.classList.add('selected');
         });
         if (typeof data.bpm === 'number') {
-            this.elements.bpmInput.value = data.bpm;
             this.drumMachine.setBPM(data.bpm);
         } else {
             this.drumMachine.setBPM(parseInt(this.elements.bpmInput.value, 10) || 90);
