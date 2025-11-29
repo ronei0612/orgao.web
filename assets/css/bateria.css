@@ -174,7 +174,10 @@ body.dark-mode #bateriaWrapper .btn-outline-secondary {
     animation: blinker 1s linear infinite;
 }
 
-/* Botões de Instrumentos */
+.rhythm-buttons button.fill {
+    background-color: var(--drum-fill);
+}
+
 .instrument-button {
     width: 35px;
     height: 35px;

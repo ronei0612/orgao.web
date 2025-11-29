@@ -11,7 +11,6 @@ class BateriaUI {
         this.fillLoaded = false;
         this.defaultStyle = 'Novo Estilo';
         this.copiedRhythmData = null;
-        this.rhythmButtonClicks = {};
     }
 
     async init() {
@@ -390,63 +389,61 @@ class BateriaUI {
      * Seleciona o ritmo com base no botão clicado e na chave do ritmo.
      */
     selectRhythm(rhythmButton, rhythmKey) {
-        const id = rhythmButton.id;
-        this.rhythmButtonClicks[id] = (this.rhythmButtonClicks[id] || 0) + 1;
         const styleName = this.elements.styleSelect.value || this.defaultStyle;
-        const rhythmCode = rhythmKey.replace('rhythm-', '').toUpperCase(); // A, B, C, D
+        const rhythmCode = rhythmKey.replace('rhythm-', '').toUpperCase(); // A, B, C, D, E...
 
-        // 1. Lógica do Double-Click para Ativar/Desativar FILL
-        // Se já está selecionado e é o segundo clique:
-        if (rhythmButton.classList.contains('selected') && this.rhythmButtonClicks[id] > 1) {
-
-            // Alternar o estado Fill
+        if (rhythmButton.classList.contains('selected')) {
             const isFill = rhythmButton.classList.toggle('fill');
-            this.rhythmButtonClicks[id] = 0; // Resetar contador após ação
 
-            // Se a bateria estiver PARADA, carregar a visualização imediatamente
-            if (!this.drumMachine.isPlaying) {
-                const fillKey = `${styleName}-${rhythmCode}-fill`;
-                const baseKey = `${styleName}-${rhythmCode}`;
-                const keyToLoad = isFill && localStorage.getItem(fillKey) ? fillKey : baseKey;
-                this.loadRhythm(keyToLoad);
-                return;
+            // remover pending/fill dos outros botões
+            this.elements.rhythmButtons.forEach(b => {
+                if (b !== rhythmButton) {
+                    b.classList.remove('fill', 'selected', 'pending');
+                } else {
+                    b.classList.remove('pending');
+                }
+            });
+
+            // Se estiver tocando: agendar revert para o fim da medida,
+            // e carregar o fill imediatamente se existir
+            this.pendingRhythm = rhythmCode;
+            this.pendingButton = rhythmButton;
+
+            if (isFill && localStorage.getItem(`${styleName}-${rhythmCode}-fill`)) {
+                this.loadRhythm(`${styleName}-${rhythmCode}-fill`);
+                this.fillLoaded = true;
+            } else {
+                // desativou o fill enquanto tocando -> marca pendência para reverter/confirmar no fim da medida
+                this.fillLoaded = false;
             }
+
+            // visual de pending para indicar troca no fim da medida
+            rhythmButton.classList.add('pending');
+            return;
         }
 
-        // Resetar cliques dos outros botões e remover 'fill' dos outros
+        // Selecionando um novo ritmo
         this.elements.rhythmButtons.forEach(b => {
             if (b !== rhythmButton) {
                 b.classList.remove('selected', 'fill');
-                this.rhythmButtonClicks[b.id] = 0;
             }
-            b.classList.remove('pending'); // Remove todos os 'pending'
+            b.classList.remove('pending');
         });
 
-        // 2. Definir o ritmo como selecionado (single-click)
         rhythmButton.classList.add('selected');
 
-        // 3. Atualizar o ritmo pendente (com ou sem fill)
         this.pendingRhythm = rhythmCode;
-        this.pendingButton = rhythmButton; // O botão que foi clicado
+        this.pendingButton = rhythmButton;
 
-        // 4. Se a bateria estiver PARADA, carregar o ritmo base (ou fill se for double-click)
         if (!this.drumMachine.isPlaying) {
-            // Se não estava em fill, carrega o ritmo base
-            if (!rhythmButton.classList.contains('fill')) {
-                this.loadRhythm(`${styleName}-${rhythmCode}`);
-            } // Se estava, já foi carregado acima.
-
-            // O ritmo selecionado atualiza imediatamente
+            this.loadRhythm(`${styleName}-${rhythmCode}`);
             this.selectedRhythm = rhythmCode;
-            this.pendingRhythm = null; // Não há pendência se está parado
+            this.pendingRhythm = null;
             this.pendingButton = null;
         } else {
-            // Se a bateria está tocando: agendar e visualmente mostrar 'pending'
-            if (!rhythmButton.classList.contains('fill')) {
-                rhythmButton.classList.add('pending');
-            }
+            // quando tocando, mostrar que está pending até o fim da medida
+            rhythmButton.classList.add('pending');
 
-            // Carregar o fill imediatamente se o botão está 'fill'
             const isFillSelected = rhythmButton.classList.contains('fill');
             const fillKey = `${styleName}-${rhythmCode}-fill`;
 
@@ -496,7 +493,7 @@ class BateriaUI {
     play() {
         if (!this.drumMachine.isPlaying) {
             // remove fill when starting
-            this.elements.rhythmButtons.forEach(button => button.classList.remove('fill'));
+            //this.elements.rhythmButtons.forEach(button => button.classList.remove('fill'));
             this.drumMachine.start();
             this.uiController.exibirBotaoStop();
         }
@@ -531,7 +528,7 @@ class BateriaUI {
 
         // Rhythm buttons
         this.elements.rhythmButtons.forEach(button => {
-            this.rhythmButtonClicks[button.id] = 0;
+            // contador de cliques removido; apenas ligar o evento
             button.addEventListener('click', () => {
                 this.selectRhythm(button, button.id);
             });

@@ -112,7 +112,7 @@ class DrumMachine {
                 try {
                     this.lastChimbalAbertoSource.stop(0);
                 } catch (e) {
-                    // Ignore se já parou
+                    // Ignore se ja parou
                 }
                 this.lastChimbalAbertoSource = null;
             }
