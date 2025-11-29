@@ -37,7 +37,7 @@ class App {
         if (typeof drumMachine.init === 'function')
             await drumMachine.init();
 
-        this.bateriaUI = new BateriaUI(drumMachine, this.uiController);
+        this.bateriaUI = new BateriaUI(this.elements, drumMachine, this.uiController);
         await this.bateriaUI.init();
 
         if (this.BASE_URL.includes('http')) {
@@ -935,7 +935,18 @@ document.addEventListener('DOMContentLoaded', () => {
         borderRight: document.getElementById('borderRight'),
         borderLeft: document.getElementById('borderLeft'),
         draggableControls: document.getElementById('draggableControls'),
-        orgaoInstrumentButton: document.getElementById('orgaoInstrumentButton')
+        orgaoInstrumentButton: document.getElementById('orgaoInstrumentButton'),
+        bpmInput: document.getElementById('bpm'),
+        numStepsInput: document.getElementById('num-steps'),
+        tracksContainer: document.getElementById('tracks'),
+        rhythmButtons: Array.from(document.querySelectorAll('.rhythm-button')),
+        saveRhythmButton: document.getElementById('save-rhythm'),
+        styleSelect: document.getElementById('style'),
+        addStyleButton: document.getElementById('addStyle'),
+        editStyleButton: document.getElementById('editStyle'),
+        deleteStyleButton: document.getElementById('deleteStyle'),
+        copyRhythmButton: document.getElementById('copy-rhythm'),
+        pasteRhythmButton: document.getElementById('paste-rhythm')
     };
 
     const app = new App(elements);

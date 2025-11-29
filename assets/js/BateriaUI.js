@@ -1,21 +1,8 @@
 class BateriaUI {
-    constructor(drumMachine, uiController) {
+    constructor(elements, drumMachine, uiController) {
+        this.elements = elements;
         this.uiController = uiController;
         this.drumMachine = drumMachine;
-
-        this.bpmInput = document.getElementById('bpm');
-        this.numStepsInput = document.getElementById('num-steps');
-        this.tracksContainer = document.getElementById('tracks');
-        this.rhythmButtons = Array.from(document.querySelectorAll('.rhythm-button'));
-        this.saveRhythmButton = document.getElementById('save-rhythm');
-
-        this.styleSelect = document.getElementById('style');
-        this.addStyleButton = document.getElementById('addStyle');
-        this.editStyleButton = document.getElementById('editStyle');
-        this.deleteStyleButton = document.getElementById('deleteStyle');
-
-        this.copyRhythmButton = document.getElementById('copy-rhythm');
-        this.pasteRhythmButton = document.getElementById('paste-rhythm');
 
         // State
         this.selectedRhythm = 'A';
@@ -41,7 +28,7 @@ class BateriaUI {
         this.bindEvents();
 
         // Load the initially selected rhythm for the selected style
-        const initialStyle = this.styleSelect.value || this.defaultStyle;
+        const initialStyle = this.elements.styleSelect.value || this.defaultStyle;
         this.loadRhythmForStyleAndRhythm(initialStyle, this.selectedRhythm);
     }
 
@@ -70,8 +57,8 @@ class BateriaUI {
                 const key = `${this.defaultStyle}-${r}`;
                 const fillKey = `${this.defaultStyle}-${r}-fill`;
                 if (!localStorage.getItem(key)) {
-                    const bpm = parseInt(this.bpmInput.value, 10) || 90;
-                    const numSteps = parseInt(this.numStepsInput.value, 10) || 4;
+                    const bpm = parseInt(this.elements.bpmInput.value, 10) || 90;
+                    const numSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
                     this.saveRhythmToStyle(this.defaultStyle, r, this.createEmptyRhythm(bpm, numSteps));
                     this.saveRhythmToStyle(this.defaultStyle, `${r}-fill`, this.createEmptyRhythm(bpm, numSteps));
                 }
@@ -101,13 +88,13 @@ class BateriaUI {
      */
     loadStyles() {
         const styles = JSON.parse(localStorage.getItem('styles') || '[]');
-        this.styleSelect.innerHTML = '';
+        this.elements.styleSelect.innerHTML = '';
         if (!styles.length) {
             const option = document.createElement('option');
             option.value = this.defaultStyle;
             option.textContent = this.defaultStyle;
-            this.styleSelect.appendChild(option);
-            this.styleSelect.value = this.defaultStyle;
+            this.elements.styleSelect.appendChild(option);
+            this.elements.styleSelect.value = this.defaultStyle;
             return;
         }
         const sorted = styles.slice().sort((a, b) => a.localeCompare(b));
@@ -115,13 +102,13 @@ class BateriaUI {
             const option = document.createElement('option');
             option.value = s;
             option.textContent = s;
-            this.styleSelect.appendChild(option);
+            this.elements.styleSelect.appendChild(option);
         });
-        this.styleSelect.selectedIndex = 0;
+        this.elements.styleSelect.selectedIndex = 0;
     }
 
     saveStyles() {
-        const styles = Array.from(this.styleSelect.options).map(o => o.value);
+        const styles = Array.from(this.elements.styleSelect.options).map(o => o.value);
         localStorage.setItem('styles', JSON.stringify(styles));
     }
 
@@ -141,14 +128,14 @@ class BateriaUI {
         localStorage.setItem('styles', JSON.stringify(styles));
         this.saveStyles();
         // create blank rhythms
-        const bpm = parseInt(this.bpmInput.value, 10) || 90;
-        const numSteps = parseInt(this.numStepsInput.value, 10) || 4;
+        const bpm = parseInt(this.elements.bpmInput.value, 10) || 90;
+        const numSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
         ['A', 'B', 'C', 'D'].forEach(r => {
             this.saveRhythmToStyle(newName, r, this.createEmptyRhythm(bpm, numSteps));
             this.saveRhythmToStyle(newName, `${r}-fill`, this.createEmptyRhythm(bpm, numSteps));
         });
         this.loadStyles();
-        this.styleSelect.value = newName;
+        this.elements.styleSelect.value = newName;
     }
 
     /**
@@ -157,7 +144,7 @@ class BateriaUI {
      * Também renomeia os ritmos associados ao estilo.
      */
     editStyle() {
-        const current = this.styleSelect.value;
+        const current = this.elements.styleSelect.value;
         const newName = prompt('Digite o novo nome para o estilo:', current);
         if (!newName || newName === current) return;
         const styles = JSON.parse(localStorage.getItem('styles') || '[]');
@@ -180,7 +167,7 @@ class BateriaUI {
             if (fdata) { localStorage.setItem(newFill, fdata); localStorage.removeItem(oldFill); }
         });
         this.loadStyles();
-        this.styleSelect.value = newName;
+        this.elements.styleSelect.value = newName;
     }
 
     /**
@@ -188,7 +175,7 @@ class BateriaUI {
      * Remove o estilo do localStorage e também exclui os ritmos associados.
      */
     deleteStyle() {
-        const current = this.styleSelect.value;
+        const current = this.elements.styleSelect.value;
         if (!confirm(`Tem certeza que deseja excluir o estilo "${current}"?`)) return;
         // remove options and persisted rhythms
         const styles = JSON.parse(localStorage.getItem('styles') || '[]').filter(s => s !== current);
@@ -212,21 +199,21 @@ class BateriaUI {
      * Salva o ritmo atual no localStorage para o estilo e ritmo selecionados.
      */
     saveRhythm() {
-        const styleName = this.styleSelect.value || this.defaultStyle;
+        const styleName = this.elements.styleSelect.value || this.defaultStyle;
         let rhythmKey = this.selectedRhythm;
         const selectedButton = document.getElementById(`rhythm-${this.selectedRhythm.toLowerCase()}`);
         if (selectedButton && selectedButton.classList.contains('fill')) rhythmKey = `${rhythmKey}-fill`;
 
         const rhythmData = {};
-        this.tracksContainer.querySelectorAll('.track').forEach(track => {
+        this.elements.tracksContainer.querySelectorAll('.track').forEach(track => {
             const instKey = this.getInstrumentKeyFromTrack(track);
             if (!instKey) return;
             const steps = Array.from(track.querySelectorAll('.step')).map(s => parseInt(s.dataset.volume || '0', 10));
             const isSelected = track.querySelector('.instrument-button')?.classList.contains('selected') || false;
             rhythmData[instKey] = { steps, selected: isSelected };
         });
-        rhythmData.bpm = parseInt(this.bpmInput.value, 10) || 90;
-        rhythmData.numSteps = parseInt(this.numStepsInput.value, 10) || 4;
+        rhythmData.bpm = parseInt(this.elements.bpmInput.value, 10) || 90;
+        rhythmData.numSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
         this.saveRhythmToStyle(styleName, rhythmKey, rhythmData);
     }
 
@@ -248,11 +235,11 @@ class BateriaUI {
         }
         const data = JSON.parse(saved);
         if (typeof data.numSteps === 'number') {
-            this.numStepsInput.value = data.numSteps;
+            this.elements.numStepsInput.value = data.numSteps;
             this.drumMachine.setNumSteps(data.numSteps);
             this.initializeTracks();
         }
-        this.tracksContainer.querySelectorAll('.track').forEach(track => {
+        this.elements.tracksContainer.querySelectorAll('.track').forEach(track => {
             const instKey = this.getInstrumentKeyFromTrack(track);
             const btn = track.querySelector('.instrument-button');
             const instrumentData = data[instKey] || {};
@@ -274,10 +261,10 @@ class BateriaUI {
             else btn.classList.add('selected');
         });
         if (typeof data.bpm === 'number') {
-            this.bpmInput.value = data.bpm;
+            this.elements.bpmInput.value = data.bpm;
             this.drumMachine.setBPM(data.bpm);
         } else {
-            this.drumMachine.setBPM(parseInt(this.bpmInput.value, 10) || 90);
+            this.drumMachine.setBPM(parseInt(this.elements.bpmInput.value, 10) || 90);
         }
     }
 
@@ -290,8 +277,8 @@ class BateriaUI {
         (this.drumMachine.instruments || []).forEach(inst => {
             frag.appendChild(this.createTrack(inst));
         });
-        this.tracksContainer.innerHTML = '';
-        this.tracksContainer.appendChild(frag);
+        this.elements.tracksContainer.innerHTML = '';
+        this.elements.tracksContainer.appendChild(frag);
     }
 
     /**
@@ -320,7 +307,7 @@ class BateriaUI {
         button.addEventListener('click', () => button.classList.toggle('selected'));
 
         const stepsFragment = document.createDocumentFragment();
-        const currentSteps = parseInt(this.numStepsInput.value, 10) || 4;
+        const currentSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
         for (let i = 1; i <= currentSteps; i++) {
             const step = document.createElement('div');
             step.className = 'step';
@@ -357,12 +344,12 @@ class BateriaUI {
      * Limpa todos os passos em todas as faixas, definindo-os como inativos e removendo quaisquer classes de volume.
      */
     clearSteps() {
-        this.tracksContainer.querySelectorAll('.step').forEach(step => {
+        this.elements.tracksContainer.querySelectorAll('.step').forEach(step => {
             step.classList.remove('active', 'low-volume', 'third-volume');
             step.dataset.volume = '0';
         });
         // update instrument buttons
-        this.tracksContainer.querySelectorAll('.instrument-button').forEach(btn => btn.classList.remove('selected'));
+        this.elements.tracksContainer.querySelectorAll('.instrument-button').forEach(btn => btn.classList.remove('selected'));
     }
 
     /**
@@ -371,7 +358,7 @@ class BateriaUI {
      */
     copyRhythm() {
         const rhythmData = {};
-        this.tracksContainer.querySelectorAll('.track').forEach(track => {
+        this.elements.tracksContainer.querySelectorAll('.track').forEach(track => {
             const instKey = this.getInstrumentKeyFromTrack(track);
             if (!instKey) return;
             const steps = Array.from(track.querySelectorAll('.step')).map(s => parseInt(s.dataset.volume || '0', 10));
@@ -390,7 +377,7 @@ class BateriaUI {
             alert('Nenhum ritmo copiado.');
             return;
         }
-        this.tracksContainer.querySelectorAll('.track').forEach(track => {
+        this.elements.tracksContainer.querySelectorAll('.track').forEach(track => {
             const instKey = this.getInstrumentKeyFromTrack(track);
             const data = this.copiedRhythmData[instKey];
             if (!data) return;
@@ -416,7 +403,7 @@ class BateriaUI {
     selectRhythm(rhythmButton, rhythmKey) {
         const id = rhythmButton.id;
         this.rhythmButtonClicks[id] = (this.rhythmButtonClicks[id] || 0) + 1;
-        const styleName = this.styleSelect.value || this.defaultStyle;
+        const styleName = this.elements.styleSelect.value || this.defaultStyle;
         const rhythmCode = rhythmKey.replace('rhythm-', '').toUpperCase(); // A, B, C, D
 
         // 1. Lógica do Double-Click para Ativar/Desativar FILL
@@ -438,7 +425,7 @@ class BateriaUI {
         }
 
         // Resetar cliques dos outros botões e remover 'fill' dos outros
-        this.rhythmButtons.forEach(b => {
+        this.elements.rhythmButtons.forEach(b => {
             if (b !== rhythmButton) {
                 b.classList.remove('selected', 'fill');
                 this.rhythmButtonClicks[b.id] = 0;
@@ -506,13 +493,13 @@ class BateriaUI {
             }
 
             if (!isFillSelected) {
-                this.loadRhythm(`${this.styleSelect.value}-${this.selectedRhythm}`);
+                this.loadRhythm(`${this.elements.styleSelect.value}-${this.selectedRhythm}`);
                 this.fillLoaded = false;
 
                 // 2. Se o botão Clicado *está* no modo FILL
             } else {
                 // A medida terminou, então ele volta para o ritmo BASE (não importa o estado anterior de this.fillLoaded)
-                this.loadRhythm(`${this.styleSelect.value}-${this.selectedRhythm}`);
+                this.loadRhythm(`${this.elements.styleSelect.value}-${this.selectedRhythm}`);
                 this.fillLoaded = false;
                 selectedButton.classList.remove('fill');
             }
@@ -522,7 +509,7 @@ class BateriaUI {
     play() {
         if (!this.drumMachine.isPlaying) {
             // remove fill when starting
-            this.rhythmButtons.forEach(button => button.classList.remove('fill'));
+            this.elements.rhythmButtons.forEach(button => button.classList.remove('fill'));
             this.drumMachine.start();
             this.uiController.exibirBotaoStop();
         }
@@ -538,7 +525,7 @@ class BateriaUI {
     togglePlay() {
         if (!this.drumMachine.isPlaying) {
             // remove fill when starting
-            this.rhythmButtons.forEach(button => button.classList.remove('fill'));
+            this.elements.rhythmButtons.forEach(button => button.classList.remove('fill'));
             this.drumMachine.start();
         } else {
             this.drumMachine.stop();
@@ -550,13 +537,13 @@ class BateriaUI {
      */
     bindEvents() {
         // Steps via delegation
-        this.tracksContainer.addEventListener('click', (ev) => {
+        this.elements.tracksContainer.addEventListener('click', (ev) => {
             const el = ev.target;
             if (el.classList.contains('step')) this.toggleStep(el);
         });
 
         // Rhythm buttons
-        this.rhythmButtons.forEach(button => {
+        this.elements.rhythmButtons.forEach(button => {
             this.rhythmButtonClicks[button.id] = 0;
             button.addEventListener('click', () => {
                 this.selectRhythm(button, button.id);
@@ -564,54 +551,54 @@ class BateriaUI {
         });
 
         // Copy / Paste / Save
-        this.copyRhythmButton.addEventListener('click', () => this.copyRhythm());
-        this.pasteRhythmButton.addEventListener('click', () => this.pasteRhythm());
-        this.saveRhythmButton.addEventListener('click', () => this.saveRhythm());
+        this.elements.copyRhythmButton.addEventListener('click', () => this.copyRhythm());
+        this.elements.pasteRhythmButton.addEventListener('click', () => this.pasteRhythm());
+        this.elements.saveRhythmButton.addEventListener('click', () => this.saveRhythm());
 
         // BPM / Steps inputs + increment/decrement
         document.querySelector('.increment-bpm').addEventListener('click', () => {
-            this.bpmInput.value = (parseInt(this.bpmInput.value, 10) || 0) + 1;
-            this.drumMachine.setBPM(parseInt(this.bpmInput.value, 10));
+            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
+            this.drumMachine.setBPM(parseInt(this.elements.bpmInput.value, 10));
         });
         document.querySelector('.decrement-bpm').addEventListener('click', () => {
-            const bpm = Math.max(1, (parseInt(this.bpmInput.value, 10) || 1) - 1);
-            this.bpmInput.value = bpm;
+            const bpm = Math.max(1, (parseInt(this.elements.bpmInput.value, 10) || 1) - 1);
+            this.elements.bpmInput.value = bpm;
             this.drumMachine.setBPM(bpm);
         });
 
         document.querySelector('.increment-steps').addEventListener('click', () => {
-            const ns = Math.max(1, (parseInt(this.numStepsInput.value, 10) || 1) + 1);
-            this.numStepsInput.value = ns;
+            const ns = Math.max(1, (parseInt(this.elements.numStepsInput.value, 10) || 1) + 1);
+            this.elements.numStepsInput.value = ns;
             this.drumMachine.setNumSteps(ns);
             this.initializeTracks();
         });
         document.querySelector('.decrement-steps').addEventListener('click', () => {
-            const ns = Math.max(1, (parseInt(this.numStepsInput.value, 10) || 2) - 1);
-            this.numStepsInput.value = ns;
+            const ns = Math.max(1, (parseInt(this.elements.numStepsInput.value, 10) || 2) - 1);
+            this.elements.numStepsInput.value = ns;
             this.drumMachine.setNumSteps(ns);
             this.initializeTracks();
         });
 
-        this.bpmInput.addEventListener('change', () => {
-            const bpm = Math.max(1, parseInt(this.bpmInput.value, 10) || 1);
-            this.bpmInput.value = bpm;
+        this.elements.bpmInput.addEventListener('change', () => {
+            const bpm = Math.max(1, parseInt(this.elements.bpmInput.value, 10) || 1);
+            this.elements.bpmInput.value = bpm;
             this.drumMachine.setBPM(bpm);
         });
 
-        this.numStepsInput.addEventListener('change', () => {
-            const ns = Math.max(1, parseInt(this.numStepsInput.value, 10) || 1);
-            this.numStepsInput.value = ns;
+        this.elements.numStepsInput.addEventListener('change', () => {
+            const ns = Math.max(1, parseInt(this.elements.numStepsInput.value, 10) || 1);
+            this.elements.numStepsInput.value = ns;
             this.drumMachine.setNumSteps(ns);
             this.initializeTracks();
         });
 
         // Styles
-        this.styleSelect.addEventListener('change', () => {
-            this.loadRhythmForStyleAndRhythm(this.styleSelect.value, this.selectedRhythm);
+        this.elements.styleSelect.addEventListener('change', () => {
+            this.loadRhythmForStyleAndRhythm(this.elements.styleSelect.value, this.selectedRhythm);
         });
-        this.addStyleButton.addEventListener('click', () => this.addStyle());
-        this.editStyleButton.addEventListener('click', () => this.editStyle());
-        this.deleteStyleButton.addEventListener('click', () => this.deleteStyle());
+        this.elements.addStyleButton.addEventListener('click', () => this.addStyle());
+        this.elements.editStyleButton.addEventListener('click', () => this.editStyle());
+        this.elements.deleteStyleButton.addEventListener('click', () => this.deleteStyle());
 
         // Hook DrumMachine measure end to UI (if DrumMachine exposes onMeasureEnd)
         if (typeof this.drumMachine.onMeasureEnd === 'function') {
