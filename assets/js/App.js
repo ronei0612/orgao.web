@@ -8,7 +8,7 @@ class App {
         this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web' : '.';
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
-        this.version = '3.9';
+        this.version = '4.0';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
