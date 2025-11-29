@@ -397,7 +397,8 @@ class BateriaUI {
      */
     selectRhythm(rhythmButton, rhythmKey) {
         const styleName = this.elements.styleSelect.value || this.defaultStyle;
-        const rhythmCode = rhythmKey.replace('rhythm-', '').toUpperCase(); // A, B, C, D, E...
+        const rhythmCode = rhythmKey.replace('rhythm-', '').toUpperCase();
+        this.unSelectRhythmButtons(rhythmButton);
 
         if (rhythmButton.classList.contains('selected') && localStorage.getItem(`${styleName}-${rhythmCode}-fill`)) {
             this.selectFill(rhythmButton, `${styleName}-${rhythmCode}-fill`, rhythmCode);
@@ -412,6 +413,18 @@ class BateriaUI {
 
         this.pendingRhythm = rhythmCode;
         this.pendingButton = rhythmButton;
+    }
+
+    /**
+     * Desmarca todos os botões de ritmo, exceto o fornecido.
+     * @param {any} rhythmButton
+     */
+    unSelectRhythmButtons(rhythmButton) {
+        this.elements.rhythmButtons.forEach(button => {
+            if (button !== rhythmButton) {
+                button.classList.remove('selected', 'fill', 'pending');
+            }
+        });
     }
 
     /**
