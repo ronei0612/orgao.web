@@ -353,11 +353,13 @@ class App {
             this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/teclado.svg';
             this.cifraPlayer.instrumento = 'epiano';
             this.cifraPlayer.attack = 0;
+            this.elements.bateriaWrapper.classList.remove('d-none');
         }
         else {
             this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/piano.svg';
             this.cifraPlayer.instrumento = 'orgao';
             this.cifraPlayer.attack = 0.2;
+            this.elements.bateriaWrapper.classList.add('d-none');
         }
     }
 
@@ -949,7 +951,8 @@ document.addEventListener('DOMContentLoaded', () => {
         editStyleButton: document.getElementById('editStyle'),
         deleteStyleButton: document.getElementById('deleteStyle'),
         copyRhythmButton: document.getElementById('copy-rhythm'),
-        pasteRhythmButton: document.getElementById('paste-rhythm')
+        pasteRhythmButton: document.getElementById('paste-rhythm'),
+        bateriaWrapper: document.getElementById('bateriaWrapper')
     };
 
     const app = new App(elements);
