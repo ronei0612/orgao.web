@@ -8,7 +8,7 @@ class App {
         this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web' : '.';
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
-        this.version = '3.8';
+        this.version = '3.9';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -37,11 +37,12 @@ class App {
         if (typeof drumMachine.init === 'function')
             await drumMachine.init();
 
-        this.bateriaUI = new BateriaUI(drumMachine, this.uiController);
+        this.bateriaUI = new BateriaUI(this.elements, drumMachine, this.uiController);
         await this.bateriaUI.init();
 
         if (this.BASE_URL.includes('http')) {
             document.getElementById('styleButtons').classList.remove('d-none');
+            document.getElementById('drumEditor').classList.remove('d-none');
         }
     }
 
@@ -322,6 +323,8 @@ class App {
         if (this.elements.acorde1.classList.contains('d-none')) {
             this.cifraPlayer.iniciarReproducao();
             this.uiController.exibirBotoesAvancarVoltarCifra();
+        } else {
+            this.bateriaUI.play();
         }
     }
 
@@ -347,14 +350,16 @@ class App {
 
     handleOrgaoInstrumentClick() {
         if (this.cifraPlayer.instrumento === 'orgao') {
-            this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/piano.svg';
+            this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/teclado.svg';
             this.cifraPlayer.instrumento = 'epiano';
             this.cifraPlayer.attack = 0;
+            this.elements.bateriaWrapper.classList.remove('d-none');
         }
         else {
-            this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/teclado.svg';
+            this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/piano.svg';
             this.cifraPlayer.instrumento = 'orgao';
             this.cifraPlayer.attack = 0.2;
+            this.elements.bateriaWrapper.classList.add('d-none');
         }
     }
 
@@ -935,7 +940,19 @@ document.addEventListener('DOMContentLoaded', () => {
         borderRight: document.getElementById('borderRight'),
         borderLeft: document.getElementById('borderLeft'),
         draggableControls: document.getElementById('draggableControls'),
-        orgaoInstrumentButton: document.getElementById('orgaoInstrumentButton')
+        orgaoInstrumentButton: document.getElementById('orgaoInstrumentButton'),
+        bpmInput: document.getElementById('bpm-input'),
+        numStepsInput: document.getElementById('num-steps'),
+        tracksContainer: document.getElementById('tracks'),
+        rhythmButtons: Array.from(document.querySelectorAll('.rhythm-button')),
+        saveRhythmButton: document.getElementById('save-rhythm'),
+        styleSelect: document.getElementById('style'),
+        addStyleButton: document.getElementById('addStyle'),
+        editStyleButton: document.getElementById('editStyle'),
+        deleteStyleButton: document.getElementById('deleteStyle'),
+        copyRhythmButton: document.getElementById('copy-rhythm'),
+        pasteRhythmButton: document.getElementById('paste-rhythm'),
+        bateriaWrapper: document.getElementById('bateriaWrapper')
     };
 
     const app = new App(elements);

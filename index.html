@@ -40,7 +40,7 @@
                 </div>
 
                 <button class="btn btn-outline-secondary mx-1 btn-instrument" id="orgaoInstrumentButton" aria-pressed="false" type="button">
-                    <img src="./assets/icons/teclado.svg" />
+                    <img src="./assets/icons/piano.svg" />
                 </button>
             </div>
             <div class="mx-1"></div>
@@ -83,7 +83,7 @@
             <textarea class="modal-textarea d-none" id="editTextarea" placeholder="Editar Cifra..."></textarea>
         </div>
 
-        <div id="bateriaWrapper">
+        <div id="bateriaWrapper" class="d-none">
 
             <div class="d-flex align-items-center mb-1">
                 <div class="input-group flex-grow-1 mr-1">
@@ -100,7 +100,7 @@
                     <div class="input-group-prepend">
                         <button class="btn btn-outline-secondary decrement-bpm" type="button"><i class="bi bi-dash"></i></button>
                     </div>
-                    <input type="text" id="bpm" value="90" class="form-control text-center px-1" aria-label="BPM">
+                    <input type="text" id="bpm-input" value="90" class="form-control text-center px-1" aria-label="BPM">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary increment-bpm" type="button"><i class="bi bi-plus"></i></button>
                         <span class="input-group-text px-1"><small>BPM</small></span>
@@ -109,11 +109,21 @@
             </div>
 
             <div class="rhythm-buttons d-flex justify-content-center mb-2">
-                <button id="rhythm-a" class="btn btn-secondary rhythm-button">A</button>
-                <button id="rhythm-b" class="btn btn-secondary rhythm-button">B</button>
-                <button id="rhythm-c" class="btn btn-secondary rhythm-button">C</button>
-                <button id="rhythm-d" class="btn btn-secondary rhythm-button">D</button>
-                <button id="rhythm-e" class="btn btn-secondary rhythm-button">E</button>
+                <button id="rhythm-a" class="btn btn-secondary rhythm-button">
+                    <img class="instrument-icon-rhythm" src="./assets/icons/pratoBaqueta.svg" title="Chimbal-Fechado">
+                </button>
+                <button id="rhythm-b" class="btn btn-secondary rhythm-button">
+                    <img class="instrument-icon-rhythm" src="./assets/icons/bumbo.svg" title="Bumbo">
+                </button>
+                <button id="rhythm-c" class="btn btn-secondary rhythm-button">
+                    <img class="instrument-icon-rhythm" src="./assets/icons/caixa.svg" title="Caixa">
+                </button>
+                <button id="rhythm-d" class="btn btn-secondary rhythm-button">
+                    <img class="instrument-icon-rhythm" src="./assets/icons/chimbal.svg" title="Chimbal-Aberto">
+                </button>
+                <button id="rhythm-e" class="btn btn-secondary rhythm-button">
+                    <img class="instrument-icon-rhythm" src="./assets/icons/meiaLua.svg" title="Meia-Lua">
+                </button>
             </div>
 
             <div id="drumEditor" class="d-none">

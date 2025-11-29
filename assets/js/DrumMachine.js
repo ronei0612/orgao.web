@@ -112,7 +112,7 @@ class DrumMachine {
                 try {
                     this.lastChimbalAbertoSource.stop(0);
                 } catch (e) {
-                    // Ignore se já parou
+                    // Ignore se ja parou
                 }
                 this.lastChimbalAbertoSource = null;
             }
@@ -183,10 +183,15 @@ class DrumMachine {
 
     setBPM(bpm) {
         this.bpm = bpm;
+        this.updateFillBlink(bpm);
     }
 
     setNumSteps(steps) {
         this.numSteps = steps;
-        //this.currentStep = 1;
+    }
+
+    updateFillBlink(bpm) {
+        const secPerBeat = 60 / bpm;
+        document.documentElement.style.setProperty('--fill-blink-duration', `${secPerBeat}s`);
     }
 }
