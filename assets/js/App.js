@@ -42,6 +42,7 @@ class App {
 
         if (this.BASE_URL.includes('http')) {
             document.getElementById('styleButtons').classList.remove('d-none');
+            document.getElementById('drumEditor').classList.remove('d-none');
         }
     }
 
@@ -322,6 +323,8 @@ class App {
         if (this.elements.acorde1.classList.contains('d-none')) {
             this.cifraPlayer.iniciarReproducao();
             this.uiController.exibirBotoesAvancarVoltarCifra();
+        } else {
+            this.bateriaUI.play();
         }
     }
 

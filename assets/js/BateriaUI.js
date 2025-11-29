@@ -458,8 +458,6 @@ class BateriaUI {
                 this.fillLoaded = false;
             }
         }
-
-        this.play();
     }
 
     /**
