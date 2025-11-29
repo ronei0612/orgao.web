@@ -183,9 +183,15 @@ class DrumMachine {
 
     setBPM(bpm) {
         this.bpm = bpm;
+        this.updateFillBlink(bpm);
     }
 
     setNumSteps(steps) {
         this.numSteps = steps;
+    }
+
+    updateFillBlink(bpm) {
+        const secPerBeat = 60 / bpm;
+        document.documentElement.style.setProperty('--fill-blink-duration', `${secPerBeat}s`);
     }
 }

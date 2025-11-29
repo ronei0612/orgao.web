@@ -249,11 +249,6 @@ class BateriaUI {
             if (isEmpty) btn.classList.remove('selected');
             else btn.classList.add('selected');
         });
-        if (typeof data.bpm === 'number') {
-            this.drumMachine.setBPM(data.bpm);
-        } else {
-            this.drumMachine.setBPM(parseInt(this.elements.bpmInput.value, 10) || 90);
-        }
     }
 
     /**
@@ -385,6 +380,18 @@ class BateriaUI {
         });
     }
 
+    selectFill(rhythmButton, rhythmKey, rhythmCode) {
+        rhythmButton.classList.add('fill', 'pending');
+
+        // Se estiver tocando: agendar revert para o fim da medida
+        this.pendingRhythm = rhythmCode;
+        this.pendingButton = rhythmButton;
+
+        this.loadRhythm(rhythmKey);
+
+        return;
+    }
+
     /**
      * Seleciona o ritmo com base no botão clicado e na chave do ritmo.
      */
@@ -392,73 +399,23 @@ class BateriaUI {
         const styleName = this.elements.styleSelect.value || this.defaultStyle;
         const rhythmCode = rhythmKey.replace('rhythm-', '').toUpperCase(); // A, B, C, D, E...
 
-        if (rhythmButton.classList.contains('selected')) {
-            const isFill = rhythmButton.classList.toggle('fill');
-
-            // remover pending/fill dos outros botões
-            this.elements.rhythmButtons.forEach(b => {
-                if (b !== rhythmButton) {
-                    b.classList.remove('fill', 'selected', 'pending');
-                } else {
-                    b.classList.remove('pending');
-                }
-            });
-
-            // Se estiver tocando: agendar revert para o fim da medida,
-            // e carregar o fill imediatamente se existir
-            this.pendingRhythm = rhythmCode;
-            this.pendingButton = rhythmButton;
-
-            if (isFill && localStorage.getItem(`${styleName}-${rhythmCode}-fill`)) {
-                this.loadRhythm(`${styleName}-${rhythmCode}-fill`);
-                this.fillLoaded = true;
-            } else {
-                // desativou o fill enquanto tocando -> marca pendência para reverter/confirmar no fim da medida
-                this.fillLoaded = false;
-            }
-
-            // visual de pending para indicar troca no fim da medida
-            rhythmButton.classList.add('pending');
-            return;
+        if (rhythmButton.classList.contains('selected') && localStorage.getItem(`${styleName}-${rhythmCode}-fill`)) {
+            this.selectFill(rhythmButton, `${styleName}-${rhythmCode}-fill`, rhythmCode);
+            this.fillLoaded = true;
+        } else {
+            rhythmButton.classList.remove('fill');
+            this.fillLoaded = false;            
+            this.loadRhythm(`${styleName}-${rhythmCode}`);
         }
-
-        // Selecionando um novo ritmo
-        this.elements.rhythmButtons.forEach(b => {
-            if (b !== rhythmButton) {
-                b.classList.remove('selected', 'fill');
-            }
-            b.classList.remove('pending');
-        });
 
         rhythmButton.classList.add('selected');
 
         this.pendingRhythm = rhythmCode;
         this.pendingButton = rhythmButton;
-
-        if (!this.drumMachine.isPlaying) {
-            this.loadRhythm(`${styleName}-${rhythmCode}`);
-            this.selectedRhythm = rhythmCode;
-            this.pendingRhythm = null;
-            this.pendingButton = null;
-        } else {
-            // quando tocando, mostrar que está pending até o fim da medida
-            rhythmButton.classList.add('pending');
-
-            const isFillSelected = rhythmButton.classList.contains('fill');
-            const fillKey = `${styleName}-${rhythmCode}-fill`;
-
-            if (isFillSelected && localStorage.getItem(fillKey)) {
-                this.loadRhythm(fillKey);
-                this.fillLoaded = true;
-            } else {
-                this.fillLoaded = false;
-            }
-        }
     }
 
     /**
-     * Corrigir onMeasureEnd para lidar com o estado 'fill' corretamente.
-     * Quando a medida termina, verifica se há um ritmo pendente.
+     * Quando o compasso termina, verifica se há um ritmo pendente.
      * Se houver, carrega o ritmo apropriado com base no estado do botão (fill ou não).
      */
     onMeasureEnd() {

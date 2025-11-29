@@ -1,8 +1,8 @@
 :root {
-    /* ... suas variáveis existentes ... */
+    /* ... suas variï¿½veis existentes ... */
     --acorde-botao-azul: #4682B4;
     /* ... */
-    /* VARIÁVEIS DA BATERIA */
+    /* VARIï¿½VEIS DA BATERIA */
     --drum-bg: #ffffff;
     --drum-border: #ced4da;
     --drum-text: #333333;
@@ -23,7 +23,7 @@
 body.dark-mode {
     background-color: #0C101C;
     color: #fff;
-    /* REAPLICAR VARIÁVEIS DA BATERIA PARA DARK MODE */
+    /* REAPLICAR VARIï¿½VEIS DA BATERIA PARA DARK MODE */
     --drum-bg: #1D2439;
     --drum-border: #444444;
     --drum-text: #ffffff;
@@ -53,7 +53,7 @@ body.dark-mode {
     /* Removemos a largura fixa global para controlar via inline style no HTML conforme a necessidade (BPM vs Steps) */
 }
 
-/* Ajustes Específicos para Dark Mode nos Inputs do Bootstrap */
+/* Ajustes Especï¿½ficos para Dark Mode nos Inputs do Bootstrap */
 body.dark-mode #bateriaWrapper .input-group-text {
     background-color: var(--drum-btn-bg);
     border-color: var(--drum-btn-border);
@@ -76,7 +76,7 @@ body.dark-mode #bateriaWrapper .btn-outline-secondary {
         color: white;
     }
 
-/* Área dos trilhos (Tracks) */
+/* ï¿½rea dos trilhos (Tracks) */
 .track {
     display: flex;
     align-items: center;
@@ -151,7 +151,7 @@ body.dark-mode #bateriaWrapper .btn-outline-secondary {
     color: white;
 }
 
-/* Botões de Ritmo */
+/* Botï¿½es de Ritmo */
 .rhythm-buttons {
     display: flex;
     gap: 8px;
@@ -171,7 +171,7 @@ body.dark-mode #bateriaWrapper .btn-outline-secondary {
         }
 
 .rhythm-button.pending {
-    animation: blinker 1s linear infinite;
+    animation: blinker var(--fill-blink-duration, 1s) linear infinite;
 }
 
 .rhythm-buttons button.fill {
