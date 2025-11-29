@@ -936,7 +936,7 @@ document.addEventListener('DOMContentLoaded', () => {
         borderLeft: document.getElementById('borderLeft'),
         draggableControls: document.getElementById('draggableControls'),
         orgaoInstrumentButton: document.getElementById('orgaoInstrumentButton'),
-        bpmInput: document.getElementById('bpm'),
+        bpmInput: document.getElementById('bpm-input'),
         numStepsInput: document.getElementById('num-steps'),
         tracksContainer: document.getElementById('tracks'),
         rhythmButtons: Array.from(document.querySelectorAll('.rhythm-button')),
