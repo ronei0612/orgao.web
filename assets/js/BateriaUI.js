@@ -15,21 +15,11 @@ class BateriaUI {
     }
 
     async init() {
-        // Initialize drumMachine state
-        this.drumMachine.setBPM(parseInt(this.bpmInput.value, 10) || 90);
-        this.drumMachine.setNumSteps(parseInt(this.numStepsInput.value, 10) || 4);
-
-        // Create blank styles and rhythms if none exist
         this.ensureDefaultStyleExists();
 
-        // Load UI state
         this.loadStyles();
         this.initializeTracks();
         this.bindEvents();
-
-        // Load the initially selected rhythm for the selected style
-        const initialStyle = this.elements.styleSelect.value || this.defaultStyle;
-        this.loadRhythmForStyleAndRhythm(initialStyle, this.selectedRhythm);
     }
 
     /**
