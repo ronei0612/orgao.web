@@ -151,6 +151,13 @@ body.dark-mode #bateriaWrapper .btn-outline-secondary {
     color: white;
 }
 
+.instrument-icon-rhythm {
+    vertical-align: middle;
+    width: 30px;
+    height: 30px;
+    filter: invert(1);
+}
+
 /* Bot�es de Ritmo */
 .rhythm-buttons {
     display: flex;
