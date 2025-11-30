@@ -90,7 +90,7 @@ class BateriaUI {
             const key = inst.name.toLowerCase().replace(/ /g, '');
             rhythmData[key] = { steps: Array(numSteps).fill(0), selected: false };
         });
-        rhythmData.bpm = bpm;
+
         rhythmData.numSteps = numSteps;
         return rhythmData;
     }
@@ -219,7 +219,7 @@ class BateriaUI {
             const isSelected = track.querySelector('.instrument-button')?.classList.contains('selected') || false;
             rhythmData[instKey] = { steps, selected: isSelected };
         });
-        rhythmData.bpm = parseInt(this.elements.bpmInput.value, 10) || 90;
+
         rhythmData.numSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
         this.saveRhythmToStyle(styleName, rhythmKey, rhythmData);
     }
