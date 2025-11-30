@@ -446,7 +446,7 @@ class BateriaUI {
         }
 
         rhythmButton.classList.add('selected');
-
+        this.selectedRhythm = rhythmCode;
         this.pendingRhythm = rhythmCode;
         this.pendingButton = rhythmButton;
     }
