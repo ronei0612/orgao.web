@@ -11,6 +11,24 @@ class BateriaUI {
         this.fillLoaded = false;
         this.defaultStyle = 'Novo Estilo';
         this.copiedRhythmData = null;
+
+        // storage key for structured JSON
+        this.storageKey = 'drumStylesData';
+    }
+
+    // helpers para storage estruturada
+    getStorageData() {
+        const raw = localStorage.getItem(this.storageKey);
+        if (!raw) return { styles: [], data: {} };
+        try { return JSON.parse(raw) || { styles: [], data: {} }; }
+        catch { return { styles: [], data: {} }; }
+    }
+    persistStorageData(obj) {
+        localStorage.setItem(this.storageKey, JSON.stringify(obj));
+    }
+    getStoredRhythm(styleName, rhythmKey) {
+        const s = this.getStorageData();
+        return s.data && s.data[styleName] ? s.data[styleName][rhythmKey] || null : null;
     }
 
     async init() {
@@ -34,36 +52,43 @@ class BateriaUI {
     }
 
     /**
-     * Garantir que o estilo padrão exista no localStorage
-     * Se não existir, criar o estilo padrão e ritmos vazios para A, B, C, D
+     * Garantir que o estilo padrão exista no localStorage (estrutura JSON)
      */
     ensureDefaultStyleExists() {
-        const styles = JSON.parse(localStorage.getItem('styles') || '[]');
-        if (!styles || styles.length === 0) {
-            localStorage.setItem('styles', JSON.stringify([this.defaultStyle]));
-            // ensure rhythm keys exist for default style
-            ['A', 'B', 'C', 'D'].forEach(r => {
-                const key = `${this.defaultStyle}-${r}`;
-                const fillKey = `${this.defaultStyle}-${r}-fill`;
-                if (!localStorage.getItem(key)) {
-                    const bpm = parseInt(this.elements.bpmInput.value, 10) || 90;
-                    const numSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
-                    this.saveRhythmToStyle(this.defaultStyle, r, this.createEmptyRhythm(bpm, numSteps));
-                    this.saveRhythmToStyle(this.defaultStyle, `${r}-fill`, this.createEmptyRhythm(bpm, numSteps));
-                }
-            });
+        const storage = this.getStorageData();
+        if (!storage.styles || storage.styles.length === 0) {
+            storage.styles = [this.defaultStyle];
         }
+        if (!storage.data) storage.data = {};
+        // garantir que a entrada do estilo exista e tenha A,B,C,D e fills
+        if (!storage.data[this.defaultStyle]) storage.data[this.defaultStyle] = {};
+        ['A', 'B', 'C', 'D'].forEach(r => {
+            const key = r;
+            const fillKey = `${r}-fill`;
+            if (!storage.data[this.defaultStyle][key]) {
+                const bpm = parseInt(this.elements.bpmInput.value, 10) || 90;
+                const numSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
+                storage.data[this.defaultStyle][key] = this.createEmptyRhythm(bpm, numSteps);
+            }
+            if (!storage.data[this.defaultStyle][fillKey]) {
+                const bpm = parseInt(this.elements.bpmInput.value, 10) || 90;
+                const numSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
+                storage.data[this.defaultStyle][fillKey] = this.createEmptyRhythm(bpm, numSteps);
+            }
+        });
+        this.persistStorageData(storage);
     }
 
     /**
      * Cria um objeto de ritmo vazio com o BPM e número de passos fornecidos.
-     * Cada instrumento terá uma matriz de passos preenchida com zeros.
+     * Cada instrumento terá um objeto { steps, selected }.
      * Retorna o objeto de dados do ritmo.
      */
     createEmptyRhythm(bpm, numSteps) {
         const rhythmData = {};
         (this.drumMachine.instruments || []).forEach(inst => {
-            rhythmData[inst.name.toLowerCase().replace(/ /g, '')] = Array(numSteps).fill(0);
+            const key = inst.name.toLowerCase().replace(/ /g, '');
+            rhythmData[key] = { steps: Array(numSteps).fill(0), selected: false };
         });
         rhythmData.bpm = bpm;
         rhythmData.numSteps = numSteps;
@@ -71,12 +96,11 @@ class BateriaUI {
     }
 
     /**
-     * Carrega os estilos salvos do localStorage e popula o seletor de estilos na UI.
-     * Se nenhum estilo existir, adiciona o estilo padrão.
-     * Ordena os estilos alfabeticamente antes de adicioná-los ao seletor.
+     * Carrega os estilos salvos do localStorage (estrutura JSON) e popula o seletor
      */
     loadStyles() {
-        const styles = JSON.parse(localStorage.getItem('styles') || '[]');
+        const storage = this.getStorageData();
+        const styles = storage.styles || [];
         this.elements.styleSelect.innerHTML = '';
         if (!styles.length) {
             const option = document.createElement('option');
@@ -97,91 +121,85 @@ class BateriaUI {
     }
 
     saveStyles() {
-        const styles = Array.from(this.elements.styleSelect.options).map(o => o.value);
-        localStorage.setItem('styles', JSON.stringify(styles));
+        const storage = this.getStorageData();
+        storage.styles = Array.from(this.elements.styleSelect.options).map(o => o.value);
+        // preserve storage.data (do not clobber)
+        this.persistStorageData(storage);
     }
 
     /**
-     * Adiciona um novo estilo após solicitar o nome ao usuário.
-     * Cria ritmos vazios para A, B, C, D e seus respectivos fills.
+     * Adiciona um novo estilo e cria ritmos vazios na estrutura JSON
      */
     addStyle() {
         const newName = prompt('Digite o nome do novo estilo:');
         if (!newName) return;
-        const styles = JSON.parse(localStorage.getItem('styles') || '[]');
-        if (styles.includes(newName)) {
+        const storage = this.getStorageData();
+        if (storage.styles.includes(newName)) {
             alert('Este nome de estilo já existe.');
             return;
         }
-        styles.push(newName);
-        localStorage.setItem('styles', JSON.stringify(styles));
-        this.saveStyles();
+        storage.styles.push(newName);
+        storage.data[newName] = {};
         // create blank rhythms
         const bpm = parseInt(this.elements.bpmInput.value, 10) || 90;
         const numSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
         ['A', 'B', 'C', 'D'].forEach(r => {
-            this.saveRhythmToStyle(newName, r, this.createEmptyRhythm(bpm, numSteps));
-            this.saveRhythmToStyle(newName, `${r}-fill`, this.createEmptyRhythm(bpm, numSteps));
+            storage.data[newName][r] = this.createEmptyRhythm(bpm, numSteps);
+            storage.data[newName][`${r}-fill`] = this.createEmptyRhythm(bpm, numSteps);
         });
+        this.persistStorageData(storage);
         this.loadStyles();
         this.elements.styleSelect.value = newName;
     }
 
     /**
-     * Edita o nome do estilo atualmente selecionado.
-     * Solicita o novo nome ao usuário e atualiza o localStorage.
-     * Também renomeia os ritmos associados ao estilo.
+     * Edita (renomeia) um estilo na estrutura JSON
      */
     editStyle() {
         const current = this.elements.styleSelect.value;
         const newName = prompt('Digite o novo nome para o estilo:', current);
         if (!newName || newName === current) return;
-        const styles = JSON.parse(localStorage.getItem('styles') || '[]');
-        if (styles.includes(newName)) {
+        const storage = this.getStorageData();
+        if (storage.styles.includes(newName)) {
             alert('Este nome de estilo já existe.');
             return;
         }
-        const idx = styles.indexOf(current);
-        if (idx !== -1) styles[idx] = newName;
-        localStorage.setItem('styles', JSON.stringify(styles));
-        // rename rhythms
-        ['A', 'B', 'C', 'D'].forEach(r => {
-            const oldKey = `${current}-${r}`;
-            const newKey = `${newName}-${r}`;
-            const oldFill = `${current}-${r}-fill`;
-            const newFill = `${newName}-${r}-fill`;
-            const data = localStorage.getItem(oldKey);
-            if (data) { localStorage.setItem(newKey, data); localStorage.removeItem(oldKey); }
-            const fdata = localStorage.getItem(oldFill);
-            if (fdata) { localStorage.setItem(newFill, fdata); localStorage.removeItem(oldFill); }
-        });
+        const idx = storage.styles.indexOf(current);
+        if (idx !== -1) storage.styles[idx] = newName;
+        // rename data key
+        if (storage.data && storage.data[current]) {
+            storage.data[newName] = storage.data[current];
+            delete storage.data[current];
+        } else {
+            storage.data[newName] = {};
+        }
+        this.persistStorageData(storage);
         this.loadStyles();
         this.elements.styleSelect.value = newName;
     }
 
     /**
-     * Exclui o estilo atualmente selecionado após confirmação do usuário.
-     * Remove o estilo do localStorage e também exclui os ritmos associados.
+     * Exclui o estilo atualmente selecionado da estrutura JSON
      */
     deleteStyle() {
         const current = this.elements.styleSelect.value;
         if (!confirm(`Tem certeza que deseja excluir o estilo "${current}"?`)) return;
-        // remove options and persisted rhythms
-        const styles = JSON.parse(localStorage.getItem('styles') || '[]').filter(s => s !== current);
-        localStorage.setItem('styles', JSON.stringify(styles));
-        ['A', 'B', 'C', 'D'].forEach(r => {
-            localStorage.removeItem(`${current}-${r}`);
-            localStorage.removeItem(`${current}-${r}-fill`);
-        });
+        const storage = this.getStorageData();
+        storage.styles = (storage.styles || []).filter(s => s !== current);
+        if (storage.data && storage.data[current]) delete storage.data[current];
+        this.persistStorageData(storage);
         this.loadStyles();
     }
 
     /**
-     * Salva o ritmo atual no estilo e chave de ritmo fornecidos.
+     * Salva o ritmo atual no estilo e chave de ritmo fornecidos (estrutura JSON)
      */
     saveRhythmToStyle(styleName, rhythmKey, rhythmData) {
-        const key = `${styleName}-${rhythmKey}`;
-        localStorage.setItem(key, JSON.stringify(rhythmData));
+        const storage = this.getStorageData();
+        if (!storage.data) storage.data = {};
+        if (!storage.data[styleName]) storage.data[styleName] = {};
+        storage.data[styleName][rhythmKey] = rhythmData;
+        this.persistStorageData(storage);
     }
 
     /**
@@ -215,14 +233,27 @@ class BateriaUI {
 
     /**
      * Carrega o ritmo salvo do localStorage usando a chave fornecida.
+     * Aceita chave no formato "Style-Rhythm" ou apenas rhythm buscando no style atual.
      */
     loadRhythm(rhythmKey) {
-        const saved = localStorage.getItem(rhythmKey);
-        if (!saved) {
+        // try parse "Style-Rhythm" format
+        let data = null;
+        const storage = this.getStorageData();
+        if (rhythmKey && rhythmKey.indexOf('-') > 0) {
+            const idx = rhythmKey.indexOf('-');
+            const style = rhythmKey.substring(0, idx);
+            const rkey = rhythmKey.substring(idx + 1);
+            data = storage.data && storage.data[style] ? storage.data[style][rkey] : null;
+        } else {
+            const styleName = this.elements.styleSelect.value || this.defaultStyle;
+            data = storage.data && storage.data[styleName] ? storage.data[styleName][rhythmKey] : null;
+        }
+
+        if (!data) {
             this.clearSteps();
             return;
         }
-        const data = JSON.parse(saved);
+
         if (typeof data.numSteps === 'number') {
             this.elements.numStepsInput.value = data.numSteps;
             this.drumMachine.setNumSteps(data.numSteps);
@@ -232,7 +263,9 @@ class BateriaUI {
             const instKey = this.getInstrumentKeyFromTrack(track);
             const btn = track.querySelector('.instrument-button');
             const instrumentData = data[instKey] || {};
-            const stepsData = Array.isArray(instrumentData.steps) ? instrumentData.steps : [];
+            // support both legacy array format and { steps, selected }
+            const stepsData = Array.isArray(instrumentData.steps) ? instrumentData.steps
+                : (Array.isArray(instrumentData) ? instrumentData : []);
             const isSelected = !!instrumentData.selected;
             // set selection state
             if (isSelected) btn.classList.add('selected'); else btn.classList.remove('selected');
@@ -394,18 +427,21 @@ class BateriaUI {
 
     /**
      * Seleciona o ritmo com base no botão clicado e na chave do ritmo.
+     * Altera verificação de existence de fill para usar o novo JSON estruturado.
      */
     selectRhythm(rhythmButton, rhythmKey) {
         const styleName = this.elements.styleSelect.value || this.defaultStyle;
         const rhythmCode = rhythmKey.replace('rhythm-', '').toUpperCase();
         this.unSelectRhythmButtons(rhythmButton);
 
-        if (rhythmButton.classList.contains('selected') && localStorage.getItem(`${styleName}-${rhythmCode}-fill`)) {
+        // verifica se existe fill no storage estruturado
+        const hasFill = !!this.getStoredRhythm(styleName, `${rhythmCode}-fill`);
+        if (rhythmButton.classList.contains('selected') && hasFill) {
             this.selectFill(rhythmButton, `${styleName}-${rhythmCode}-fill`, rhythmCode);
             this.fillLoaded = true;
         } else {
             rhythmButton.classList.remove('fill');
-            this.fillLoaded = false;            
+            this.fillLoaded = false;
             this.loadRhythm(`${styleName}-${rhythmCode}`);
         }
 
