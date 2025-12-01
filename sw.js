@@ -5,6 +5,7 @@ const urlsToCache = [
     './',
     './index.html',
     './cifras.json',
+    './styles.json',
     './assets/css/styles.css',
     './assets/css/frames-styles.css',
     './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css',

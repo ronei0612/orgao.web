@@ -1,8 +1,8 @@
 class BateriaUI {
     constructor(elements, drumMachine, uiController) {
         this.elements = elements;
-        this.uiController = uiController;
         this.drumMachine = drumMachine;
+        this.uiController = uiController;
 
         // State
         this.selectedRhythm = 'A';
@@ -11,28 +11,23 @@ class BateriaUI {
         this.fillLoaded = false;
         this.defaultStyle = 'Novo Estilo';
         this.copiedRhythmData = null;
-
-        // storage key for structured JSON
         this.storageKey = 'drumStylesData';
     }
-
-    // helpers para storage estruturada
     getStorageData() {
-        const raw = localStorage.getItem(this.storageKey);
-        if (!raw) return { styles: [], data: {} };
-        try { return JSON.parse(raw) || { styles: [], data: {} }; }
-        catch { return { styles: [], data: {} }; }
+        return this.drumMachine.styles;
     }
+
     persistStorageData(obj) {
         localStorage.setItem(this.storageKey, JSON.stringify(obj));
     }
+    
     getStoredRhythm(styleName, rhythmKey) {
-        const s = this.getStorageData();
+        const s = this.drumMachine.styles;
         return s.data && s.data[styleName] ? s.data[styleName][rhythmKey] || null : null;
     }
 
     async init() {
-        this.ensureDefaultStyleExists();
+        //this.ensureDefaultStyleExists();
 
         this.loadStyles();
         this.initializeTracks();
@@ -435,7 +430,7 @@ class BateriaUI {
         this.unSelectRhythmButtons(rhythmButton);
 
         // verifica se existe fill no storage estruturado
-        const hasFill = !!this.getStoredRhythm(styleName, `${rhythmCode}-fill`);
+        const hasFill = true;// !!this.getStoredRhythm(styleName, `${rhythmCode}-fill`);
         if (rhythmButton.classList.contains('selected') && !rhythmButton.classList.contains('fill') && hasFill) {
             this.selectFill(rhythmButton, `${styleName}-${rhythmCode}-fill`, rhythmCode);
             this.fillLoaded = true;
