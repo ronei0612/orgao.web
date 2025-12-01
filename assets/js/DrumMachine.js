@@ -42,7 +42,6 @@ class DrumMachine {
                 throw new Error(`Falha ao carregar styles.json: ${resp.status}`);
             }
             this.styles = await resp.json();
-            console.log(`DrumMachine: ${Array.isArray(this.styles) ? this.styles.length : 'styles carregados'}`);
         } catch (err) {
             console.warn('DrumMachine: não foi possível carregar styles.json, mantendo comportamento padrão.', err);
             // fallback mínimo: mantém this.styles como null ou vazio para que UI trate
