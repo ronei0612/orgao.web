@@ -26,12 +26,32 @@ class DrumMachine {
         this.animationFrameId = null;
         this.lastDrawTime = 0;
         this.lastChimbalAbertoSource = null;
+        this.styles = null; // será preenchido em init()
 
         this.init();
     }
 
     async init() {
         await this.loadSounds();
+
+        // Carrega os styles/ritmos da web (styles.json) — mesmo padrão de fetch usado em App.loadCifrasLocal
+        const stylesUrl = `${this.baseUrl}/styles.json`;
+        try {
+            const resp = await fetch(stylesUrl);
+            if (!resp.ok) {
+                throw new Error(`Falha ao carregar styles.json: ${resp.status}`);
+            }
+            this.styles = await resp.json();
+        } catch (err) {
+            console.warn('DrumMachine: não foi possível carregar styles.json, mantendo comportamento padrão.', err);
+            // fallback mínimo: mantém this.styles como null ou vazio para que UI trate
+            this.styles = this.styles || null;
+        }
+    }
+
+    // opcional helper para acessar styles seguro
+    getStyles() {
+        return this.styles;
     }
 
     async loadSounds() {
