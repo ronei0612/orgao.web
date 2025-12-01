@@ -19,6 +19,7 @@ class App {
         this.selectItemAntes = null;
         this.LOCAL_STORAGE_SAVES_KEY = 'saves';
         this.API_BASE_URL = 'https://apinode-h4wt.onrender.com';
+        this.STYLES_LOCAL_KEY = 'drumStylesData';
     }
 
     async init() {
@@ -41,6 +42,7 @@ class App {
         await this.bateriaUI.init();
 
         if (this.BASE_URL.includes('http')) {
+            document.getElementById('downloadStylesLink').parentElement.classList.remove('d-none');
             document.getElementById('styleButtons').classList.remove('d-none');
             document.getElementById('drumEditor').classList.remove('d-none');
         }
@@ -68,6 +70,7 @@ class App {
         this.elements.aboutLink.addEventListener('click', () => this.uiController.customAlert(`Projeto de Ronei Costa Soares. version: ${this.version}`, 'Versão'));
         this.elements.downloadSavesLink.addEventListener('click', this.downloadSaves.bind(this));
         this.elements.uploadSavesLink.addEventListener('click', this.uploadSaves.bind(this));
+        this.elements.downloadStylesLink.addEventListener('click', () => this.downloadStyles());
         this.elements.missaOrdinarioLink.addEventListener('click', () => this.exibirFrame('santamissaFrame'));
         this.elements.stopButton.addEventListener('mousedown', this.handleStopMousedown.bind(this));
         this.elements.playButton.addEventListener('mousedown', this.handlePlayMousedown.bind(this));
@@ -771,6 +774,38 @@ class App {
         URL.revokeObjectURL(link.href);
     }
 
+    downloadStyles() {
+        const key = this.STYLES_LOCAL_KEY;
+        try {
+            const raw = localStorage.getItem(key);
+            if (!raw) {
+                this.uiController.customAlert('Não há drumStylesData salvo no localStorage.', 'Aviso');
+                return;
+            }
+
+            let data;
+            try {
+                data = JSON.parse(raw);
+            } catch (parseErr) {
+                this.uiController.customAlert('Conteúdo de drumStylesData inválido (JSON).', 'Erro');
+                return;
+            }
+
+            const filename = (document.getElementById('downloadStylesLink')?.dataset?.filename) || 'drum-styles.json';
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            this.uiController.customAlert('Erro ao gerar o arquivo de download dos styles.', 'Erro');
+        }
+    }
+
     fullScreen() {
         if (this.isMobileDevice()) {
             if (!document.fullscreenElement &&    // Opera 12.1, Firefox, Chrome, Edge, Safari
@@ -925,6 +960,7 @@ document.addEventListener('DOMContentLoaded', () => {
         aboutLink: document.getElementById('about'),
         downloadSavesLink: document.getElementById('downloadSavesLink'),
         uploadSavesLink: document.getElementById('uploadSavesLink'),
+        downloadStylesLink: document.getElementById('downloadStylesLink'),
         liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame'),
         acorde1: document.getElementById('acorde1'),
         acorde2: document.getElementById('acorde2'),
