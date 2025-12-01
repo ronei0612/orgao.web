@@ -436,11 +436,11 @@ class BateriaUI {
 
         // verifica se existe fill no storage estruturado
         const hasFill = !!this.getStoredRhythm(styleName, `${rhythmCode}-fill`);
-        if (rhythmButton.classList.contains('selected') && hasFill) {
+        if (rhythmButton.classList.contains('selected') && !rhythmButton.classList.contains('fill') && hasFill) {
             this.selectFill(rhythmButton, `${styleName}-${rhythmCode}-fill`, rhythmCode);
             this.fillLoaded = true;
         } else {
-            rhythmButton.classList.remove('fill');
+            rhythmButton.classList.remove('fill', 'pending');
             this.fillLoaded = false;
             this.loadRhythm(`${styleName}-${rhythmCode}`);
         }
