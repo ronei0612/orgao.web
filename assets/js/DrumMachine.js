@@ -24,7 +24,7 @@ class DrumMachine {
         this.scheduleAheadTime = 0.1;
         this.lookahead = 25.0;
         this.bpm = 90;
-        this.numSteps = 4;
+        this.numSteps = 16;
         this.animationFrameId = null;
         this.lastDrawTime = 0;
         this.lastChimbalAbertoSource = null;
