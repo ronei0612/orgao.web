@@ -15,6 +15,7 @@ class CifraPlayer {
         this.instrumento = 'orgao';
         this.attack = 0.2;
         this.release = 0.2;
+        this.baixo = null;
 
         this.audioContextManager = new AudioContextManager();
         this.carregarAcordes();
@@ -131,7 +132,7 @@ class CifraPlayer {
         const urlsDict = {};
         const instrumentos = ['orgao', 'strings', 'epiano'];
         const oitavas = ['grave', 'baixo', ''];
-        const notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
+        const notas = this.musicTheory.notas;
 
         const VOLUME_CONFIG = {
             'grave': {
@@ -265,14 +266,14 @@ class CifraPlayer {
         //notas = this.inversaoDeAcorde(notas, baixo.toLowerCase());
         //}
 
-        baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
+        this.baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
 
         this.acordeGroup = [];
-        this.adicionarSom(this.instrumento, baixo, 'grave');
+        this.adicionarSom(this.instrumento, this.baixo, 'grave');
         if (!this.elements.notesButton.classList.contains('notaSolo') && this.instrumento === 'orgao')
-            this.adicionarSom('strings', baixo, 'grave');
+            this.adicionarSom('strings', this.baixo, 'grave');
         else if (this.elements.notesButton.classList.contains('pressed') && this.instrumento === 'epiano')
-            this.adicionarSom('strings', baixo, 'grave');
+            this.adicionarSom('strings', this.baixo, 'grave');
 
         notas.forEach(nota => {
             if (this.instrumento === 'orgao') {

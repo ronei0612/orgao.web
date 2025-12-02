@@ -375,6 +375,8 @@ class MusicTheory {
             'Bb': ['Ab', 'G', 'A°', 'D', 'C', 'Bb', 'Gm', 'Eb', 'Cm', 'F', 'Dm'],
             'B': ['A', 'Ab', 'Bb°', 'Eb', 'C#', 'B', 'Abm', 'E', 'C#m', 'F#', 'Ebm']
         };
+
+        this.notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
     }
 
     getAcordeNotas(acordeNome) {

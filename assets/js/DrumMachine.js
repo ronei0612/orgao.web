@@ -1,6 +1,8 @@
 class DrumMachine {
-    constructor(baseUrl) {
+    constructor(baseUrl, cifraPlayer, musicTheory) {
         this.baseUrl = baseUrl;
+        this.cifraPlayer = cifraPlayer;
+        this.musicTheory = musicTheory;
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.buffers = new Map();
         const audioPath = this.baseUrl + '/assets/audio/studio/Drums/';
@@ -13,8 +15,7 @@ class DrumMachine {
             { name: 'Bumbo', icon: 'bumbo.svg', file: audioPath + 'bumbo.ogg', somAlternativo: null },
             { name: 'Meia-Lua', icon: 'meiaLua.svg', file: audioPath + 'meialua.ogg', somAlternativo: audioPath + 'meialua2.ogg' },
             { name: 'Violao', icon: 'violao.svg', file: audioPath + 'bumbo.ogg', somAlternativo: null },
-            /*{ name: 'Guitarra', icon: 'guitarra.svg', file: audioPath + 'bumbo.ogg', somAlternativo: null },*/
-            { name: 'Baixo', icon: 'baixo.svg', file: audioPath + 'bumbo.ogg', somAlternativo: null }
+            { name: 'Baixo', icon: 'baixo.svg', file: null, somAlternativo: null }
         ];
         this.isPlaying = false;
         this.currentStep = 1;
@@ -55,18 +56,35 @@ class DrumMachine {
     }
 
     async loadSounds() {
-        const loadPromises = this.instruments.map(async instrument => {
-            const response = await fetch(instrument.file);
-            const arrayBuffer = await response.arrayBuffer();
-            const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-            this.buffers.set(instrument.name.toLowerCase(), audioBuffer);
+        const loadPromises = [];
 
-            if (instrument.somAlternativo) {
-                const response3 = await fetch(instrument.somAlternativo);
-                const arrayBuffer3 = await response3.arrayBuffer();
-                const audioBuffer3 = await this.audioContext.decodeAudioData(arrayBuffer3);
-                this.buffers.set(instrument.name.toLowerCase() + '-alt', audioBuffer3);
-            }
+        // 1) carregar samples de percussão/others definidos em this.instruments
+        this.instruments.forEach(instrument => {
+            if (!instrument.file) return;
+            loadPromises.push((async () => {
+                const response = await fetch(instrument.file);
+                const arrayBuffer = await response.arrayBuffer();
+                const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                this.buffers.set(instrument.name.toLowerCase(), audioBuffer);
+
+                if (instrument.somAlternativo) {
+                    const response3 = await fetch(instrument.somAlternativo);
+                    const arrayBuffer3 = await response3.arrayBuffer();
+                    const audioBuffer3 = await this.audioContext.decodeAudioData(arrayBuffer3);
+                    this.buffers.set(instrument.name.toLowerCase() + '-alt', audioBuffer3);
+                }
+            })());
+        });
+
+        const notas = this.musicTheory.notas;
+        notas.forEach(nota => {
+            const fileName = `${this.baseUrl}/assets/audio/studio/Drums/baixo_${nota}.ogg`;
+            loadPromises.push((async () => {
+                const resp = await fetch(fileName);
+                const arrayBuffer = await resp.arrayBuffer();
+                const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                this.buffers.set(`baixo_${nota}`, buffer);
+            })());
         });
 
         await Promise.all(loadPromises);
@@ -95,10 +113,13 @@ class DrumMachine {
             if (buffer) {
                 this.playSound(buffer, time, 1, true);
             }
-        } else {
-            const buffer = this.buffers.get(instrument);
-            if (buffer && volume > 0) {
-                this.playSound(buffer, time, volume === 2 ? 0.3 : 1);
+        }
+        else {
+            if (!this.playBass(instrument, time, volume)) {
+                const buffer = this.buffers.get(instrument);
+                if (buffer && volume > 0) {
+                    this.playSound(buffer, time, volume === 2 ? 0.3 : 1);
+                }
             }
         }
     }
@@ -213,5 +234,18 @@ class DrumMachine {
     updateFillBlink(bpm) {
         const secPerBeat = 60 / bpm;
         document.documentElement.style.setProperty('--fill-blink-duration', `${secPerBeat}s`);
+    }
+
+    playBass(instrument, time, volume) {
+        if (instrument === 'baixo' && this.cifraPlayer.acordeTocando) {
+            const bass = instrument + '_' + this.cifraPlayer.baixo;
+            const buffer = this.buffers.get(bass);
+            if (buffer && volume > 0) {
+                this.playSound(buffer, time, volume === 2 ? 0.3 : 1);
+                return true;
+            }
+        }
+
+        return false;
     }
 }
