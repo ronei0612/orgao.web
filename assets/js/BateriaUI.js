@@ -14,7 +14,11 @@ class BateriaUI {
         this.storageKey = 'drumStylesData';
     }
     getStorageData() {
-        return this.drumMachine.styles;
+        const tem_styles_bateria = localStorage.getItem(this.storageKey);
+        if (tem_styles_bateria)
+            return JSON.parse(tem_styles_bateria);
+
+        return this.drumMachine.styles;                
     }
 
     persistStorageData(obj) {
