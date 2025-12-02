@@ -38,7 +38,7 @@ class App {
         if (typeof drumMachine.init === 'function')
             await drumMachine.init();
 
-        this.bateriaUI = new BateriaUI(this.elements, drumMachine, this.uiController);
+        this.bateriaUI = new BateriaUI(this.elements, drumMachine, this.uiController, this.cifraPlayer);
         await this.bateriaUI.init();
 
         if (this.BASE_URL.includes('http')) {
