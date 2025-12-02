@@ -260,11 +260,12 @@ class DrumMachine {
             const bass = instrument + '_' + this.cifraPlayer.baixo;
             const buffer = this.buffers.get(bass);
             if (buffer && volume > 0) {
-                this.playSound(buffer, time, volume === 2 ? 0.3 : 1);
+                // Aplica atraso de 30ms somente no primeiro step
+                const delayedTime = (this.currentStep === 1) ? time + 0.03 : time;
+                this.playSound(buffer, delayedTime, volume === 2 ? 0.3 : 1);
                 return true;
             }
         }
-
         return false;
     }
 
@@ -273,11 +274,12 @@ class DrumMachine {
             const violao = instrument + '_' + this.cifraPlayer.baixo;
             const buffer = this.buffers.get(violao);
             if (buffer && volume > 0) {
-                this.playSound(buffer, time, volume === 2 ? 0.3 : 1);
+                // Aplica atraso de 30ms somente no primeiro step
+                const delayedTime = (this.currentStep === 1) ? time + 0.03 : time;
+                this.playSound(buffer, delayedTime, volume === 2 ? 0.3 : 1);
                 return true;
             }
         }
-
         return false;
     }
 }
