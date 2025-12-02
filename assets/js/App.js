@@ -1,11 +1,11 @@
 class App {
     constructor(elements) {
         this.elements = elements;
+        this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web' : '.';
         this.musicTheory = new MusicTheory();
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
-        this.draggableController = new DraggableController(this.elements.draggableControls);
-        this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web' : '.';
+        this.draggableController = new DraggableController(this.elements.draggableControls);        
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.version = '4.2';
@@ -34,7 +34,7 @@ class App {
         this.setupSelect2();
         this.getUrlParam();
 
-        const drumMachine = new DrumMachine(this.BASE_URL);
+        const drumMachine = new DrumMachine(this.BASE_URL, this.cifraPlayer, this.musicTheory);
         if (typeof drumMachine.init === 'function')
             await drumMachine.init();
 
