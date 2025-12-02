@@ -63,7 +63,7 @@ class AudioContextManager {
 	 * Aplica o Release no acorde anterior, se houver, antes de iniciar o novo.
 	 * @param {number} [attackTime=0.2] Duração do efeito Attack em segundos (entrada suave).
 	 */
-	play(attackTime = 0.2, loop = true) {
+	play(attackTime = 0.2) {
 		// Garante que o AudioContext esteja resumido após o clique do usuário
 		if (this.audioContext.state === 'suspended') {
 			this.audioContext.resume();
@@ -88,7 +88,7 @@ class AudioContextManager {
 			const gainNode = this.audioContext.createGain();
 
 			source.buffer = buffer;
-			source.loop = loop;
+			source.loop = true;
 
 			// Conexões: Fonte -> Ganho (volume/envelope) -> Destino (alto-falantes)
 			source.connect(gainNode);
