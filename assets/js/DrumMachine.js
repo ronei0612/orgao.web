@@ -5,16 +5,17 @@ class DrumMachine {
         this.musicTheory = musicTheory;
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.buffers = new Map();
-        const audioPath = this.baseUrl + '/assets/audio/studio/Drums/';
+        this.audioPath = this.baseUrl + '/assets/audio/studio/Drums/';
         this.instruments = [
-            { name: 'Prato', icon: 'prato.svg', file: audioPath + 'ride.ogg', somAlternativo: audioPath + 'prato2.ogg' },
-            { name: 'Tom', icon: 'tom.svg', file: audioPath + 'tom-03.ogg', somAlternativo: audioPath + 'tom-02.ogg' },
-            { name: 'Surdo', icon: 'surdo.svg', file: audioPath + 'tom.ogg', somAlternativo: audioPath + 'prato1.ogg' },
-            { name: 'Chimbal', icon: 'chimbal.svg', file: audioPath + 'chimbal.ogg', somAlternativo: audioPath + 'aberto.ogg' },
-            { name: 'Caixa', icon: 'caixa.svg', file: audioPath + 'caixa.ogg', somAlternativo: audioPath + 'aro.ogg' },
-            { name: 'Bumbo', icon: 'bumbo.svg', file: audioPath + 'bumbo.ogg', somAlternativo: null },
-            { name: 'Meia-Lua', icon: 'meiaLua.svg', file: audioPath + 'meialua.ogg', somAlternativo: audioPath + 'meialua2.ogg' },
-            { name: 'Violao', icon: 'violao.svg', file: audioPath + 'bumbo.ogg', somAlternativo: null },
+            { name: 'Prato', icon: 'prato.svg', file: this.audioPath + 'ride.ogg', somAlternativo: this.audioPath + 'prato2.ogg' },
+            { name: 'Tom', icon: 'tom.svg', file: this.audioPath + 'tom-03.ogg', somAlternativo: this.audioPath + 'tom-02.ogg' },
+            { name: 'Surdo', icon: 'surdo.svg', file: this.audioPath + 'tom.ogg', somAlternativo: this.audioPath + 'prato1.ogg' },
+            { name: 'Chimbal', icon: 'chimbal.svg', file: this.audioPath + 'chimbal.ogg', somAlternativo: this.audioPath + 'aberto.ogg' },
+            { name: 'Caixa', icon: 'caixa.svg', file: this.audioPath + 'caixa.ogg', somAlternativo: this.audioPath + 'aro.ogg' },
+            { name: 'Bumbo', icon: 'bumbo.svg', file: this.audioPath + 'bumbo.ogg', somAlternativo: null },
+            { name: 'Meia-Lua', icon: 'meiaLua.svg', file: this.audioPath + 'meialua.ogg', somAlternativo: this.audioPath + 'meialua2.ogg' },
+            { name: 'Violao-Baixo', icon: 'violao.svg', file: null, somAlternativo: null },
+            { name: 'Violao-Cima', icon: 'violao.svg', file: null, somAlternativo: null },
             { name: 'Baixo', icon: 'baixo.svg', file: null, somAlternativo: null }
         ];
         this.isPlaying = false;
@@ -78,12 +79,30 @@ class DrumMachine {
 
         const notas = this.musicTheory.notas;
         notas.forEach(nota => {
-            const fileName = `${this.baseUrl}/assets/audio/studio/Drums/baixo_${nota}.ogg`;
+            var instrument = 'baixo';
+            const baixoFileName = `${this.audioPath}/${instrument}_${nota}.ogg`;
             loadPromises.push((async () => {
-                const resp = await fetch(fileName);
+                const resp = await fetch(baixoFileName);
                 const arrayBuffer = await resp.arrayBuffer();
                 const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
                 this.buffers.set(`baixo_${nota}`, buffer);
+            })());
+
+            instrument = 'violao';
+            const violaoFileName = `${this.audioPath}/${instrument}_${nota}.ogg`;
+            loadPromises.push((async () => {
+                const resp = await fetch(violaoFileName);
+                const arrayBuffer = await resp.arrayBuffer();
+                const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                this.buffers.set(`${instrument}-baixo_${nota}`, buffer);
+            })());
+
+            const violao1FileName = `${this.audioPath}/${instrument}_${nota}1.ogg`;
+            loadPromises.push((async () => {
+                const resp = await fetch(violao1FileName);
+                const arrayBuffer = await resp.arrayBuffer();
+                const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                this.buffers.set(`${instrument}-cima_${nota}`, buffer);
             })());
         });
 
@@ -115,7 +134,7 @@ class DrumMachine {
             }
         }
         else {
-            if (!this.playBass(instrument, time, volume)) {
+            if (!this.playBass(instrument, time, volume) && !this.playViolao(instrument, time, volume)) {
                 const buffer = this.buffers.get(instrument);
                 if (buffer && volume > 0) {
                     this.playSound(buffer, time, volume === 2 ? 0.3 : 1);
@@ -240,6 +259,19 @@ class DrumMachine {
         if (instrument === 'baixo' && this.cifraPlayer.acordeTocando) {
             const bass = instrument + '_' + this.cifraPlayer.baixo;
             const buffer = this.buffers.get(bass);
+            if (buffer && volume > 0) {
+                this.playSound(buffer, time, volume === 2 ? 0.3 : 1);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    playViolao(instrument, time, volume) {
+        if (instrument.includes('violao') && this.cifraPlayer.acordeTocando) {
+            const violao = instrument + '_' + this.cifraPlayer.baixo;
+            const buffer = this.buffers.get(violao);
             if (buffer && volume > 0) {
                 this.playSound(buffer, time, volume === 2 ? 0.3 : 1);
                 return true;
