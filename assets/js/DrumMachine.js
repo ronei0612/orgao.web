@@ -145,7 +145,7 @@ class DrumMachine {
 
     nextNote() {
         const secondsPerQuarterNote = 60.0 / this.bpm;
-        const secondsPerStep = secondsPerQuarterNote / 2;
+        const secondsPerStep = secondsPerQuarterNote / 4;
         this.nextNoteTime += secondsPerStep;
         this.currentStep++;
 
