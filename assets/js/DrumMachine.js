@@ -28,7 +28,8 @@ class DrumMachine {
         this.animationFrameId = null;
         this.lastDrawTime = 0;
         this.lastChimbalAbertoSource = null;
-        this.styles = null; // será preenchido em init()
+        this.styles = null;
+        this.atrasoMudarNota = 0.03; // 30ms
 
         this.init();
     }
@@ -260,8 +261,7 @@ class DrumMachine {
             const bass = instrument + '_' + this.cifraPlayer.baixo;
             const buffer = this.buffers.get(bass);
             if (buffer && volume > 0) {
-                // Aplica atraso de 30ms somente no primeiro step
-                const delayedTime = (this.currentStep === 1) ? time + 0.03 : time;
+                const delayedTime = (this.currentStep === 1) ? time + this.atrasoMudarNota : time;
                 this.playSound(buffer, delayedTime, volume === 2 ? 0.3 : 1);
                 return true;
             }
@@ -274,8 +274,7 @@ class DrumMachine {
             const violao = instrument + '_' + this.cifraPlayer.baixo;
             const buffer = this.buffers.get(violao);
             if (buffer && volume > 0) {
-                // Aplica atraso de 30ms somente no primeiro step
-                const delayedTime = (this.currentStep === 1) ? time + 0.03 : time;
+                const delayedTime = (this.currentStep === 1) ? time + this.atrasoMudarNota : time;
                 this.playSound(buffer, delayedTime, volume === 2 ? 0.3 : 1);
                 return true;
             }
