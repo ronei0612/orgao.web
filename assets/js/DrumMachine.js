@@ -261,8 +261,9 @@ class DrumMachine {
             const bass = instrument + '_' + this.cifraPlayer.baixo;
             const buffer = this.buffers.get(bass);
             if (buffer && volume > 0) {
-                const delayedTime = (this.currentStep === 1) ? time + this.atrasoMudarNota : time;
-                this.playSound(buffer, delayedTime, volume === 2 ? 0.3 : 1);
+                //const delayedTime = (this.currentStep === 1) ? time + this.atrasoMudarNota : time;
+                //this.playSound(buffer, delayedTime, volume === 2 ? 0.3 : 1);
+                this.playSound(buffer, time, volume === 2 ? 0.4 : 1);
                 return true;
             }
         }
@@ -274,8 +275,9 @@ class DrumMachine {
             const violao = instrument + '_' + this.cifraPlayer.baixo;
             const buffer = this.buffers.get(violao);
             if (buffer && volume > 0) {
-                const delayedTime = (this.currentStep === 1) ? time + this.atrasoMudarNota : time;
-                this.playSound(buffer, delayedTime, volume === 2 ? 0.3 : 1);
+                //const delayedTime = (this.currentStep === 1) ? time + this.atrasoMudarNota : time;
+                //this.playSound(buffer, delayedTime, volume === 2 ? 0.3 : 1);
+                this.playSound(buffer, time, volume === 2 ? 0.4 : 1);
                 return true;
             }
         }
