@@ -262,13 +262,10 @@ class CifraPlayer {
         let notas = this.musicTheory.getAcordeNotas(notaPrincipal);
         if (!notas) return;
 
-        //if (baixo && notas.includes(baixo.toLowerCase())) {
-        //notas = this.inversaoDeAcorde(notas, baixo.toLowerCase());
-        //}
-
         this.baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
 
         this.acordeGroup = [];
+        var loop = true;
         this.adicionarSom(this.instrumento, this.baixo, 'grave');
         if (!this.elements.notesButton.classList.contains('notaSolo') && this.instrumento === 'orgao')
             this.adicionarSom('strings', this.baixo, 'grave');
@@ -288,6 +285,7 @@ class CifraPlayer {
                 }
             }
             else if (this.instrumento === 'epiano') {
+                loop = false;
                 this.adicionarSom('epiano', nota.replace('#', '_'), 'baixo');
 
                 if (!this.elements.notesButton.classList.contains('notaSolo'))
@@ -301,7 +299,7 @@ class CifraPlayer {
         });
 
         this.audioContextManager.setNotes(this.acordeGroup);
-        this.audioContextManager.play(this.attack);
+        this.audioContextManager.play(this.attack, loop);
     }
 
     desabilitarSelectSaves() {
