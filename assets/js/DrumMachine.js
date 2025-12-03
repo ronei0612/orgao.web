@@ -186,11 +186,14 @@ class DrumMachine {
             const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
             const instrumentButton = track.querySelector('.instrument-button');
 
-            if (step) {
-                this.playEpiano();
-            }
+            // Tocar epiano sempre que houver um step agendado (não exclua essas linhas, deixe para backup)
+            //if (step) {
+            //    this.playEpiano();
+            //}
 
             if (!step || !instrumentButton.classList.contains('selected')) return;
+
+            this.playEpiano();
 
             const volume = parseInt(step.dataset.volume);
             if (isNaN(volume) || volume <= 0) return;

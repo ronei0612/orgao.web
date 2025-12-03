@@ -8,7 +8,7 @@ class App {
         this.draggableController = new DraggableController(this.elements.draggableControls);        
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
-        this.version = '4.2';
+        this.version = '4.4';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -604,7 +604,8 @@ class App {
         } else {
             if (action === 'acorde') {
                 this.cifraPlayer.parado = false;
-                this.bateriaUI.play();
+                if (this.bateriaUI)
+                    this.bateriaUI.play();
                 this.cifraPlayer.tocarAcorde(button.value);
             }
             // Remove o pressed de todos os outros botões de acorde

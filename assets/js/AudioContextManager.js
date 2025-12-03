@@ -67,17 +67,16 @@ class AudioContextManager {
 	}
 
 	/**
-	 * Toca as notas definidas em currentNotes com loop e efeito Attack.
-	 * Aplica o Release no acorde anterior, se houver, antes de iniciar o novo.
-	 * @param {number} [attackTime=0.2] Duração do efeito Attack em segundos (entrada suave).
+	 * Toca as notas definidas em currentNotes.
+	 * Lógica alterada para diferenciar Loop de Strings e Órgão.
 	 */
-	play(attackTime = 0.2, loop = true) {
-		// Garante que o AudioContext esteja resumido após o clique do usuário
+	play(attackTime = 0.2) {
+		// Garante que o AudioContext esteja resumido
 		if (this.audioContext.state === 'suspended') {
 			this.audioContext.resume();
 		}
 
-		// Parar qualquer som anterior usando o Release padrão (0.3s) para a transição suave.
+		// Para o som anterior
 		this.stop();
 
 		const now = this.audioContext.currentTime;
@@ -96,15 +95,19 @@ class AudioContextManager {
 			const gainNode = this.audioContext.createGain();
 
 			source.buffer = buffer;
-			source.loop = loop;
+			source.loop = true;
 
-			// Conexões: Fonte -> Ganho (volume/envelope) -> Destino (alto-falantes)
+			if (note.startsWith('epiano')) {
+				source.loop = false;
+			}
+
+			// Conexões: Fonte -> Ganho -> Destino
 			source.connect(gainNode);
 			gainNode.connect(this.audioContext.destination);
 
-			// Efeito Attack: Sobe o volume de 0 para 1 (máximo)
-			gainNode.gain.setValueAtTime(0, now); // Começa em volume 0
-			gainNode.gain.linearRampToValueAtTime(targetVolume, now + attackTime); // Sobe linearmente em 'attackTime' segundos
+			// Efeito Attack
+			gainNode.gain.setValueAtTime(0, now);
+			gainNode.gain.linearRampToValueAtTime(targetVolume, now + attackTime);
 
 			source.start(0);
 
