@@ -300,6 +300,7 @@ class CifraPlayer {
         });
 
         this.audioContextManager.setNotes(this.epianoGroup);
+        this.audioContextManager.addNotes(this.acordeGroup);
 
         if (this.instrumento === 'orgao') {
             this.audioContextManager.play(this.attack);

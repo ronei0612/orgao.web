@@ -59,6 +59,14 @@ class AudioContextManager {
 	}
 
 	/**
+	 * Adiciona notas ao conjunto currentNotes.
+	 * @param {string[]} notes Um array de strings com as notas a serem adicionadas.
+	 */
+	addNotes(notes) {
+		this.currentNotes = Array.from(new Set([...this.currentNotes, ...notes]));
+	}
+
+	/**
 	 * Toca as notas definidas em currentNotes com loop e efeito Attack.
 	 * Aplica o Release no acorde anterior, se houver, antes de iniciar o novo.
 	 * @param {number} [attackTime=0.2] Duração do efeito Attack em segundos (entrada suave).
