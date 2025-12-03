@@ -6,6 +6,8 @@ class CifraPlayer {
         this.elements = elements;
 
         this.acordeGroup = [];
+        this.epianoGroup = [];
+        this.tocarEpiano = false;
         this.parado = true;
         this.acordeTocando = '';
         this.indiceAcorde = 0;
@@ -265,6 +267,7 @@ class CifraPlayer {
         this.baixo = baixo ? baixo.replace('#', '_') : notas[0].replace('#', '_');
 
         this.acordeGroup = [];
+        this.epianoGroup = [];
         this.adicionarSom(this.instrumento, this.baixo, 'grave');
         if (!this.elements.notesButton.classList.contains('notaSolo') && this.instrumento === 'orgao')
             this.adicionarSom('strings', this.baixo, 'grave');
@@ -296,8 +299,25 @@ class CifraPlayer {
             }
         });
 
-        this.audioContextManager.setNotes(this.acordeGroup);
-        this.audioContextManager.play(this.attack);
+        this.audioContextManager.setNotes(this.epianoGroup);
+        this.audioContextManager.addNotes(this.acordeGroup);
+
+        if (this.instrumento === 'orgao') {
+            this.audioContextManager.play(this.attack);
+        }
+        else {
+            if (!this.uiController.ritmoAtivo()) {
+                this.epianoPlay();
+            }
+            else {
+                this.tocarEpiano = true;
+            }
+        }
+    }
+
+    epianoPlay() {
+        this.audioContextManager.play(this.attack, false);
+        this.tocarEpiano = false;
     }
 
     desabilitarSelectSaves() {
@@ -458,7 +478,13 @@ class CifraPlayer {
         nota = nota.toLowerCase();
         nota = this.getNomeArquivoAudio(nota);
         const key = `${instrumento}_${nota}${oitava ? '_' + oitava : ''}`;
-        this.acordeGroup.push(key);
+
+        if (instrumento === 'epiano') {
+            this.epianoGroup.push(key);
+        }
+        else {
+            this.acordeGroup.push(key);
+        }
     }
 
     removerClasseCifraSelecionada(iframeDoc, excecao = null) {

@@ -432,23 +432,29 @@ class BateriaUI {
     selectRhythm(rhythmButton, rhythmKey) {
         const styleName = this.elements.styleSelect.value || this.defaultStyle;
         const rhythmCode = rhythmKey.replace('rhythm-', '').toUpperCase();
-        this.unSelectRhythmButtons(rhythmButton);
-
-        // verifica se existe fill no storage estruturado
-        const hasFill = true;// !!this.getStoredRhythm(styleName, `${rhythmCode}-fill`);
-        if (rhythmButton.classList.contains('selected') && !rhythmButton.classList.contains('fill') && hasFill) {
-            this.selectFill(rhythmButton, `${styleName}-${rhythmCode}-fill`, rhythmCode);
-            this.fillLoaded = true;
-        } else {
+        
+        if (rhythmButton.classList.contains('selected')) {
+            if (rhythmButton.classList.contains('fill') && !this.drumMachine.isPlaying) {
+                this.unSelectRhythmButtons();
+                this.fillLoaded = false;
+            }
+            else {
+                this.selectFill(rhythmButton, `${styleName}-${rhythmCode}-fill`, rhythmCode);
+                this.unSelectRhythmButtons(rhythmButton);
+                this.fillLoaded = true;
+            }
+        }
+        else {
             rhythmButton.classList.remove('fill', 'pending');
             this.fillLoaded = false;
             this.loadRhythm(`${styleName}-${rhythmCode}`);
-        }
+            this.unSelectRhythmButtons(rhythmButton);
 
-        rhythmButton.classList.add('selected');
-        this.selectedRhythm = rhythmCode;
-        this.pendingRhythm = rhythmCode;
-        this.pendingButton = rhythmButton;
+            rhythmButton.classList.add('selected');
+            this.selectedRhythm = rhythmCode;
+            this.pendingRhythm = rhythmCode;
+            this.pendingButton = rhythmButton;
+        }     
 
         if (!this.cifraPlayer.parado) {
             this.play();
@@ -459,7 +465,7 @@ class BateriaUI {
      * Desmarca todos os botões de ritmo, exceto o fornecido.
      * @param {any} rhythmButton
      */
-    unSelectRhythmButtons(rhythmButton) {
+    unSelectRhythmButtons(rhythmButton = null) {
         this.elements.rhythmButtons.forEach(button => {
             if (button !== rhythmButton) {
                 button.classList.remove('selected', 'fill', 'pending');
@@ -502,10 +508,10 @@ class BateriaUI {
 
     play() {
         if (!this.drumMachine.isPlaying) {
-            // remove fill when starting
-            //this.elements.rhythmButtons.forEach(button => button.classList.remove('fill'));
-            this.drumMachine.start();
-            this.uiController.exibirBotaoStop();
+            if (this.uiController.ritmoAtivo()) {
+                this.drumMachine.start();
+                this.uiController.exibirBotaoStop();
+            }
         }
     }
 

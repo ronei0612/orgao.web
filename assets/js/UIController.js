@@ -202,6 +202,10 @@ class UIController {
         return option;
     }
 
+    ritmoAtivo() {
+        return this.elements.rhythmButtons.some(button => button.classList.contains('selected'));
+    }
+
     exibirInterfaceDePesquisaPesquisando() {
         this.elements.cifraDisplay.classList.add('d-none');
         this.elements.searchIcon.classList.add('d-none');

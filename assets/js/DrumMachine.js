@@ -185,6 +185,11 @@ class DrumMachine {
             const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
             const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
             const instrumentButton = track.querySelector('.instrument-button');
+
+            if (step) {
+                this.playEpiano();
+            }
+
             if (!step || !instrumentButton.classList.contains('selected')) return;
 
             const volume = parseInt(step.dataset.volume);
@@ -283,4 +288,12 @@ class DrumMachine {
         }
         return false;
     }
+
+    playEpiano() {
+        if (this.cifraPlayer.epianoGroup.length > 0) {
+            if (this.cifraPlayer.tocarEpiano)
+                this.cifraPlayer.epianoPlay();
+        }
+    }
+
 }

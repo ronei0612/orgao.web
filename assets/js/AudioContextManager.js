@@ -59,11 +59,19 @@ class AudioContextManager {
 	}
 
 	/**
+	 * Adiciona notas ao conjunto currentNotes.
+	 * @param {string[]} notes Um array de strings com as notas a serem adicionadas.
+	 */
+	addNotes(notes) {
+		this.currentNotes = Array.from(new Set([...this.currentNotes, ...notes]));
+	}
+
+	/**
 	 * Toca as notas definidas em currentNotes com loop e efeito Attack.
 	 * Aplica o Release no acorde anterior, se houver, antes de iniciar o novo.
 	 * @param {number} [attackTime=0.2] Duração do efeito Attack em segundos (entrada suave).
 	 */
-	play(attackTime = 0.2) {
+	play(attackTime = 0.2, loop = true) {
 		// Garante que o AudioContext esteja resumido após o clique do usuário
 		if (this.audioContext.state === 'suspended') {
 			this.audioContext.resume();
@@ -88,7 +96,7 @@ class AudioContextManager {
 			const gainNode = this.audioContext.createGain();
 
 			source.buffer = buffer;
-			source.loop = true;
+			source.loop = loop;
 
 			// Conexões: Fonte -> Ganho (volume/envelope) -> Destino (alto-falantes)
 			source.connect(gainNode);
