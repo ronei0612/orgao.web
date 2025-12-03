@@ -502,11 +502,11 @@ class BateriaUI {
 
     play() {
         if (!this.drumMachine.isPlaying) {
-            // remove fill when starting
-            //this.elements.rhythmButtons.forEach(button => button.classList.remove('fill'));
+            if (this.uiController.ritmoAtivo()) {
             this.drumMachine.start();
             this.uiController.exibirBotaoStop();
         }
+    }
     }
 
     stop() {

@@ -604,6 +604,7 @@ class App {
         } else {
             if (action === 'acorde') {
                 this.cifraPlayer.parado = false;
+                this.bateriaUI.play();
                 this.cifraPlayer.tocarAcorde(button.value);
             }
             // Remove o pressed de todos os outros botões de acorde
