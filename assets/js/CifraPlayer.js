@@ -316,7 +316,7 @@ class CifraPlayer {
     }
 
     epianoPlay() {
-        this.audioContextManager.play(this.attack, false);
+        this.audioContextManager.play(this.attack);
         this.tocarEpiano = false;
     }
 
