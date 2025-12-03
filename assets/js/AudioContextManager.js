@@ -1,29 +1,29 @@
 /**
  * Classe AudioContextManager
- * Responsï¿½vel por gerenciar o Web Audio API, carregar instrumentos e tocar acordes
+ * Responsável por gerenciar o Web Audio API, carregar instrumentos e tocar acordes
  * com efeitos de loop, attack e release.
  */
 class AudioContextManager {
 	constructor() {
-		// Cria uma nova instï¿½ncia do AudioContext
+		// Cria uma nova instância do AudioContext
 		this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-		this.buffers = {}; // Armazena os buffers de ï¿½udio carregados (instrumentos)
+		this.buffers = {}; // Armazena os buffers de áudio carregados (instrumentos)
 		this.instrumentSettings = {};
-		this.sources = []; // Armazena os nï¿½s de fonte de ï¿½udio atualmente tocando
-		this.gainNodes = []; // Armazena os nï¿½s de ganho (volume) para controle de Attack/Release
+		this.sources = []; // Armazena os nós de fonte de áudio atualmente tocando
+		this.gainNodes = []; // Armazena os nós de ganho (volume) para controle de Attack/Release
 		this.currentNotes = []; // Notas a serem tocadas (setadas pelo setNotes)
-		// O this.notesMap foi removido do construtor e serï¿½ passado para loadInstruments()
+		// O this.notesMap foi removido do construtor e será passado para loadInstruments()
 	}
 
 	/**
-	 * Carrega todos os instrumentos (arquivos de ï¿½udio) na memï¿½ria (buffers).
+	 * Carrega todos os instrumentos (arquivos de áudio) na memória (buffers).
 	 * @param {Object<string, {url: string, volume: number}>} urlsMap Um objeto mapeando o nome da nota para um objeto com a URL e o volume desejado (0.0 a 1.0).
-	 * @returns {Promise<void>} Uma Promise que resolve quando todos os arquivos sï¿½o carregados.
+	 * @returns {Promise<void>} Uma Promise que resolve quando todos os arquivos são carregados.
 	 */
 	async loadInstruments(urlsMap) {
 		const noteKeys = Object.keys(urlsMap);
 
-		// Limpa buffers e configuraï¿½ï¿½es anteriores
+		// Limpa buffers e configurações anteriores
 		this.buffers = {};
 		this.instrumentSettings = {};
 
@@ -51,7 +51,7 @@ class AudioContextManager {
 	}
 
 	/**
-	 * Define as notas que serï¿½o tocadas no prï¿½ximo mï¿½todo play().
+	 * Define as notas que serão tocadas no próximo método play().
 	 * @param {string[]} notes Um array de strings com as notas, ex: ['c', 'e', 'g'].
 	 */
 	setNotes(notes) {
@@ -67,17 +67,16 @@ class AudioContextManager {
 	}
 
 	/**
-	 * Toca as notas definidas em currentNotes com loop e efeito Attack.
-	 * Aplica o Release no acorde anterior, se houver, antes de iniciar o novo.
-	 * @param {number} [attackTime=0.2] Duraï¿½ï¿½o do efeito Attack em segundos (entrada suave).
+	 * Toca as notas definidas em currentNotes.
+	 * Lógica alterada para diferenciar Loop de Strings e Órgão.
 	 */
 	play(attackTime = 0.2) {
-		// Garante que o AudioContext esteja resumido apï¿½s o clique do usuï¿½rio
+		// Garante que o AudioContext esteja resumido
 		if (this.audioContext.state === 'suspended') {
 			this.audioContext.resume();
 		}
 
-		// Parar qualquer som anterior usando o Release padrï¿½o (0.3s) para a transiï¿½ï¿½o suave.
+		// Para o som anterior
 		this.stop();
 
 		const now = this.audioContext.currentTime;
@@ -87,7 +86,7 @@ class AudioContextManager {
 			const settings = this.instrumentSettings[note];
 
 			if (!buffer || !settings) {
-				console.warn(`Buffer para a nota ${note} nï¿½o encontrado no cache. Pulando.`);
+				console.warn(`Buffer para a nota ${note} não encontrado no cache. Pulando.`);
 				return;
 			}
 
@@ -102,13 +101,13 @@ class AudioContextManager {
 				source.loop = false;
 			}
 
-			// Conexï¿½es: Fonte -> Ganho (volume/envelope) -> Destino (alto-falantes)
+			// Conexões: Fonte -> Ganho -> Destino
 			source.connect(gainNode);
 			gainNode.connect(this.audioContext.destination);
 
-			// Efeito Attack: Sobe o volume de 0 para 1 (mï¿½ximo)
-			gainNode.gain.setValueAtTime(0, now); // Comeï¿½a em volume 0
-			gainNode.gain.linearRampToValueAtTime(targetVolume, now + attackTime); // Sobe linearmente em 'attackTime' segundos
+			// Efeito Attack
+			gainNode.gain.setValueAtTime(0, now);
+			gainNode.gain.linearRampToValueAtTime(targetVolume, now + attackTime);
 
 			source.start(0);
 
@@ -118,8 +117,8 @@ class AudioContextManager {
 	}
 
 	/**
-	 * Para as notas que estï¿½o tocando com efeito Release.
-	 * @param {number} [releaseTime=0.2] Duraï¿½ï¿½o do efeito Release em segundos (saï¿½da suave).
+	 * Para as notas que estão tocando com efeito Release.
+	 * @param {number} [releaseTime=0.2] Duração do efeito Release em segundos (saída suave).
 	 */
 	stop(releaseTime = 0.2) {
 		if (this.sources.length === 0) return;
@@ -127,7 +126,7 @@ class AudioContextManager {
 		const now = this.audioContext.currentTime;
 
 		this.gainNodes.forEach(gainNode => {
-			// Cancela qualquer mudanï¿½a de volume programada (ex: um Attack em andamento)
+			// Cancela qualquer mudança de volume programada (ex: um Attack em andamento)
 			gainNode.gain.cancelScheduledValues(now);
 			// Define o valor inicial da rampa de parada para o valor atual do ganho
 			gainNode.gain.setValueAtTime(gainNode.gain.value, now);
@@ -136,7 +135,7 @@ class AudioContextManager {
 		});
 
 		this.sources.forEach(source => {
-			// Para o som apï¿½s o efeito Release terminar
+			// Para o som após o efeito Release terminar
 			source.stop(now + releaseTime);
 		});
 
