@@ -203,7 +203,8 @@ class UIController {
     }
 
     ritmoAtivo() {
-        return this.elements.rhythmButtons.some(button => button.classList.contains('selected'));
+        const isKeyboard = this.elements.orgaoInstrumentButton.firstElementChild.src.includes('teclado.svg');
+        return isKeyboard && this.elements.rhythmButtons.some(button => button.classList.contains('selected'));
     }
 
     exibirInterfaceDePesquisaPesquisando() {
