@@ -299,7 +299,7 @@ class MusicTheory {
         this.notasAcordes = Object.keys(this.notasAcordesJson);
 
         this.acordeMap = {
-            'c#': 'c_', 'd#': 'd_', 'e#': 'e_', 'f#': 'f_', 'g#': 'g_', 'a#': 'a_', 'b#': 'b_'
+            'c#': 'c_', 'd#': 'd_', 'e#': 'e_', 'f#': 'f_', 'g#': 'g_', 'a#': 'a_', 'b#': 'b_', 'cb': 'b', 'db': 'c_', 'eb': 'd_', 'fb': 'e', 'gb': 'f_', 'ab': 'g_', 'bb': 'a_'
         };
 
         this.tonsMaiores = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
@@ -377,6 +377,25 @@ class MusicTheory {
         };
 
         this.notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
+    }
+
+    simplificarAcorde(acorde) {
+        if (!acorde || typeof acorde !== 'string') return '';
+
+        let limpo = acorde.trim();
+        limpo = limpo.split('/')[0];
+
+        const regex = /^([A-G][#b]?)(.*)$/;
+        const match = limpo.match(regex);
+
+        if (!match) return acorde;
+
+        const tonica = match[1];
+        const resto = match[2];
+        const ehMenor = /^(m(?!aj)|min|-)/.test(resto);        
+        const tonicaNormalizada = this.acordeMap[tonica.toLowerCase()] || tonica.toLowerCase();
+
+        return tonicaNormalizada + (ehMenor ? 'm' : '');
     }
 
     getAcordeNotas(acordeNome) {

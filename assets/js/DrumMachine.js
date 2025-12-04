@@ -105,6 +105,22 @@ class DrumMachine {
                 const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
                 this.buffers.set(`${instrument}-cima_${nota}`, buffer);
             })());
+
+            const violaoFileNameMenor = `${this.audioPath}/${instrument}_${nota}m.ogg`;
+            loadPromises.push((async () => {
+                const resp = await fetch(violaoFileNameMenor);
+                const arrayBuffer = await resp.arrayBuffer();
+                const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                this.buffers.set(`${instrument}-baixo_${nota}m`, buffer);
+            })());
+
+            const violao1FileNameMenor = `${this.audioPath}/${instrument}_${nota}m1.ogg`;
+            loadPromises.push((async () => {
+                const resp = await fetch(violao1FileNameMenor);
+                const arrayBuffer = await resp.arrayBuffer();
+                const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                this.buffers.set(`${instrument}-cima_${nota}`, buffer);
+            })());
         });
 
         await Promise.all(loadPromises);
@@ -280,7 +296,7 @@ class DrumMachine {
 
     playViolao(instrument, time, volume) {
         if (instrument.includes('violao') && this.cifraPlayer.acordeTocando) {
-            const violao = instrument + '_' + this.cifraPlayer.baixo;
+            const violao = instrument + '_' + this.cifraPlayer.acordeTocando;
             const buffer = this.buffers.get(violao);
             if (buffer && volume > 0) {
                 //const delayedTime = (this.currentStep === 1) ? time + this.atrasoMudarNota : time;

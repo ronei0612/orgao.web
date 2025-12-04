@@ -256,7 +256,7 @@ class CifraPlayer {
 
     tocarAcorde(acorde) {
         acorde = this.musicTheory.getAcorde(acorde, this.tomAtual);
-        this.acordeTocando = acorde;
+        this.acordeTocando = this.musicTheory.simplificarAcorde(acorde);
 
         this.desabilitarSelectSaves();
 
