@@ -8,7 +8,7 @@ class App {
         this.draggableController = new DraggableController(this.elements.draggableControls);        
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
-        this.version = '4.6';
+        this.version = '4.7';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -41,7 +41,7 @@ class App {
         this.bateriaUI = new BateriaUI(this.elements, drumMachine, this.uiController, this.cifraPlayer);
         await this.bateriaUI.init();
 
-        if (window.location.href.includes(this.BASE_URL)) {
+        if (this.BASE_URL.includes('http')) {
             document.getElementById('downloadStylesLink').parentElement.classList.remove('d-none');
             document.getElementById('styleButtons').classList.remove('d-none');
             document.getElementById('drumEditor').classList.remove('d-none');
