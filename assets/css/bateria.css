@@ -223,8 +223,8 @@ body.dark-mode .instrument-button img {
         filter: brightness(0) invert(1);
     }
 
-#bpm-input {
-    /*width: 24px;*/
+#bpm-container {
+    width: 330px;
 }
 
 #increment-bpm-10 {
