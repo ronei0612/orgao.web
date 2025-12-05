@@ -180,6 +180,7 @@ class DrumMachine {
 
         if (this.currentStep === this.stepFill && this.onMeasureEnd) {
             this.stepFill = 2;
+            this.fecharChimbal();
             this.onMeasureEnd();
         }
     }
