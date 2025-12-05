@@ -14,8 +14,8 @@ class DrumMachine {
             { name: 'Caixa', icon: 'caixa.svg', file: this.audioPath + 'caixa.ogg', somAlternativo: this.audioPath + 'aro.ogg' },
             { name: 'Bumbo', icon: 'bumbo.svg', file: this.audioPath + 'bumbo.ogg', somAlternativo: null },
             { name: 'Meia-Lua', icon: 'meiaLua.svg', file: this.audioPath + 'meialua.ogg', somAlternativo: this.audioPath + 'meialua2.ogg' },
-            { name: 'Violao-Baixo', icon: 'violao.svg', file: null, somAlternativo: null },
-            { name: 'Violao-Cima', icon: 'violao.svg', file: null, somAlternativo: null },
+            { name: 'Violao-Baixo', icon: 'violao.svg', file: null, somAlternativo: 'violao_' },
+            { name: 'Violao-Cima', icon: 'violao.svg', file: null, somAlternativo: 'violao_' },
             { name: 'Baixo', icon: 'baixo.svg', file: null, somAlternativo: null }
         ];
         this.isPlaying = false;
@@ -71,10 +71,10 @@ class DrumMachine {
                 this.buffers.set(instrument.name.toLowerCase(), audioBuffer);
 
                 if (instrument.somAlternativo) {
-                    const response3 = await fetch(instrument.somAlternativo);
-                    const arrayBuffer3 = await response3.arrayBuffer();
-                    const audioBuffer3 = await this.audioContext.decodeAudioData(arrayBuffer3);
-                    this.buffers.set(instrument.name.toLowerCase() + '-alt', audioBuffer3);
+                    const responseAlt = await fetch(instrument.somAlternativo);
+                    const arrayBufferAlt = await responseAlt.arrayBuffer();
+                    const audioBufferAlt = await this.audioContext.decodeAudioData(arrayBufferAlt);
+                    this.buffers.set(instrument.name.toLowerCase() + '-alt', audioBufferAlt);
                 }
             })());
         });
@@ -123,6 +123,13 @@ class DrumMachine {
                 this.buffers.set(`${instrument}-cima_${nota}`, buffer);
             })());
         });
+
+        const violaoAlt = `${this.audioPath}/violao_.ogg`;
+        const responseViolaoAlt = await fetch(violaoAlt);
+        const arrayBufferViolaoAlt = await responseViolaoAlt.arrayBuffer();
+        const audioBufferViolaoAlt = await this.audioContext.decodeAudioData(arrayBufferViolaoAlt);
+        this.buffers.set('violao-baixo-alt', audioBufferViolaoAlt);
+        this.buffers.set('violao-cima-alt', audioBufferViolaoAlt);
 
         await Promise.all(loadPromises);
     }
