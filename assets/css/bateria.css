@@ -223,6 +223,18 @@ body.dark-mode .instrument-button img {
         filter: brightness(0) invert(1);
     }
 
+#bpm-container {
+    width: 330px;
+}
+
+#increment-bpm-10 {
+    font-size: small;
+}
+
+#decrement-bpm-10 {
+    font-size: small;
+}
+
 @keyframes blinker {
     50% {
         opacity: 0.5;
