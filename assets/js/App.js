@@ -8,7 +8,7 @@ class App {
         this.draggableController = new DraggableController(this.elements.draggableControls);        
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
-        this.version = '4.7';
+        this.version = '4.8';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -357,12 +357,14 @@ class App {
             this.cifraPlayer.instrumento = 'epiano';
             this.cifraPlayer.attack = 0;
             this.elements.bateriaWrapper.classList.remove('d-none');
+            this.cifraPlayer.atualizarVolumeStringsParaEpiano();
         }
         else {
             this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/piano.svg';
             this.cifraPlayer.instrumento = 'orgao';
             this.cifraPlayer.attack = 0.2;
             this.elements.bateriaWrapper.classList.add('d-none');
+            this.cifraPlayer.atualizarVolumeStringsParaOrgao();
         }
     }
 

@@ -14,12 +14,13 @@ class DrumMachine {
             { name: 'Caixa', icon: 'caixa.svg', file: this.audioPath + 'caixa.ogg', somAlternativo: this.audioPath + 'aro.ogg' },
             { name: 'Bumbo', icon: 'bumbo.svg', file: this.audioPath + 'bumbo.ogg', somAlternativo: null },
             { name: 'Meia-Lua', icon: 'meiaLua.svg', file: this.audioPath + 'meialua.ogg', somAlternativo: this.audioPath + 'meialua2.ogg' },
-            { name: 'Violao-Baixo', icon: 'violao.svg', file: null, somAlternativo: null },
-            { name: 'Violao-Cima', icon: 'violao.svg', file: null, somAlternativo: null },
+            { name: 'Violao-Baixo', icon: 'violao.svg', file: null, somAlternativo: 'violao_' },
+            { name: 'Violao-Cima', icon: 'violao.svg', file: null, somAlternativo: 'violao_' },
             { name: 'Baixo', icon: 'baixo.svg', file: null, somAlternativo: null }
         ];
         this.isPlaying = false;
         this.currentStep = 1;
+        this.stepFill = 2;
         this.nextNoteTime = 0;
         this.scheduleAheadTime = 0.1;
         this.lookahead = 25.0;
@@ -70,10 +71,10 @@ class DrumMachine {
                 this.buffers.set(instrument.name.toLowerCase(), audioBuffer);
 
                 if (instrument.somAlternativo) {
-                    const response3 = await fetch(instrument.somAlternativo);
-                    const arrayBuffer3 = await response3.arrayBuffer();
-                    const audioBuffer3 = await this.audioContext.decodeAudioData(arrayBuffer3);
-                    this.buffers.set(instrument.name.toLowerCase() + '-alt', audioBuffer3);
+                    const responseAlt = await fetch(instrument.somAlternativo);
+                    const arrayBufferAlt = await responseAlt.arrayBuffer();
+                    const audioBufferAlt = await this.audioContext.decodeAudioData(arrayBufferAlt);
+                    this.buffers.set(instrument.name.toLowerCase() + '-alt', audioBufferAlt);
                 }
             })());
         });
@@ -123,6 +124,13 @@ class DrumMachine {
             })());
         });
 
+        const violaoAlt = `${this.audioPath}/violao_.ogg`;
+        const responseViolaoAlt = await fetch(violaoAlt);
+        const arrayBufferViolaoAlt = await responseViolaoAlt.arrayBuffer();
+        const audioBufferViolaoAlt = await this.audioContext.decodeAudioData(arrayBufferViolaoAlt);
+        this.buffers.set('violao-baixo-alt', audioBufferViolaoAlt);
+        this.buffers.set('violao-cima-alt', audioBufferViolaoAlt);
+
         await Promise.all(loadPromises);
     }
 
@@ -147,7 +155,7 @@ class DrumMachine {
         if (volume === 3) {
             const buffer = this.buffers.get(instrument + '-alt');
             if (buffer) {
-                this.playSound(buffer, time, 1, true);
+                this.playSound(buffer, time, 1, instrument === 'chimbal');
             }
         }
         else {
@@ -168,9 +176,12 @@ class DrumMachine {
 
         if (this.currentStep > this.numSteps) {
             this.currentStep = 1;
-            if (this.onMeasureEnd) {
-                this.onMeasureEnd();
-            }
+        }
+
+        if (this.currentStep === this.stepFill && this.onStepsEnd) {
+            this.stepFill = 2;
+            this.fecharChimbal();
+            this.onStepsEnd();
         }
     }
 
@@ -202,11 +213,6 @@ class DrumMachine {
             const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
             const instrumentButton = track.querySelector('.instrument-button');
 
-            // Tocar epiano sempre que houver um step agendado (não exclua essas linhas, deixe para backup)
-            //if (step) {
-            //    this.playEpiano();
-            //}
-
             if (!step || !instrumentButton.classList.contains('selected')) return;
 
             this.playEpiano();
@@ -215,7 +221,6 @@ class DrumMachine {
             if (isNaN(volume) || volume <= 0) return;
 
             this.fecharChimbal(instrument, volume);
-
             this.scheduleNote(instrument, this.currentStep, this.nextNoteTime, volume);
             step.classList.add('playing');
             setTimeout(() => step.classList.remove('playing'), 100);

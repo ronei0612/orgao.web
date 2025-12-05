@@ -139,15 +139,18 @@ class CifraPlayer {
         const VOLUME_CONFIG = {
             'grave': {
                 'orgao': 1.0,
-                'strings': 0.9
+                'strings': 0.9,
+                'epiano': 1.0
             },
             'baixo': {
                 'orgao': 1.0,
-                'strings': 0.8
+                'strings': 0.8,
+                'epiano': 1.0
             },
             'agudo': {
                 'orgao': 0.6,
-                'strings': 1.0
+                'strings': 1.0,
+                'epiano': 1.0
             }
         };
 
@@ -536,5 +539,27 @@ class CifraPlayer {
         if (!this.parado && this.acordeTocando) {
             this.iniciarReproducao();
         }
+    }
+
+    atualizarVolumeStringsParaEpiano() {
+        Object.keys(this.audioContextManager.instrumentSettings).forEach(key => {
+            if (key.startsWith('strings_')) {
+                this.audioContextManager.instrumentSettings[key].volume = 1.0;
+            }
+        });
+    }
+
+    atualizarVolumeStringsParaOrgao() {
+        Object.keys(this.audioContextManager.instrumentSettings).forEach(key => {
+            if (key.startsWith('strings_')) {
+                if (key.includes('_grave')) {
+                    this.audioContextManager.instrumentSettings[key].volume = 0.9;
+                } else if (key.includes('_baixo')) {
+                    this.audioContextManager.instrumentSettings[key].volume = 0.8;
+                } else {
+                    this.audioContextManager.instrumentSettings[key].volume = 1.0;
+                }
+            }
+        });
     }
 }

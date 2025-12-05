@@ -414,6 +414,10 @@ class BateriaUI {
     }
 
     selectFill(rhythmButton, rhythmKey, rhythmCode) {
+        if (!this.drumMachine.isPlaying) {
+            this.drumMachine.stepFill = 1;
+        }
+
         rhythmButton.classList.add('fill', 'pending');
 
         // Se estiver tocando: agendar revert para o fim da medida
@@ -477,7 +481,7 @@ class BateriaUI {
      * Quando o compasso termina, verifica se há um ritmo pendente.
      * Se houver, carrega o ritmo apropriado com base no estado do botão (fill ou não).
      */
-    onMeasureEnd() {
+    onStepsEnd() {
         if (this.pendingRhythm && this.drumMachine.isPlaying) {
             const selectedButton = document.getElementById(`rhythm-${this.pendingRhythm.toLowerCase()}`);
 
@@ -556,12 +560,16 @@ class BateriaUI {
         this.elements.saveRhythmButton.addEventListener('click', () => this.saveRhythm());
 
         // BPM / Steps inputs + increment/decrement
-        document.querySelector('.increment-bpm').addEventListener('click', () => {
+        document.getElementById('increment-bpm-10').addEventListener('click', () => {
+            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 10;
+            this.drumMachine.setBPM(parseInt(this.elements.bpmInput.value, 10));
+        });
+        document.getElementById('increment-bpm').addEventListener('click', () => {
             this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
             this.drumMachine.setBPM(parseInt(this.elements.bpmInput.value, 10));
         });
-        document.querySelector('.decrement-bpm').addEventListener('click', () => {
-            const bpm = Math.max(1, (parseInt(this.elements.bpmInput.value, 10) || 1) - 1);
+        document.getElementById('decrement-bpm-10').addEventListener('click', () => {
+            const bpm = Math.max(1, (parseInt(this.elements.bpmInput.value, 10) || 1) - 10);
             this.elements.bpmInput.value = bpm;
             this.drumMachine.setBPM(bpm);
         });
@@ -600,17 +608,17 @@ class BateriaUI {
         this.elements.editStyleButton.addEventListener('click', () => this.editStyle());
         this.elements.deleteStyleButton.addEventListener('click', () => this.deleteStyle());
 
-        // Hook DrumMachine measure end to UI (if DrumMachine exposes onMeasureEnd)
-        if (typeof this.drumMachine.onMeasureEnd === 'function') {
-            const original = this.drumMachine.onMeasureEnd.bind(this.drumMachine);
-            this.drumMachine.onMeasureEnd = () => {
+        // Hook DrumMachine measure end to UI (if DrumMachine exposes onStepsEnd)
+        if (typeof this.drumMachine.onStepsEnd === 'function') {
+            const original = this.drumMachine.onStepsEnd.bind(this.drumMachine);
+            this.drumMachine.onStepsEnd = () => {
                 // preserve original behavior if any
                 try { original(); } catch { }
-                this.onMeasureEnd();
+                this.onStepsEnd();
             };
         } else {
-            // provide a safe onMeasureEnd to be used by DrumMachine
-            this.drumMachine.onMeasureEnd = this.onMeasureEnd.bind(this);
+            // provide a safe onStepsEnd to be used by DrumMachine
+            this.drumMachine.onStepsEnd = this.onStepsEnd.bind(this);
         }
     }
 }
