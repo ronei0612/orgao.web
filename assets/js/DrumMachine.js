@@ -120,7 +120,7 @@ class DrumMachine {
                 const resp = await fetch(violao1FileNameMenor);
                 const arrayBuffer = await resp.arrayBuffer();
                 const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                this.buffers.set(`${instrument}-cima_${nota}`, buffer);
+                this.buffers.set(`${instrument}-cima_${nota}m`, buffer);
             })());
         });
 
