@@ -556,12 +556,16 @@ class BateriaUI {
         this.elements.saveRhythmButton.addEventListener('click', () => this.saveRhythm());
 
         // BPM / Steps inputs + increment/decrement
-        document.querySelector('.increment-bpm').addEventListener('click', () => {
+        document.getElementById('increment-bpm-10').addEventListener('click', () => {
+            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 10;
+            this.drumMachine.setBPM(parseInt(this.elements.bpmInput.value, 10));
+        });
+        document.getElementById('increment-bpm').addEventListener('click', () => {
             this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
             this.drumMachine.setBPM(parseInt(this.elements.bpmInput.value, 10));
         });
-        document.querySelector('.decrement-bpm').addEventListener('click', () => {
-            const bpm = Math.max(1, (parseInt(this.elements.bpmInput.value, 10) || 1) - 1);
+        document.getElementById('decrement-bpm-10').addEventListener('click', () => {
+            const bpm = Math.max(1, (parseInt(this.elements.bpmInput.value, 10) || 1) - 10);
             this.elements.bpmInput.value = bpm;
             this.drumMachine.setBPM(bpm);
         });
