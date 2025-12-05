@@ -20,7 +20,6 @@ class DrumMachine {
         ];
         this.isPlaying = false;
         this.currentStep = 1;
-        this.stepFill = 2;
         this.nextNoteTime = 0;
         this.scheduleAheadTime = 0.1;
         this.lookahead = 25.0;
@@ -176,12 +175,10 @@ class DrumMachine {
 
         if (this.currentStep > this.numSteps) {
             this.currentStep = 1;
-        }
-
-        if (this.currentStep === this.stepFill && this.onStepsEnd) {
-            this.stepFill = 2;
-            this.fecharChimbal();
-            this.onStepsEnd();
+            if (this.onStepsEnd) {
+                this.fecharChimbal();
+                this.onStepsEnd();
+            }
         }
     }
 
