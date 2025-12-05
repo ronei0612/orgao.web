@@ -481,7 +481,7 @@ class BateriaUI {
      * Quando o compasso termina, verifica se há um ritmo pendente.
      * Se houver, carrega o ritmo apropriado com base no estado do botão (fill ou não).
      */
-    onMeasureEnd() {
+    onStepsEnd() {
         if (this.pendingRhythm && this.drumMachine.isPlaying) {
             const selectedButton = document.getElementById(`rhythm-${this.pendingRhythm.toLowerCase()}`);
 
@@ -608,17 +608,17 @@ class BateriaUI {
         this.elements.editStyleButton.addEventListener('click', () => this.editStyle());
         this.elements.deleteStyleButton.addEventListener('click', () => this.deleteStyle());
 
-        // Hook DrumMachine measure end to UI (if DrumMachine exposes onMeasureEnd)
-        if (typeof this.drumMachine.onMeasureEnd === 'function') {
-            const original = this.drumMachine.onMeasureEnd.bind(this.drumMachine);
-            this.drumMachine.onMeasureEnd = () => {
+        // Hook DrumMachine measure end to UI (if DrumMachine exposes onStepsEnd)
+        if (typeof this.drumMachine.onStepsEnd === 'function') {
+            const original = this.drumMachine.onStepsEnd.bind(this.drumMachine);
+            this.drumMachine.onStepsEnd = () => {
                 // preserve original behavior if any
                 try { original(); } catch { }
-                this.onMeasureEnd();
+                this.onStepsEnd();
             };
         } else {
-            // provide a safe onMeasureEnd to be used by DrumMachine
-            this.drumMachine.onMeasureEnd = this.onMeasureEnd.bind(this);
+            // provide a safe onStepsEnd to be used by DrumMachine
+            this.drumMachine.onStepsEnd = this.onStepsEnd.bind(this);
         }
     }
 }

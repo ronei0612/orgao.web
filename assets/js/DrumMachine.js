@@ -155,7 +155,7 @@ class DrumMachine {
         if (volume === 3) {
             const buffer = this.buffers.get(instrument + '-alt');
             if (buffer) {
-                this.playSound(buffer, time, 1, true);
+                this.playSound(buffer, time, 1, instrument === 'chimbal');
             }
         }
         else {
@@ -178,10 +178,10 @@ class DrumMachine {
             this.currentStep = 1;
         }
 
-        if (this.currentStep === this.stepFill && this.onMeasureEnd) {
+        if (this.currentStep === this.stepFill && this.onStepsEnd) {
             this.stepFill = 2;
             this.fecharChimbal();
-            this.onMeasureEnd();
+            this.onStepsEnd();
         }
     }
 
@@ -221,7 +221,6 @@ class DrumMachine {
             if (isNaN(volume) || volume <= 0) return;
 
             this.fecharChimbal(instrument, volume);
-
             this.scheduleNote(instrument, this.currentStep, this.nextNoteTime, volume);
             step.classList.add('playing');
             setTimeout(() => step.classList.remove('playing'), 100);
