@@ -1531,11 +1531,11 @@
           "selected": true
         },
         "caixa": {
-          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0 ],
           "selected": true
         },
         "bumbo": {
-          "steps": [ 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "steps": [ 0, 0, 1, 0, 0, 0, 1, 0 ],
           "selected": true
         },
         "meia-lua": {
@@ -1543,16 +1543,16 @@
           "selected": false
         },
         "violao-baixo": {
-          "steps": [ 2, 0, 0, 0, 1, 0, 0, 0 ],
+          "steps": [ 3, 0, 3, 0, 3, 0, 3, 0 ],
           "selected": true
         },
         "violao-cima": {
-          "steps": [ 0, 0, 2, 0, 0, 0, 2, 0 ],
-          "selected": true
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
         },
         "baixo": {
-          "steps": [ 1, 0, 0, 0, 2, 0, 0, 0 ],
-          "selected": true
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
         },
         "numSteps": 8
       },
@@ -1601,8 +1601,8 @@
       },
       "D-fill": {
         "prato": {
-          "steps": [ 3, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": true
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
         },
         "tom": {
           "steps": [ 0, 0, 0, 0, 0, 0, 1, 0 ],
@@ -1613,7 +1613,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 0, 3, 0, 0, 0, 0, 0, 0 ],
+          "steps": [ 3, 3, 0, 0, 0, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -1687,11 +1687,11 @@
       },
       "E-fill": {
         "prato": {
-          "steps": [ 3, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": true
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
         },
         "tom": {
-          "steps": [ 0, 2, 1, 2, 0, 0, 0, 0 ],
+          "steps": [ 2, 2, 1, 2, 0, 0, 0, 0 ],
           "selected": true
         },
         "surdo": {
