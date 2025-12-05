@@ -414,6 +414,10 @@ class BateriaUI {
     }
 
     selectFill(rhythmButton, rhythmKey, rhythmCode) {
+        if (!this.drumMachine.isPlaying) {
+            this.drumMachine.stepFill = 1;
+        }
+
         rhythmButton.classList.add('fill', 'pending');
 
         // Se estiver tocando: agendar revert para o fim da medida
