@@ -50,6 +50,8 @@ class DrumMachine {
             // fallback mínimo: mantém this.styles como null ou vazio para que UI trate
             this.styles = this.styles || null;
         }
+
+        this.updateFillBlink(this.bpm);
     }
 
     // opcional helper para acessar styles seguro
