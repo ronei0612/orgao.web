@@ -212,7 +212,8 @@ class DrumMachine {
 
             if (!step || !instrumentButton.classList.contains('selected')) return;
 
-            this.playEpiano();
+            if (step.classList.contains('active') || step.classList.contains('low-volume') || step.classList.contains('third-volume'))
+                this.playEpiano();
 
             const volume = parseInt(step.dataset.volume);
             if (isNaN(volume) || volume <= 0) return;
