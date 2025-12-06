@@ -433,6 +433,8 @@ class BateriaUI {
         const styleName = this.elements.styleSelect.value || this.defaultStyle;
         const rhythmCode = rhythmKey.replace('rhythm-', '').toUpperCase();
 
+        this.toggleStrings(rhythmCode);
+
         if (this.drumMachine.isPlaying && !rhythmButton.classList.contains('selected')) {
             rhythmButton.classList.add('selected');
             this.selectFill(rhythmButton, `${styleName}-${rhythmCode}-fill`, rhythmCode);
@@ -464,6 +466,15 @@ class BateriaUI {
 
         if (!this.cifraPlayer.parado) {
             this.play();
+        }
+    }
+
+    toggleStrings(rhythmCode) {
+        if (rhythmCode === 'A' || rhythmCode === 'B' || rhythmCode === 'C') {
+            this.uiController.desativarNotesButton();
+        }
+        else if (rhythmCode === 'D' || rhythmCode === 'E') {
+            this.uiController.ativarNotesButton();
         }
     }
 

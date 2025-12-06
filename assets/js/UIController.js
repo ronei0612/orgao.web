@@ -462,4 +462,12 @@ class UIController {
             doc.head.appendChild(style);
         }
     }
+
+    ativarNotesButton() {
+        this.elements.notesButton.classList.add('pressed');
+    }
+
+    desativarNotesButton() {
+        this.elements.notesButton.classList.remove('pressed');
+    }
 }
