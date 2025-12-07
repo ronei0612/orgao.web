@@ -470,10 +470,22 @@ class UIController {
     }
 
     ativarNotesButton() {
+        if (this.elements.notesButton.classList.contains('notaSolo')) {
+            var icon = this.elements.notesButton.querySelector('i');
+            icon.classList.remove('bi-music-note');
+            icon.classList.add('bi-music-note-beamed');
+            this.elements.notesButton.classList.remove('notaSolo');
+        }
         this.elements.notesButton.classList.add('pressed');
     }
 
     desativarNotesButton() {
+        if (this.elements.notesButton.classList.contains('notaSolo')) {
+            var icon = this.elements.notesButton.querySelector('i');
+            icon.classList.remove('bi-music-note');
+            icon.classList.add('bi-music-note-beamed');
+            this.elements.notesButton.classList.remove('notaSolo');
+        }
         this.elements.notesButton.classList.remove('pressed');
     }
 }
