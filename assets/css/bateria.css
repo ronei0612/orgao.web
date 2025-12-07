@@ -177,9 +177,9 @@ body.dark-mode #bateriaWrapper .btn-outline-secondary {
             border-color: var(--drum-highlight);
         }
 
-.rhythm-button.pending {
+ .rhythm-button.pending {
     animation: blinker var(--fill-blink-duration, 1s) linear infinite;
-}
+} 
 
 .rhythm-buttons button.fill {
     background-color: var(--drum-fill);
@@ -222,6 +222,19 @@ body.dark-mode .instrument-button img {
     .instrument-button.selected img {
         filter: brightness(0) invert(1);
     }
+
+ .rhythm-buttons button.selected {
+    animation: blinker var(--fill-blink-duration, 1s) linear infinite;
+} 
+
+.rhythm-button.flash-weak {
+    background-color: #00d2ff !important;
+    transition: background-color 0.1s;
+}
+.rhythm-button.flash-accent {
+    background-color: #ffc107 !important;
+    transition: background-color 0.1s;
+}
 
 #bpm-container {
     width: 330px;
