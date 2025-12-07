@@ -289,6 +289,7 @@ class BateriaUI {
      * Cria um elemento de faixa para cada instrumento e os adiciona ao contêiner de faixas.
      */
     initializeTracks() {
+        this.calcularCompasso(this.elements.numStepsInput.value);
         const frag = document.createDocumentFragment();
         (this.drumMachine.instruments || []).forEach(inst => {
             frag.appendChild(this.createTrack(inst));
@@ -462,11 +463,21 @@ class BateriaUI {
             this.selectedRhythm = rhythmCode;
             this.pendingRhythm = rhythmCode;
             this.pendingButton = rhythmButton;
-        }     
+        }
 
         if (!this.cifraPlayer.parado) {
             this.play();
         }
+    }
+    
+    // Calcula quantos tempos tem o compasso baseado no número de steps
+    calcularCompasso(numSteps) {
+        let temposCompasso = 4;
+        if (numSteps === 8) temposCompasso = 2;
+        else if (numSteps === 12) temposCompasso = 3;
+        else if (numSteps === 24) temposCompasso = 6;
+
+        this.drumMachine.stepsPorTempo = numSteps / temposCompasso;
     }
 
     toggleStrings(rhythmCode) {
@@ -485,7 +496,7 @@ class BateriaUI {
     unSelectRhythmButtons(rhythmButton = null) {
         this.elements.rhythmButtons.forEach(button => {
             if (button !== rhythmButton) {
-                button.classList.remove('selected', 'fill', 'pending');
+                button.classList.remove('selected', 'fill', 'pending', 'flash-accent', 'flash-weak');
             }
         });
     }
@@ -610,9 +621,9 @@ class BateriaUI {
         });
 
         this.elements.numStepsInput.addEventListener('change', () => {
-            const ns = Math.max(1, parseInt(this.elements.numStepsInput.value, 10) || 1);
-            this.elements.numStepsInput.value = ns;
-            this.drumMachine.setNumSteps(ns);
+            const numSteps = Math.max(1, parseInt(this.elements.numStepsInput.value, 10) || 1);
+            this.elements.numStepsInput.value = numSteps;
+            this.drumMachine.setNumSteps(numSteps);
             this.initializeTracks();
         });
 

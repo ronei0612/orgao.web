@@ -30,6 +30,7 @@ class DrumMachine {
         this.lastChimbalAbertoSource = null;
         this.styles = null;
         this.atrasoMudarNota = 0.03; // 30ms
+        this.stepsPorTempo = null;
 
         this.init();
     }
@@ -206,7 +207,16 @@ class DrumMachine {
         }
     }
 
+    // Piscar no início de cada tempo
     scheduleCurrentStep() {
+        const stepAtual = this.currentStep;
+        const tempoAtual = Math.floor((stepAtual - 1) / this.stepsPorTempo) + 1;
+        const isInicioTempo = ((stepAtual - 1) % this.stepsPorTempo === 0);
+
+        if (isInicioTempo) {
+            this.blinkSelectedRhythmButton(tempoAtual);
+        }
+
         document.querySelectorAll('.track').forEach(track => {
             const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
             const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
@@ -225,6 +235,22 @@ class DrumMachine {
             step.classList.add('playing');
             setTimeout(() => step.classList.remove('playing'), 100);
         });
+    }
+
+    /**
+     * Pisca o botão do ritmo selecionado conforme a batida do compasso.
+     * @param {number} beat - Número da batida atual (1 = acento)
+     */
+    blinkSelectedRhythmButton(beat) {
+        const selectedButton = document.querySelector('.rhythm-button.selected');
+        selectedButton.classList.remove('flash-accent', 'flash-weak');
+        void selectedButton.offsetWidth; // Força reflow
+
+        if (beat === 1) {
+            selectedButton.classList.add('flash-accent');
+        } else {
+            selectedButton.classList.add('flash-weak');
+        }
     }
 
     timerWorker() {

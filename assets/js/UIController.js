@@ -134,6 +134,7 @@ class UIController {
     exibirBotaoPlay() {
         this.elements.playButton.classList.remove('d-none', 'pressed');
         this.elements.stopButton.classList.add('d-none', 'pulse');
+        this.resetAnimacaoRitmo();
     }
 
     exibirBotaoStop() {
@@ -205,6 +206,11 @@ class UIController {
     ritmoAtivo() {
         const isKeyboard = this.elements.orgaoInstrumentButton.firstElementChild.src.includes('teclado.svg');
         return isKeyboard && this.elements.rhythmButtons.some(button => button.classList.contains('selected'));
+    }
+
+    resetAnimacaoRitmo() {
+        const selected = Array.from(this.elements.rhythmButtons).find(btn => btn.classList.contains('selected'));
+        if (selected) selected.classList.remove('flash-accent', 'flash-weak');
     }
 
     exibirInterfaceDePesquisaPesquisando() {
