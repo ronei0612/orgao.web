@@ -1,5 +1,5 @@
 {
-  "styles": [ "4/4", "4/8", "3/4", "2/4", "2/8", "8-beat", "Baiao", "6/8" ],
+  "styles": [ "4/4", "4/8", "3/4", "2/4", "2/8", "Baiao", "6/8", "8–beat", "16–beat" ],
   "data": {
     "4/4": {
       "A": {
@@ -1293,352 +1293,6 @@
         "baixo": {
           "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 ],
           "selected": true
-        },
-        "numSteps": 16
-      }
-    },
-    "8-beat": {
-      "A": {
-        "prato": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "tom": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "surdo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "chimbal": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "caixa": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "bumbo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "meia-lua": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-cima": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "numSteps": 16
-      },
-      "A-fill": {
-        "prato": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "tom": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "surdo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "chimbal": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "caixa": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "bumbo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "meia-lua": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-cima": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "numSteps": 16
-      },
-      "B": {
-        "prato": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "tom": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "surdo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "chimbal": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "caixa": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "bumbo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "meia-lua": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-cima": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "numSteps": 16
-      },
-      "B-fill": {
-        "prato": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "tom": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "surdo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "chimbal": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "caixa": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "bumbo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "meia-lua": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-cima": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "numSteps": 16
-      },
-      "C": {
-        "prato": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "tom": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "surdo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "chimbal": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "caixa": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "bumbo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "meia-lua": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-cima": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "numSteps": 16
-      },
-      "C-fill": {
-        "prato": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "tom": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "surdo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "chimbal": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "caixa": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "bumbo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "meia-lua": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-cima": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "numSteps": 16
-      },
-      "D": {
-        "prato": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "tom": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "surdo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "chimbal": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "caixa": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "bumbo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "meia-lua": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-cima": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "numSteps": 16
-      },
-      "D-fill": {
-        "prato": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "tom": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "surdo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "chimbal": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "caixa": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "bumbo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "meia-lua": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "violao-cima": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
-        },
-        "baixo": {
-          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-          "selected": false
         },
         "numSteps": 16
       }
@@ -3369,6 +3023,870 @@
           "selected": true
         },
         "numSteps": 24
+      }
+    },
+    "8–beat": {
+      "A": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "bumbo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "numSteps": 16
+      },
+      "A-fill": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "bumbo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "numSteps": 16
+      },
+      "B": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "B-fill": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "C": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0 ],
+          "selected": true
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "C-fill": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0 ],
+          "selected": true
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "D": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0 ],
+          "selected": true
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "D-fill": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0 ],
+          "selected": true
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "E": {
+        "prato": {
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 2, 0, 3, 0, 1, 0, 3, 0, 2, 0, 3, 0, 1, 0, 3, 0 ],
+          "selected": true
+        },
+        "violao-baixo": {
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0 ],
+          "selected": true
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "E-fill": {
+        "prato": {
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 2, 0, 3, 0, 1, 0, 3, 0, 2, 0, 3, 0, 1, 0, 3, 0 ],
+          "selected": true
+        },
+        "violao-baixo": {
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0 ],
+          "selected": true
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      }
+    },
+    "16–beat": {
+      "A": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "bumbo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "numSteps": 16
+      },
+      "A-fill": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "bumbo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "numSteps": 16
+      },
+      "B": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "B-fill": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "C": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "C-fill": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "D": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "D-fill": {
+        "prato": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0 ],
+          "selected": true
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "E": {
+        "prato": {
+          "steps": [ 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 ],
+          "selected": true
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
+      },
+      "E-fill": {
+        "prato": {
+          "steps": [ 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 ],
+          "selected": true
+        },
+        "tom": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "surdo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "chimbal": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "caixa": {
+          "steps": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 ],
+          "selected": true
+        },
+        "bumbo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "meia-lua": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-baixo": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "violao-cima": {
+          "steps": [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": false
+        },
+        "baixo": {
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0 ],
+          "selected": true
+        },
+        "numSteps": 16
       }
     }
   }
