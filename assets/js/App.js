@@ -8,7 +8,7 @@ class App {
         this.draggableController = new DraggableController(this.elements.draggableControls);        
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
-        this.version = '5.6';
+        this.version = '5.7';
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -135,7 +135,7 @@ class App {
             var selectedValue = e.params.data.id;
             appInstance.selectEscolhido(selectedValue);
 
-            if (selectedValue === 'acordes__' || selectedValue === 'bateria__') {
+            if (selectedValue === 'acordes__') {
                 $(this).val(null).trigger('change');
             }
         });
@@ -407,12 +407,12 @@ class App {
     }
 
     async selectEscolhido(selectItem) {
-        if (this.selectItemAntes && this.selectItemAntes !== 'acordes__' && this.selectItemAntes !== '' && this.selectItemAntes !== 'bateria__')
+        if (this.selectItemAntes && this.selectItemAntes !== 'acordes__' && this.selectItemAntes !== '')
             await this.verificarTrocouTom();
 
         this.selectItemAntes = selectItem;
 
-        if (selectItem && selectItem !== 'acordes__' && selectItem !== 'bateria__') {
+        if (selectItem && selectItem !== 'acordes__') {
             const texto = this.localStorageManager.getTextJson(this.LOCAL_STORAGE_SAVES_KEY, selectItem);
             this.showLetraCifra(texto);
         }
@@ -427,10 +427,7 @@ class App {
             this.cifraPlayer.preencherAcordes(tom);
             this.elements.savesSelect.selectedIndex = 0;
 
-            if (selectItem === 'bateria__') {
-                this.uiController.exibirBateria();
-            }
-            else {
+            if (selectItem === 'acordes__') {
                 this.cifraPlayer.preencherIframeCifra('');
             }
         }

@@ -106,10 +106,6 @@ class UIController {
         this.elements.acorde11.textContent = 'B°';
     }
 
-    exibirBateria() {
-        this.elements.iframeCifra.classList.add('d-none');
-    }
-
     esconderBotoesTom() {
         this.elements.tomSelect.innerHTML = '<option value="">Letra</option>';
         this.elements.tomContainer.classList.remove('d-flex');
@@ -161,11 +157,6 @@ class UIController {
         emptyOption.value = 'acordes__';
         emptyOption.text = 'Acordes';
         this.elements.savesSelect.appendChild(emptyOption);
-
-        const bateriaOption = document.createElement('option');
-        bateriaOption.value = 'bateria__';
-        bateriaOption.text = 'Bateria';
-        this.elements.savesSelect.appendChild(bateriaOption);
 
         this.elements.savesSelect.style.color = '';
 
