@@ -70,6 +70,7 @@ class App {
         this.elements.aboutLink.addEventListener('click', () => this.uiController.customAlert(`Projeto de Ronei Costa Soares. version: ${this.version}`, 'Versão'));
         this.elements.downloadSavesLink.addEventListener('click', this.downloadSaves.bind(this));
         this.elements.uploadSavesLink.addEventListener('click', this.uploadSaves.bind(this));
+        this.elements.restoreLink.addEventListener('click', this.restore.bind(this));
         this.elements.downloadStylesLink.addEventListener('click', () => this.downloadStyles());
         this.elements.missaOrdinarioLink.addEventListener('click', () => this.exibirFrame('santamissaFrame'));
         this.elements.stopButton.addEventListener('mousedown', this.handleStopMousedown.bind(this));
@@ -651,6 +652,14 @@ class App {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
+    async restore() {
+        const confirmed = await this.uiController.customConfirm('Tem certeza que deseja restaurar? Isso apagará todas as músicas salvas.');
+        if (confirmed) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
     uploadSaves() {
         let input = document.getElementById('uploadSavesInput');
         if (!input) {
@@ -964,6 +973,7 @@ document.addEventListener('DOMContentLoaded', () => {
         aboutLink: document.getElementById('about'),
         downloadSavesLink: document.getElementById('downloadSavesLink'),
         uploadSavesLink: document.getElementById('uploadSavesLink'),
+        restoreLink: document.getElementById('restoreLink'),
         downloadStylesLink: document.getElementById('downloadStylesLink'),
         liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame'),
         acorde1: document.getElementById('acorde1'),
