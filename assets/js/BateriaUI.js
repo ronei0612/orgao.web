@@ -473,9 +473,10 @@ class BateriaUI {
     // Calcula quantos tempos tem o compasso baseado no número de steps
     calcularCompasso(numSteps) {
         let temposCompasso = 4;
-        if (numSteps === 8) temposCompasso = 2;
-        else if (numSteps === 12) temposCompasso = 3;
-        else if (numSteps === 24) temposCompasso = 6;
+        if (numSteps === '8') temposCompasso = 2;
+        else if (numSteps === '12') temposCompasso = 3;
+        else if (numSteps === '24') temposCompasso = 6;
+        else if (numSteps === '16') temposCompasso = 4;
 
         this.drumMachine.stepsPorTempo = numSteps / temposCompasso;
     }
