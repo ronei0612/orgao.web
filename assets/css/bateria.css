@@ -1,8 +1,5 @@
 :root {
-    /* ... suas vari�veis existentes ... */
     --acorde-botao-azul: #4682B4;
-    /* ... */
-    /* VARI�VEIS DA BATERIA */
     --drum-bg: #ffffff;
     --drum-border: #ced4da;
     --drum-text: #333333;
@@ -18,6 +15,14 @@
     --drum-highlight: #007bff; /* Azul destaque */
     --drum-fill: #17a2b8; /* Ciano */
     --drum-scrollbar: #cccccc;
+    /* NOVAS VARIÁVEIS PARA OS BOTÕES DE RITMO */
+    --rhythm-btn-bg: #e9ecef; /* Cinza claro para inativo */
+    --rhythm-btn-text: #495057;
+    --rhythm-btn-selected-bg: #0d6efd; /* Azul Bootstrap vibrante */
+    --rhythm-btn-fill-bg: #0dcaf0; /* Ciano para viradas */
+    /* Cores do Pisca (Metrônomo) */
+    --beat-accent-color: #ffc107; /* Amarelo Ouro para tempo forte (1) */
+    --beat-weak-color: #ffffff; /* Branco para tempos fracos */
 }
 
 body.dark-mode {
@@ -158,7 +163,6 @@ body.dark-mode #bateriaWrapper .btn-outline-secondary {
     filter: invert(1);
 }
 
-/* Bot�es de Ritmo */
 .rhythm-buttons {
     display: flex;
     gap: 8px;
@@ -168,21 +172,23 @@ body.dark-mode #bateriaWrapper .btn-outline-secondary {
 
     .rhythm-buttons button {
         min-width: 55px;
-        /*min-height: 35px;*/
+        transition: background-color 0.2s, box-shadow 0.3s ease-out, transform 0.1s, filter 0.3s;
     }
 
         .rhythm-buttons button.selected {
-            background-color: var(--drum-highlight);
+            background-color: var(--rhythm-btn-selected-bg) !important;
+            border-color: var(--rhythm-btn-selected-bg);
             color: white;
-            border-color: var(--drum-highlight);
         }
 
  .rhythm-button.pending {
     animation: blinker var(--fill-blink-duration, 1s) linear infinite;
-} 
+}
 
 .rhythm-buttons button.fill {
-    background-color: var(--drum-fill);
+    background-color: var(--rhythm-btn-fill-bg) !important;
+    border-color: var(--rhythm-btn-fill-bg);
+    color: white;
 }
 
 .instrument-button {
@@ -225,15 +231,21 @@ body.dark-mode .instrument-button img {
 
  .rhythm-buttons button.selected {
     animation: blinker var(--fill-blink-duration, 1s) linear infinite;
-} 
+}
 
 .rhythm-button.flash-weak {
-    background-color: #00d2ff !important;
-    transition: background-color 0.1s;
+    filter: brightness(1.15) !important;
+    box-shadow: 0 0 8px var(--beat-weak-color) !important;
+    transition: none; /* Aplica instantaneamente */
 }
+
 .rhythm-button.flash-accent {
-    background-color: #ffc107 !important;
-    transition: background-color 0.1s;
+    /* Não muda o background-color drasticamente, usa brilho e sombra */
+    filter: brightness(1.3) !important;
+    box-shadow: 0 0 15px var(--beat-accent-color), inset 0 0 10px var(--beat-accent-color) !important;
+    border-color: var(--beat-accent-color) !important;
+    transform: scale(1.05); /* Leve pulsação */
+    transition: none; /* Aplica instantaneamente */
 }
 
 #bpm-container {

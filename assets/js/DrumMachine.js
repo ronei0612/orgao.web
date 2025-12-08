@@ -209,13 +209,16 @@ class DrumMachine {
 
     // Piscar no início de cada tempo
     scheduleCurrentStep() {
-        const stepAtual = this.currentStep;
-        const tempoAtual = Math.floor((stepAtual - 1) / this.stepsPorTempo) + 1;
-        const isInicioTempo = ((stepAtual - 1) % this.stepsPorTempo === 0);
+        const tempoAtual = Math.floor((this.currentStep - 1) / this.stepsPorTempo) + 1;
+        const isInicioTempo = ((this.currentStep - 1) % this.stepsPorTempo === 0);
 
         if (isInicioTempo) {
             this.blinkSelectedRhythmButton(tempoAtual);
         }
+
+        const stepImpar = this.currentStep % 2 === 1;
+        if (stepImpar)
+            this.playEpiano();
 
         document.querySelectorAll('.track').forEach(track => {
             const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
@@ -223,9 +226,6 @@ class DrumMachine {
             const instrumentButton = track.querySelector('.instrument-button');
 
             if (!step || !instrumentButton.classList.contains('selected')) return;
-
-            if (step.classList.contains('active') || step.classList.contains('low-volume') || step.classList.contains('third-volume'))
-                this.playEpiano();
 
             const volume = parseInt(step.dataset.volume);
             if (isNaN(volume) || volume <= 0) return;
