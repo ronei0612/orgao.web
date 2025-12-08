@@ -528,13 +528,18 @@ class BateriaUI {
                 // 2. Se o botão Clicado *está* no modo FILL
             } else {
                 // A medida terminou, então ele volta para o ritmo BASE (não importa o estado anterior de this.fillLoaded)
-                const prato2Buffer = this.drumMachine.buffers.get('prato-alt');
-                this.drumMachine.playSound(prato2Buffer, this.drumMachine.nextNoteTime, 1);
-
+                this.playPrato();
                 this.loadRhythm(`${this.elements.styleSelect.value}-${this.selectedRhythm}`);
                 this.fillLoaded = false;
                 selectedButton.classList.remove('fill');
             }
+        }
+    }
+
+    playPrato() {
+        if (this.selectedRhythm === 'C' || this.selectedRhythm === 'D' || this.selectedRhythm === 'E') {
+            const prato2Buffer = this.drumMachine.buffers.get('prato-alt');
+            this.drumMachine.playSound(prato2Buffer, this.drumMachine.nextNoteTime, 1);
         }
     }
 
