@@ -356,6 +356,10 @@ class UIController {
         this.elements.addButton.classList.toggle('rounded-right-custom');
     }
 
+    versionAlert(versionConfig) {
+        this.customAlert(versionConfig.htmlMessage, 'Nova Versão - ' + versionConfig.version, 'Fechar').then(() => { });
+    }
+
     async customAlert(message, title = "Aviso", buttonText = "OK") {
         return new Promise((resolve) => {
             const modal = new bootstrap.Modal(document.getElementById('customAlertModal'));
@@ -364,7 +368,10 @@ class UIController {
             const btnOk = document.getElementById('btnAlertDialogOK');
 
             modalTitle.textContent = title;
-            modalBody.textContent = message;
+            if (/<[a-z][\s\S]*>/i.test(message))
+                modalBody.innerHTML = message;
+            else
+                modalBody.textContent = message;
             btnOk.textContent = buttonText;
 
             btnOk.onclick = null;
