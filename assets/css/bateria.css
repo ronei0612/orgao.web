@@ -181,7 +181,7 @@ body.dark-mode #bateriaWrapper .btn-outline-secondary {
             color: white;
         }
 
- .rhythm-button.pending {
+ .blinking {
     animation: blinker var(--fill-blink-duration, 1s) linear infinite;
 }
 
@@ -228,10 +228,6 @@ body.dark-mode .instrument-button img {
     .instrument-button.selected img {
         filter: brightness(0) invert(1);
     }
-
- .rhythm-buttons button.selected {
-    animation: blinker var(--fill-blink-duration, 1s) linear infinite;
-}
 
 .rhythm-button.flash-weak {
     filter: brightness(1.15) !important;
