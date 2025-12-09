@@ -100,7 +100,7 @@ class BateriaUI {
      */
     loadStyles() {
         const storage = this.getStorageData();
-        const styles = storage.styles || [];
+        const styles = storage?.styles || [];
         this.elements.styleSelect.innerHTML = '';
         if (!styles.length) {
             const option = document.createElement('option');
