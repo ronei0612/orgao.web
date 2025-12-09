@@ -9,7 +9,7 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '5.8.0',
+            version: '5.8.1',
             htmlMessage: `
                 <p>Novo módulo de E-piano e Bateria.</p>
 

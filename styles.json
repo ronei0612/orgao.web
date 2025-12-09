@@ -16,7 +16,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -59,7 +59,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -448,7 +448,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -491,7 +491,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -880,7 +880,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -923,7 +923,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -1312,7 +1312,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -1355,7 +1355,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 3, 0, 0, 0, 3, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -1744,7 +1744,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -1787,7 +1787,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 3, 0, 0, 0, 3, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -2219,7 +2219,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 1, 0, 1, 0, 1, 0 ],
+          "steps": [ 3, 0, 0, 0, 3, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -2651,7 +2651,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+          "steps": [ 3, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -3040,7 +3040,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -3083,7 +3083,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -3472,7 +3472,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 1, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -3515,7 +3515,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0, 1, 0, 2, 0 ],
+          "steps": [ 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -3904,7 +3904,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -3947,7 +3947,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+          "steps": [ 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -4336,7 +4336,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
@@ -4768,7 +4768,7 @@
           "selected": false
         },
         "chimbal": {
-          "steps": [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ],
+          "steps": [ 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 ],
           "selected": true
         },
         "caixa": {
