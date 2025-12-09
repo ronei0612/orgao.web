@@ -8,7 +8,16 @@ class App {
         this.draggableController = new DraggableController(this.elements.draggableControls);        
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
-        this.version = '5.8';
+        this.versionConfig = {
+            version: '5.8.0',
+            htmlMessage: `
+                <p>Novo módulo de E-piano e Bateria.</p>
+
+                👉 <button class="btn btn-outline-secondary mx-1 btn-instrument" aria-pressed="false" type="button">
+                    <img src="./assets/icons/piano.svg">
+                </button>
+            `
+        };
         this.holdTime = 1000;
         this.held = false;
         this.pesquisarNaWeb = false;
@@ -20,9 +29,11 @@ class App {
         this.LOCAL_STORAGE_SAVES_KEY = 'saves';
         this.API_BASE_URL = 'https://apinode-h4wt.onrender.com';
         this.STYLES_LOCAL_KEY = 'drumStylesData';
+        this.VERSION_LOCAL_KEY = 'versao_app';
     }
 
     async init() {
+        this.showVersionAlert();
         this.setupServiceWorker();
         this.loadCifrasLocal();
         this.warmupApi();
@@ -67,7 +78,7 @@ class App {
         this.elements.clearButton.addEventListener('click', () => this.handleClearSearchClick());
         this.elements.liturgiaDiariaLink.addEventListener('click', () => this.exibirFrame('liturgiaDiariaFrame'));
         this.elements.oracoesLink.addEventListener('click', () => this.exibirFrame('oracoesFrame'));
-        this.elements.aboutLink.addEventListener('click', () => this.uiController.customAlert(`Projeto de Ronei Costa Soares. version: ${this.version}`, 'Versão'));
+        this.elements.aboutLink.addEventListener('click', () => this.uiController.customAlert(`Projeto de Ronei Costa Soares. version: ${this.versionConfig.version}`, 'Versão'));
         this.elements.downloadSavesLink.addEventListener('click', this.downloadSaves.bind(this));
         this.elements.uploadSavesLink.addEventListener('click', this.uploadSaves.bind(this));
         this.elements.restoreLink.addEventListener('click', this.restore.bind(this));
@@ -139,6 +150,15 @@ class App {
                 $(this).val(null).trigger('change');
             }
         });
+    }
+
+    showVersionAlert() {
+        const lastSeenVersion = localStorage.getItem(this.VERSION_LOCAL_KEY) || '0.0.0';
+
+        if (lastSeenVersion !== this.versionConfig.version) {
+            this.uiController.versionAlert(this.versionConfig);
+            localStorage.setItem(this.VERSION_LOCAL_KEY, this.versionConfig.version);
+        }
     }
 
     handleSantaMissaLoad() {
@@ -354,17 +374,15 @@ class App {
 
     handleOrgaoInstrumentClick() {
         if (this.cifraPlayer.instrumento === 'orgao') {
-            this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/teclado.svg';
             this.cifraPlayer.instrumento = 'epiano';
             this.cifraPlayer.attack = 0;
-            this.elements.bateriaWrapper.classList.remove('d-none');
+            this.uiController.exibirElementosBateria();
             this.cifraPlayer.atualizarVolumeStringsParaEpiano();
         }
         else {
-            this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/piano.svg';
             this.cifraPlayer.instrumento = 'orgao';
             this.cifraPlayer.attack = 0.2;
-            this.elements.bateriaWrapper.classList.add('d-none');
+            this.uiController.esconderElementosBateria();
             this.cifraPlayer.atualizarVolumeStringsParaOrgao();
         }
     }

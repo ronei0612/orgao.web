@@ -181,7 +181,7 @@ body.dark-mode #bateriaWrapper .btn-outline-secondary {
             color: white;
         }
 
- .rhythm-button.pending {
+.blinking {
     animation: blinker var(--fill-blink-duration, 1s) linear infinite;
 }
 
@@ -229,23 +229,20 @@ body.dark-mode .instrument-button img {
         filter: brightness(0) invert(1);
     }
 
- .rhythm-buttons button.selected {
-    animation: blinker var(--fill-blink-duration, 1s) linear infinite;
-}
-
 .rhythm-button.flash-weak {
-    filter: brightness(1.15) !important;
-    box-shadow: 0 0 8px var(--beat-weak-color) !important;
-    transition: none; /* Aplica instantaneamente */
+    background-color: var(--beat-weak-color) !important;
+    border-color: var(--beat-weak-color) !important;
+    box-shadow: 0 0 15px var(--beat-weak-color) !important;
+    filter: brightness(1.1);
+    transition: none;
 }
 
 .rhythm-button.flash-accent {
-    /* Não muda o background-color drasticamente, usa brilho e sombra */
-    filter: brightness(1.3) !important;
-    box-shadow: 0 0 15px var(--beat-accent-color), inset 0 0 10px var(--beat-accent-color) !important;
+    background-color: var(--beat-accent-color) !important;
     border-color: var(--beat-accent-color) !important;
-    transform: scale(1.05); /* Leve pulsação */
-    transition: none; /* Aplica instantaneamente */
+    box-shadow: 0 0 20px var(--beat-accent-color), inset 0 0 10px rgba(255, 255, 255, 0.5) !important;
+    filter: brightness(1.2);
+    transition: none;
 }
 
 #bpm-container {
