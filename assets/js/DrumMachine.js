@@ -251,6 +251,10 @@ class DrumMachine {
         } else {
             selectedButton.classList.add('flash-weak');
         }
+
+        setTimeout(() => {
+            selectedButton.classList.remove('flash-accent', 'flash-weak');
+        }, 150);
     }
 
     timerWorker() {
