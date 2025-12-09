@@ -157,7 +157,7 @@ class App {
 
         if (lastSeenVersion !== this.versionConfig.version) {
             this.uiController.versionAlert(this.versionConfig);
-            localStorage.setItem(this.VERSION_LOCAL_KEY, versionConfig.version);
+            localStorage.setItem(this.VERSION_LOCAL_KEY, this.versionConfig.version);
         }
     }
 
