@@ -77,42 +77,34 @@ class AudioContextManager {
 		}
 
 		// Para o som anterior
-		this.stop();
+		this.stop(0.2);
 
 		const now = this.audioContext.currentTime;
 
 		this.currentNotes.forEach(note => {
-			const buffer = this.buffers[note];
-			const settings = this.instrumentSettings[note];
+			if (!this.buffers[note]) return;
 
-			if (!buffer || !settings) {
-				console.warn(`Buffer para a nota ${note} não encontrado no cache. Pulando.`);
-				return;
-			}
-
-			const targetVolume = settings.volume;
 			const source = this.audioContext.createBufferSource();
 			const gainNode = this.audioContext.createGain();
+			const settings = this.instrumentSettings[note] || { volume: 1 };
 
-			source.buffer = buffer;
-			source.loop = true;
+			source.buffer = this.buffers[note];
 
-			if (note.startsWith('epiano')) {
-				source.loop = false;
-			}
+			source.loop = !note.startsWith('epiano');
 
-			// Conexões: Fonte -> Ganho -> Destino
 			source.connect(gainNode);
 			gainNode.connect(this.audioContext.destination);
 
 			// Efeito Attack
 			gainNode.gain.setValueAtTime(0, now);
-			gainNode.gain.linearRampToValueAtTime(targetVolume, now + attackTime);
+			gainNode.gain.linearRampToValueAtTime(settings.volume, now + attackTime);
 
-			source.start(0);
+			source.start(now);
+
+			// Adiciona propriedade customizada para facilitar limpeza
+			source.gainNodeRef = gainNode;
 
 			this.sources.push(source);
-			this.gainNodes.push(gainNode);
 		});
 	}
 
@@ -122,25 +114,29 @@ class AudioContextManager {
 	 */
 	stop(releaseTime = 0.2) {
 		if (this.sources.length === 0) return;
-
 		const now = this.audioContext.currentTime;
+		const stopTime = now + releaseTime;
 
-		this.gainNodes.forEach(gainNode => {
-			// Cancela qualquer mudança de volume programada (ex: um Attack em andamento)
-			gainNode.gain.cancelScheduledValues(now);
-			// Define o valor inicial da rampa de parada para o valor atual do ganho
-			gainNode.gain.setValueAtTime(gainNode.gain.value, now);
-			// Efeito Release: Desce o volume para 0
-			gainNode.gain.linearRampToValueAtTime(0, now + releaseTime);
-		});
-
-		this.sources.forEach(source => {
-			// Para o som após o efeito Release terminar
-			source.stop(now + releaseTime);
-		});
-
-		// Limpa os arrays de controle
+		// Movemos os sources atuais para uma variável local para limpar o array da classe
+		const oldSources = [...this.sources];
 		this.sources = [];
-		this.gainNodes = [];
+
+		oldSources.forEach(source => {
+			const gainNode = source.gainNodeRef;
+
+			// Release suave
+			gainNode.gain.cancelScheduledValues(now);
+			gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+			gainNode.gain.linearRampToValueAtTime(0, stopTime);
+
+			source.stop(stopTime);
+
+			// GARANTIA DE LIMPEZA DE MEMÓRIA:
+			// Agenda a desconexão para quando o som terminar
+			setTimeout(() => {
+				source.disconnect();
+				gainNode.disconnect();
+			}, releaseTime * 1000 + 100);
+		});
 	}
 }
