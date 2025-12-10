@@ -41,7 +41,6 @@ class CifrasEditor {
         this.elements.saveBtn.addEventListener('click', this.saveCurrentCifra.bind(this));
         this.elements.clearBtn.addEventListener('click', this.clearCifras.bind(this)); 
         this.elements.downloadBtn.addEventListener('click', this.downloadJson.bind(this));
-        this.elements.downloadBtn.addEventListener('click', this.clearCifras.bind(this));
         this.elements.importBtn.addEventListener('click', this.uploadJson.bind(this));
         this.elements.importFileInput.addEventListener('change', this.handleFileSelect.bind(this));
         this.elements.importContainer.addEventListener('click', this.handleImportCardAction.bind(this));
