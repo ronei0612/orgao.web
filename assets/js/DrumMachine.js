@@ -7,16 +7,16 @@ class DrumMachine {
         this.buffers = new Map();
         this.audioPath = this.baseUrl + '/assets/audio/studio/Drums/';
         this.instruments = [
-            { name: 'Prato', icon: 'prato.svg', file: this.audioPath + 'ride.ogg', somAlternativo: this.audioPath + 'prato2.ogg' },
-            { name: 'Tom', icon: 'tom.svg', file: this.audioPath + 'tom-03.ogg', somAlternativo: this.audioPath + 'tom-02.ogg' },
-            { name: 'Surdo', icon: 'surdo.svg', file: this.audioPath + 'tom.ogg', somAlternativo: this.audioPath + 'prato1.ogg' },
-            { name: 'Chimbal', icon: 'chimbal.svg', file: this.audioPath + 'chimbal.ogg', somAlternativo: this.audioPath + 'aberto.ogg' },
-            { name: 'Caixa', icon: 'caixa.svg', file: this.audioPath + 'caixa.ogg', somAlternativo: this.audioPath + 'aro.ogg' },
-            { name: 'Bumbo', icon: 'bumbo.svg', file: this.audioPath + 'bumbo.ogg', somAlternativo: null },
-            { name: 'Meia-Lua', icon: 'meiaLua.svg', file: this.audioPath + 'meialua.ogg', somAlternativo: this.audioPath + 'meialua2.ogg' },
-            { name: 'Violao-Baixo', icon: 'violao.svg', file: null, somAlternativo: 'violao_' },
-            { name: 'Violao-Cima', icon: 'violao.svg', file: null, somAlternativo: 'violao_' },
-            { name: 'Baixo', icon: 'baixo.svg', file: null, somAlternativo: null }
+            { name: 'prato', icon: 'prato.svg', file: this.audioPath + 'ride.ogg', somAlternativo: this.audioPath + 'prato2.ogg' },
+            { name: 'tom', icon: 'tom.svg', file: this.audioPath + 'tom-03.ogg', somAlternativo: this.audioPath + 'tom-02.ogg' },
+            { name: 'surdo', icon: 'surdo.svg', file: this.audioPath + 'tom.ogg', somAlternativo: this.audioPath + 'prato1.ogg' },
+            { name: 'chimbal', icon: 'chimbal.svg', file: this.audioPath + 'chimbal.ogg', somAlternativo: this.audioPath + 'aberto.ogg' },
+            { name: 'caixa', icon: 'caixa.svg', file: this.audioPath + 'caixa.ogg', somAlternativo: this.audioPath + 'aro.ogg' },
+            { name: 'bumbo', icon: 'bumbo.svg', file: this.audioPath + 'bumbo.ogg', somAlternativo: null },
+            { name: 'meia-Lua', icon: 'meiaLua.svg', file: this.audioPath + 'meialua.ogg', somAlternativo: this.audioPath + 'meialua2.ogg' },
+            { name: 'violao-baixo', icon: 'violao.svg', file: null, somAlternativo: 'violao_' },
+            { name: 'violao-cima', icon: 'violao.svg', file: null, somAlternativo: 'violao_' },
+            { name: 'baixo', icon: 'baixo.svg', file: null, somAlternativo: null }
         ];
         this.isPlaying = false;
         this.currentStep = 1;
@@ -37,8 +37,12 @@ class DrumMachine {
 
     async init() {
         await this.loadSounds();
+        await this.getStyles();
 
-        // Carrega os styles/ritmos da web (styles.json) — mesmo padrão de fetch usado em App.loadCifrasLocal
+        this.updateFillBlink(this.bpm);
+    }
+
+    async getStyles() {
         const stylesUrl = `${this.baseUrl}/styles.json`;
         try {
             const resp = await fetch(stylesUrl);
@@ -48,35 +52,26 @@ class DrumMachine {
             this.styles = await resp.json();
         } catch (err) {
             console.warn('DrumMachine: não foi possível carregar styles.json, mantendo comportamento padrão.', err);
-            // fallback mínimo: mantém this.styles como null ou vazio para que UI trate
             this.styles = this.styles || null;
         }
-
-        this.updateFillBlink(this.bpm);
-    }
-
-    // opcional helper para acessar styles seguro
-    getStyles() {
-        return this.styles;
     }
 
     async loadSounds() {
         const loadPromises = [];
 
-        // 1) carregar samples de percussão/others definidos em this.instruments
         this.instruments.forEach(instrument => {
             if (!instrument.file) return;
             loadPromises.push((async () => {
                 const response = await fetch(instrument.file);
                 const arrayBuffer = await response.arrayBuffer();
                 const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                this.buffers.set(instrument.name.toLowerCase(), audioBuffer);
+                this.buffers.set(instrument.name, audioBuffer);
 
                 if (instrument.somAlternativo) {
                     const responseAlt = await fetch(instrument.somAlternativo);
                     const arrayBufferAlt = await responseAlt.arrayBuffer();
                     const audioBufferAlt = await this.audioContext.decodeAudioData(arrayBufferAlt);
-                    this.buffers.set(instrument.name.toLowerCase() + '-alt', audioBufferAlt);
+                    this.buffers.set(instrument.name + '-alt', audioBufferAlt);
                 }
             })());
         });
@@ -207,7 +202,6 @@ class DrumMachine {
         }
     }
 
-    // Piscar no início de cada tempo
     scheduleCurrentStep() {
         const tempoAtual = Math.floor((this.currentStep - 1) / this.stepsPorTempo) + 1;
         const isInicioTempo = ((this.currentStep - 1) % this.stepsPorTempo === 0);
@@ -221,7 +215,7 @@ class DrumMachine {
             this.playEpiano();
 
         document.querySelectorAll('.track').forEach(track => {
-            const instrument = track.querySelector('label img').title.toLowerCase().replace(/ /g, '');
+            const instrument = track.querySelector('label img').title;
             const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
             const instrumentButton = track.querySelector('.instrument-button');
 
@@ -244,7 +238,7 @@ class DrumMachine {
     blinkSelectedRhythmButton(beat) {
         const selectedButton = document.querySelector('.rhythm-button.selected');
         selectedButton.classList.remove('flash-accent', 'flash-weak');
-        void selectedButton.offsetWidth; // Força reflow
+        void selectedButton.offsetWidth;
 
         if (beat === 1) {
             selectedButton.classList.add('flash-accent');
