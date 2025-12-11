@@ -262,3 +262,40 @@ body.dark-mode .instrument-button img {
         opacity: 0.5;
     }
 }
+
+/* --- ADICIONAR NO FINAL DO ARQUIVO CSS --- */
+
+/* Aplicar o mesmo estilo de scroll do Tracks da Bateria para o Melody */
+#melodyTracks {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+}
+
+    #melodyTracks::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    #melodyTracks::-webkit-scrollbar-thumb {
+        background-color: var(--drum-scrollbar);
+        border-radius: 4px;
+    }
+
+    /* Ajuste específico para os botões de Nota da Melodia (Texto em vez de Imagem) */
+    #melodyTracks .instrument-button {
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--drum-text);
+        padding: 0; /* Remove padding para caber o texto */
+    }
+
+/* Garante que o texto fique visível no Dark Mode */
+body.dark-mode #melodyTracks .instrument-button {
+    color: var(--drum-text);
+}
+
+/* Se quiser labels um pouco mais largos para caber nomes maiores no futuro */
+#melodyTracks .track label {
+    width: 45px; /* Ligeiramente maior que os 40px da bateria */
+}
