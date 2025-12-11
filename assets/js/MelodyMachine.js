@@ -1,13 +1,10 @@
 class MelodyMachine {
-    constructor(baseUrl, musicTheory) {
+    constructor(baseUrl, musicTheory, cifraPlayer) {
         this.baseUrl = baseUrl;
         this.musicTheory = musicTheory;
-        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        this.buffers = new Map();
+        this.cifraPlayer = cifraPlayer; // Recebe a instância do CifraPlayer
 
-        // Caminho dos áudios
-        this.audioPath = this.baseUrl + '/assets/audio/Orgao/';
-
+        // Mantém definição dos instrumentos para gerar o Grid no UI
         this.instruments = [
             { note: 'B2', index: 13, name: 'orgao', octave: '' },
             { note: 'A2', index: 12, name: 'orgao', octave: '' },
@@ -37,14 +34,23 @@ class MelodyMachine {
         this.stepsPorTempo = null;
         this.tracksCache = null;
 
-        // MONOFONIA: Armazena apenas a nota atual
+        // Monofonia: guarda apenas o som atual tocando
         this.currentSource = null;
 
         this.init();
     }
 
+    // Atalhos para acessar o AudioContextManager do CifraPlayer
+    get audioContext() {
+        return this.cifraPlayer.audioContextManager.audioContext;
+    }
+
+    get buffers() {
+        return this.cifraPlayer.audioContextManager.buffers;
+    }
+
     async init() {
-        await this.loadSounds();
+        // NÃO carrega sons aqui. Usa os do CifraPlayer.
         await this.getStyles();
         this.updateFillBlink(this.bpm);
     }
@@ -63,32 +69,10 @@ class MelodyMachine {
         }
     }
 
-    async loadSounds() {
-        const loadPromises = [];
-
-        this.instruments.forEach(instrument => {
-            loadPromises.push((async () => {
-                const nota = instrument.note[0].toLowerCase();
-                const fileName = `${instrument.name}_${nota}${instrument.octave ? '_' + instrument.octave : ''}`;
-                const file = `${this.audioPath}${fileName}.ogg`;
-                try {
-                    const response = await fetch(file);
-                    const arrayBuffer = await response.arrayBuffer();
-                    const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                    this.buffers.set(fileName, audioBuffer);
-                } catch (error) {
-                    console.warn(`Erro ao carregar som: ${file}`);
-                }
-            })());
-        });
-
-        await Promise.all(loadPromises);
-    }
-
-    // Retorna o objeto source/gain para controle
     playSound(buffer, time, volume = 1) {
         if (!buffer) return null;
 
+        // Usa o contexto compartilhado
         const source = this.audioContext.createBufferSource();
         const gainNode = this.audioContext.createGain();
 
@@ -109,27 +93,25 @@ class MelodyMachine {
     }
 
     scheduleNote(instrumentKey, step, time, volume) {
-        const buffer = this.buffers.get(instrumentKey);
+        // Busca o buffer diretamente no CifraPlayer
+        // Se a chave não existir (ex: orgao_c_baixo), o CifraPlayer não carregou ou o nome está diferente
+        const buffer = this.buffers[instrumentKey];
+
         if (buffer && volume > 0) {
-            // Retorna o objeto do som para ser controlado
             return this.playSound(buffer, time, volume === 2 ? 0.3 : 1.0);
         }
         return null;
     }
 
-    // NOVA FUNÇÃO: Para a nota atual imediatamente (com fade suave)
     stopCurrentNote(time) {
         if (this.currentSource) {
             const { source, gainNode } = this.currentSource;
             try {
-                // Fade out rápido de 0.05s para evitar estalo
                 gainNode.gain.cancelScheduledValues(time);
                 gainNode.gain.setValueAtTime(gainNode.gain.value, time);
                 gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
                 source.stop(time + 0.06);
-            } catch (e) {
-                // Ignora se já parou
-            }
+            } catch (e) { }
             this.currentSource = null;
         }
     }
@@ -149,6 +131,7 @@ class MelodyMachine {
     }
 
     scheduler() {
+        // Usa o tempo do AudioContext compartilhado
         while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
             this.scheduleCurrentStep();
             this.nextNote();
@@ -156,42 +139,34 @@ class MelodyMachine {
     }
 
     scheduleCurrentStep() {
-        if (!this.tracksCache) {
-            this.refreshTrackCache();
-        }
+        if (!this.tracksCache) this.refreshTrackCache();
 
         const stepIndex = this.currentStep - 1;
         let foundNote = null;
 
-        // 1. Procura UMA nota para tocar neste step (Monofonia)
         if (this.tracksCache) {
             for (let i = 0; i < this.tracksCache.length; i++) {
                 const trackData = this.tracksCache[i];
-
                 if (!trackData.instrument || !trackData.button.classList.contains('selected')) continue;
 
                 const stepEl = trackData.steps[stepIndex];
                 if (!stepEl) continue;
 
                 const volume = parseInt(stepEl.dataset.volume || '0', 10);
-
                 if (volume > 0) {
                     foundNote = {
                         instrument: trackData.instrument,
                         volume: volume,
                         element: stepEl
                     };
-                    break; // Encontrou a nota prioritária, para de procurar
+                    break;
                 }
             }
         }
 
-        // 2. Se encontrou uma nova nota para este step
         if (foundNote) {
-            // Para a nota anterior exatamente quando a nova começa
             this.stopCurrentNote(this.nextNoteTime);
 
-            // Toca a nova e guarda referência
             this.currentSource = this.scheduleNote(
                 foundNote.instrument,
                 this.currentStep,
@@ -199,7 +174,6 @@ class MelodyMachine {
                 foundNote.volume
             );
 
-            // Feedback visual
             foundNote.element.classList.add('playing');
             setTimeout(() => foundNote.element.classList.remove('playing'), 100);
         }
@@ -214,7 +188,6 @@ class MelodyMachine {
             const instrument = label ? label.dataset.instrument : null;
             const button = trackEl.querySelector('.instrument-button');
             const steps = Array.from(trackEl.querySelectorAll('.step'));
-
             return { instrument, button, steps };
         });
     }
@@ -226,6 +199,7 @@ class MelodyMachine {
 
         this.isPlaying = true;
         this.currentStep = 1;
+        // Sincroniza com o tempo atual do contexto compartilhado
         this.nextNoteTime = this.audioContext.currentTime + 0.1;
 
         this.refreshTrackCache();
@@ -234,19 +208,14 @@ class MelodyMachine {
         this.timerInterval = setInterval(() => this.scheduler(), this.lookahead);
     }
 
-    // CORREÇÃO AQUI
     stop() {
         this.isPlaying = false;
-
-        // 1. Para o agendador (Relógio)
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
             this.timerInterval = null;
         }
-
-        // 2. CORREÇÃO: Para o som que está tocando AGORA imediatamente
+        // Para o som atual
         this.stopCurrentNote(this.audioContext.currentTime);
-
         this.reset();
     }
 

@@ -52,7 +52,7 @@ class App {
         this.bateriaUI = new BateriaUI(this.elements, drumMachine, this.uiController, this.cifraPlayer);
         await this.bateriaUI.init();
 
-        this.melodyMachine = new MelodyMachine(this.BASE_URL, this.musicTheory);
+        this.melodyMachine = new MelodyMachine(this.BASE_URL, this.musicTheory, this.cifraPlayer);
 
         // CORREÇÃO AQUI: Usando this.melodyUI para acesso global
         this.melodyUI = new MelodyUI(this.elements, this.melodyMachine, this.uiController);
