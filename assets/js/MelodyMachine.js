@@ -141,9 +141,11 @@ class MelodyMachine {
             this.stopCurrentNote(this.nextNoteTime);
 
             let acordeSimplificado = this.cifraPlayer.acordeTocando.replace('_', '#');
-            acordeSimplificado = acordeSimplificado[0].toUpperCase();
+            const acordeNota = acordeSimplificado[0].toUpperCase();
             if (acordeSimplificado.length > 1)
-                acordeSimplificado = acordeSimplificado[0] + acordeSimplificado[1];
+                acordeSimplificado = acordeNota + acordeSimplificado[1];
+            else
+                acordeSimplificado = acordeNota;
             const notas = this.musicTheory.getAcordeNotas(acordeSimplificado);
             const nota = notas[foundTrack.noteIndex].replace('#', '_');
             const bufferKey = `${foundTrack.name}_${nota}${foundTrack.octave ? '_' + foundTrack.octave : ''}`;
