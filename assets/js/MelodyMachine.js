@@ -18,7 +18,7 @@ class MelodyMachine {
         this.scheduleAheadTime = 0.1;
         this.lookahead = 25.0;
         this.bpm = 90;
-        this.numSteps = 16;
+        this.numSteps = 8;
         this.timerInterval = null;
         this.styles = null;
         this.stepsPorTempo = null;
@@ -96,7 +96,7 @@ class MelodyMachine {
 
     nextNote() {
         const secondsPerQuarterNote = 60.0 / this.bpm;
-        const secondsPerStep = secondsPerQuarterNote / 4;
+        const secondsPerStep = secondsPerQuarterNote / 2;
         this.nextNoteTime += secondsPerStep;
         this.currentStep++;
 
@@ -141,13 +141,14 @@ class MelodyMachine {
             this.stopCurrentNote(this.nextNoteTime);
 
             let acordeSimplificado = this.cifraPlayer.acordeTocando.replace('_', '#');
+            acordeSimplificado = acordeSimplificado[0].toUpperCase();
             if (acordeSimplificado.length > 1)
-                acordeSimplificado = acordeSimplificado[0].toUpperCase() + acordeSimplificado[1];
+                acordeSimplificado = acordeSimplificado[0] + acordeSimplificado[1];
             const notas = this.musicTheory.getAcordeNotas(acordeSimplificado);
             const nota = notas[foundTrack.noteIndex].replace('#', '_');
             const bufferKey = `${foundTrack.name}_${nota}${foundTrack.octave ? '_' + foundTrack.octave : ''}`;
             const buffer = this.buffers[bufferKey];
-            this.currentSource = this.playSound(buffer, this.nextNoteTime, foundTrack.volume === 2 ? 0.3 : 1.0);
+            this.currentSource = this.playSound(buffer, this.nextNoteTime, foundTrack.volume === 2 ? 0.5 : 1.0);
 
             foundTrack.element.classList.add('playing');
             setTimeout(() => foundTrack.element.classList.remove('playing'), 100);
