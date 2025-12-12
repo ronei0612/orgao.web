@@ -613,7 +613,6 @@ class App {
         const button = event.currentTarget;
         const action = button.dataset.action;
 
-        // O 'notesButton' está fora da iteração do querySelectorAll
         if (action === 'notes') {
             var icon = this.elements.notesButton.querySelector('i');
             if (!this.held && icon.classList.contains('bi-music-note')) {
@@ -632,13 +631,16 @@ class App {
         } else {
             if (action === 'acorde') {
                 this.cifraPlayer.parado = false;
-                if (this.bateriaUI)
-                    this.bateriaUI.play();
-                if (this.melodyMachine)
-                    this.melodyMachine.start();
+
+                // 2. Reinicia o Melody no Step 1
+                if (this.melodyUI) {
+                    this.melodyUI.play();
+                    this.melodyMachine.currentStep = 1;
+                }
+
                 this.cifraPlayer.tocarAcorde(button.value);
             }
-            // Remove o pressed de todos os outros botões de acorde
+
             document.querySelectorAll('button[data-action="acorde"]').forEach(btn => {
                 if (btn !== button) {
                     btn.classList.remove('pressed');

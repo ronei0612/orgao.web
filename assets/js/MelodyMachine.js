@@ -181,8 +181,11 @@ class MelodyMachine {
         }
 
         this.isPlaying = true;
-        this.currentStep = 1;
-        this.nextNoteTime = this.audioContext.currentTime + 0.1;
+
+        // 2. Sincronia: Define que a próxima nota deve tocar "AGORA" (com margem de 0.05s)
+        // Isso alinha o arpejo com o clique do seu mouse/dedo no acorde
+        this.nextNoteTime = this.audioContext.currentTime;// + 0.1;
+
         this.refreshTrackCache();
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.timerInterval = setInterval(() => this.scheduler(), this.lookahead);
