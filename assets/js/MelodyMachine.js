@@ -4,7 +4,6 @@ class MelodyMachine {
         this.musicTheory = musicTheory;
         this.cifraPlayer = cifraPlayer;
 
-        // DEFINIÇÃO EXATA SOLICITADA
         this.instruments = [
             { note: 0, name: 'orgao', octave: '' },
             { note: 2, name: 'orgao', octave: 'baixo' },
@@ -17,14 +16,11 @@ class MelodyMachine {
         this.nextNoteTime = 0;
         this.scheduleAheadTime = 0.1;
         this.lookahead = 25.0;
-        this.bpm = 90;
         this.numSteps = 8;
         this.timerInterval = null;
         this.styles = null;
         this.stepsPorTempo = null;
         this.tracksCache = null;
-
-        // Variável para controlar a nota tocando (Substitui o buffer fixo)
         this.currentSource = null;
 
         this.init();
@@ -39,9 +35,7 @@ class MelodyMachine {
     }
 
     async init() {
-        // NÃO carrega sons aqui. Usa os do CifraPlayer.
         await this.getStyles();
-        this.updateFillBlink(this.bpm);
     }
 
     async getStyles() {
@@ -95,7 +89,7 @@ class MelodyMachine {
     }
 
     nextNote() {
-        const secondsPerQuarterNote = 60.0 / this.bpm;
+        const secondsPerQuarterNote = 60.0 / this.musicTheory.bpm;
         const secondsPerStep = secondsPerQuarterNote / 2;
         this.nextNoteTime += secondsPerStep;
         this.currentStep++;
@@ -205,18 +199,8 @@ class MelodyMachine {
         this.nextNoteTime = 0;
     }
 
-    setBPM(bpm) {
-        this.bpm = bpm;
-        this.updateFillBlink(bpm);
-    }
-
     setNumSteps(steps) {
         this.numSteps = steps;
         this.tracksCache = null;
-    }
-
-    updateFillBlink(bpm) {
-        const secPerBeat = 60 / bpm;
-        document.documentElement.style.setProperty('--fill-blink-duration', `${secPerBeat}s`);
     }
 }

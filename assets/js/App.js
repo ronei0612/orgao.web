@@ -44,6 +44,7 @@ class App {
         this.bindEvents();
         this.setupSelect2();
         this.getUrlParam();
+        this.updateFillBlink(this.musicTheory.bpm);
 
         const drumMachine = new DrumMachine(this.BASE_URL, this.cifraPlayer, this.musicTheory);
         if (typeof drumMachine.init === 'function')
@@ -54,12 +55,10 @@ class App {
 
         this.melodyMachine = new MelodyMachine(this.BASE_URL, this.musicTheory, this.cifraPlayer);
 
-        // CORREÇÃO AQUI: Usando this.melodyUI para acesso global
         this.melodyUI = new MelodyUI(this.elements, this.melodyMachine, this.uiController);
         await this.melodyUI.init();
 
-        // Carregar estilos de melodia e popular o select (pode ser redundante pois MelodyUI.init faz isso, mas mal não faz)
-        const melodyStyles = await this.melodyMachine.getStyles();
+        await this.melodyMachine.getStyles();
 
         if (this.BASE_URL.includes('http')) {
             document.getElementById('downloadStylesLink').parentElement.classList.remove('d-none');
@@ -101,6 +100,26 @@ class App {
         document.addEventListener('mousedown', this.fullScreen.bind(this));
         document.addEventListener('click', this.handleDocumentClick.bind(this));
         $('#searchModal').on('shown.bs.modal', this.handleSearchModalShown.bind(this));
+
+        document.getElementById('increment-bpm-10').addEventListener('click', () => {
+            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 10;
+            this.setBPM(parseInt(this.elements.bpmInput.value, 10));
+        });
+        document.getElementById('increment-bpm').addEventListener('click', () => {
+            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
+            this.setBPM(parseInt(this.elements.bpmInput.value, 10));
+        });
+        document.getElementById('decrement-bpm-10').addEventListener('click', () => {
+            const bpm = Math.max(1, (parseInt(this.elements.bpmInput.value, 10) || 1) - 10);
+            this.elements.bpmInput.value = bpm;
+            this.setBPM(bpm);
+        });
+
+        this.elements.bpmInput.addEventListener('change', () => {
+            const bpm = Math.max(1, parseInt(this.elements.bpmInput.value, 10) || 1);
+            this.elements.bpmInput.value = bpm;
+            this.setBPM(bpm);
+        });
 
         // Refatoração: Adicionar listeners aos botões de acorde de forma programática
         ['mousedown'].forEach(event => {
@@ -168,6 +187,16 @@ class App {
             this.uiController.versionAlert(this.versionConfig);
             localStorage.setItem(this.VERSION_LOCAL_KEY, this.versionConfig.version);
         }
+    }
+
+    setBPM(bpm) {
+        this.musicTheory.bpm = bpm;
+        this.updateFillBlink(bpm);
+    }
+
+    updateFillBlink(bpm) {
+        const secPerBeat = 60 / bpm;
+        document.documentElement.style.setProperty('--fill-blink-duration', `${secPerBeat}s`);
     }
 
     handleSantaMissaLoad() {

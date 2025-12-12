@@ -25,7 +25,6 @@ class DrumMachine {
         this.nextNoteTime = 0;
         this.scheduleAheadTime = 0.1;
         this.lookahead = 25.0;
-        this.bpm = 90;
         this.numSteps = 16;
 
         // Substituído animationFrameId por timerInterval para estabilidade em background
@@ -45,8 +44,6 @@ class DrumMachine {
     async init() {
         await this.loadSounds();
         await this.getStyles();
-
-        this.updateFillBlink(this.bpm);
     }
 
     async getStyles() {
@@ -182,7 +179,7 @@ class DrumMachine {
     }
 
     nextNote() {
-        const secondsPerQuarterNote = 60.0 / this.bpm;
+        const secondsPerQuarterNote = 60.0 / this.musicTheory.bpm;
         const secondsPerStep = secondsPerQuarterNote / 4;
         this.nextNoteTime += secondsPerStep;
         this.currentStep++;
@@ -333,20 +330,10 @@ class DrumMachine {
         this.nextNoteTime = 0;
     }
 
-    setBPM(bpm) {
-        this.bpm = bpm;
-        this.updateFillBlink(bpm);
-    }
-
     setNumSteps(steps) {
         this.numSteps = steps;
         // Invalida o cache para ser recriado no próximo ciclo, já que o UI mudou o DOM
         this.tracksCache = null;
-    }
-
-    updateFillBlink(bpm) {
-        const secPerBeat = 60 / bpm;
-        document.documentElement.style.setProperty('--fill-blink-duration', `${secPerBeat}s`);
     }
 
     playBass(instrument, time, volume) {
