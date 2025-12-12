@@ -59,16 +59,6 @@ class App {
         await this.melodyUI.init();
 
         await this.melodyMachine.getStyles();
-
-        if (this.BASE_URL.includes('http')) {
-            document.getElementById('downloadStylesLink').parentElement.classList.remove('d-none');
-            document.getElementById('styleButtons').classList.remove('d-none');
-            document.getElementById('drumEditor').classList.remove('d-none');
-            document.getElementById('melodyTracks').classList.remove('d-none');
-            document.getElementById('stepsMelody').classList.remove('d-none');
-            document.getElementById('melodySaveControl').classList.remove('d-none');
-            document.getElementById('save-melody').classList.remove('d-none');
-        }
     }
 
     bindEvents() {

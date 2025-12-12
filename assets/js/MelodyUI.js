@@ -29,9 +29,14 @@ class MelodyUI {
     }
 
     getStorageData() {
-        const data = localStorage.getItem(this.storageKey);
-        if (data) return JSON.parse(data);
-        return { styles: [this.defaultStyle], data: {} };
+        const tem_styles_melody = localStorage.getItem(this.storageKey);
+        if (tem_styles_melody)
+            return JSON.parse(tem_styles_melody);
+
+        if (!this.melodyMachine.styles)
+            return { styles: [this.defaultStyle], data: {} };
+
+        return this.melodyMachine.styles;
     }
 
     persistStorageData(obj) {
