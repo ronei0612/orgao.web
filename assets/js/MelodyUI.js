@@ -3,8 +3,6 @@ class MelodyUI {
         this.elements = elements;
         this.melodyMachine = melodyMachine;
         this.uiController = uiController;
-
-        this.defaultStyle = 'Novo Estilo Melodia';
         this.storageKey = 'melodyStylesData';
 
         this.wrapper = document.getElementById('melodyWrapper');
@@ -22,7 +20,6 @@ class MelodyUI {
     }
 
     async init() {
-        this.ensureDefaultStyleExists();
         this.loadStyles();
         this.initializeTracks();
         this.bindEvents();
@@ -33,23 +30,13 @@ class MelodyUI {
         if (tem_styles_melody)
             return JSON.parse(tem_styles_melody);
 
-        if (!this.melodyMachine.styles)
-            return { styles: [this.defaultStyle], data: {} };
+        
 
         return this.melodyMachine.styles;
     }
 
     persistStorageData(obj) {
         localStorage.setItem(this.storageKey, JSON.stringify(obj));
-    }
-
-    ensureDefaultStyleExists() {
-        const storage = this.getStorageData();
-        if (!storage.styles.includes(this.defaultStyle)) {
-            storage.styles.push(this.defaultStyle);
-            storage.data[this.defaultStyle] = this.createEmptyPattern(16);
-            this.persistStorageData(storage);
-        }
     }
 
     createEmptyPattern(numSteps) {
@@ -87,7 +74,6 @@ class MelodyUI {
         });
 
         if (styles.length === 0) {
-            this.ensureDefaultStyleExists();
             this.loadStyles();
             return;
         }
