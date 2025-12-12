@@ -66,14 +66,12 @@ class BateriaUI {
             const key = r;
             const fillKey = `${r}-fill`;
             if (!storage.data[this.defaultStyle][key]) {
-                const bpm = parseInt(this.elements.bpmInput.value, 10) || 90;
                 const numSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
-                storage.data[this.defaultStyle][key] = this.createEmptyRhythm(bpm, numSteps);
+                storage.data[this.defaultStyle][key] = this.createEmptyRhythm(this.bpm, numSteps);
             }
             if (!storage.data[this.defaultStyle][fillKey]) {
-                const bpm = parseInt(this.elements.bpmInput.value, 10) || 90;
                 const numSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
-                storage.data[this.defaultStyle][fillKey] = this.createEmptyRhythm(bpm, numSteps);
+                storage.data[this.defaultStyle][fillKey] = this.createEmptyRhythm(this.bpm, numSteps);
             }
         });
         this.persistStorageData(storage);
@@ -141,11 +139,10 @@ class BateriaUI {
         storage.styles.push(newName);
         storage.data[newName] = {};
         // create blank rhythms
-        const bpm = parseInt(this.elements.bpmInput.value, 10) || 90;
         const numSteps = parseInt(this.elements.numStepsInput.value, 10) || 4;
         ['A', 'B', 'C', 'D'].forEach(r => {
-            storage.data[newName][r] = this.createEmptyRhythm(bpm, numSteps);
-            storage.data[newName][`${r}-fill`] = this.createEmptyRhythm(bpm, numSteps);
+            storage.data[newName][r] = this.createEmptyRhythm(this.bpm, numSteps);
+            storage.data[newName][`${r}-fill`] = this.createEmptyRhythm(this.bpm, numSteps);
         });
         this.persistStorageData(storage);
         this.loadStyles();
@@ -592,21 +589,6 @@ class BateriaUI {
         this.elements.pasteRhythmButton.addEventListener('click', () => this.pasteRhythm());
         this.elements.saveRhythmButton.addEventListener('click', () => this.saveRhythm());
 
-        // BPM / Steps inputs + increment/decrement
-        document.getElementById('increment-bpm-10').addEventListener('click', () => {
-            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 10;
-            this.drumMachine.setBPM(parseInt(this.elements.bpmInput.value, 10));
-        });
-        document.getElementById('increment-bpm').addEventListener('click', () => {
-            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
-            this.drumMachine.setBPM(parseInt(this.elements.bpmInput.value, 10));
-        });
-        document.getElementById('decrement-bpm-10').addEventListener('click', () => {
-            const bpm = Math.max(1, (parseInt(this.elements.bpmInput.value, 10) || 1) - 10);
-            this.elements.bpmInput.value = bpm;
-            this.drumMachine.setBPM(bpm);
-        });
-
         document.querySelector('.increment-steps').addEventListener('click', () => {
             const ns = Math.max(1, (parseInt(this.elements.numStepsInput.value, 10) || 1) + 1);
             this.elements.numStepsInput.value = ns;
@@ -618,12 +600,6 @@ class BateriaUI {
             this.elements.numStepsInput.value = ns;
             this.drumMachine.setNumSteps(ns);
             this.initializeTracks();
-        });
-
-        this.elements.bpmInput.addEventListener('change', () => {
-            const bpm = Math.max(1, parseInt(this.elements.bpmInput.value, 10) || 1);
-            this.elements.bpmInput.value = bpm;
-            this.drumMachine.setBPM(bpm);
         });
 
         this.elements.numStepsInput.addEventListener('change', () => {

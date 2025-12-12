@@ -6,6 +6,7 @@ class DrumMachine {
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.buffers = new Map();
         this.audioPath = this.baseUrl + '/assets/audio/studio/Drums/';
+
         this.instruments = [
             { name: 'prato', icon: 'prato.svg', file: this.audioPath + 'ride.ogg', somAlternativo: this.audioPath + 'prato2.ogg' },
             { name: 'tom', icon: 'tom.svg', file: this.audioPath + 'tom-03.ogg', somAlternativo: this.audioPath + 'tom-02.ogg' },
@@ -18,19 +19,24 @@ class DrumMachine {
             { name: 'violao-cima', icon: 'violao.svg', file: null, somAlternativo: 'violao_' },
             { name: 'baixo', icon: 'baixo.svg', file: null, somAlternativo: null }
         ];
+
         this.isPlaying = false;
         this.currentStep = 1;
         this.nextNoteTime = 0;
         this.scheduleAheadTime = 0.1;
         this.lookahead = 25.0;
-        this.bpm = 90;
         this.numSteps = 16;
-        this.animationFrameId = null;
-        this.lastDrawTime = 0;
+
+        // Substituído animationFrameId por timerInterval para estabilidade em background
+        this.timerInterval = null;
+
         this.lastChimbalAbertoSource = null;
         this.styles = null;
-        this.atrasoMudarNota = 0.03; // 30ms
+        this.atrasoMudarNota = 0.03;
         this.stepsPorTempo = null;
+
+        // Cache para evitar ler o DOM a cada milissegundo (Performance Crítica)
+        this.tracksCache = null;
 
         this.init();
     }
@@ -38,8 +44,6 @@ class DrumMachine {
     async init() {
         await this.loadSounds();
         await this.getStyles();
-
-        this.updateFillBlink(this.bpm);
     }
 
     async getStyles() {
@@ -132,6 +136,8 @@ class DrumMachine {
     }
 
     playSound(buffer, time, volume = 1, isChimbalAberto = false) {
+        if (!buffer) return;
+
         const source = this.audioContext.createBufferSource();
         const gainNode = this.audioContext.createGain();
 
@@ -146,6 +152,13 @@ class DrumMachine {
         if (isChimbalAberto) {
             this.lastChimbalAbertoSource = source;
         }
+
+        // PERFORMANCE: Desconectar nós após o uso para liberar memória do navegador
+        // Isso evita "estalos" quando há muitos sons (polifonia alta)
+        source.onended = () => {
+            source.disconnect();
+            gainNode.disconnect();
+        };
     }
 
     scheduleNote(instrument, step, time, volume) {
@@ -166,7 +179,7 @@ class DrumMachine {
     }
 
     nextNote() {
-        const secondsPerQuarterNote = 60.0 / this.bpm;
+        const secondsPerQuarterNote = 60.0 / this.musicTheory.bpm;
         const secondsPerStep = secondsPerQuarterNote / 4;
         this.nextNoteTime += secondsPerStep;
         this.currentStep++;
@@ -203,6 +216,11 @@ class DrumMachine {
     }
 
     scheduleCurrentStep() {
+        // Reconstrói cache se necessário (ex: primeira execução ou mudança de steps)
+        if (!this.tracksCache) {
+            this.refreshTrackCache();
+        }
+
         const tempoAtual = Math.floor((this.currentStep - 1) / this.stepsPorTempo) + 1;
         const isInicioTempo = ((this.currentStep - 1) % this.stepsPorTempo === 0);
 
@@ -211,24 +229,35 @@ class DrumMachine {
         }
 
         const stepImpar = this.currentStep % 2 === 1;
-        if (stepImpar)
-            this.playEpiano();
+            if (stepImpar)
+                this.playEpiano();
 
-        document.querySelectorAll('.track').forEach(track => {
-            const instrument = track.querySelector('label img').title;
-            const step = track.querySelector(`.step[data-step="${this.currentStep}"]`);
-            const instrumentButton = track.querySelector('.instrument-button');
+        // Loop otimizado usando Cache
+        const stepIndex = this.currentStep - 1;
 
-            if (!step || !instrumentButton.classList.contains('selected')) return;
+        if (this.tracksCache) {
+            for (let i = 0; i < this.tracksCache.length; i++) {
+                const trackData = this.tracksCache[i];
 
-            const volume = parseInt(step.dataset.volume);
-            if (isNaN(volume) || volume <= 0) return;
+                // Validações rápidas de memória
+                if (!trackData.instrument || !trackData.button.classList.contains('selected')) continue;
 
-            this.fecharChimbal(instrument, volume);
-            this.scheduleNote(instrument, this.currentStep, this.nextNoteTime, volume);
-            step.classList.add('playing');
-            setTimeout(() => step.classList.remove('playing'), 100);
-        });
+                // Acesso direto ao step (O(1))
+                const stepEl = trackData.steps[stepIndex];
+                if (!stepEl) continue;
+
+                const volume = parseInt(stepEl.dataset.volume || '0', 10);
+                if (volume <= 0) continue;
+
+                this.fecharChimbal(trackData.instrument, volume);
+                this.scheduleNote(trackData.instrument, this.currentStep, this.nextNoteTime, volume);
+
+                // Feedback visual (apenas se necessário)
+                stepEl.classList.add('playing');
+                // setTimeout é aceitável para UI, pois não bloqueia o thread de áudio
+                setTimeout(() => stepEl.classList.remove('playing'), 100);
+            }
+        }
     }
 
     /**
@@ -237,6 +266,8 @@ class DrumMachine {
      */
     blinkSelectedRhythmButton(beat) {
         const selectedButton = document.querySelector('.rhythm-button.selected');
+        if (!selectedButton) return;
+
         selectedButton.classList.remove('flash-accent', 'flash-weak');
         void selectedButton.offsetWidth;
 
@@ -251,22 +282,21 @@ class DrumMachine {
         }, 150);
     }
 
-    timerWorker() {
-        if (!this.isPlaying) {
-            if (this.animationFrameId) {
-                cancelAnimationFrame(this.animationFrameId);
-                this.animationFrameId = null;
-            }
-            return;
-        }
+    // PERFORMANCE: Cria um cache do DOM para não fazer querySelector a cada batida
+    refreshTrackCache() {
+        const tracksContainer = document.getElementById('tracks');
+        if (!tracksContainer) return;
 
-        const currentTime = performance.now();
-        if (currentTime - this.lastDrawTime >= this.lookahead) {
-            this.scheduler();
-            this.lastDrawTime = currentTime;
-        }
+        // Converte HTMLCollection para Array para facilitar iteração
+        this.tracksCache = Array.from(tracksContainer.children).map(trackEl => {
+            const img = trackEl.querySelector('label img');
+            const instrument = img ? img.title : null;
+            const button = trackEl.querySelector('.instrument-button');
+            // Mapeia todos os steps deste track em um array indexável por (stepNumber - 1)
+            const steps = Array.from(trackEl.querySelectorAll('.step'));
 
-        this.animationFrameId = requestAnimationFrame(() => this.timerWorker());
+            return { instrument, button, steps };
+        });
     }
 
     start() {
@@ -276,16 +306,21 @@ class DrumMachine {
 
         this.isPlaying = true;
         this.currentStep = 1;
-        this.nextNoteTime = this.audioContext.currentTime;
-        this.lastDrawTime = performance.now();
-        this.timerWorker();
+        this.nextNoteTime = this.audioContext.currentTime + 0.1; // Pequeno delay inicial para sincronia
+
+        // Garante que o cache do DOM esteja atualizado ao iniciar
+        this.refreshTrackCache();
+
+        // PERFORMANCE: setInterval é mais estável que requestAnimationFrame para áudio em background
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        this.timerInterval = setInterval(() => this.scheduler(), this.lookahead);
     }
 
     stop() {
         this.isPlaying = false;
-        if (this.animationFrameId) {
-            cancelAnimationFrame(this.animationFrameId);
-            this.animationFrameId = null;
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
         }
         this.reset();
     }
@@ -295,18 +330,10 @@ class DrumMachine {
         this.nextNoteTime = 0;
     }
 
-    setBPM(bpm) {
-        this.bpm = bpm;
-        this.updateFillBlink(bpm);
-    }
-
     setNumSteps(steps) {
         this.numSteps = steps;
-    }
-
-    updateFillBlink(bpm) {
-        const secPerBeat = 60 / bpm;
-        document.documentElement.style.setProperty('--fill-blink-duration', `${secPerBeat}s`);
+        // Invalida o cache para ser recriado no próximo ciclo, já que o UI mudou o DOM
+        this.tracksCache = null;
     }
 
     playBass(instrument, time, volume) {
@@ -314,8 +341,6 @@ class DrumMachine {
             const bass = instrument + '_' + this.cifraPlayer.baixo;
             const buffer = this.buffers.get(bass);
             if (buffer && volume > 0) {
-                //const delayedTime = (this.currentStep === 1) ? time + this.atrasoMudarNota : time;
-                //this.playSound(buffer, delayedTime, volume === 2 ? 0.3 : 1);
                 this.playSound(buffer, time, volume === 2 ? 0.4 : 1);
                 return true;
             }
@@ -328,8 +353,6 @@ class DrumMachine {
             const violao = instrument + '_' + this.cifraPlayer.acordeTocando;
             const buffer = this.buffers.get(violao);
             if (buffer && volume > 0) {
-                //const delayedTime = (this.currentStep === 1) ? time + this.atrasoMudarNota : time;
-                //this.playSound(buffer, delayedTime, volume === 2 ? 0.3 : 1);
                 this.playSound(buffer, time, volume === 2 ? 0.4 : 1);
                 return true;
             }
@@ -338,10 +361,8 @@ class DrumMachine {
     }
 
     playEpiano() {
-        if (this.cifraPlayer.epianoGroup.length > 0) {
-            if (this.cifraPlayer.tocarEpiano)
-                this.cifraPlayer.epianoPlay();
+        if (this.cifraPlayer.epianoGroup.length > 0 && this.cifraPlayer.tocarEpiano) {
+            this.cifraPlayer.epianoPlay();
         }
     }
-
 }

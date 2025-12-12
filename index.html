@@ -18,8 +18,9 @@
 <body>
     <div class="container d-flex flex-column vh-100" id="container">
         <div class="d-sm-flex mt-1 mb-1">
-            <div class="d-flex">
-                <i class="bi bi-list" id="menuButton" data-toggle="modal" data-target="#optionsModal"></i>
+            <div class="d-flex w-100 align-items-center">
+                <i class="bi bi-list mr-2" id="menuButton" data-toggle="modal" data-target="#optionsModal"></i>
+
                 <div class="d-flex justify-content-center align-items-center flex-grow-1" id="tomContainer">
                     <button class="btn btn-dark-cyan mx-1" id="decreaseTom"><i class="bi bi-dash-lg"></i></button>
                     <select class="form-control mx-1 w-auto" id="tomSelect">
@@ -39,10 +40,19 @@
                     <button class="btn btn-dark-cyan mx-1" id="increaseTom"><i class="bi bi-plus-lg"></i></button>
                 </div>
 
-                <button class="btn btn-outline-secondary mx-1 btn-instrument" id="orgaoInstrumentButton" aria-pressed="false" type="button">
-                    <img src="./assets/icons/piano.svg" />
-                </button>
+
+                <div class="input-group drum-unified-group" id="bpm-container">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-secondary" type="button" id="decrement-bpm-10">-10</button>
+                    </div>
+                    <input type="text" id="bpm-input" value="90" class="form-control text-center px-1" aria-label="BPM">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="increment-bpm"><i class="bi bi-plus"></i></button>
+                        <button class="btn btn-outline-secondary" type="button" id="increment-bpm-10">+10</button>
+                    </div>
+                </div>
             </div>
+
             <div class="mx-1"></div>
             <div class="d-flex flex-grow-1">
                 <div class="d-flex align-items-center justify-content-between w-100">
@@ -83,6 +93,7 @@
             <textarea class="modal-textarea d-none" id="editTextarea" placeholder="Editar Cifra..."></textarea>
         </div>
 
+        <!-- Bateria -->
         <div id="bateriaWrapper" class="d-none">
 
             <div class="d-flex align-items-center mb-1">
@@ -93,17 +104,6 @@
                         <button class="btn btn-outline-secondary" type="button" id="addStyle" title="Adicionar"><i class="bi bi-plus-lg"></i></button>
                         <button class="btn btn-outline-secondary" type="button" id="editStyle" title="Editar"><i class="bi bi-pencil"></i></button>
                         <button class="btn btn-outline-secondary" type="button" id="deleteStyle" title="Excluir"><i class="bi bi-trash"></i></button>
-                    </div>
-                </div>
-
-                <div class="input-group drum-unified-group" id="bpm-container">
-                    <div class="input-group-prepend">
-                        <button class="btn btn-outline-secondary" type="button" id="decrement-bpm-10">-10</button>
-                    </div>
-                    <input type="text" id="bpm-input" value="90" class="form-control text-center px-1" aria-label="BPM">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" id="increment-bpm"><i class="bi bi-plus"></i></button>
-                        <button class="btn btn-outline-secondary" type="button" id="increment-bpm-10">+10</button>
                     </div>
                 </div>
             </div>
@@ -155,7 +155,43 @@
                 <div id="tracks">
                 </div>
             </div>
+        </div>
 
+        <!-- Melody Wrapper -->
+        <div id="melodyWrapper">
+            <div class="d-flex align-items-center mb-1">
+                <div class="input-group flex-grow-1 mr-1">
+                    <select class="form-control" id="melodyStyleSelect">
+                    </select>
+                    <div class="input-group-append d-none" id="melodySaveControl">
+                        <button class="btn btn-outline-secondary" type="button" id="addMelodyStyle" title="Adicionar"><i class="bi bi-plus-lg"></i></button>
+                        <button class="btn btn-outline-secondary" type="button" id="editMelodyStyle" title="Editar"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-outline-secondary" type="button" id="deleteMelodyStyle" title="Excluir"><i class="bi bi-trash"></i></button>
+                    </div>
+
+                    <button class="btn btn-outline-secondary mx-1 font-weight-bold" id="orgaoInstrumentButton" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
+                        Órgão
+                    </button>
+                </div>
+
+                <div class="input-group input-group-sm drum-unified-group d-none" id="stepsMelody" style="width: 150px;">
+                    <div class="input-group-prepend">
+                        <button class="btn btn-outline-secondary" type="button" id="melody-decrement-steps"><i class="bi bi-dash"></i></button>
+                    </div>
+                    <input type="text" id="melody-num-steps" value="8" class="form-control text-center px-1" aria-label="Steps">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="melody-increment-steps"><i class="bi bi-plus"></i></button>
+                        <span class="input-group-text px-1"><small>Steps</small></span>
+                    </div>
+                </div>
+
+                <button id="save-melody" class="btn btn-primary btn-sm ml-1 d-none" title="Salvar Melodia">
+                    <i class="bi bi-save"></i>
+                </button>
+            </div>
+
+            <div id="melodyTracks" class="tracks-container d-none">
+            </div>
         </div>
 
         <div id="draggableControls" style="transform: none; left: 25%; ">
@@ -173,6 +209,7 @@
             </div>
         </div>
 
+        <!-- BOTÕES DE ACORDES SECUNDÁRIOS -->
         <div class="d-flex justify-content-center align-items-center">
             <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde9" value="Bb">Bb</button>
             <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde7" value="A">A</button>
@@ -181,6 +218,7 @@
             <button class="btn-custom btn-acordeSecundario mx-1" data-action="acorde" id="acorde10" value="D">D</button>
         </div>
 
+        <!-- BOTÕES DE ACORDES PRINCIPAIS -->
         <div class="d-flex justify-content-center">
             <button class="btn-custom mx-1 botao-azul" data-action="acorde" id="acorde1" value="C">C</button>
             <button class="btn-custom mx-1" data-action="acorde" id="acorde2" value="Am">Am</button>
@@ -320,6 +358,8 @@
     <script src="./assets/js/App.js"></script>
     <script src="./assets/js/DrumMachine.js"></script>
     <script src="./assets/js/BateriaUI.js"></script>
+    <script src="./assets/js/MelodyMachine.js"></script>
+    <script src="./assets/js/MelodyUI.js"></script>
 </body>
 
 </html>

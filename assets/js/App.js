@@ -5,7 +5,7 @@ class App {
         this.musicTheory = new MusicTheory();
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
-        this.draggableController = new DraggableController(this.elements.draggableControls);        
+        this.draggableController = new DraggableController(this.elements.draggableControls);
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
@@ -44,6 +44,7 @@ class App {
         this.bindEvents();
         this.setupSelect2();
         this.getUrlParam();
+        this.updateFillBlink(this.musicTheory.bpm);
 
         const drumMachine = new DrumMachine(this.BASE_URL, this.cifraPlayer, this.musicTheory);
         if (typeof drumMachine.init === 'function')
@@ -52,10 +53,21 @@ class App {
         this.bateriaUI = new BateriaUI(this.elements, drumMachine, this.uiController, this.cifraPlayer);
         await this.bateriaUI.init();
 
+        this.melodyMachine = new MelodyMachine(this.BASE_URL, this.musicTheory, this.cifraPlayer);
+
+        this.melodyUI = new MelodyUI(this.elements, this.melodyMachine, this.uiController);
+        await this.melodyUI.init();
+
+        await this.melodyMachine.getStyles();
+
         if (this.BASE_URL.includes('http')) {
             document.getElementById('downloadStylesLink').parentElement.classList.remove('d-none');
             document.getElementById('styleButtons').classList.remove('d-none');
             document.getElementById('drumEditor').classList.remove('d-none');
+            document.getElementById('melodyTracks').classList.remove('d-none');
+            document.getElementById('stepsMelody').classList.remove('d-none');
+            document.getElementById('melodySaveControl').classList.remove('d-none');
+            document.getElementById('save-melody').classList.remove('d-none');
         }
     }
 
@@ -92,6 +104,26 @@ class App {
         document.addEventListener('mousedown', this.fullScreen.bind(this));
         document.addEventListener('click', this.handleDocumentClick.bind(this));
         $('#searchModal').on('shown.bs.modal', this.handleSearchModalShown.bind(this));
+
+        document.getElementById('increment-bpm-10').addEventListener('click', () => {
+            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 10;
+            this.setBPM(parseInt(this.elements.bpmInput.value, 10));
+        });
+        document.getElementById('increment-bpm').addEventListener('click', () => {
+            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
+            this.setBPM(parseInt(this.elements.bpmInput.value, 10));
+        });
+        document.getElementById('decrement-bpm-10').addEventListener('click', () => {
+            const bpm = Math.max(1, (parseInt(this.elements.bpmInput.value, 10) || 1) - 10);
+            this.elements.bpmInput.value = bpm;
+            this.setBPM(bpm);
+        });
+
+        this.elements.bpmInput.addEventListener('change', () => {
+            const bpm = Math.max(1, parseInt(this.elements.bpmInput.value, 10) || 1);
+            this.elements.bpmInput.value = bpm;
+            this.setBPM(bpm);
+        });
 
         // Refatoração: Adicionar listeners aos botões de acorde de forma programática
         ['mousedown'].forEach(event => {
@@ -159,6 +191,16 @@ class App {
             this.uiController.versionAlert(this.versionConfig);
             localStorage.setItem(this.VERSION_LOCAL_KEY, this.versionConfig.version);
         }
+    }
+
+    setBPM(bpm) {
+        this.musicTheory.bpm = bpm;
+        this.updateFillBlink(bpm);
+    }
+
+    updateFillBlink(bpm) {
+        const secPerBeat = 60 / bpm;
+        document.documentElement.style.setProperty('--fill-blink-duration', `${secPerBeat}s`);
     }
 
     handleSantaMissaLoad() {
@@ -341,6 +383,7 @@ class App {
         }
         this.cifraPlayer.pararReproducao();
         this.bateriaUI.stop();
+        this.melodyUI.stop();
     }
 
     handlePlayMousedown() {
@@ -603,7 +646,6 @@ class App {
         const button = event.currentTarget;
         const action = button.dataset.action;
 
-        // O 'notesButton' está fora da iteração do querySelectorAll
         if (action === 'notes') {
             var icon = this.elements.notesButton.querySelector('i');
             if (!this.held && icon.classList.contains('bi-music-note')) {
@@ -622,11 +664,16 @@ class App {
         } else {
             if (action === 'acorde') {
                 this.cifraPlayer.parado = false;
-                if (this.bateriaUI)
-                    this.bateriaUI.play();
+
+                // 2. Reinicia o Melody no Step 1
+                if (this.melodyUI) {
+                    this.melodyUI.play();
+                    this.melodyMachine.currentStep = 1;
+                }
+
                 this.cifraPlayer.tocarAcorde(button.value);
             }
-            // Remove o pressed de todos os outros botões de acorde
+
             document.querySelectorAll('button[data-action="acorde"]').forEach(btn => {
                 if (btn !== button) {
                     btn.classList.remove('pressed');
@@ -704,9 +751,7 @@ class App {
 
                     let newSaves = {};
 
-                    // 1. LÓGICA DE TRANSFORMAÇÃO:
                     if (Array.isArray(importedData)) {
-                        // Formato: Array de Cifras (do editor ou do downloadSaves)
                         importedData.forEach(cifra => {
                             if (cifra.titulo && cifra.cifra) {
                                 const chave = cifra.artista ? `${cifra.titulo} - ${cifra.artista}` : cifra.titulo;
@@ -714,29 +759,23 @@ class App {
                             }
                         });
                     } else {
-                        // Formato: Objeto de Saves (original)
                         newSaves = importedData;
                     }
 
-                    // Verifica se há algo para importar após a transformação
                     if (Object.keys(newSaves).length === 0) {
                         await this.uiController.customAlert('Arquivo importado, mas sem cifras válidas.', 'Aviso');
                         return;
                     }
 
-                    // 2. Mescla com os saves existentes
                     const currentSaves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
-                    // O operador spread ( ... ) irá sobrescrever chaves duplicadas
                     const mergedSaves = { ...currentSaves, ...newSaves };
                     localStorage.setItem(this.LOCAL_STORAGE_SAVES_KEY, JSON.stringify(mergedSaves));
 
-                    // 3. Atualiza a interface
                     this.uiController.exibirListaSaves();
 
                     $('#optionsModal').modal('hide');
                     await this.uiController.customAlert('Importado com sucesso', 'Sucesso!');
                 } catch (err) {
-                    // Trata erro de parsing do JSON
                     await this.uiController.customAlert(`Erro ao processar o arquivo: ${err.message}`, 'Erro!');
                 }
             };
@@ -746,8 +785,6 @@ class App {
         input.click();
     }
 
-    // --- DENTRO DA CLASSE App no script.js ---
-
     downloadSaves() {
         const saves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
         const nomeDoArquivo = 'repertorio-orgao-web.json';
@@ -756,28 +793,22 @@ class App {
             return;
         }
 
-        // 1. TRANSFORMAÇÃO DO FORMATO: Objeto de Saves -> Array de Cifras
         let maxId = 0;
         const arrayDeCifras = Object.keys(saves).map((nomeCompleto, index) => {
             maxId++;
             const conteudoCifra = saves[nomeCompleto];
 
-            // Tenta separar Artista e Título do nome da chave (ex: "Titulo - Artista")
             let titulo = nomeCompleto;
             let artista = '';
 
-            // Verifica se o nome da música segue o padrão "Título - Artista"
             const partes = nomeCompleto.split(' - ');
             if (partes.length > 1) {
                 artista = partes.pop().trim(); // A última parte é o artista
                 titulo = partes.join(' - ').trim(); // O restante é o título
             } else if (nomeCompleto.includes('-')) {
-                // Se houver um '-' mas não for ' - ', use o nome completo como título
                 titulo = nomeCompleto;
             }
 
-
-            // Retorna o objeto no formato esperado pelo editar-cifras.html
             return {
                 id: maxId,
                 artista: artista,
@@ -786,18 +817,15 @@ class App {
             };
         });
 
-        // 2. Criação e Download do Blob
         const dataString = JSON.stringify(arrayDeCifras, null, 2);
         const blob = new Blob([dataString], { type: 'application/json' });
 
-        // Cria um link temporário para gerar url em memória e simula um click no link
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = nomeDoArquivo;
         document.body.appendChild(link);
         link.click();
 
-        // limpeza
         document.body.removeChild(link);
         URL.revokeObjectURL(link.href);
     }
@@ -921,7 +949,6 @@ class App {
     }
 
     warmupApi() {
-        // acorda a api
         fetch(this.API_BASE_URL + '/')
             .then(response => response.json())
             .catch(() => console.log("API Warmup failed/ignored."));
@@ -929,7 +956,6 @@ class App {
 
     setupDarkMode() {
         localStorage.setItem('scrollTop', 0); // Zera a barra de rolagem de missa
-
         this.elements.darkModeToggle.checked = true;
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
@@ -939,7 +965,6 @@ class App {
     }
 }
 
-// Inicialização da Aplicação
 document.addEventListener('DOMContentLoaded', () => {
     // Definição do objeto 'elements' (mantida fora da classe App por ser um seletor de DOM global)
     // O ideal seria passar apenas o 'container' e ter o App responsável por buscar os elementos internos.

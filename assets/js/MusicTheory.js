@@ -377,6 +377,8 @@ class MusicTheory {
         };
 
         this.notas = ['c', 'c_', 'd', 'd_', 'e', 'f', 'f_', 'g', 'g_', 'a', 'a_', 'b'];
+
+        this.bpm = 90;
     }
 
     simplificarAcorde(acorde) {
