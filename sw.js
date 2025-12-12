@@ -6,6 +6,7 @@ const urlsToCache = [
     './index.html',
     './cifras.json',
     './styles.json',
+    './styles-melody.json',
     './assets/css/styles.css',
     './assets/css/frames-styles.css',
     './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css',
@@ -19,8 +20,6 @@ const urlsToCache = [
     './assets/js/UIController.js',
     './assets/lib/js/Jquery/3.5.1/jquery.min.js',
     './assets/lib/js/Bootstrap/4.6.1/bootstrap.min.js',
-
-    //adicionar icons
 
     './santamissa.html',
     './oracoes.html',
