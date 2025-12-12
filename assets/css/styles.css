@@ -581,3 +581,19 @@ body.dark-mode .control-panel {
 body.dark-mode .btn-instrument {
     background-color: #6c757d;
 }
+
+#orgaoInstrumentButton {
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+    #orgaoInstrumentButton[data-mode="teclado"] {
+        background-color: var(--drum-highlight);
+        color: white;
+        border-color: var(--drum-highlight);
+    }
+
+#bpm-input {
+    font-size: 1rem;
+}

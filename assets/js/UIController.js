@@ -179,13 +179,13 @@ class UIController {
     }
 
     esconderElementosBateria() {
-        this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/piano.svg';
+        this.elements.orgaoInstrumentButton.textContent = 'Órgão';
         this.elements.bateriaWrapper.classList.add('d-none');
         this.elements.playButton.classList.remove('blinking');
     }
 
     exibirElementosBateria() {
-        this.elements.orgaoInstrumentButton.firstElementChild.src = './assets/icons/teclado.svg';
+        this.elements.orgaoInstrumentButton.textContent = 'Bateria';
         this.elements.bateriaWrapper.classList.remove('d-none');
         this.elements.playButton.classList.add('blinking');
     }
