@@ -39,7 +39,7 @@ class MelodyMachine {
     }
 
     async getStyles() {
-        const stylesUrl = `${this.baseUrl}/styles.json`;
+        const stylesUrl = `${this.baseUrl}/styles-melody.json`;
         try {
             const resp = await fetch(stylesUrl);
             if (!resp.ok) {
