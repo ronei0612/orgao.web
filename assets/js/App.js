@@ -55,10 +55,10 @@ class App {
 
         this.melodyMachine = new MelodyMachine(this.BASE_URL, this.musicTheory, this.cifraPlayer);
 
+        await this.melodyMachine.getStyles();
+
         this.melodyUI = new MelodyUI(this.elements, this.melodyMachine, this.uiController);
         await this.melodyUI.init();
-
-        await this.melodyMachine.getStyles();
     }
 
     bindEvents() {
