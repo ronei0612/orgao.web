@@ -92,14 +92,14 @@ class MelodyUI {
     }
 
     initializeTracks() {
-        const numSteps = parseInt(this.numStepsInput.value, 10) || 16;
+        const numSteps = parseInt(this.numStepsInput.value, 10) || 8;
+        this.melodyMachine.setNumSteps(numSteps);
         this.tracksContainer.innerHTML = '';
 
         this.melodyMachine.stepsPorTempo = numSteps / 4;
 
         const frag = document.createDocumentFragment();
 
-        // ALTERAÇÃO: Removemos o .reverse() para respeitar a ordem exata da sua lista (0, 1, 2, 3)
         const instruments = this.melodyMachine.instruments;
 
         instruments.forEach(inst => {
