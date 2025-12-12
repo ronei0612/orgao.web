@@ -158,24 +158,20 @@
             </div>
         </div>
 
-        <!-- Melody Wrapper (Novo) -->
+        <!-- Melody Wrapper -->
         <div id="melodyWrapper">
-            <!-- Controles do Melody (Estilo, BPM, Steps) -->
             <div class="d-flex align-items-center mb-1">
-                <!-- Select de Estilo -->
                 <div class="input-group flex-grow-1 mr-1">
                     <select class="form-control" id="melodyStyleSelect">
-                        <!-- Preenchido via JS -->
                     </select>
-                    <div class="input-group-append">
+                    <div class="input-group-append d-none" id="melodySaveControl">
                         <button class="btn btn-outline-secondary" type="button" id="addMelodyStyle" title="Adicionar"><i class="bi bi-plus-lg"></i></button>
                         <button class="btn btn-outline-secondary" type="button" id="editMelodyStyle" title="Editar"><i class="bi bi-pencil"></i></button>
                         <button class="btn btn-outline-secondary" type="button" id="deleteMelodyStyle" title="Excluir"><i class="bi bi-trash"></i></button>
                     </div>
                 </div>
 
-                <!-- Controle de Steps (Importante para o Grid) -->
-                <div class="input-group input-group-sm drum-unified-group" style="width: 150px;">
+                <div class="input-group input-group-sm drum-unified-group d-none" id="stepsMelody" style="width: 150px;">
                     <div class="input-group-prepend">
                         <button class="btn btn-outline-secondary" type="button" id="melody-decrement-steps"><i class="bi bi-dash"></i></button>
                     </div>
@@ -185,14 +181,13 @@
                         <span class="input-group-text px-1"><small>Steps</small></span>
                     </div>
                 </div>
-                <!-- Botão Salvar -->
-                <button id="save-melody" class="btn btn-primary btn-sm ml-1" title="Salvar Melodia">
+
+                <button id="save-melody" class="btn btn-primary btn-sm ml-1 d-none" title="Salvar Melodia">
                     <i class="bi bi-save"></i>
                 </button>
             </div>
 
-            <!-- Container onde as tracks (notas) serão geradas -->
-            <div id="melodyTracks" class="tracks-container">
+            <div id="melodyTracks" class="tracks-container d-none">
             </div>
         </div>
 
