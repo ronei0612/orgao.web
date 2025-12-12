@@ -68,6 +68,12 @@ class MelodyUI {
         const styles = storage.styles || [];
 
         this.styleSelect.innerHTML = '';
+
+        const blankOption = document.createElement('option');
+        blankOption.value = "";
+        blankOption.textContent = "Sem ritmo";
+        this.styleSelect.appendChild(blankOption);
+
         styles.sort().forEach(s => {
             const option = document.createElement('option');
             option.value = s;
@@ -75,9 +81,10 @@ class MelodyUI {
             this.styleSelect.appendChild(option);
         });
 
-        if (this.styleSelect.options.length === 0) {
+        if (styles.length === 0) {
             this.ensureDefaultStyleExists();
             this.loadStyles();
+            return;
         }
 
         this.styleSelect.selectedIndex = 0;
