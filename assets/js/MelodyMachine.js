@@ -2,24 +2,14 @@ class MelodyMachine {
     constructor(baseUrl, musicTheory, cifraPlayer) {
         this.baseUrl = baseUrl;
         this.musicTheory = musicTheory;
-        this.cifraPlayer = cifraPlayer; // Recebe a instância do CifraPlayer
+        this.cifraPlayer = cifraPlayer;
 
-        // Mantém definição dos instrumentos para gerar o Grid no UI
+        // DEFINIÇÃO EXATA SOLICITADA
         this.instruments = [
-            { note: 'B2', index: 13, name: 'orgao', octave: '' },
-            { note: 'A2', index: 12, name: 'orgao', octave: '' },
-            { note: 'G2', index: 11, name: 'orgao', octave: '' },
-            { note: 'F2', index: 10, name: 'orgao', octave: '' },
-            { note: 'E2', index: 9, name: 'orgao', octave: '' },
-            { note: 'D2', index: 8, name: 'orgao', octave: '' },
-            { note: 'C2', index: 7, name: 'orgao', octave: '' },
-            { note: 'B1', index: 6, name: 'orgao', octave: 'baixo' },
-            { note: 'A1', index: 5, name: 'orgao', octave: 'baixo' },
-            { note: 'G1', index: 4, name: 'orgao', octave: 'baixo' },
-            { note: 'F1', index: 3, name: 'orgao', octave: 'baixo' },
-            { note: 'E1', index: 2, name: 'orgao', octave: 'baixo' },
-            { note: 'D1', index: 1, name: 'orgao', octave: 'baixo' },
-            { note: 'C1', index: 0, name: 'orgao', octave: 'baixo' }
+            { note: 0, name: 'orgao', octave: '' },
+            { note: 2, name: 'orgao', octave: 'baixo' },
+            { note: 1, name: 'orgao', octave: 'baixo' },
+            { note: 0, name: 'orgao', octave: 'baixo' }
         ];
 
         this.isPlaying = false;
@@ -34,13 +24,12 @@ class MelodyMachine {
         this.stepsPorTempo = null;
         this.tracksCache = null;
 
-        // Monofonia: guarda apenas o som atual tocando
+        // Variável para controlar a nota tocando (Substitui o buffer fixo)
         this.currentSource = null;
 
         this.init();
     }
 
-    // Atalhos para acessar o AudioContextManager do CifraPlayer
     get audioContext() {
         return this.cifraPlayer.audioContextManager.audioContext;
     }
@@ -92,17 +81,6 @@ class MelodyMachine {
         return { source, gainNode };
     }
 
-    scheduleNote(instrumentKey, step, time, volume) {
-        // Busca o buffer diretamente no CifraPlayer
-        // Se a chave não existir (ex: orgao_c_baixo), o CifraPlayer não carregou ou o nome está diferente
-        const buffer = this.buffers[instrumentKey];
-
-        if (buffer && volume > 0) {
-            return this.playSound(buffer, time, volume === 2 ? 0.3 : 1.0);
-        }
-        return null;
-    }
-
     stopCurrentNote(time) {
         if (this.currentSource) {
             const { source, gainNode } = this.currentSource;
@@ -131,7 +109,6 @@ class MelodyMachine {
     }
 
     scheduler() {
-        // Usa o tempo do AudioContext compartilhado
         while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
             this.scheduleCurrentStep();
             this.nextNote();
@@ -142,40 +119,38 @@ class MelodyMachine {
         if (!this.tracksCache) this.refreshTrackCache();
 
         const stepIndex = this.currentStep - 1;
-        let foundNote = null;
+        let foundTrack = null;
 
         if (this.tracksCache) {
             for (let i = 0; i < this.tracksCache.length; i++) {
                 const trackData = this.tracksCache[i];
-                if (!trackData.instrument || !trackData.button.classList.contains('selected')) continue;
+                if (!trackData.button.classList.contains('selected')) continue;
 
                 const stepEl = trackData.steps[stepIndex];
                 if (!stepEl) continue;
 
                 const volume = parseInt(stepEl.dataset.volume || '0', 10);
                 if (volume > 0) {
-                    foundNote = {
-                        instrument: trackData.instrument,
-                        volume: volume,
-                        element: stepEl
-                    };
+                    foundTrack = { ...trackData, volume, element: stepEl };
                     break;
                 }
             }
         }
 
-        if (foundNote) {
+        if (foundTrack) {
             this.stopCurrentNote(this.nextNoteTime);
 
-            this.currentSource = this.scheduleNote(
-                foundNote.instrument,
-                this.currentStep,
-                this.nextNoteTime,
-                foundNote.volume
-            );
+            let acordeSimplificado = this.cifraPlayer.acordeTocando.replace('_', '#');
+            if (acordeSimplificado.length > 1)
+                acordeSimplificado = acordeSimplificado[0].toUpperCase() + acordeSimplificado[1];
+            const notas = this.musicTheory.getAcordeNotas(acordeSimplificado);
+            const nota = notas[foundTrack.noteIndex].replace('#', '_');
+            const bufferKey = `${foundTrack.name}_${nota}${foundTrack.octave ? '_' + foundTrack.octave : ''}`;
+            const buffer = this.buffers[bufferKey];
+            this.currentSource = this.playSound(buffer, this.nextNoteTime, foundTrack.volume === 2 ? 0.3 : 1.0);
 
-            foundNote.element.classList.add('playing');
-            setTimeout(() => foundNote.element.classList.remove('playing'), 100);
+            foundTrack.element.classList.add('playing');
+            setTimeout(() => foundTrack.element.classList.remove('playing'), 100);
         }
     }
 
@@ -184,11 +159,16 @@ class MelodyMachine {
         if (!tracksContainer) return;
 
         this.tracksCache = Array.from(tracksContainer.children).map(trackEl => {
-            const label = trackEl.querySelector('.track-label span');
-            const instrument = label ? label.dataset.instrument : null;
             const button = trackEl.querySelector('.instrument-button');
             const steps = Array.from(trackEl.querySelectorAll('.step'));
-            return { instrument, button, steps };
+
+            return {
+                noteIndex: parseInt(button.dataset.noteIndex), // O índice (0, 1, 2...)
+                octave: button.dataset.octave,                 // 'baixo'
+                name: button.dataset.name,                     // 'orgao'
+                button,
+                steps
+            };
         });
     }
 
@@ -199,11 +179,8 @@ class MelodyMachine {
 
         this.isPlaying = true;
         this.currentStep = 1;
-        // Sincroniza com o tempo atual do contexto compartilhado
         this.nextNoteTime = this.audioContext.currentTime + 0.1;
-
         this.refreshTrackCache();
-
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.timerInterval = setInterval(() => this.scheduler(), this.lookahead);
     }
@@ -212,9 +189,7 @@ class MelodyMachine {
         this.isPlaying = false;
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
-            this.timerInterval = null;
         }
-        // Para o som atual
         this.stopCurrentNote(this.audioContext.currentTime);
         this.reset();
     }

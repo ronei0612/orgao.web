@@ -57,9 +57,10 @@ class MelodyUI {
         return patternData;
     }
 
+    // ALTERAÇÃO: Gera chave única baseada no índice numérico e oitava
     getInstrumentKey(inst) {
-        const nota = inst.note[0].toLowerCase();
-        return `${inst.name}_${nota}${inst.octave ? '_' + inst.octave : ''}`;
+        // Ex: orgao_0_baixo
+        return `${inst.name}_${inst.note}_${inst.octave}`;
     }
 
     loadStyles() {
@@ -91,8 +92,8 @@ class MelodyUI {
 
         const frag = document.createDocumentFragment();
 
-        // Inverte a ordem para que notas agudas fiquem no topo (opcional, mas comum em DAWs)
-        const instruments = [...this.melodyMachine.instruments].reverse();
+        // ALTERAÇÃO: Removemos o .reverse() para respeitar a ordem exata da sua lista (0, 1, 2, 3)
+        const instruments = this.melodyMachine.instruments;
 
         instruments.forEach(inst => {
             frag.appendChild(this.createTrack(inst, numSteps));
@@ -111,27 +112,32 @@ class MelodyUI {
 
         const labelDiv = document.createElement('div');
         labelDiv.className = 'track-label';
-        // Estilo inline para garantir alinhamento caso o CSS não tenha essa classe específica
-        labelDiv.style.width = '50px';
+        labelDiv.style.width = '70px'; // Leve ajuste para caber "Voz X"
         labelDiv.style.marginRight = '5px';
 
         const button = document.createElement('button');
         button.type = 'button';
-        // Reutiliza classes de bateria ou define estilo próprio
         button.className = 'instrument-button';
-        // Estilo inline para sobrescrever comportamento de imagem da bateria se necessário
-        button.style.fontSize = '12px';
+        button.style.fontSize = '11px';
         button.style.fontWeight = 'bold';
         button.style.color = '#333';
-        button.textContent = instrument.note;
+        button.style.width = '100%';
+
+        // ALTERAÇÃO: Texto do botão agora mostra a Voz (índice + 1)
+        button.textContent = `Voz ${instrument.note + 1}`;
+
+        // ALTERAÇÃO CRÍTICA: Adiciona os datasets que o MelodyMachine.js lê no refreshTrackCache
+        button.dataset.noteIndex = instrument.note; // 0, 1, 2...
+        button.dataset.name = instrument.name;      // orgao
+        button.dataset.octave = instrument.octave;  // baixo
 
         const dataSpan = document.createElement('span');
-        // Gera a chave exata que está no this.buffers do MelodyMachine
-        const nota = instrument.note[0].toLowerCase();
-        const bufferKey = `${instrument.name}_${nota}${instrument.octave ? '_' + instrument.octave : ''}`;
 
-        dataSpan.dataset.instrument = bufferKey;
-        dataSpan.className = 'd-none'; // Bootstrap hide
+        // ALTERAÇÃO: Chave única para persistência (Save/Load)
+        const storageKey = this.getInstrumentKey(instrument);
+        dataSpan.dataset.instrument = storageKey;
+
+        dataSpan.className = 'd-none';
 
         labelDiv.appendChild(button);
         labelDiv.appendChild(dataSpan);
@@ -154,7 +160,7 @@ class MelodyUI {
 
     toggleStep(step) {
         let volume = parseInt(step.dataset.volume || '0', 10);
-        volume = (volume + 1) % 3; // 0->1->2->0
+        volume = (volume + 1) % 3;
 
         step.dataset.volume = String(volume);
         step.classList.remove('active', 'low-volume');
@@ -162,7 +168,6 @@ class MelodyUI {
         if (volume === 1) step.classList.add('active');
         else if (volume === 2) step.classList.add('low-volume');
 
-        // Ativa visualmente a track se tiver algum step
         const track = step.closest('.track');
         if (track) {
             const btn = track.querySelector('.instrument-button');
@@ -333,14 +338,12 @@ class MelodyUI {
     }
 
     play() {
-        // CORRIGIDO: Referência correta ao melodyMachine
         if (!this.melodyMachine.isPlaying) {
             this.melodyMachine.start();
         }
     }
 
     stop() {
-        // CORRIGIDO: Referência correta ao melodyMachine
         if (this.melodyMachine.isPlaying) {
             this.melodyMachine.stop();
         }
