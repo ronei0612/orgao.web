@@ -285,6 +285,10 @@ class UIController {
         this.elements.oracoesFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
+        this.elements.melodyStyleSelect.classList.remove('d-none');
+        this.elements.drumStyleSelect.classList.add('d-none');
+        this.elements.orgaoInstrumentButton.classList.remove('d-none');
+        this.elements.bateriaInstrumentButton.classList.add('d-none');
     }
 
     exibirIframeCifra() {
@@ -293,6 +297,8 @@ class UIController {
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.oracoesFrame.classList.add('d-none');
+        this.elements.melodyStyleSelect.classList.add('d-none');
+        this.elements.orgaoInstrumentButton.classList.add('d-none');
     }
 
     esconderEditDeleteButtons() {
