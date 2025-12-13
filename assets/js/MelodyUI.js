@@ -51,7 +51,7 @@ class MelodyUI {
     // ALTERAÇÃO: Gera chave única baseada no índice numérico e oitava
     getInstrumentKey(inst) {
         // Ex: orgao_0_baixo
-        return `${inst.name}_${inst.note}_${inst.octave}`;
+        return `${inst.name}_${inst.note}${inst.octave}`;
     }
 
     loadStyles() {
