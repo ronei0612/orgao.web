@@ -3,7 +3,7 @@
   "data": {
     "4/4": {
       "numSteps": 8,
-      "orgao_0_": {
+      "orgao_0": {
         "steps": [ 0, 0, 0, 0, 1, 0, 0, 0 ],
         "selected": true
       },
@@ -22,7 +22,7 @@
     },
     "2/4": {
       "numSteps": 4,
-      "orgao_0_": {
+      "orgao_0": {
         "steps": [ 0, 0, 0, 0 ],
         "selected": false
       },
@@ -41,7 +41,7 @@
     },
     "3/4": {
       "numSteps": 6,
-      "orgao_0_": {
+      "orgao_0": {
         "steps": [ 0, 0, 0, 0, 0, 0 ],
         "selected": false
       },
@@ -60,7 +60,7 @@
     },
     "3/8": {
       "numSteps": 6,
-      "orgao_0_": {
+      "orgao_0": {
         "steps": [ 0, 0, 0, 0, 0, 0 ],
         "selected": false
       },
@@ -79,7 +79,7 @@
     },
     "6/8": {
       "numSteps": 6,
-      "orgao_0_": {
+      "orgao_0": {
         "steps": [ 0, 0, 0, 1, 0, 0 ],
         "selected": true
       },
@@ -98,7 +98,7 @@
     },
     "4/8": {
       "numSteps": 8,
-      "orgao_0_": {
+      "orgao_0": {
         "steps": [ 0, 0, 0, 1, 0, 0, 0, 1 ],
         "selected": true
       },
