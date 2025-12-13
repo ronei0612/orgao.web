@@ -5,7 +5,6 @@ class MelodyUI {
         this.uiController = uiController;
         this.storageKey = 'melodyStylesData';
 
-        this.wrapper = document.getElementById('melodyWrapper');
         this.tracksContainer = document.getElementById('melodyTracks');
         this.styleSelect = document.getElementById('melodyStyleSelect');
         this.numStepsInput = document.getElementById('melody-num-steps');
@@ -325,14 +324,6 @@ class MelodyUI {
         this.addStyleBtn.addEventListener('click', () => this.addStyle());
         this.editStyleBtn.addEventListener('click', () => this.editStyle());
         this.deleteStyleBtn.addEventListener('click', () => this.deleteStyle());
-    }
-
-    toggleVisibility(show) {
-        if (show) {
-            this.wrapper.classList.remove('d-none');
-        } else {
-            this.wrapper.classList.add('d-none');
-        }
     }
 
     play() {

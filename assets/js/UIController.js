@@ -179,15 +179,27 @@ class UIController {
     }
 
     esconderElementosBateria() {
-        this.elements.orgaoInstrumentButton.textContent = 'Órgão';
+        this.elements.orgaoInstrumentButton.classList.remove('d-none');
+        this.elements.bateriaInstrumentButton.classList.add('d-none');
         this.elements.bateriaWrapper.classList.add('d-none');
         this.elements.playButton.classList.remove('blinking');
+        this.exibirElementosMelody();
     }
 
     exibirElementosBateria() {
-        this.elements.orgaoInstrumentButton.textContent = 'Bateria';
+        this.elements.orgaoInstrumentButton.classList.add('d-none');
+        this.elements.bateriaInstrumentButton.classList.remove('d-none');
         this.elements.bateriaWrapper.classList.remove('d-none');
         this.elements.playButton.classList.add('blinking');
+        this.esconderElementosMelody();
+    }
+
+    esconderElementosMelody() {
+        this.elements.melodyWrapper.classList.add('d-none');
+    }
+
+    exibirElementosMelody() {
+        this.elements.melodyWrapper.classList.remove('d-none');
     }
 
     esconderBotoesPlay() {
