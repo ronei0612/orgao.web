@@ -245,10 +245,6 @@ body.dark-mode .instrument-button img {
     transition: none;
 }
 
-#bpm-container {
-    width: 330px;
-}
-
 #increment-bpm-10 {
     font-size: small;
 }
