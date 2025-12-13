@@ -6,7 +6,7 @@ class MelodyUI {
         this.storageKey = 'melodyStylesData';
 
         this.tracksContainer = document.getElementById('melodyTracks');
-        this.styleSelect = document.getElementById('melodyStyleSelect');
+        this.melodyStyleSelect = document.getElementById('melodyStyleSelect');
         this.numStepsInput = document.getElementById('melody-num-steps');
 
         this.addStyleBtn = document.getElementById('addMelodyStyle');
@@ -58,18 +58,18 @@ class MelodyUI {
         const storage = this.getStorageData();
         const styles = storage.styles || [];
 
-        this.styleSelect.innerHTML = '';
+        this.melodyStyleSelect.innerHTML = '';
 
         const blankOption = document.createElement('option');
         blankOption.value = "";
         blankOption.textContent = "Sem ritmo";
-        this.styleSelect.appendChild(blankOption);
+        this.melodyStyleSelect.appendChild(blankOption);
 
         styles.sort().forEach(s => {
             const option = document.createElement('option');
             option.value = s;
             option.textContent = s;
-            this.styleSelect.appendChild(option);
+            this.melodyStyleSelect.appendChild(option);
         });
 
         if (styles.length === 0) {
@@ -77,8 +77,8 @@ class MelodyUI {
             return;
         }
 
-        this.styleSelect.selectedIndex = 0;
-        this.loadPattern(this.styleSelect.value);
+        this.melodyStyleSelect.selectedIndex = 0;
+        this.loadPattern(this.melodyStyleSelect.value);
     }
 
     initializeTracks() {
@@ -174,7 +174,7 @@ class MelodyUI {
     }
 
     saveCurrentPattern() {
-        const styleName = this.styleSelect.value;
+        const styleName = this.melodyStyleSelect.value;
         const numSteps = parseInt(this.numStepsInput.value, 10);
         const patternData = { numSteps: numSteps };
 
@@ -271,13 +271,13 @@ class MelodyUI {
             storage.data[name] = this.createEmptyPattern(parseInt(this.numStepsInput.value));
             this.persistStorageData(storage);
             this.loadStyles();
-            this.styleSelect.value = name;
+            this.melodyStyleSelect.value = name;
             this.loadPattern(name);
         }
     }
 
     deleteStyle() {
-        const name = this.styleSelect.value;
+        const name = this.melodyStyleSelect.value;
         if (confirm(`Excluir estilo "${name}"?`)) {
             const storage = this.getStorageData();
             storage.styles = storage.styles.filter(s => s !== name);
@@ -288,7 +288,7 @@ class MelodyUI {
     }
 
     editStyle() {
-        const oldName = this.styleSelect.value;
+        const oldName = this.melodyStyleSelect.value;
         const newName = prompt("Renomear estilo para:", oldName);
         if (newName && newName !== oldName) {
             const storage = this.getStorageData();
@@ -300,7 +300,7 @@ class MelodyUI {
 
             this.persistStorageData(storage);
             this.loadStyles();
-            this.styleSelect.value = newName;
+            this.melodyStyleSelect.value = newName;
         }
     }
 
@@ -319,7 +319,7 @@ class MelodyUI {
 
         this.numStepsInput.addEventListener('change', () => this.initializeTracks());
         this.saveBtn.addEventListener('click', () => this.saveCurrentPattern());
-        this.styleSelect.addEventListener('change', () => this.loadPattern(this.styleSelect.value));
+        this.melodyStyleSelect.addEventListener('change', () => this.loadPattern(this.melodyStyleSelect.value));
 
         this.addStyleBtn.addEventListener('click', () => this.addStyle());
         this.editStyleBtn.addEventListener('click', () => this.editStyle());
