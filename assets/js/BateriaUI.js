@@ -100,13 +100,13 @@ class BateriaUI {
     loadStyles() {
         const storage = this.getStorageData();
         const styles = storage?.styles || [];
-        this.elements.styleSelect.innerHTML = '';
+        this.elements.drumStyleSelect.innerHTML = '';
         if (!styles.length) {
             const option = document.createElement('option');
             option.value = this.defaultStyle;
             option.textContent = this.defaultStyle;
-            this.elements.styleSelect.appendChild(option);
-            this.elements.styleSelect.value = this.defaultStyle;
+            this.elements.drumStyleSelect.appendChild(option);
+            this.elements.drumStyleSelect.value = this.defaultStyle;
             return;
         }
         const sorted = styles.slice().sort((a, b) => a.localeCompare(b));
@@ -114,14 +114,14 @@ class BateriaUI {
             const option = document.createElement('option');
             option.value = s;
             option.textContent = s;
-            this.elements.styleSelect.appendChild(option);
+            this.elements.drumStyleSelect.appendChild(option);
         });
-        this.elements.styleSelect.selectedIndex = 0;
+        this.elements.drumStyleSelect.selectedIndex = 0;
     }
 
     saveStyles() {
         const storage = this.getStorageData();
-        storage.styles = Array.from(this.elements.styleSelect.options).map(o => o.value);
+        storage.styles = Array.from(this.elements.drumStyleSelect.options).map(o => o.value);
         // preserve storage.data (do not clobber)
         this.persistStorageData(storage);
     }
@@ -147,14 +147,14 @@ class BateriaUI {
         });
         this.persistStorageData(storage);
         this.loadStyles();
-        this.elements.styleSelect.value = newName;
+        this.elements.drumStyleSelect.value = newName;
     }
 
     /**
      * Edita (renomeia) um estilo na estrutura JSON
      */
     editStyle() {
-        const current = this.elements.styleSelect.value;
+        const current = this.elements.drumStyleSelect.value;
         const newName = prompt('Digite o novo nome para o estilo:', current);
         if (!newName || newName === current) return;
         const storage = this.getStorageData();
@@ -173,14 +173,14 @@ class BateriaUI {
         }
         this.persistStorageData(storage);
         this.loadStyles();
-        this.elements.styleSelect.value = newName;
+        this.elements.drumStyleSelect.value = newName;
     }
 
     /**
      * Exclui o estilo atualmente selecionado da estrutura JSON
      */
     deleteStyle() {
-        const current = this.elements.styleSelect.value;
+        const current = this.elements.drumStyleSelect.value;
         if (!confirm(`Tem certeza que deseja excluir o estilo "${current}"?`)) return;
         const storage = this.getStorageData();
         storage.styles = (storage.styles || []).filter(s => s !== current);
@@ -204,7 +204,7 @@ class BateriaUI {
      * Salva o ritmo atual no localStorage para o estilo e ritmo selecionados.
      */
     saveRhythm() {
-        const styleName = this.elements.styleSelect.value || this.defaultStyle;
+        const styleName = this.elements.drumStyleSelect.value || this.defaultStyle;
         let rhythmKey = this.selectedRhythm;
         const selectedButton = document.getElementById(`rhythm-${this.selectedRhythm.toLowerCase()}`);
         if (selectedButton && selectedButton.classList.contains('fill')) rhythmKey = `${rhythmKey}-fill`;
@@ -243,7 +243,7 @@ class BateriaUI {
             const rkey = rhythmKey.substring(idx + 1);
             data = storage.data && storage.data[style] ? storage.data[style][rkey] : null;
         } else {
-            const styleName = this.elements.styleSelect.value || this.defaultStyle;
+            const styleName = this.elements.drumStyleSelect.value || this.defaultStyle;
             data = storage.data && storage.data[styleName] ? storage.data[styleName][rhythmKey] : null;
         }
 
@@ -429,7 +429,7 @@ class BateriaUI {
      * Altera verificação de existence de fill para usar o novo JSON estruturado.
      */
     selectRhythm(rhythmButton, rhythmKey) {
-        const styleName = this.elements.styleSelect.value || this.defaultStyle;
+        const styleName = this.elements.drumStyleSelect.value || this.defaultStyle;
         const rhythmCode = rhythmKey.replace('rhythm-', '').toUpperCase();
 
         this.toggleStrings(rhythmCode);
@@ -520,14 +520,14 @@ class BateriaUI {
             }
 
             if (!isFillSelected) {
-                this.loadRhythm(`${this.elements.styleSelect.value}-${this.selectedRhythm}`);
+                this.loadRhythm(`${this.elements.drumStyleSelect.value}-${this.selectedRhythm}`);
                 this.fillLoaded = false;
 
                 // 2. Se o botão Clicado *está* no modo FILL
             } else {
                 // A medida terminou, então ele volta para o ritmo BASE (não importa o estado anterior de this.fillLoaded)
                 this.playPrato();
-                this.loadRhythm(`${this.elements.styleSelect.value}-${this.selectedRhythm}`);
+                this.loadRhythm(`${this.elements.drumStyleSelect.value}-${this.selectedRhythm}`);
                 this.fillLoaded = false;
                 selectedButton.classList.remove('fill');
             }
@@ -611,8 +611,8 @@ class BateriaUI {
         });
 
         // Styles
-        this.elements.styleSelect.addEventListener('change', () => {
-            this.loadRhythmForStyleAndRhythm(this.elements.styleSelect.value, this.selectedRhythm);
+        this.elements.drumStyleSelect.addEventListener('change', () => {
+            this.loadRhythmForStyleAndRhythm(this.elements.drumStyleSelect.value, this.selectedRhythm);
         });
         this.elements.addStyleButton.addEventListener('click', () => this.addStyle());
         this.elements.editStyleButton.addEventListener('click', () => this.editStyle());

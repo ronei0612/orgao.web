@@ -9,7 +9,7 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '5.8.5',
+            version: '5.8.6',
             htmlMessage: `
                 <p>Novo botão para trocar de Órgão para Bateria.</p>
 
@@ -1039,7 +1039,8 @@ document.addEventListener('DOMContentLoaded', () => {
         tracksContainer: document.getElementById('tracks'),
         rhythmButtons: Array.from(document.querySelectorAll('.rhythm-button')),
         saveRhythmButton: document.getElementById('save-rhythm'),
-        styleSelect: document.getElementById('style'),
+        drumStyleSelect: document.getElementById('drumStyleSelect'),
+        melodyStyleSelect: document.getElementById('melodyStyleSelect'),
         addStyleButton: document.getElementById('addStyle'),
         editStyleButton: document.getElementById('editStyle'),
         deleteStyleButton: document.getElementById('deleteStyle'),
