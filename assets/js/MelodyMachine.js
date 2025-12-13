@@ -22,8 +22,20 @@ class MelodyMachine {
             'g': ['g_baixo', 'b_baixo', 'd'],
             'g_': ['g__baixo', 'c', 'd_'],
             'a': ['a_baixo', 'c_', 'e'],
-            'a_': ['a__baixo', 'd', 'e_'],
-            'b': ['b_baixo', 'd_', 'f_']
+            'a_': ['a__baixo', 'd', 'f'],
+            'b': ['b_baixo', 'd_', 'f_'],
+            'cm': ['c_baixo', 'd__baixo', 'g_baixo'],
+            'c_m': ['c__baixo', 'e_baixo', 'g__baixo'],
+            'dm': ['d_baixo', 'f_baixo', 'a_baixo'],
+            'd_m': ['d__baixo', 'f__baixo', 'a__baixo'],
+            'em': ['e_baixo', 'g_baixo', 'b_baixo'],
+            'fm': ['f_baixo', 'g__baixo', 'c'],
+            'f_m': ['f__baixo', 'a_baixo', 'c_'],
+            'gm': ['g_baixo', 'a__baixo', 'd'],
+            'g_m': ['g__baixo', 'b_baixo', 'd_'],
+            'am': ['a_baixo', 'c_', 'e'],
+            'a_m': ['a__baixo', 'd__', 'f'],
+            'bm': ['b_baixo', 'd', 'f_']
         };
 
         this.isPlaying = false;
@@ -150,11 +162,6 @@ class MelodyMachine {
             this.stopCurrentNote(this.nextNoteTime);
 
             let acordeSimplificado = this.cifraPlayer.acordeTocando;
-            const acordeNota = acordeSimplificado[0];
-            if (acordeSimplificado.length > 1)
-                acordeSimplificado = acordeNota + acordeSimplificado[1];
-            else
-                acordeSimplificado = acordeNota;
             const notas = this.getAcordeNotas(acordeSimplificado);
             const nota = notas[foundTrack.noteIndex].replace('_baixo', foundTrack.octave);
             const bufferKey = `${foundTrack.name}_${nota}`;
