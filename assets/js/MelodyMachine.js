@@ -6,10 +6,25 @@ class MelodyMachine {
 
         this.instruments = [
             { note: 0, name: 'orgao', octave: '' },
-            { note: 2, name: 'orgao', octave: 'baixo' },
-            { note: 1, name: 'orgao', octave: 'baixo' },
-            { note: 0, name: 'orgao', octave: 'baixo' }
+            { note: 2, name: 'orgao', octave: '_baixo' },
+            { note: 1, name: 'orgao', octave: '_baixo' },
+            { note: 0, name: 'orgao', octave: '_baixo' }
         ];
+
+        this.acordes = {
+            'c': ['c_baixo', 'e_baixo', 'g_baixo'],
+            'c_': ['c__baixo', 'f_baixo', 'g__baixo'],
+            'd': ['d_baixo', 'f__baixo', 'a_baixo'],
+            'd_': ['d__baixo', 'g_baixo', 'a__baixo'],
+            'e': ['e_baixo', 'g__baixo', 'b_baixo'],
+            'f': ['f_baixo', 'a_baixo', 'c'],
+            'f_': ['f__baixo', 'a__baixo', 'c_'],
+            'g': ['g_baixo', 'b_baixo', 'd'],
+            'g_': ['g__baixo', 'c', 'd_'],
+            'a': ['a_baixo', 'c_', 'e'],
+            'a_': ['a__baixo', 'd', 'e_'],
+            'b': ['b_baixo', 'd_', 'f_']
+        };
 
         this.isPlaying = false;
         this.currentStep = 1;
@@ -134,21 +149,25 @@ class MelodyMachine {
         if (foundTrack) {
             this.stopCurrentNote(this.nextNoteTime);
 
-            let acordeSimplificado = this.cifraPlayer.acordeTocando.replace('_', '#');
-            const acordeNota = acordeSimplificado[0].toUpperCase();
+            let acordeSimplificado = this.cifraPlayer.acordeTocando;
+            const acordeNota = acordeSimplificado[0];
             if (acordeSimplificado.length > 1)
                 acordeSimplificado = acordeNota + acordeSimplificado[1];
             else
                 acordeSimplificado = acordeNota;
-            const notas = this.musicTheory.getAcordeNotas(acordeSimplificado);
-            const nota = notas[foundTrack.noteIndex].replace('#', '_');
-            const bufferKey = `${foundTrack.name}_${nota}${foundTrack.octave ? '_' + foundTrack.octave : ''}`;
+            const notas = this.getAcordeNotas(acordeSimplificado);
+            const nota = notas[foundTrack.noteIndex].replace('_baixo', foundTrack.octave);
+            const bufferKey = `${foundTrack.name}_${nota}`;
             const buffer = this.buffers[bufferKey];
             this.currentSource = this.playSound(buffer, this.nextNoteTime, foundTrack.volume === 2 ? 0.5 : 1.0);
 
             foundTrack.element.classList.add('playing');
             setTimeout(() => foundTrack.element.classList.remove('playing'), 100);
         }
+    }
+
+    getAcordeNotas(acordeNome) {
+        return this.acordes[acordeNome];
     }
 
     refreshTrackCache() {
