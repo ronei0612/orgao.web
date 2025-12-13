@@ -182,7 +182,9 @@ class UIController {
         this.elements.orgaoInstrumentButton.classList.remove('d-none');
         this.elements.bateriaInstrumentButton.classList.add('d-none');
         this.elements.bateriaWrapper.classList.add('d-none');
+        this.elements.rhythmButtonsControl.classList.add('d-none');
         this.elements.playButton.classList.remove('blinking');
+        this.elements.drumStyleSelect.classList.add('d-none');
         this.exibirElementosMelody();
     }
 
@@ -190,7 +192,9 @@ class UIController {
         this.elements.orgaoInstrumentButton.classList.add('d-none');
         this.elements.bateriaInstrumentButton.classList.remove('d-none');
         this.elements.bateriaWrapper.classList.remove('d-none');
+        this.elements.rhythmButtonsControl.classList.remove('d-none');
         this.elements.playButton.classList.add('blinking');
+        this.elements.drumStyleSelect.classList.remove('d-none');
         this.esconderElementosMelody();
     }
 
@@ -288,7 +292,9 @@ class UIController {
         this.elements.melodyStyleSelect.classList.remove('d-none');
         this.elements.drumStyleSelect.classList.add('d-none');
         this.elements.orgaoInstrumentButton.classList.remove('d-none');
+        this.elements.melodyWrapper.classList.remove('d-none');
         this.elements.bateriaInstrumentButton.classList.add('d-none');
+        //this.elements.rhythmButtonsControl.classList.add('d-none');
     }
 
     exibirIframeCifra() {
