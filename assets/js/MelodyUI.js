@@ -3,11 +3,8 @@ class MelodyUI {
         this.elements = elements;
         this.melodyMachine = melodyMachine;
         this.uiController = uiController;
-
-        this.defaultStyle = 'Novo Estilo Melodia';
         this.storageKey = 'melodyStylesData';
 
-        this.wrapper = document.getElementById('melodyWrapper');
         this.tracksContainer = document.getElementById('melodyTracks');
         this.styleSelect = document.getElementById('melodyStyleSelect');
         this.numStepsInput = document.getElementById('melody-num-steps');
@@ -22,29 +19,23 @@ class MelodyUI {
     }
 
     async init() {
-        this.ensureDefaultStyleExists();
         this.loadStyles();
         this.initializeTracks();
         this.bindEvents();
     }
 
     getStorageData() {
-        const data = localStorage.getItem(this.storageKey);
-        if (data) return JSON.parse(data);
-        return { styles: [this.defaultStyle], data: {} };
+        const tem_styles_melody = localStorage.getItem(this.storageKey);
+        if (tem_styles_melody)
+            return JSON.parse(tem_styles_melody);
+
+        
+
+        return this.melodyMachine.styles;
     }
 
     persistStorageData(obj) {
         localStorage.setItem(this.storageKey, JSON.stringify(obj));
-    }
-
-    ensureDefaultStyleExists() {
-        const storage = this.getStorageData();
-        if (!storage.styles.includes(this.defaultStyle)) {
-            storage.styles.push(this.defaultStyle);
-            storage.data[this.defaultStyle] = this.createEmptyPattern(16);
-            this.persistStorageData(storage);
-        }
     }
 
     createEmptyPattern(numSteps) {
@@ -82,7 +73,6 @@ class MelodyUI {
         });
 
         if (styles.length === 0) {
-            this.ensureDefaultStyleExists();
             this.loadStyles();
             return;
         }
@@ -334,14 +324,6 @@ class MelodyUI {
         this.addStyleBtn.addEventListener('click', () => this.addStyle());
         this.editStyleBtn.addEventListener('click', () => this.editStyle());
         this.deleteStyleBtn.addEventListener('click', () => this.deleteStyle());
-    }
-
-    toggleVisibility(show) {
-        if (show) {
-            this.wrapper.classList.remove('d-none');
-        } else {
-            this.wrapper.classList.add('d-none');
-        }
     }
 
     play() {

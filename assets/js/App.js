@@ -9,12 +9,13 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '5.8.2',
+            version: '5.8.3',
             htmlMessage: `
-                <p>Novo módulo de E-piano e Bateria.</p>
+                <p>Novo botão para trocar de Órgão para Bateria.</p>
 
-                👉 <button class="btn btn-outline-secondary mx-1 btn-instrument" aria-pressed="false" type="button">
-                    <img src="./assets/icons/piano.svg">
+                👉 <button class="btn btn-outline-secondary mx-1 font-weight-bold" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
+                        Órgão
+                    </button>
                 </button>
             `
         };
@@ -55,20 +56,10 @@ class App {
 
         this.melodyMachine = new MelodyMachine(this.BASE_URL, this.musicTheory, this.cifraPlayer);
 
-        this.melodyUI = new MelodyUI(this.elements, this.melodyMachine, this.uiController);
-        await this.melodyUI.init();
-
         await this.melodyMachine.getStyles();
 
-        if (this.BASE_URL.includes('http')) {
-            document.getElementById('downloadStylesLink').parentElement.classList.remove('d-none');
-            document.getElementById('styleButtons').classList.remove('d-none');
-            document.getElementById('drumEditor').classList.remove('d-none');
-            document.getElementById('melodyTracks').classList.remove('d-none');
-            document.getElementById('stepsMelody').classList.remove('d-none');
-            document.getElementById('melodySaveControl').classList.remove('d-none');
-            document.getElementById('save-melody').classList.remove('d-none');
-        }
+        this.melodyUI = new MelodyUI(this.elements, this.melodyMachine, this.uiController);
+        await this.melodyUI.init();
     }
 
     bindEvents() {
@@ -101,6 +92,7 @@ class App {
         this.elements.avancarButton.addEventListener('mousedown', () => this.cifraPlayer.avancarCifra());
         this.elements.retrocederButton.addEventListener('mousedown', () => this.cifraPlayer.retrocederCifra());
         this.elements.orgaoInstrumentButton.addEventListener('click', () => this.handleOrgaoInstrumentClick());
+        this.elements.bateriaInstrumentButton.addEventListener('click', () => this.handleOrgaoInstrumentClick());
         document.addEventListener('mousedown', this.fullScreen.bind(this));
         document.addEventListener('click', this.handleDocumentClick.bind(this));
         $('#searchModal').on('shown.bs.modal', this.handleSearchModalShown.bind(this));
@@ -1031,6 +1023,7 @@ document.addEventListener('DOMContentLoaded', () => {
         borderLeft: document.getElementById('borderLeft'),
         draggableControls: document.getElementById('draggableControls'),
         orgaoInstrumentButton: document.getElementById('orgaoInstrumentButton'),
+        bateriaInstrumentButton: document.getElementById('bateriaInstrumentButton'),
         bpmInput: document.getElementById('bpm-input'),
         numStepsInput: document.getElementById('num-steps'),
         tracksContainer: document.getElementById('tracks'),
@@ -1042,7 +1035,8 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteStyleButton: document.getElementById('deleteStyle'),
         copyRhythmButton: document.getElementById('copy-rhythm'),
         pasteRhythmButton: document.getElementById('paste-rhythm'),
-        bateriaWrapper: document.getElementById('bateriaWrapper')
+        bateriaWrapper: document.getElementById('bateriaWrapper'),
+        melodyWrapper: document.getElementById('melodyWrapper')
     };
 
     const app = new App(elements);

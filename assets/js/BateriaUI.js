@@ -14,6 +14,7 @@ class BateriaUI {
         this.copiedRhythmData = null;
         this.storageKey = 'drumStylesData';
     }
+
     getStorageData() {
         const tem_styles_bateria = localStorage.getItem(this.storageKey);
         if (tem_styles_bateria)
