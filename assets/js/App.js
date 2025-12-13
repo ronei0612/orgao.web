@@ -9,7 +9,7 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '5.8.3',
+            version: '5.8.4',
             htmlMessage: `
                 <p>Novo botão para trocar de Órgão para Bateria.</p>
 
@@ -60,6 +60,16 @@ class App {
 
         this.melodyUI = new MelodyUI(this.elements, this.melodyMachine, this.uiController);
         await this.melodyUI.init();
+
+        //if (this.BASE_URL.includes('http')) {
+        //    document.getElementById('downloadStylesLink').parentElement.classList.remove('d-none');
+        //    document.getElementById('styleButtons').classList.remove('d-none');
+        //    document.getElementById('drumEditor').classList.remove('d-none');
+        //    document.getElementById('melodyTracks').classList.remove('d-none');
+        //    document.getElementById('stepsMelody').classList.remove('d-none');
+        //    document.getElementById('melodySaveControl').classList.remove('d-none');
+        //    document.getElementById('save-melody').classList.remove('d-none');
+        //}
     }
 
     bindEvents() {
