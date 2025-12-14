@@ -1,4 +1,4 @@
-const version = '5.8.9';
+const version = '5.9.0';
 const CACHE_NAME = 'cifra-app-cache-' + version;
 
 const urlsToCache = [
@@ -31,27 +31,27 @@ const urlsToCache = [
     './santamissa.html',
     './oracoes.html',
 
-    '/assets/icons/v2/avancar.svg',
-    '/assets/icons/menu.svg',
-    '/assets/icons/dash-lg.svg',
-    '/assets/icons/plus-lg.svg',
-    '/assets/icons/plus.svg',
-    '/assets/icons/check.svg',
-    '/assets/icons/plus-square.svg',
-    '/assets/icons/pencil.svg',
-    '/assets/icons/trash.svg',
-    '/assets/icons/pratoBaqueta.svg',
-    '/assets/icons/bumbo.svg',
-    '/assets/icons/caixa.svg',
-    '/assets/icons/chimbal.svg',
-    '/assets/icons/meiaLua.svg',
-    '/assets/icons/v2/voltar.svg',
-    '/assets/icons/play-fill.svg',
-    '/assets/icons/stop-fill.svg',
-    '/assets/icons/music-note-beamed.svg',
-    '/assets/icons/x-circle.svg',
-    '/assets/icons/search.svg',
-    '/assets/icons/check.svg',
+    './assets/icons/v2/avancar.svg',
+    './assets/icons/menu.svg',
+    './assets/icons/dash-lg.svg',
+    './assets/icons/plus-lg.svg',
+    './assets/icons/plus.svg',
+    './assets/icons/check.svg',
+    './assets/icons/plus-square.svg',
+    './assets/icons/pencil.svg',
+    './assets/icons/trash.svg',
+    './assets/icons/pratoBaqueta.svg',
+    './assets/icons/bumbo.svg',
+    './assets/icons/caixa.svg',
+    './assets/icons/chimbal.svg',
+    './assets/icons/meiaLua.svg',
+    './assets/icons/v2/voltar.svg',
+    './assets/icons/play-fill.svg',
+    './assets/icons/stop-fill.svg',
+    './assets/icons/music-note-beamed.svg',
+    './assets/icons/x-circle.svg',
+    './assets/icons/search.svg',
+    './assets/icons/check.svg',
 
     // Dependências externas (CDNs) - CRÍTICO para o modo offline!
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'
@@ -59,18 +59,30 @@ const urlsToCache = [
 
 // Evento de Instalação: Salva todos os arquivos listados no cache.
 self.addEventListener('install', event => {
-    self.skipWaiting(); // Sugestão: Pula a fase waiting e tenta ativar imediatamente
+    self.skipWaiting();
 
     event.waitUntil(
-        caches.open(CACHE_NAME) // Use a variável CACHE_NAME
-            .then(cache => {
-                console.log('[SW] Cache aberto. Adicionando arquivos essenciais para modo offline.');
-                return cache.addAll(urlsToCache);
-            })
-            .catch(error => {
-                // É importante saber se o addAll falhou, especialmente por causa de CDNs
-                console.error('[SW] Falha ao cachear ativos. Isso pode ser um problema de CDN.', error);
-            })
+        caches.open(CACHE_NAME).then(async cache => {
+            console.log('[SW] Iniciando cache de arquivos...');
+
+            // Adiciona um por um para sabermos qual falha
+            for (const url of urlsToCache) {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`Status ${response.status}`);
+                    }
+                    await cache.put(url, response);
+                } catch (error) {
+                    console.error(`[SW FALHA] Não foi possível cachear: ${url} - Erro: ${error.message}`);
+                    // Opcional: Se quiser que o app funcione mesmo faltando arquivos, 
+                    // remova o 'return Promise.reject' abaixo. 
+                    // Mas o ideal é manter para saber que algo está errado.
+                    return Promise.reject(error);
+                }
+            }
+            console.log('[SW] Todos os arquivos foram cacheados com sucesso!');
+        })
     );
 });
 
