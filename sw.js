@@ -1,4 +1,4 @@
-const version = '5.8.8';
+const version = '5.8.9';
 const CACHE_NAME = 'cifra-app-cache-' + version;
 
 const urlsToCache = [
@@ -9,6 +9,7 @@ const urlsToCache = [
     './styles-melody.json',
     './assets/css/styles.css',
     './assets/css/frames-styles.css',
+    './assets/css/bateria.css',
     './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/bootstrap-icons.css',
     './assets/lib/css/Bootstrap/bootstrap-icons/1.8.1/fonts/bootstrap-icons.woff2',
     './assets/lib/css/Bootstrap/4.6.2/bootstrap.min.css',
@@ -18,11 +19,39 @@ const urlsToCache = [
     './assets/js/LocalStorageManager.js',
     './assets/js/MusicTheory.js',
     './assets/js/UIController.js',
+    './assets/js/DraggableController.js',
+    './assets/js/DrumMachine.js',
+    './assets/js/BateriaUI.js',
+    './assets/js/MelodyMachine.js',
+    './assets/js/MelodyUI.js',
+    './assets/js/CifrasEditor.js',
     './assets/lib/js/Jquery/3.5.1/jquery.min.js',
-    './assets/lib/js/Bootstrap/4.6.1/bootstrap.min.js',
+    './assets/lib/js/Bootstrap/4.6.2/bootstrap.min.js',
 
     './santamissa.html',
     './oracoes.html',
+
+    '/assets/icons/v2/avancar.svg',
+    '/assets/icons/menu.svg',
+    '/assets/icons/dash-lg.svg',
+    '/assets/icons/plus-lg.svg',
+    '/assets/icons/plus.svg',
+    '/assets/icons/check.svg',
+    '/assets/icons/plus-square.svg',
+    '/assets/icons/pencil.svg',
+    '/assets/icons/trash.svg',
+    '/assets/icons/pratoBaqueta.svg',
+    '/assets/icons/bumbo.svg',
+    '/assets/icons/caixa.svg',
+    '/assets/icons/chimbal.svg',
+    '/assets/icons/meiaLua.svg',
+    '/assets/icons/v2/voltar.svg',
+    '/assets/icons/play-fill.svg',
+    '/assets/icons/stop-fill.svg',
+    '/assets/icons/music-note-beamed.svg',
+    '/assets/icons/x-circle.svg',
+    '/assets/icons/search.svg',
+    '/assets/icons/check.svg',
 
     // Dependências externas (CDNs) - CRÍTICO para o modo offline!
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'
