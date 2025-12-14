@@ -28,6 +28,7 @@ class App {
         this.musicaEscolhida = false;
         this.selectItemAntes = null;
         this.LOCAL_STORAGE_SAVES_KEY = 'saves';
+        this.LOCAL_STORAGE_SAVES_INSTRUMENT_KEY = 'saves_instrument';
         this.API_BASE_URL = 'https://apinode-h4wt.onrender.com';
         this.STYLES_LOCAL_KEY = 'drumStylesData';
         this.VERSION_LOCAL_KEY = 'versao_app';
@@ -346,6 +347,14 @@ class App {
         this.uiController.exibirBotoesTom();
         this.uiController.exibirBotoesAcordes();
         this.cifraPlayer.preencherSelectCifras('C');
+        this.exibirInstrument(this.cifraPlayer.instrumento);
+    }
+
+    exibirBotaoInstrumento(selectItem) {
+        const instrumento = this.localStorageManager.getTextJson(this.LOCAL_STORAGE_SAVES_INSTRUMENT_KEY, selectItem);
+        if (instrumento) {
+            this.escolherInstrumento(instrumento);
+        }
     }
 
     async handleDeleteSaveClick() {
@@ -354,6 +363,7 @@ class App {
             const confirmed = await this.uiController.customConfirm(`Deseja excluir "${saveName}"?`, 'Deletar!');
             if (confirmed) {
                 this.localStorageManager.deleteJson(this.LOCAL_STORAGE_SAVES_KEY, saveName);
+                this.localStorageManager.deleteJson(this.LOCAL_STORAGE_SAVES_INSTRUMENT_KEY, saveName);
                 this.uiController.resetInterface();
                 this.uiController.exibirListaSaves();
                 this.selectEscolhido('acordes__');
@@ -417,19 +427,43 @@ class App {
         }
     }
 
-    handleOrgaoInstrumentClick() {
-        if (this.cifraPlayer.instrumento === 'orgao') {
-            this.cifraPlayer.instrumento = 'epiano';
-            this.cifraPlayer.attack = 0;
-            this.uiController.exibirElementosBateria();
-            this.cifraPlayer.atualizarVolumeStringsParaEpiano();
+    escolherInstrumento(instrument) {
+        if (instrument === 'orgao') {
+            this.cifraPlayer.instrumento = 'orgao';
+            this.cifraPlayer.attack = 0.2;
+            this.elements.rhythmButtonsControl.classList.add('d-none');
+            this.cifraPlayer.atualizarVolumeStringsParaOrgao();
         }
         else {
-            this.cifraPlayer.instrumento = 'orgao';
+            this.cifraPlayer.instrumento = 'epiano';
+            this.cifraPlayer.attack = 0;
+            this.elements.rhythmButtonsControl.classList.remove('d-none');
+            this.cifraPlayer.atualizarVolumeStringsParaEpiano();
+        }
+    }
+
+    exibirInstrument(instrument) {
+        if (instrument === 'orgao') {
             this.cifraPlayer.attack = 0.2;
             this.uiController.esconderElementosBateria();
             this.cifraPlayer.atualizarVolumeStringsParaOrgao();
         }
+        else {
+            this.cifraPlayer.attack = 0;
+            this.uiController.exibirElementosBateria();
+            this.cifraPlayer.atualizarVolumeStringsParaEpiano();
+        }
+    }
+
+    handleOrgaoInstrumentClick() {
+        if (this.cifraPlayer.instrumento === 'orgao') {
+            this.cifraPlayer.instrumento = 'epiano';
+        }
+        else {
+            this.cifraPlayer.instrumento = 'orgao';
+        }
+
+        this.exibirInstrument(this.cifraPlayer.instrumento);
     }
 
     verifyLetraOuCifra(texto) {
@@ -464,6 +498,8 @@ class App {
             if (confirmed) {
                 var saveContent = this.elements.iframeCifra.contentDocument.body.innerText;
                 this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_KEY, this.selectItemAntes, saveContent);
+                debugger;
+                this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_INSTRUMENT_KEY, this.selectItemAntes, this.cifraPlayer.instrumento);
             }
             this.cifraPlayer.tomOriginal = null;
         }
@@ -478,6 +514,8 @@ class App {
         if (selectItem && selectItem !== 'acordes__') {
             const texto = this.localStorageManager.getTextJson(this.LOCAL_STORAGE_SAVES_KEY, selectItem);
             this.showLetraCifra(texto);
+
+            this.exibirBotaoInstrumento(selectItem);
         }
         else {
             this.uiController.resetInterface();
@@ -911,6 +949,8 @@ class App {
         this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_KEY, newSaveName, saveContent);
         this.elements.savesSelect.value = newSaveName;
 
+        this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_INSTRUMENT_KEY, newSaveName, this.cifraPlayer.instrumento);
+
         this.uiController.exibirIframeCifra();
         this.uiController.exibirListaSaves(newSaveName);
 
@@ -1047,7 +1087,8 @@ document.addEventListener('DOMContentLoaded', () => {
         copyRhythmButton: document.getElementById('copy-rhythm'),
         pasteRhythmButton: document.getElementById('paste-rhythm'),
         bateriaWrapper: document.getElementById('bateriaWrapper'),
-        melodyWrapper: document.getElementById('melodyWrapper')
+        melodyWrapper: document.getElementById('melodyWrapper'),
+        rhythmButtonsControl: document.getElementById('rhythm-buttons')
     };
 
     const app = new App(elements);
