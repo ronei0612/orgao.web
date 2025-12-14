@@ -1,4 +1,4 @@
-const version = '5.8.7';
+const version = '5.8.8';
 const CACHE_NAME = 'cifra-app-cache-' + version;
 
 const urlsToCache = [
