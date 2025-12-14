@@ -32,6 +32,7 @@ class App {
         this.API_BASE_URL = 'https://apinode-h4wt.onrender.com';
         this.STYLES_LOCAL_KEY = 'drumStylesData';
         this.VERSION_LOCAL_KEY = 'versao_app';
+        this.LOG_STORAGE_KEY = 'debug_logs_v1';
     }
 
     async init() {
@@ -92,7 +93,7 @@ class App {
         this.elements.clearButton.addEventListener('click', () => this.handleClearSearchClick());
         this.elements.liturgiaDiariaLink.addEventListener('click', () => this.exibirFrame('liturgiaDiariaFrame'));
         this.elements.oracoesLink.addEventListener('click', () => this.exibirFrame('oracoesFrame'));
-        this.elements.aboutLink.addEventListener('click', () => this.uiController.customAlert(`Projeto de Ronei Costa Soares. version: ${this.versionConfig.version}`, 'Versão'));
+        this.elements.aboutLink.addEventListener('click', () => this.exibirSobre());
         this.elements.downloadSavesLink.addEventListener('click', this.downloadSaves.bind(this));
         this.elements.uploadSavesLink.addEventListener('click', this.uploadSaves.bind(this));
         this.elements.restoreLink.addEventListener('click', this.restore.bind(this));
@@ -185,6 +186,38 @@ class App {
                 $(this).val(null).trigger('change');
             }
         });
+    }
+
+    async exibirSobre() {
+        const logs = JSON.parse(localStorage.getItem(LOG_STORAGE_KEY) || '[]');
+
+        const logsHtml = logs.length > 0
+            ? logs.reverse().join('<br><hr style="margin:2px 0;">')
+            : '<em>Nenhum log registrado ainda.</em>';
+
+        const htmlMessage = `
+        <p><strong>Versão:</strong> ${this.versionConfig.version}</p>
+        <p>Projeto de Ronei Costa Soares.</p>
+        <div class="mt-3">
+            <button class="btn btn-sm btn-danger mb-2" onclick="localStorage.removeItem('${LOG_STORAGE_KEY}'); this.nextElementSibling.innerHTML='Logs limpos!';">
+                <i class="bi bi-trash"></i> Limpar Logs
+            </button>
+            <div style="
+                max-height: 300px; 
+                overflow-y: auto; 
+                background: #f8f9fa; 
+                border: 1px solid #dee2e6; 
+                padding: 10px; 
+                font-family: monospace; 
+                font-size: 11px; 
+                text-align: left;
+                color: #333;">
+                ${logsHtml}
+            </div>
+        </div>
+    `;
+
+        await this.uiController.customAlert(htmlMessage, 'Sobre / Logs de Debug');
     }
 
     showVersionAlert() {
