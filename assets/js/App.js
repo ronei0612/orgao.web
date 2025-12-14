@@ -738,10 +738,13 @@ class App {
             if (action === 'acorde') {
                 this.cifraPlayer.parado = false;
 
-                // 2. Reinicia o Melody no Step 1
-                if (this.melodyUI) {
+                if (this.cifraPlayer.instrumento === 'orgao') {
                     this.melodyUI.play();
                     this.melodyMachine.currentStep = 1;
+                }
+                else {
+                    if (this.bateriaUI)
+                        this.bateriaUI.play();
                 }
 
                 this.cifraPlayer.tocarAcorde(button.value);
