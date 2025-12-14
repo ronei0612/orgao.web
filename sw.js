@@ -31,6 +31,28 @@ const urlsToCache = [
     './santamissa.html',
     './oracoes.html',
 
+    '/assets/icons/v2/avancar.svg',
+    '/assets/icons/menu.svg',
+    '/assets/icons/dash-lg.svg',
+    '/assets/icons/plus-lg.svg',
+    '/assets/icons/plus.svg',
+    '/assets/icons/check.svg',
+    '/assets/icons/plus-square.svg',
+    '/assets/icons/pencil.svg',
+    '/assets/icons/trash.svg',
+    '/assets/icons/pratoBaqueta.svg',
+    '/assets/icons/bumbo.svg',
+    '/assets/icons/caixa.svg',
+    '/assets/icons/chimbal.svg',
+    '/assets/icons/meiaLua.svg',
+    '/assets/icons/v2/voltar.svg',
+    '/assets/icons/play-fill.svg',
+    '/assets/icons/stop-fill.svg',
+    '/assets/icons/music-note-beamed.svg',
+    '/assets/icons/x-circle.svg',
+    '/assets/icons/search.svg',
+    '/assets/icons/check.svg',
+
     // Dependências externas (CDNs) - CRÍTICO para o modo offline!
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'
 ];
