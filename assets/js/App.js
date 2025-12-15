@@ -166,7 +166,7 @@ class App {
 
             if (searchTerm) {
                 var $optionPesquisaWeb = $('<li class="select2-results__option pesquisar-na-web" role="treeitem" aria-selected="false"></li>');
-                $optionPesquisaWeb.html('<i class="bi bi-search"></i> Pesquisar na Web');
+                $optionPesquisaWeb.html('🔍 Pesquisar na Web');
 
                 $('.select2-results__options').prepend($optionPesquisaWeb);
 
