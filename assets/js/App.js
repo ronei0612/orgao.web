@@ -41,6 +41,7 @@ class App {
         this.loadCifrasLocal();
         this.warmupApi();
         this.setupDarkMode();
+        this.migrateLocalStorageSaves();
         this.uiController.exibirListaSaves();
         this.uiController.injetarEstilosNoIframeCifra();
 
@@ -383,20 +384,12 @@ class App {
         this.exibirInstrument(this.cifraPlayer.instrumento);
     }
 
-    exibirBotaoInstrumento(selectItem) {
-        const instrumento = this.localStorageManager.getTextJson(this.LOCAL_STORAGE_SAVES_INSTRUMENT_KEY, selectItem);
-        if (instrumento) {
-            this.escolherInstrumento(instrumento);
-        }
-    }
-
     async handleDeleteSaveClick() {
         const saveName = this.elements.savesSelect.value;
         if (this.elements.savesSelect.selectedIndex !== 0) {
             const confirmed = await this.uiController.customConfirm(`Deseja excluir "${saveName}"?`, 'Deletar!');
             if (confirmed) {
                 this.localStorageManager.deleteJson(this.LOCAL_STORAGE_SAVES_KEY, saveName);
-                this.localStorageManager.deleteJson(this.LOCAL_STORAGE_SAVES_INSTRUMENT_KEY, saveName);
                 this.uiController.resetInterface();
                 this.uiController.exibirListaSaves();
                 this.selectEscolhido('acordes__');
@@ -514,11 +507,28 @@ class App {
             this.cifraPlayer.preencherSelectAcordes('C');
             this.cifraPlayer.preencherIframeCifra(texto);
         }
+
+        this.preencherPaginaDoLocalStorage(saveData);
     }
 
-    showLetraCifra(texto) {
-        var textoMusica = this.cifraPlayer.destacarCifras(texto, null);
-        this.verifyLetraOuCifra(textoMusica);
+    preencherPaginaDoLocalStorage(saveData) {
+        if (saveData && saveData.instrument) {
+            this.cifraPlayer.instrumento = saveData.instrument;
+            this.exibirInstrument(saveData.instrument);
+            this.elements.bpmInput.value = saveData.bpm;
+
+            if (saveData.instrument === 'orgao') {
+                this.elements.melodyStyleSelect.value = saveData.style;
+            }
+            else {
+                this.elements.drumStyleSelect.value = saveData.style;
+            }
+        }
+    }
+
+    showLetraCifra(saveData) {
+        var textoMusica = this.cifraPlayer.destacarCifras(saveData.chords, null);
+        this.verifyLetraOuCifra(textoMusica, saveData);
 
         this.uiController.exibirBotoesTom();
         this.uiController.exibirIframeCifra();
@@ -527,12 +537,18 @@ class App {
 
     async verificarTrocouTom() {
         if (this.cifraPlayer.tomOriginal && this.cifraPlayer.tomOriginal !== this.cifraPlayer.tomAtual) {
-            const confirmed = await this.uiController.customConfirm(`Você trocou de tom de ${this.cifraPlayer.tomOriginal} para ${this.cifraPlayer.tomAtual}. Substituir novo tom?`);
+            const tom = this.cifraPlayer.tomAtual;
+            const confirmed = await this.uiController.customConfirm(`Você trocou de tom de ${this.cifraPlayer.tomOriginal} para ${tom}. Substituir novo tom?`);
             if (confirmed) {
-                var saveContent = this.elements.iframeCifra.contentDocument.body.innerText;
-                this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_KEY, this.selectItemAntes, saveContent);
-                debugger;
-                this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_INSTRUMENT_KEY, this.selectItemAntes, this.cifraPlayer.instrumento);
+                const metaData = {
+                    chords: this.elements.iframeCifra.contentDocument.body.innerText,
+                    key: tom,
+                    instrument: this.cifraPlayer.instrumento,
+                    style: this.cifraPlayer.instrumento === 'epiano' ? this.elements.drumStyleSelect.value : this.elements.melodyStyleSelect.value,
+                    bpm: this.elements.bpmInput.value
+                };
+
+                this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_KEY, this.selectItemAntes, metaData);
             }
             this.cifraPlayer.tomOriginal = null;
         }
@@ -545,10 +561,9 @@ class App {
         this.selectItemAntes = selectItem;
 
         if (selectItem && selectItem !== 'acordes__') {
-            const texto = this.localStorageManager.getTextJson(this.LOCAL_STORAGE_SAVES_KEY, selectItem);
-            this.showLetraCifra(texto);
-
-            this.exibirBotaoInstrumento(selectItem);
+            const saveData = this.localStorageManager.getSaveJson(this.LOCAL_STORAGE_SAVES_KEY, selectItem);
+            this.showLetraCifra(saveData);
+            this.escolherStyle(saveData.style);
         }
         else {
             this.uiController.resetInterface();
@@ -564,6 +579,16 @@ class App {
             if (selectItem === 'acordes__') {
                 this.cifraPlayer.preencherIframeCifra('');
             }
+        }
+    }
+
+    escolherStyle(style) {
+        if (this.cifraPlayer.instrumento === 'orgao') {
+            this.elements.melodyStyleSelect.value = style;
+        }
+        else {
+            this.elements.drumStyleSelect.value = style;
+
         }
     }
 
@@ -810,7 +835,7 @@ class App {
             document.body.appendChild(input);
         }
 
-        input.value = ''; // Permite selecionar o mesmo arquivo novamente
+        input.value = '';
 
         input.onchange = async (event) => {
             const file = event.target.files[0];
@@ -822,21 +847,42 @@ class App {
                     const importedData = JSON.parse(e.target.result);
 
                     if (typeof importedData !== 'object') {
-                        await this.customAlert('Arquivo inválido: Não é um objeto ou array.', 'Erro!');
+                        await this.uiController.customAlert('Arquivo inválido: Não é um objeto ou array.', 'Erro!');
                         return;
                     }
 
                     let newSaves = {};
 
+                    const padronizarItem = (conteudo) => {
+                        return {
+                            chords: conteudo,
+                            tom: 'C',
+                            instrument: 'orgao',
+                            style: '',
+                            bpm: 90
+                        };
+                    };
+
                     if (Array.isArray(importedData)) {
-                        importedData.forEach(cifra => {
-                            if (cifra.titulo && cifra.cifra) {
-                                const chave = cifra.artista ? `${cifra.titulo} - ${cifra.artista}` : cifra.titulo;
-                                newSaves[chave] = cifra.cifra;
+                        importedData.forEach(item => {
+                            if (item.titulo && item.cifra) {
+                                const chave = item.artista ? `${item.titulo} - ${item.artista}` : item.titulo;
+                                const dadosPadronizados = padronizarItem(item.cifra);
+
+                                if (dadosPadronizados) {
+                                    newSaves[chave] = dadosPadronizados;
+                                }
                             }
                         });
-                    } else {
-                        newSaves = importedData;
+                    }
+                    // CENÁRIO B: Importando Objeto direto (dump do localStorage)
+                    else {
+                        Object.keys(importedData).forEach(key => {
+                            const dadosPadronizados = padronizarItem(importedData[key]);
+                            if (dadosPadronizados) {
+                                newSaves[key] = dadosPadronizados;
+                            }
+                        });
                     }
 
                     if (Object.keys(newSaves).length === 0) {
@@ -853,6 +899,7 @@ class App {
                     $('#optionsModal').modal('hide');
                     await this.uiController.customAlert('Importado com sucesso', 'Sucesso!');
                 } catch (err) {
+                    console.error(err);
                     await this.uiController.customAlert(`Erro ao processar o arquivo: ${err.message}`, 'Erro!');
                 }
             };
@@ -961,6 +1008,44 @@ class App {
         }
     }
 
+    migrateLocalStorageSaves() {
+        try {
+            const rawData = localStorage.getItem(this.LOCAL_STORAGE_SAVES_KEY);
+
+            if (!rawData) return;
+
+            if (rawData.includes('chords')) {
+                return;
+            }
+
+            let saves = {};
+            try {
+                saves = JSON.parse(rawData);
+            } catch (e) {
+                console.error("Erro ao analisar JSON do localStorage:", e);
+                return;
+            }
+
+            Object.keys(saves).forEach(key => {
+                let valorAtual = saves[key];
+
+                saves[key] = {
+                    chords: valorAtual,
+                    key: 'C',
+                    instrument: 'orgao',
+                    style: '',
+                    bpm: 90
+                };
+            });
+
+            localStorage.setItem(this.LOCAL_STORAGE_SAVES_KEY, JSON.stringify(saves));
+            console.log('Sistema: LocalStorage "saves" foi migrado para o novo formato de objetos.');
+
+        } catch (error) {
+            console.error('Erro crítico na migração de saves:', error);
+        }
+    }
+
     async salvarSave(newSaveName, oldSaveName) {
         if (!newSaveName) {
             const musicasDefault = this.elements.savesSelect.querySelectorAll('option[value^="Música "]');
@@ -968,10 +1053,10 @@ class App {
             newSaveName = "Música " + count;
         }
 
-        let saves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
+        const saves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
 
         newSaveName = newSaveName.trim();
-        let temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
+        const temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
 
         if (temSaveName && newSaveName.toLowerCase() !== this.elements.savesSelect.value.toLowerCase()) {
             await this.uiController.customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Salvar Música');
@@ -979,14 +1064,19 @@ class App {
         }
 
         if (oldSaveName && oldSaveName !== newSaveName) {
-            this.localStorageManager.editarNome(this.LOCAL_STORAGE_SAVES_KEY,oldSaveName, newSaveName);
+            this.localStorageManager.editarNome(this.LOCAL_STORAGE_SAVES_KEY, oldSaveName, newSaveName);
         }
 
-        var saveContent = this.elements.editTextarea.value;
-        this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_KEY, newSaveName, saveContent);
-        this.elements.savesSelect.value = newSaveName;
+        const metaData = {
+            chords: this.elements.editTextarea.value,
+            key: this.elements.tomSelect.value,
+            instrument: this.cifraPlayer.instrumento,
+            style: this.cifraPlayer.instrumento === 'epiano' ? this.elements.drumStyleSelect.value : this.elements.melodyStyleSelect.value,
+            bpm: this.elements.bpmInput.value
+        };
 
-        this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_INSTRUMENT_KEY, newSaveName, this.cifraPlayer.instrumento);
+        this.localStorageManager.saveJson(this.LOCAL_STORAGE_SAVES_KEY, newSaveName, metaData);
+        this.elements.savesSelect.value = newSaveName;
 
         this.uiController.exibirIframeCifra();
         this.uiController.exibirListaSaves(newSaveName);
