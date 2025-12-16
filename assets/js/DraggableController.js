@@ -3,14 +3,16 @@ class DraggableController {
         this.draggableControls = element;
         this.isDragging = false;
         this.offset = { x: 0, y: 0 };
-        this.startX = 0;
-        this.startY = 0;
+        this.currentX = 0;
+        this.currentY = 0;
         this.DRAG_THRESHOLD = 5;
-        this.isSetup = false;
+        this.animationFrameId = null; // Controle da animação
 
         this.onDragStart = this.onDragStart.bind(this);
         this.onDragMove = this.onDragMove.bind(this);
         this.onDragEnd = this.onDragEnd.bind(this);
+        this.updatePosition = this.updatePosition.bind(this);
+
         this.setupListeners();
     }
 
@@ -41,22 +43,24 @@ class DraggableController {
         const clientX = event.touches ? event.touches[0].clientX : event.clientX;
         const clientY = event.touches ? event.touches[0].clientY : event.clientY;
 
-        this.startX = clientX;
-        this.startY = clientY;
-
-        const currentLeft = parseFloat(this.draggableControls.style.left);
-        const currentTop = parseFloat(this.draggableControls.style.top);
+        // Cache inicial das posições
+        const currentLeft = parseFloat(this.draggableControls.style.left) || 0;
+        const currentTop = parseFloat(this.draggableControls.style.top) || 0;
 
         this.offset.x = clientX - currentLeft;
         this.offset.y = clientY - currentTop;
+        this.startX = clientX;
+        this.startY = clientY;
 
-        document.addEventListener('mousemove', this.onDragMove);
+        document.addEventListener('mousemove', this.onDragMove, { passive: false });
         document.addEventListener('mouseup', this.onDragEnd);
-        document.addEventListener('touchmove', this.onDragMove);
+        document.addEventListener('touchmove', this.onDragMove, { passive: false });
         document.addEventListener('touchend', this.onDragEnd);
     }
 
     onDragMove(event) {
+        event.preventDefault();
+
         const clientX = event.touches ? event.touches[0].clientX : event.clientX;
         const clientY = event.touches ? event.touches[0].clientY : event.clientY;
 
@@ -71,24 +75,40 @@ class DraggableController {
             }
         }
 
-        event.preventDefault();
+        this.currentX = clientX - this.offset.x;
+        this.currentY = clientY - this.offset.y;
 
-        let newX = clientX - this.offset.x;
-        let newY = clientY - this.offset.y;
+        // Solicita o frame de animação se não houver um pendente
+        if (!this.animationFrameId) {
+            this.animationFrameId = requestAnimationFrame(this.updatePosition);
+        }
+    }
 
+    updatePosition() {
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
         const elementWidth = this.draggableControls.offsetWidth;
         const elementHeight = this.draggableControls.offsetHeight;
 
-        newX = Math.max(0, Math.min(newX, viewportWidth - elementWidth));
-        newY = Math.max(0, Math.min(newY, viewportHeight - elementHeight));
+        const newX = Math.max(0, Math.min(this.currentX, viewportWidth - elementWidth));
+        const newY = Math.max(0, Math.min(this.currentY, viewportHeight - elementHeight));
 
+        this.draggableControls.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+        // Nota: Mudei para transform/translate3d para melhor performance de GPU
+        // Se precisar manter left/top por compatibilidade com o resto do app:
         this.draggableControls.style.left = `${newX}px`;
         this.draggableControls.style.top = `${newY}px`;
+        this.draggableControls.style.transform = 'none';
+
+        this.animationFrameId = null;
     }
 
     onDragEnd(event) {
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+
         document.removeEventListener('mousemove', this.onDragMove);
         document.removeEventListener('mouseup', this.onDragEnd);
         document.removeEventListener('touchmove', this.onDragMove);
