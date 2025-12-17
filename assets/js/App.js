@@ -387,7 +387,7 @@ class App {
         this.uiController.editarMusica();
         this.uiController.exibirBotoesTom();
         this.uiController.exibirBotoesAcordes();
-        this.cifraPlayer.preencherSelectCifras('C');
+        this.cifraPlayer.preencherSelectCifras(this.elements.tomSelect.value);
         this.exibirInstrument(this.cifraPlayer.instrumento);
     }
 
