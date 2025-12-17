@@ -539,7 +539,8 @@ class App {
 
     salvarMetaDataNoLocalStorage(name, item) {
         const metaData = {
-            chords: this.elements.iframeCifra.contentDocument.body.innerText,
+            chords: this.elements.editTextarea.value,
+            //chords: this.elements.iframeCifra.contentDocument.body.innerText,
             key: this.elements.tomSelect.value,
             instrument: this.cifraPlayer.instrumento,
             style: this.cifraPlayer.instrumento === 'epiano' ? this.elements.drumStyleSelect.value : this.elements.melodyStyleSelect.value,
