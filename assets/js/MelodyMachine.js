@@ -33,8 +33,8 @@ class MelodyMachine {
             'f_m': ['f__baixo', 'a_baixo', 'c_'],
             'gm': ['g_baixo', 'a__baixo', 'd'],
             'g_m': ['g__baixo', 'b_baixo', 'd_'],
-            'am': ['a_baixo', 'c_', 'e'],
-            'a_m': ['a__baixo', 'd__', 'f'],
+            'am': ['a_baixo', 'c', 'e'],
+            'a_m': ['a__baixo', 'c_', 'f'],
             'bm': ['b_baixo', 'd', 'f_']
         };
 
