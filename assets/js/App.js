@@ -9,7 +9,7 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '5.9.2',
+            version: '5.9.3',
             htmlMessage: `
                 <p>Novo botão para trocar de Órgão para Bateria.</p>
 
@@ -539,7 +539,8 @@ class App {
 
     salvarMetaDataNoLocalStorage(name, item) {
         const metaData = {
-            chords: this.elements.iframeCifra.contentDocument.body.innerText,
+            chords: this.elements.editTextarea.value,
+            //chords: this.elements.iframeCifra.contentDocument.body.innerText,
             key: this.elements.tomSelect.value,
             instrument: this.cifraPlayer.instrumento,
             style: this.cifraPlayer.instrumento === 'epiano' ? this.elements.drumStyleSelect.value : this.elements.melodyStyleSelect.value,
