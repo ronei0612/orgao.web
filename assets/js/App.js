@@ -507,10 +507,10 @@ class App {
             this.cifraPlayer.preencherIframeCifra(texto);
         }
 
-        this.preencherPaginaDoLocalStorage(saveData);
+        this.preencherLayoutDoLocalStorage(saveData);
     }
 
-    preencherPaginaDoLocalStorage(saveData) {
+    preencherLayoutDoLocalStorage(saveData) {
         if (saveData && saveData.instrument) {
             this.cifraPlayer.instrumento = saveData.instrument;
             this.exibirInstrument(saveData.instrument);
@@ -518,10 +518,12 @@ class App {
 
             if (saveData.instrument === 'orgao') {
                 this.elements.melodyStyleSelect.value = saveData.style;
+                this.elements.melodyStyleSelect.dispatchEvent(new Event('change'));
                 this.uiController.esconderElementosBateria();
             }
             else {
                 this.elements.drumStyleSelect.value = saveData.style;
+                this.elements.drumStyleSelect.dispatchEvent(new Event('change'));
                 this.uiController.exibirElementosBateria();
             }
         }
@@ -582,7 +584,7 @@ class App {
             if (saveData) {
                 if (saveData.key) {
                     tom = saveData.key;
-                    this.preencherPaginaDoLocalStorage(saveData);
+                    this.preencherLayoutDoLocalStorage(saveData);
                 }
                 else if (saveData !== '')
                     tom = saveData;
@@ -824,7 +826,7 @@ class App {
         if (saveData) {
             if (saveData.key) {
                 tom = saveData.key;
-                this.preencherPaginaDoLocalStorage(saveData);
+                this.preencherLayoutDoLocalStorage(saveData);
             }
             else if (saveData !== '')
                 tom = saveData;
