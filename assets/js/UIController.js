@@ -356,7 +356,6 @@ class UIController {
             }
         }
 
-        this.elements.savesSelect.selectedIndex = 0;
         $('#optionsModal').modal('hide');
     }
 
