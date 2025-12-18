@@ -1101,6 +1101,7 @@ class App {
         this.salvarMetaDataNoLocalStorage(this.LOCAL_STORAGE_SAVES_KEY, newSaveName);
         this.elements.savesSelect.value = newSaveName;
 
+        this.uiController.resetInterface();
         this.uiController.exibirIframeCifra();
         this.uiController.exibirListaSaves(newSaveName);
 
