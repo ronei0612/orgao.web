@@ -379,12 +379,11 @@ class App {
             this.editing = true;
         this.elements.itemNameInput.value = saveName ? saveName : '';
 
-        // O conteúdo do iframe é a cifra atual (pode estar transposta)
         this.elements.editTextarea.value = this.elements.iframeCifra.contentDocument.body.innerText;
         this.uiController.editarMusica();
         this.uiController.exibirBotoesTom();
         this.uiController.exibirBotoesAcordes();
-        this.cifraPlayer.preencherSelectCifras(this.elements.tomSelect.value);
+        this.cifraPlayer.preencherSelectCifras(this.elements.tomSelect.value ?? 'C');
         this.exibirInstrument(this.cifraPlayer.instrumento);
     }
 
@@ -540,7 +539,6 @@ class App {
     salvarMetaDataNoLocalStorage(name, item) {
         const metaData = {
             chords: this.elements.editTextarea.value,
-            //chords: this.elements.iframeCifra.contentDocument.body.innerText,
             key: this.elements.tomSelect.value,
             instrument: this.cifraPlayer.instrumento,
             style: this.cifraPlayer.instrumento === 'epiano' ? this.elements.drumStyleSelect.value : this.elements.melodyStyleSelect.value,
@@ -562,8 +560,9 @@ class App {
     }
 
     async selectEscolhido(selectItem) {
-        if (this.selectItemAntes && this.selectItemAntes !== 'acordes__' && this.selectItemAntes !== '')
-            await this.verificarTrocouTom();
+        // Desativado para melhorar a experiência do usuário (temporariamente)
+        //if (this.selectItemAntes && this.selectItemAntes !== 'acordes__' && this.selectItemAntes !== '')
+        //    await this.verificarTrocouTom();
 
         this.selectItemAntes = selectItem;
 
