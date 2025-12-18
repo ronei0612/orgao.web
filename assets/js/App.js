@@ -528,8 +528,10 @@ class App {
     }
 
     showLetraCifra(saveData) {
-        var textoMusica = this.cifraPlayer.destacarCifras(saveData.chords, null);
-        this.verifyLetraOuCifra(textoMusica, saveData);
+        // Correção caso saveData seja apenas uma string (cifra simples) que veio da pesquisa
+        const texto = saveData.chords ?? saveData;
+        var textoMusica = this.cifraPlayer.destacarCifras(texto, null);
+        this.verifyLetraOuCifra(textoMusica, saveData.chords ? saveData : null);
 
         this.uiController.exibirBotoesTom();
         this.uiController.exibirIframeCifra();
