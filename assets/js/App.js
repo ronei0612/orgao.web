@@ -779,16 +779,6 @@ class App {
         } else {
             if (action === 'acorde') {
                 this.cifraPlayer.parado = false;
-
-                if (this.cifraPlayer.instrumento === 'orgao') {
-                    this.melodyUI.play();
-                    this.melodyMachine.currentStep = 1;
-                }
-                else {
-                    if (this.bateriaUI)
-                        this.bateriaUI.play();
-                }
-
                 this.cifraPlayer.tocarAcorde(button.value);
             }
 
@@ -802,11 +792,24 @@ class App {
             setTimeout(() => button.classList.add('pressed'), 100);
 
             if (action === 'play' || action === 'acorde') {
+                this.tocarBateriaMelody();
+
                 setTimeout(() => button.classList.add('pulse'), 100);
                 this.uiController.exibirBotaoStop();
             } else if (action === 'stop') {
                 this.uiController.exibirBotaoPlay();
             }
+        }
+    }
+
+    tocarBateriaMelody() {
+        if (this.cifraPlayer.instrumento === 'orgao') {
+            this.melodyUI.play();
+            this.melodyMachine.currentStep = 1;
+        }
+        else {
+            if (this.bateriaUI)
+                this.bateriaUI.play();
         }
     }
 
