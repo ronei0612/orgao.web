@@ -968,7 +968,9 @@ class App {
                 id: maxId,
                 artista: artista,
                 titulo: titulo,
-                cifra: conteudoCifra
+                chords: conteudoCifra.chords,
+                instrument: conteudoCifra.instrument,
+                style: conteudoCifra.style,
             };
         });
 
