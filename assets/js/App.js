@@ -9,7 +9,7 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '5.9.5',
+            version: '5.9.6',
             htmlMessage: `
                 <p>Novo botão para trocar de Órgão para Bateria.</p>
 
@@ -896,9 +896,9 @@ class App {
 
                     if (Array.isArray(importedData)) {
                         importedData.forEach(item => {
-                            if (item.titulo && item.cifra) {
+                            if (item.titulo && item.chords) {
                                 const chave = item.artista ? `${item.titulo} - ${item.artista}` : item.titulo;
-                                const dadosPadronizados = padronizarItem(item.cifra);
+                                const dadosPadronizados = padronizarItem(item.chords);
 
                                 if (dadosPadronizados) {
                                     newSaves[chave] = dadosPadronizados;
@@ -968,7 +968,10 @@ class App {
                 id: maxId,
                 artista: artista,
                 titulo: titulo,
-                cifra: conteudoCifra
+                bpm: conteudoCifra.bpm,
+                chords: conteudoCifra.chords,
+                instrument: conteudoCifra.instrument,
+                style: conteudoCifra.style,
             };
         });
 
