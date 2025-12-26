@@ -479,6 +479,10 @@ img.icon-svg {
     display: inline-block;
 }
 
+body.dark-mode img.dark-invert {
+    filter: invert(1);
+}
+
 #avancarButton:active,
 #retrocederButton:active {
     transform: scale(0.95);
