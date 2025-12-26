@@ -575,6 +575,7 @@ class App {
             const saveData = this.localStorageManager.getSaveJson(this.LOCAL_STORAGE_SAVES_KEY, selectItem);
             this.showLetraCifra(saveData);
             this.escolherStyle(saveData.style);
+            this.uiController.rolarIframeParaTopo(this.elements.iframeCifra);
         }
         else {
             this.uiController.resetInterface();
