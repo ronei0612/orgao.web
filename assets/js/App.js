@@ -515,6 +515,7 @@ class App {
             this.cifraPlayer.instrumento = saveData.instrument;
             this.exibirInstrument(saveData.instrument);
             this.elements.bpmInput.value = saveData.bpm;
+            this.setBPM(saveData.bpm);
 
             if (saveData.instrument === 'orgao') {
                 this.elements.melodyStyleSelect.value = saveData.style;
