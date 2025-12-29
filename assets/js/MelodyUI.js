@@ -328,7 +328,7 @@ class MelodyUI {
         this.loadPattern(this.elements.melodyStyleSelect.value);
         if (this.elements.melodyStyleSelect.value === '')
             this.stop();
-        else
+        else if (this.melodyMachine.isPlaying) {
             this.play();
     }
 
