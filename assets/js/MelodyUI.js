@@ -28,7 +28,7 @@ class MelodyUI {
         if (tem_styles_melody)
             return JSON.parse(tem_styles_melody);
 
-        
+
 
         return this.melodyMachine.styles;
     }
@@ -329,18 +329,21 @@ class MelodyUI {
         if (this.elements.melodyStyleSelect.value === '')
             this.stop();
         else if (this.melodyMachine.isPlaying) {
-            this.play();
+            this.melodyMachine.stop(true);
+            this.melodyMachine.start();
+        }
     }
 
     play() {
         if (!this.melodyMachine.isPlaying) {
+            this.melodyMachine.stop(true);
             this.melodyMachine.start();
         }
     }
 
     stop() {
         if (this.melodyMachine.isPlaying) {
-            this.melodyMachine.stop();
+            this.melodyMachine.stop(true);
         }
     }
 }
