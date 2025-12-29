@@ -163,7 +163,7 @@ class MelodyMachine {
     }
 
     scheduler() {
-        while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
+        while (this.isPlaying && this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
             this.scheduleCurrentStep();
             this.nextNote();
         }
