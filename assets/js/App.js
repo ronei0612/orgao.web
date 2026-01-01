@@ -9,9 +9,9 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '5.9.8',
+            version: '5.9.9',
             htmlMessage: `
-                <p>Novo botão para trocar de Órgão para Bateria.</p>
+                <p>O ritmo de Órgão agora não será mais em loop.</p>
 
                 👉 <button class="btn btn-outline-secondary mx-1 font-weight-bold" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
                         Órgão
@@ -63,6 +63,12 @@ class App {
 
         this.melodyUI = new MelodyUI(this.elements, this.melodyMachine, this.uiController);
         await this.melodyUI.init();
+
+        this.cifraPlayer.onChordChange = () => {
+            if (this.cifraPlayer.instrumento === 'orgao' && this.elements.melodyStyleSelect.value !== '') {
+                this.melodyUI.play();
+            }
+        };
 
         //if (this.BASE_URL.includes('http')) {
         //    document.getElementById('downloadStylesLink').parentElement.classList.remove('d-none');
@@ -128,6 +134,10 @@ class App {
             const bpm = Math.max(1, parseInt(this.elements.bpmInput.value, 10) || 1);
             this.elements.bpmInput.value = bpm;
             this.setBPM(bpm);
+        });
+
+        document.getElementById('volumeOrgao').addEventListener('change', () => {
+            this.melodyMachine.defaultVol = parseFloat(document.getElementById('volumeOrgao').value);
         });
 
         // Refatoração: Adicionar listeners aos botões de acorde de forma programática

@@ -5,6 +5,7 @@ class MelodyMachine {
         this.cifraPlayer = cifraPlayer;
         this.attackTime = 0.02;
         this.releaseTime = 0.1;
+        this.defaultVol = 0.5;
         this.buffers = new Map();
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.audioPath = this.baseUrl + '/assets/audio/studio/Orgao';
@@ -17,42 +18,42 @@ class MelodyMachine {
         ];
 
         this.acordes = {
-            'c': ['g_baixo', 'c', 'e', 'g'],
-            'c_': ['g__baixo', 'c_', 'f', 'g_'],
-            'd': ['a_baixo', 'd', 'f_', 'a'],
-            'd_': ['a__baixo', 'd_', 'g', 'a_'],
-            'e': ['g__baixo', 'b_baixo', 'e', 'g_'],
-            'f': ['a_baixo', 'c', 'f', 'a'],
-            'f_': ['a__baixo', 'c_', 'f_', 'a_'],
-            'g': ['g_baixo', 'b_baixo', 'd', 'g'],
-            'g_': ['g__baixo', 'c', 'd_', 'g_'],
-            'a': ['a_baixo', 'c_', 'e', 'a'],
-            'a_': ['a__baixo', 'd', 'f', 'a_'],
-            'b': ['b_baixo', 'd_', 'f_', 'b'],
-            'cm': ['g_baixo', 'c', 'd_', 'g'],
-            'c_m': ['g__baixo', 'c_', 'e', 'g_'],
-            'dm': ['a_baixo', 'd', 'f', 'a'],
-            'd_m': ['a__baixo', 'd_', 'f_', 'a_'],
-            'em': ['g_baixo', 'b_baixo', 'e', 'g'],
-            'fm': ['g__baixo', 'c', 'f', 'g_'],
-            'f_m': ['a_baixo', 'c_', 'f_', 'a'],
-            'gm': ['g_baixo', 'a__baixo', 'd', 'g'],
-            'g_m': ['g__baixo', 'b_baixo', 'd_', 'g_'],
-            'am': ['a_baixo', 'c', 'e', 'a'],
-            'a_m': ['a__baixo', 'c_', 'f', 'a_'],
-            'bm': ['b_baixo', 'd', 'f_', 'b'],
-            'cdim': ['f__baixo', 'c', 'd_', 'f_'],
-            'c_dim': ['g_baixo', 'c_', 'e', 'g'],
-            'ddim': ['g__baixo', 'd', 'f', 'g_'],
-            'd_dim': ['a_baixo', 'd_', 'f_', 'a'],
-            'edim': ['g_baixo', 'a__baixo', 'e', 'g'],
-            'fdim': ['g__baixo', 'b', 'f', 'g_'],
-            'f_dim': ['a_baixo', 'c', 'f_', 'a'],
-            'gdim': ['g_baixo', 'a__baixo', 'c_', 'g'],
-            'g_dim': ['g__baixo', 'b_baixo', 'd', 'g_'],
-            'adim': ['a_baixo', 'c', 'd_', 'a'],
-            'a_dim': ['a__baixo', 'c_', 'e', 'a_'],
-            'bdim': ['b_baixo', 'd', 'f', 'b']
+            'c': ['c_baixo', 'e_baixo', 'g_baixo', 'c'],
+            'c_': ['c__baixo', 'f_baixo', 'g__baixo', 'c_'],
+            'd': ['d_baixo', 'f__baixo', 'a_baixo', 'd'],
+            'd_': ['d__baixo', 'g_baixo', 'a__baixo', 'd_'],
+            'e': ['e_baixo', 'g__baixo', 'b_baixo', 'e'],
+            'f': ['c_baixo', 'f_baixo', 'a_baixo', 'c'],
+            'f_': ['c__baixo', 'f__baixo', 'a__baixo', 'c_'],
+            'g': ['d_baixo', 'g_baixo', 'b_baixo', 'd'],
+            'g_': ['d__baixo', 'g__baixo', 'c', 'd_'],
+            'a': ['c__baixo', 'e_baixo', 'a_baixo', 'c_'],
+            'a_': ['d_baixo', 'f_baixo', 'a__baixo', 'd'],
+            'b': ['d__baixo', 'f__baixo', 'b_baixo', 'd_'],
+            'cm': ['c_baixo', 'd__baixo', 'g_baixo', 'c'],
+            'c_m': ['c__baixo', 'e_baixo', 'g__baixo', 'c_'],
+            'dm': ['d_baixo', 'f_baixo', 'a_baixo', 'd'],
+            'd_m': ['d__baixo', 'f__baixo', 'a__baixo', 'd_'],
+            'em': ['e_baixo', 'g_baixo', 'b_baixo', 'e'],
+            'fm': ['c_baixo', 'f_baixo', 'g__baixo', 'c'],
+            'f_m': ['c__baixo', 'f__baixo', 'a_baixo', 'c_'],
+            'gm': ['d_baixo', 'g_baixo', 'a__baixo', 'd'],
+            'g_m': ['d__baixo', 'g__baixo', 'b_baixo', 'd_'],
+            'am': ['c_baixo', 'e_baixo', 'a_baixo', 'c'],
+            'a_m': ['c__baixo', 'f_baixo', 'a__baixo', 'c_'],
+            'bm': ['d_baixo', 'f__baixo', 'b_baixo', 'd'],
+            'cdim': ['c_baixo', 'd__baixo', 'f__baixo', 'c'],
+            'c_dim': ['c__baixo', 'e_baixo', 'g_baixo', 'c_'],
+            'ddim': ['d_baixo', 'f_baixo', 'g__baixo', 'd'],
+            'd_dim': ['d__baixo', 'f__baixo', 'a_baixo', 'd_'],
+            'edim': ['e_baixo', 'g_baixo', 'a__baixo', 'e'],
+            'fdim': ['f_baixo', 'g__baixo', 'b_baixo', 'f'],
+            'f_dim': ['c_baixo', 'f__baixo', 'a_baixo', 'c'],
+            'gdim': ['c__baixo', 'g_baixo', 'a__baixo', 'c_'],
+            'g_dim': ['d_baixo', 'g__baixo', 'b_baixo', 'd'],
+            'adim': ['c_baixo', 'd__baixo', 'a_baixo', 'c'],
+            'a_dim': ['c__baixo', 'e_baixo', 'a__baixo', 'c_'],
+            'bdim': ['d_baixo', 'f_baixo', 'b_baixo', 'd'],
         };
 
         this.isPlaying = false;
@@ -65,7 +66,7 @@ class MelodyMachine {
         this.styles = null;
         this.stepsPorTempo = null;
         this.tracksCache = null;
-        this.currentSource = null;
+        this.activeSources = [];
 
         this.init();
     }
@@ -115,7 +116,7 @@ class MelodyMachine {
         const gainNode = this.audioContext.createGain();
 
         source.buffer = buffer;
-        source.loop = true;
+        source.loop = false;
 
         gainNode.gain.setValueAtTime(0.001, time);
         gainNode.gain.exponentialRampToValueAtTime(volume, time + this.attackTime);
@@ -125,36 +126,41 @@ class MelodyMachine {
 
         source.start(time);
 
+        const noteEntry = { source, gainNode };
+        this.activeSources.push(noteEntry);
+
         source.onended = () => {
+            // Remove da lista de ativos quando o som acabar naturalmente
+            this.activeSources = this.activeSources.filter(item => item !== noteEntry);
             source.disconnect();
             gainNode.disconnect();
         };
 
-        return { source, gainNode };
+        return noteEntry;
     }
 
-    stopCurrentNote(time) {
-        if (this.currentSource) {
-            const { source, gainNode } = this.currentSource;
+    stopNotes(time) {
+        this.activeSources.forEach(item => {
             try {
+                const { source, gainNode } = item;
                 gainNode.gain.cancelScheduledValues(time);
                 gainNode.gain.setValueAtTime(gainNode.gain.value, time);
                 gainNode.gain.exponentialRampToValueAtTime(0.001, time + this.releaseTime);
-
                 source.stop(time + this.releaseTime + 0.01);
-            } catch { }
-            this.currentSource = null;
-        }
+            } catch (e) { }
+        });
+        this.activeSources = [];
     }
 
     nextNote() {
         const secondsPerQuarterNote = 60.0 / this.musicTheory.bpm;
         const secondsPerStep = secondsPerQuarterNote / 2;
         this.nextNoteTime += secondsPerStep;
+
         this.currentStep++;
 
         if (this.currentStep > this.numSteps) {
-            this.currentStep = 1;
+            this.stop();
             if (typeof this.onStepsEnd === 'function') {
                 this.onStepsEnd();
             }
@@ -162,7 +168,7 @@ class MelodyMachine {
     }
 
     scheduler() {
-        while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
+        while (this.isPlaying && this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
             this.scheduleCurrentStep();
             this.nextNote();
         }
@@ -172,8 +178,13 @@ class MelodyMachine {
         if (!this.tracksCache) this.refreshTrackCache();
 
         const stepIndex = this.currentStep - 1;
-        let foundTrack = null;
+        const iniciouNovoAcorde = this.currentStep === 1;
 
+        if (iniciouNovoAcorde) {
+            this.stopNotes(this.nextNoteTime);
+        }
+
+        let foundTrack = null;
         if (this.tracksCache) {
             for (let i = 0; i < this.tracksCache.length; i++) {
                 const trackData = this.tracksCache[i];
@@ -185,23 +196,21 @@ class MelodyMachine {
                 const volume = parseInt(stepEl.dataset.volume || '0', 10);
                 if (volume > 0) {
                     foundTrack = { ...trackData, volume, element: stepEl };
-                    break;
+
+                    if (this.cifraPlayer.acordeTocando) {
+                        let acordeSimplificado = this.cifraPlayer.acordeTocando;
+                        const notas = this.getAcordeNotas(acordeSimplificado);
+                        const nota = notas[foundTrack.noteIndex];
+                        const bufferKey = `${foundTrack.name}_${nota}`;
+                        const buffer = this.buffers.get(bufferKey);
+
+                        this.playSound(buffer, this.nextNoteTime, foundTrack.volume === 2 ? (this.defaultVol / 2) : this.defaultVol);
+
+                        foundTrack.element.classList.add('playing');
+                        setTimeout(() => foundTrack.element.classList.remove('playing'), 100);
+                    }
                 }
             }
-        }
-
-        if (foundTrack && this.cifraPlayer.acordeTocando) {
-            this.stopCurrentNote(this.nextNoteTime);
-
-            let acordeSimplificado = this.cifraPlayer.acordeTocando;
-            const notas = this.getAcordeNotas(acordeSimplificado);
-            const nota = notas[foundTrack.noteIndex];
-            const bufferKey = `${foundTrack.name}_${nota}`;
-            const buffer = this.buffers.get(bufferKey);
-            this.currentSource = this.playSound(buffer, this.nextNoteTime, foundTrack.volume === 2 ? 0.3 : 0.5);
-
-            foundTrack.element.classList.add('playing');
-            setTimeout(() => foundTrack.element.classList.remove('playing'), 100);
         }
     }
 
@@ -230,19 +239,28 @@ class MelodyMachine {
         if (this.audioContext.state === 'suspended') {
             this.audioContext.resume();
         }
+
         this.isPlaying = true;
+        this.currentStep = 1;
         this.nextNoteTime = this.audioContext.currentTime;
+
+        this.stopNotes(this.nextNoteTime);
+
         this.refreshTrackCache();
         if (this.timerInterval) clearInterval(this.timerInterval);
         this.timerInterval = setInterval(() => this.scheduler(), this.lookahead);
     }
 
-    stop() {
+    stop(stopAll = false) {
         this.isPlaying = false;
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
+            this.timerInterval = null;
         }
-        this.stopCurrentNote(this.audioContext.currentTime);
+
+        if (stopAll)
+            this.stopNotes(this.audioContext.currentTime);
+
         this.reset();
     }
 
