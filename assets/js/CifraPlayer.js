@@ -74,7 +74,8 @@ class CifraPlayer {
     }
 
     destacarCifras(texto, tom) {
-        const linhas = texto.split('\n');
+        const textoAcordesCorrigidos = texto.replace('º', '°');
+        const linhas = textoAcordesCorrigidos.split('\n');
         let cifraNum = 1;
         const temPalavra = /[a-zA-Z]{4,}/; // Não remover! Usar caso necessário
         const temColchetes = /\[.*?\]/;
