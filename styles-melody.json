@@ -118,11 +118,11 @@
     "4/8": {
       "numSteps": 8,
       "orgao_3": {
-        "steps": [ 0, 0, 1, 0, 1, 0, 2, 0 ],
+        "steps": [ 0, 0, 0, 1, 0, 2, 0, 2 ],
         "selected": true
       },
       "orgao_2": {
-        "steps": [ 0, 0, 0, 1, 0, 2, 0, 2 ],
+        "steps": [ 0, 0, 1, 0, 1, 0, 2, 0 ],
         "selected": true
       },
       "orgao_1": {

@@ -9,10 +9,11 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '5.9.9',
+            version: '6.0.0',
             htmlMessage: `
-                <p>O ritmo de Órgão agora não será mais em loop.</p>
+                <p>Melhorias</p>
 
+                <p>• Melodia e som do órgão.</p>
                 👉 <button class="btn btn-outline-secondary mx-1 font-weight-bold" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
                         Órgão
                     </button>
@@ -120,8 +121,12 @@ class App {
             this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 5;
             this.setBPM(parseInt(this.elements.bpmInput.value, 10));
         });
-        document.getElementById('increment-bpm').addEventListener('click', () => {
-            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
+        //document.getElementById('increment-bpm').addEventListener('click', () => {
+        //    this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
+        //    this.setBPM(parseInt(this.elements.bpmInput.value, 10));
+        //}); //Não remover
+        document.getElementById('decrement-bpm').addEventListener('click', () => {
+            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) - 1;
             this.setBPM(parseInt(this.elements.bpmInput.value, 10));
         });
         document.getElementById('decrement-bpm-5').addEventListener('click', () => {
@@ -140,7 +145,6 @@ class App {
             this.melodyMachine.defaultVol = parseFloat(document.getElementById('volumeOrgao').value);
         });
 
-        // Refatoração: Adicionar listeners aos botões de acorde de forma programática
         ['mousedown'].forEach(event => {
             const controlButtons = [
                 this.elements.playButton,
