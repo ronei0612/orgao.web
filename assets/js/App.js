@@ -9,10 +9,11 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '5.9.9',
+            version: '6.0.0',
             htmlMessage: `
-                <p>O ritmo de Órgão agora não será mais em loop.</p>
+                <p>Melhorias</p>
 
+                <p>• Melodia e som do órgão.</p>
                 👉 <button class="btn btn-outline-secondary mx-1 font-weight-bold" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
                         Órgão
                     </button>
