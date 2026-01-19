@@ -120,8 +120,12 @@ class App {
             this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 5;
             this.setBPM(parseInt(this.elements.bpmInput.value, 10));
         });
-        document.getElementById('increment-bpm').addEventListener('click', () => {
-            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
+        //document.getElementById('increment-bpm').addEventListener('click', () => {
+        //    this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
+        //    this.setBPM(parseInt(this.elements.bpmInput.value, 10));
+        //}); //Não remover
+        document.getElementById('decrement-bpm').addEventListener('click', () => {
+            this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) - 1;
             this.setBPM(parseInt(this.elements.bpmInput.value, 10));
         });
         document.getElementById('decrement-bpm-5').addEventListener('click', () => {
@@ -140,7 +144,6 @@ class App {
             this.melodyMachine.defaultVol = parseFloat(document.getElementById('volumeOrgao').value);
         });
 
-        // Refatoração: Adicionar listeners aos botões de acorde de forma programática
         ['mousedown'].forEach(event => {
             const controlButtons = [
                 this.elements.playButton,
