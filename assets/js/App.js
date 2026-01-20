@@ -1113,6 +1113,19 @@ class App {
             return;
         }
 
+        let content = this.elements.editTextarea.value;
+        const musicaCifrada = this.cifraPlayer.destacarCifras(content, null);
+
+        let tom;
+
+        if (this.cifraPlayer.tomOriginal && this.cifraPlayer.tomOriginal !== this.elements.tomSelect.value) {
+            tom = this.elements.tomSelect.value;
+        } else {
+            tom = this.cifraPlayer.descobrirTom(musicaCifrada) || this.elements.tomSelect.value || 'C';
+        }
+
+        this.elements.tomSelect.value = tom;
+
         if (oldSaveName && oldSaveName !== newSaveName) {
             this.localStorageManager.editarNome(this.LOCAL_STORAGE_SAVES_KEY, oldSaveName, newSaveName);
         }
