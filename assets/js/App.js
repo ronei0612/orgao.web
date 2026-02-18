@@ -9,9 +9,9 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '6.0.0',
+            version: '6.0.1',
             htmlMessage: `
-                <p>Melhorias</p>
+                <p>Novos Ritmos Órgão</p>
 
                 <p>• Melodia e som do órgão.</p>
                 👉 <button class="btn btn-outline-secondary mx-1 font-weight-bold" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
@@ -781,17 +781,20 @@ class App {
         if (action === 'notes') {
             var icon = this.elements.notesButton.querySelector('i');
             if (!this.held && this.elements.musicNoteBeamedIcon.classList.contains('d-none')) {
+                this.cifraPlayer.acordeFull = false;
                 this.elements.musicNoteIcon.classList.add('d-none');
                 this.elements.musicNoteBeamedIcon.classList.remove('d-none');
                 this.elements.notesButton.classList.remove('notaSolo');
             }
             else if (this.elements.notesButton.classList.contains('pressed')) {
+                this.cifraPlayer.acordeFull = false;
                 this.elements.musicNoteIcon.classList.remove('d-none');
                 this.elements.musicNoteBeamedIcon.classList.add('d-none');
 
                 this.elements.notesButton.classList.remove('pressed');
                 this.elements.notesButton.classList.add('notaSolo');
             } else if (!this.elements.notesButton.classList.contains('notaSolo')) {
+                this.cifraPlayer.acordeFull = true;
                 this.elements.notesButton.classList.add('pressed');
             }
         } else {
@@ -1112,6 +1115,19 @@ class App {
             await this.uiController.customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Salvar Música');
             return;
         }
+
+        let content = this.elements.editTextarea.value;
+        const musicaCifrada = this.cifraPlayer.destacarCifras(content, null);
+
+        let tom;
+
+        if (this.cifraPlayer.tomOriginal && this.cifraPlayer.tomOriginal !== this.elements.tomSelect.value) {
+            tom = this.elements.tomSelect.value;
+        } else {
+            tom = this.cifraPlayer.descobrirTom(musicaCifrada) || this.elements.tomSelect.value || 'C';
+        }
+
+        this.elements.tomSelect.value = tom;
 
         if (oldSaveName && oldSaveName !== newSaveName) {
             this.localStorageManager.editarNome(this.LOCAL_STORAGE_SAVES_KEY, oldSaveName, newSaveName);

@@ -335,15 +335,13 @@ class MelodyUI {
     }
 
     play() {
+        this.melodyMachine.stop(true);
         if (!this.melodyMachine.isPlaying) {
-            this.melodyMachine.stop(true);
             this.melodyMachine.start();
         }
     }
 
     stop() {
-        if (this.melodyMachine.isPlaying) {
-            this.melodyMachine.stop(true);
-        }
+        this.melodyMachine.stop(true);
     }
 }
