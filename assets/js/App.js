@@ -9,9 +9,9 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '6.0.0',
+            version: '6.0.1',
             htmlMessage: `
-                <p>Melhorias</p>
+                <p>Novos Ritmos Órgão</p>
 
                 <p>• Melodia e som do órgão.</p>
                 👉 <button class="btn btn-outline-secondary mx-1 font-weight-bold" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
