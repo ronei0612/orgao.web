@@ -39,7 +39,7 @@ class CifrasEditor {
         this.elements.addBtn.addEventListener('click', this.addCifra.bind(this));
         this.elements.deleteBtn.addEventListener('click', this.deleteSelectedCifra.bind(this));
         this.elements.saveBtn.addEventListener('click', this.saveCurrentCifra.bind(this));
-        this.elements.clearBtn.addEventListener('click', this.clearCifras.bind(this)); 
+        this.elements.clearBtn.addEventListener('click', this.clearCifras.bind(this));
         this.elements.downloadBtn.addEventListener('click', this.downloadJson.bind(this));
         this.elements.importBtn.addEventListener('click', this.uploadJson.bind(this));
         this.elements.importFileInput.addEventListener('change', this.handleFileSelect.bind(this));
@@ -66,7 +66,7 @@ class CifrasEditor {
             allowClear: true
         });
 
-        $(this.elements.cifraSelect).val(null).trigger('change'); 
+        $(this.elements.cifraSelect).val(null).trigger('change');
         // Evento Select2: Seleção de Cifra
         $(this.elements.cifraSelect).on('select2:select', this.handleCifraSelect.bind(this));
 
@@ -282,7 +282,7 @@ class CifrasEditor {
             <div class="card cifras-card shadow-sm mb-3" data-import-idx="${index}">
                 <div class="card-body">
                     <h5 class="card-title text-warning">${title} - ${artist}</h5>
-                    <p class="card-text text-muted" style="white-space: pre-wrap; max-height: 100px; overflow: hidden;">${item.cifra || 'Cifra Vazia'}</p>
+                    <p class="card-text text-muted" style="white-space: pre-wrap; max-height: 100px; overflow: hidden;">${item.chords || 'Cifra Vazia'}</p>
                     <div class="d-flex justify-content-end">
                         <button class="btn btn-sm btn-success mr-2" data-action="import-add" data-import-idx="${index}">Adicionar</button>
                         <button class="btn btn-sm btn-secondary" data-action="import-ignore" data-import-idx="${index}">Ignorar</button>
