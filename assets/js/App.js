@@ -1,7 +1,7 @@
 class App {
     constructor(elements) {
         this.elements = elements;
-        this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web' : '.';
+        this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web.beta' : '.';
         this.musicTheory = new MusicTheory();
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
@@ -9,15 +9,14 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '6.0.1',
+            version: '6.0.2',
             htmlMessage: `
-                <p>Novos Ritmos Órgão</p>
+                <p>Correções de bugs</p>
 
-                <p>• Melodia e som do órgão.</p>
-                👉 <button class="btn btn-outline-secondary mx-1 font-weight-bold" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
-                        Órgão
-                    </button>
-                </button>
+                <p>• Ao mudar de tom em Liturgia diária.</p>
+                <p>• Na exportação e importação de repertório.</p>
+                <p>• Letras com Cifras com parênteses.</p>
+                <p>• Pesquisar cifra somente se não encontrar local.</p>
             `
         };
         this.holdTime = 1000;
@@ -159,7 +158,6 @@ class App {
     }
 
     setupSelect2() {
-        // 1. Salva a referência 'this' da instância da App porque senão o valor de this dentro dessa função é definido pelo jQuery e geralmente aponta para o elemento DOM 
         const appInstance = this;
 
         var $select = $('#savesSelect').select2({
@@ -167,31 +165,33 @@ class App {
             placeholder: "Escolha a Música...",
             width: '100%',
             minimumResultsForSearch: 0,
+            escapeMarkup: function (markup) { return markup; },
             language: {
                 noResults: function () {
-                    return "";
+                    return `<li class="select2-results__option pesquisar-na-web" style="cursor:pointer">🔍 Pesquisar na Web</li>`;
                 }
             }
         });
 
-        $(document).on('keyup.appSelect2', '.select2-search__field', function (e) {
-            var searchTerm = $(this).val().trim();
-
-            $('.select2-results__options').find('.pesquisar-na-web').remove();
-
-            if (searchTerm) {
-                var $optionPesquisaWeb = $('<li class="select2-results__option pesquisar-na-web" role="treeitem" aria-selected="false"></li>');
-                $optionPesquisaWeb.html('🔍 Pesquisar na Web');
-
-                $('.select2-results__options').prepend($optionPesquisaWeb);
-
-                $optionPesquisaWeb.on('click', function () {
-                    appInstance.pesquisarWeb(searchTerm);
-                    $select.select2('close');
-                });
-            }
+        $(document).on('click', '.pesquisar-na-web', function () {
+            const searchTerm = $('.select2-search__field').val();
+            $('#savesSelect').select2('close');
+            appInstance.pesquisarWeb(searchTerm);
         });
 
+        $(document).on('keydown', '.select2-search__field', function (e) {
+            const enter = 13;
+            if (e.which === enter) {
+                const searchTerm = $(this).val();
+                const pesquisarWebVisible = $('.pesquisar-na-web').length > 0;
+
+                if (pesquisarWebVisible) {
+                    e.preventDefault();
+                    $('#savesSelect').select2('close');
+                    appInstance.pesquisarWeb(searchTerm);
+                }
+            }
+        });
 
         $('#savesSelect').on('select2:select', function (e) {
             var selectedValue = e.params.data.id;
