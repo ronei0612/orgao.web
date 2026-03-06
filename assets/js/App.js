@@ -9,14 +9,11 @@ class App {
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
 
         this.versionConfig = {
-            version: '6.0.2',
+            version: '6.0.3',
             htmlMessage: `
-                <p>Correções de bugs</p>
+                <p>Melhorias</p>
 
-                <p>• Ao mudar de tom em Liturgia diária.</p>
-                <p>• Na exportação e importação de repertório.</p>
-                <p>• Letras com Cifras com parênteses.</p>
-                <p>• Pesquisar cifra somente se não encontrar local.</p>
+                <p>• Botão Play e Stop piscar conforme o tempo.</p>
             `
         };
         this.holdTime = 1000;
