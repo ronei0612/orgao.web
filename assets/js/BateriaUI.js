@@ -468,15 +468,16 @@ class BateriaUI {
         }
     }
     
-    // Calcula quantos tempos tem o compasso baseado no número de steps
     calcularCompasso(numSteps) {
+        const ritmo68 = this.elements.drumStyleSelect.value === '6/8';
         let temposCompasso = 4;
         if (numSteps === '8') temposCompasso = 2;
-        else if (numSteps === '12') temposCompasso = 3;
+        else if (numSteps === '12' && !ritmo68) temposCompasso = 3;
+        else if (numSteps === '12' && ritmo68) temposCompasso = 6;
         else if (numSteps === '24') temposCompasso = 6;
         else if (numSteps === '16') temposCompasso = 4;
 
-        this.drumMachine.stepsPorTempo = numSteps / temposCompasso;
+        this.drumMachine.stepsPorTempo = numSteps / temposCompasso;        
     }
 
     toggleStrings(rhythmCode) {
