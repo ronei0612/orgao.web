@@ -29,6 +29,7 @@ class CifrasEditor {
     }
 
     init() {
+        if (!this.elements.cifraSelect) return; //evitar problem
         this.loadCifras().then(() => {
             this.setupSelect2();
             this.bindEvents();
@@ -39,7 +40,7 @@ class CifrasEditor {
         this.elements.addBtn.addEventListener('click', this.addCifra.bind(this));
         this.elements.deleteBtn.addEventListener('click', this.deleteSelectedCifra.bind(this));
         this.elements.saveBtn.addEventListener('click', this.saveCurrentCifra.bind(this));
-        this.elements.clearBtn.addEventListener('click', this.clearCifras.bind(this));
+        this.elements.clearBtn.addEventListener('click', this.clearCifras.bind(this)); 
         this.elements.downloadBtn.addEventListener('click', this.downloadJson.bind(this));
         this.elements.importBtn.addEventListener('click', this.uploadJson.bind(this));
         this.elements.importFileInput.addEventListener('change', this.handleFileSelect.bind(this));
@@ -66,7 +67,7 @@ class CifrasEditor {
             allowClear: true
         });
 
-        $(this.elements.cifraSelect).val(null).trigger('change');
+        $(this.elements.cifraSelect).val(null).trigger('change'); 
         // Evento Select2: Seleção de Cifra
         $(this.elements.cifraSelect).on('select2:select', this.handleCifraSelect.bind(this));
 

@@ -2,18 +2,45 @@ class App {
     constructor(elements) {
         this.elements = elements;
         this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web.beta' : '.';
+
         this.musicTheory = new MusicTheory();
         this.uiController = new UIController(this.elements);
         this.localStorageManager = new LocalStorageManager();
+
+        // 1. Criar o gerenciador de áudio ÚNICO aqui
+        this.audioManager = new AudioContextManager();
+
+        // 2. Passar o audioManager para todos os players
+        this.partituraEditor = new PartituraEditor(this.elements.partituraEditFrame, this.elements.partituraFrame, this.musicTheory);
+
+        // CifraPlayer agora recebe o audioManager pronto
+        this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL, this.audioManager);
+
+        this.cifraPlayer.onInstrumentosCarregados = () => {
+            this.elements.orgaoInstrumentButton.removeAttribute('disabled');
+        };
+
+        // PartituraPlayer agora recebe o audioManager pronto
+        this.partituraPlayer = new PartituraPlayer(this.elements, this.cifraPlayer, this.partituraEditor, this.BASE_URL, this.audioManager);
+
         this.draggableController = new DraggableController(this.elements.draggableControls);
-        this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL);
+
+        // Em App.init(), após criar o partituraPlayer:
+        this.partituraPlayer.onNotaClicada = () => {
+            this.uiController.exibirBotaoStop();
+            this.uiController.exibirBotoesAvancarVoltarCifra();
+        };
 
         this.versionConfig = {
-            version: '6.0.4',
+            version: '6.0.6',
             htmlMessage: `
                 <p>Melhorias</p>
 
-                <p>• Botão Play e Stop piscar conforme o tempo.</p>
+                <p>• Melodia e som do órgão.</p>
+                👉 <button class="btn btn-outline-secondary mx-1 font-weight-bold" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
+                        Órgão
+                    </button>
+                </button>
             `
         };
         this.holdTime = 1000;
@@ -36,7 +63,7 @@ class App {
         this.showVersionAlert();
         this.setupServiceWorker();
         this.loadCifrasLocal();
-        this.warmupApi();
+        //this.warmupApi();
         this.setupDarkMode();
         this.migrateLocalStorageSaves();
         this.uiController.exibirListaSaves();
@@ -47,16 +74,11 @@ class App {
         this.getUrlParam();
         this.updateFillBlink(this.musicTheory.bpm);
 
-        const drumMachine = new DrumMachine(this.BASE_URL, this.cifraPlayer, this.musicTheory);
-        if (typeof drumMachine.init === 'function')
-            await drumMachine.init();
+        this.drumMachine = new DrumMachine(this.BASE_URL, this.cifraPlayer, this.musicTheory, this.audioManager);
+        this.bateriaUI = new BateriaUI(this.elements, this.drumMachine, this.uiController, this.cifraPlayer);
 
-        this.bateriaUI = new BateriaUI(this.elements, drumMachine, this.uiController, this.cifraPlayer);
-        await this.bateriaUI.init();
-
-        this.melodyMachine = new MelodyMachine(this.BASE_URL, this.musicTheory, this.cifraPlayer);
-
-        await this.melodyMachine.getStyles();
+        this.melodyMachine = new MelodyMachine(this.BASE_URL, this.musicTheory, this.cifraPlayer, this.audioManager);
+        await this.melodyMachine.init();
 
         this.melodyUI = new MelodyUI(this.elements, this.melodyMachine, this.uiController);
         await this.melodyUI.init();
@@ -86,6 +108,9 @@ class App {
         this.elements.darkModeToggle.addEventListener('change', this.uiController.toggleDarkMode.bind(this.uiController));
         this.elements.tocarButton.addEventListener('click', this.handleTocarClick.bind(this));
         this.elements.tomSelect.addEventListener('change', this.handleTomSelectChange.bind(this));
+        //this.elements.tomSelect.addEventListener('mousedown', () => { this.tomAnterior = this.elements.tomSelect.value; });
+        //this.elements.decreaseTom.addEventListener('mousedown', () => { this.tomAnterior = this.elements.tomSelect.value;});
+        //this.elements.increaseTom.addEventListener('mousedown', () => { this.tomAnterior = this.elements.tomSelect.value; });
         this.elements.decreaseTom.addEventListener('click', this.handleDecreaseTomClick.bind(this));
         this.elements.increaseTom.addEventListener('click', this.handleIncreaseTomClick.bind(this));
         this.elements.addButton.addEventListener('click', this.handleAddClick.bind(this));
@@ -105,8 +130,8 @@ class App {
         this.elements.missaOrdinarioLink.addEventListener('click', () => this.exibirFrame('santamissaFrame'));
         this.elements.stopButton.addEventListener('mousedown', this.handleStopMousedown.bind(this));
         this.elements.playButton.addEventListener('mousedown', this.handlePlayMousedown.bind(this));
-        this.elements.avancarButton.addEventListener('mousedown', () => this.cifraPlayer.avancarCifra());
-        this.elements.retrocederButton.addEventListener('mousedown', () => this.cifraPlayer.retrocederCifra());
+        this.elements.avancarButton.addEventListener('mousedown', () => this.avancar());
+        this.elements.retrocederButton.addEventListener('mousedown', () => this.retroceder());
         this.elements.orgaoInstrumentButton.addEventListener('click', () => this.handleOrgaoInstrumentClick());
         this.elements.bateriaInstrumentButton.addEventListener('click', () => this.handleOrgaoInstrumentClick());
         document.addEventListener('mousedown', this.fullScreen.bind(this));
@@ -117,6 +142,19 @@ class App {
             this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 5;
             this.setBPM(parseInt(this.elements.bpmInput.value, 10));
         });
+
+        ['mousedown', 'touchstart'].forEach(evento => {
+            this.elements.tomSelect.addEventListener(evento, () => {
+                this.tomAnterior = this.elements.tomSelect.value;
+            });
+            this.elements.decreaseTom.addEventListener(evento, () => {
+                this.tomAnterior = this.elements.tomSelect.value;
+            });
+            this.elements.increaseTom.addEventListener(evento, () => {
+                this.tomAnterior = this.elements.tomSelect.value;
+            });
+        });
+
         //document.getElementById('increment-bpm').addEventListener('click', () => {
         //    this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
         //    this.setBPM(parseInt(this.elements.bpmInput.value, 10));
@@ -190,9 +228,9 @@ class App {
             }
         });
 
-        $('#savesSelect').on('select2:select', function (e) {
+        $('#savesSelect').on('select2:select', async (e) => {
             var selectedValue = e.params.data.id;
-            appInstance.selectEscolhido(selectedValue);
+            await appInstance.selectEscolhido(selectedValue);
 
             if (selectedValue === 'acordes__') {
                 $(this).val(null).trigger('change');
@@ -244,6 +282,63 @@ class App {
     setBPM(bpm) {
         this.musicTheory.bpm = bpm;
         this.updateFillBlink(bpm);
+    }
+
+    avancar() {
+        if (!this.elements.partituraFrame.classList.contains('d-none')) {
+            this._moverPartitura(1);
+        } else {
+            this._moverCifra(1);
+        }
+    }
+
+    retroceder() {
+        if (!this.elements.partituraFrame.classList.contains('d-none')) {
+            this._moverPartitura(-1);
+        } else {
+            this._moverCifra(-1);
+        }
+    }
+
+    _moverPartitura(direcao) {
+        const total = this.partituraEditor.currentData.length - 1;
+        const atual = this.partituraEditor.highlightIndex === -1 ? 0 : this.partituraEditor.highlightIndex;
+        const novoIndex = Math.max(0, Math.min(atual + direcao, total));
+
+        this.partituraEditor.highlightIndex = novoIndex;
+
+        if (this.partituraPlayer.partituraPlaybackIndex !== -1) {
+            // Está tocando: toca a nota
+            this.partituraPlayer.partituraPlaybackIndex = novoIndex;
+            this.partituraPlayer.tocarNotaAtualPartitura();
+        } else {
+            // Parado: só destaca
+            this.partituraEditor.draw(this.elements.partituraFrame, false);
+        }
+    }
+
+    _moverCifra(direcao) {
+        // Garante que elements_b está inicializado
+        if (!this.cifraPlayer.elements_b) {
+            this.cifraPlayer.elements_b = this.elements.iframeCifra
+                .contentDocument.getElementsByTagName('b');
+        }
+
+        if (!this.cifraPlayer.parado) {
+            // Está tocando: usa o fluxo normal com som
+            if (direcao > 0) {
+                this.cifraPlayer.avancarCifra();
+            } else {
+                this.cifraPlayer.retrocederCifra();
+            }
+        } else {
+            // Parado: só destaca sem som
+            if (direcao > 0) {
+                this.cifraPlayer.avancarDestaque();
+            } else {
+                this.cifraPlayer.retrocederDestaque();
+            }
+        }
     }
 
     updateFillBlink(bpm) {
@@ -319,13 +414,23 @@ class App {
                 this.cifraPlayer.preencherAcordes(selectedTom);
             }
             else {
-                this.cifraPlayer.transposeCifra();
+                // Modo partitura visualização
+                if (!this.elements.partituraFrame.classList.contains('d-none')) {
+                    const tomOrigem = this.tomAnterior || selectedTom;
+                    const semitones = this.musicTheory.getTransposeSteps(tomOrigem, selectedTom);
+                    this.tomAnterior = selectedTom; // atualiza para a próxima mudança
+                    this.partituraEditor.transporVisualizacao(semitones);
+                    return;
+                }
+                else {
+                    this.cifraPlayer.transposeCifra();
 
-                if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
-                    const button = event.currentTarget;
-                    this.cifraPlayer.parado = false;
-                    this.cifraPlayer.tocarAcorde(button.value);
-                    button.classList.add('pressed');
+                    if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
+                        const button = event.currentTarget;
+                        this.cifraPlayer.parado = false;
+                        this.cifraPlayer.tocarAcorde(button.value);
+                        button.classList.add('pressed');
+                    }
                 }
             }
         }
@@ -362,36 +467,75 @@ class App {
         }
     }
 
-    handleAddClick() {
+    async handleAddClick() {
         this.elements.addButton.classList.add('pressed');
+        setTimeout(() => this.elements.addButton.classList.remove('pressed'), 100);
 
-        setTimeout(() => {
-            this.elements.addButton.classList.remove('pressed');
-        }, 100);
-
+        // Verifica se o menu de edição (lápis/lixeira) está ativo
         if (!this.elements.deleteSavesSelect.classList.contains('d-none')) {
+
+            // 1. Pergunta o tipo (Cifra ou Partitura)
+            const tipo = await this.uiController.chooseEditorType();
+            this.currentEditorType = tipo;
+
+            // 2. Limpa o nome da música e o select
             this.elements.itemNameInput.value = '';
             $('#savesSelect').val('').trigger('change');
-            this.elements.editTextarea.value = this.elements.iframeCifra.contentDocument.body.innerText;
 
-            this.uiController.editarMusica();
+            // 3. Prepara a visualização (Mostra o Iframe de edição ou o Textarea)
+            this.uiController.editarMusica(tipo);
+
+            if (tipo === 'partitura') {
+                if (!this.partituraPlayer._initialized) await this.partituraPlayer.init();
+                this.partituraEditor.abrirEditor([]);
+            } else {
+                // Limpa o editor de texto normal
+                this.elements.editTextarea.value = '';
+            }
+
+            // 5. Configurações padrão de UI
             this.uiController.exibirBotoesTom();
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelectCifras('C');
-            this.elements.itemNameInput.click();
+            this.elements.itemNameInput.focus();
         }
 
         this.uiController.toggleEditDeleteButtons();
     }
 
-    handleEditSaveClick() {
+    async handleEditSaveClick() {
         const saveName = this.elements.savesSelect.value;
-        if (saveName)
-            this.editing = true;
-        this.elements.itemNameInput.value = saveName ? saveName : '';
+        if (!saveName) return;
 
-        this.elements.editTextarea.value = this.elements.iframeCifra.contentDocument.body.innerText;
-        this.uiController.editarMusica();
+        const saveData = this.localStorageManager.getSaveJson(this.LOCAL_STORAGE_SAVES_KEY, saveName);
+        const tipo = saveData.type || (saveData.chords?.includes('@') ? 'partitura' : 'cifra');
+        this.currentEditorType = tipo;
+
+        this.editing = true;
+        this.elements.itemNameInput.value = saveName;
+
+        this.uiController.editarMusica(tipo);
+
+        if (tipo === 'partitura') {
+            if (!this.partituraPlayer._initialized) await this.partituraPlayer.init();
+            const dataArray = saveData.chords.split('\n').filter(l => l.trim());
+            this.partituraEditor.abrirEditor(dataArray);
+        } else {
+            // Pega o texto transposto do iframe em vez do original do localStorage
+            const iframeBody = this.elements.iframeCifra.contentDocument?.body;
+            const textoTransposto = iframeBody
+                ? this.cifraPlayer.removerTagsDaCifra('<pre>' + iframeBody.innerText + '</pre>')
+                : saveData.chords || "";
+
+            // Se o tom foi alterado, usa o texto do iframe; senão usa o salvo
+            const tomAtual = this.elements.tomSelect.value;
+            const tomOriginal = saveData.key || 'C';
+
+            this.elements.editTextarea.value = (tomAtual !== tomOriginal)
+                ? (iframeBody?.innerText || saveData.chords || "")
+                : (saveData.chords || "");
+        }
+
         this.uiController.exibirBotoesTom();
         this.uiController.exibirBotoesAcordes();
         this.cifraPlayer.preencherSelectCifras(this.elements.tomSelect.value ?? 'C');
@@ -430,18 +574,39 @@ class App {
 
     handleStopMousedown() {
         this.uiController.esconderEditDeleteButtons();
-        if (this.elements.acorde1.classList.contains('d-none')) {
-            this.uiController.esconderBotoesAvancarVoltarCifra();
-        }
+
+        this.partituraPlayer.partituraPlaybackIndex = -1;
+        this.audioManager.stopAll(this.partituraPlayer.activeSources, 0.02);
+
+        this.uiController.habilitarSelectSaves(); // Reabilita opções e edições ao parar partitura
+
         this.cifraPlayer.pararReproducao();
         this.bateriaUI.stop();
-        this.melodyUI.stop();
+        if (this.elements.melodyStyleSelect.value) {
+            this.melodyUI.stop();
+        }
     }
 
     handlePlayMousedown() {
-        if (this.elements.acorde1.classList.contains('d-none')) {
-            this.cifraPlayer.iniciarReproducao();
+        if (this.currentEditorType === 'partitura' || (!this.elements.partituraFrame.classList.contains('d-none'))) {
+            const startIndex = this.partituraEditor.highlightIndex !== -1
+                ? this.partituraEditor.highlightIndex
+                : 0;
+
+            this.partituraPlayer.partituraPlaybackIndex = startIndex;
+            this.partituraPlayer.tocarNotaAtualPartitura();
+            this.uiController.exibirBotaoStop();
             this.uiController.exibirBotoesAvancarVoltarCifra();
+
+            this.uiController.desabilitarSelectSaves(); // Trava select e botão de mais (+/lápis) ao tocar
+        }
+        else if (this.elements.acorde1.classList.contains('d-none')) {
+            // Modo cifra — começa do índice atual se houver destaque
+            if (this.cifraPlayer.indiceAcorde > 0) {
+                // Já há uma posição selecionada, retrocede um para retocar a atual
+                this.cifraPlayer.indiceAcorde--;
+            }
+            this.cifraPlayer.iniciarReproducao();
         } else {
             this.bateriaUI.play();
         }
@@ -480,11 +645,18 @@ class App {
         }
     }
 
-    handleOrgaoInstrumentClick() {
+    async handleOrgaoInstrumentClick() {
         if (this.cifraPlayer.instrumento === 'orgao') {
             this.cifraPlayer.instrumento = 'epiano';
-        }
-        else {
+
+            await this.cifraPlayer.loadEpianoSounds();
+
+            if (!this.bateriaUI._initialized) {
+                await this.drumMachine.init(); // carrega styles.json + sons
+                await this.bateriaUI.init();   // constrói UI + bindEvents
+                this.bateriaUI._initialized = true;
+            }
+        } else {
             this.cifraPlayer.instrumento = 'orgao';
         }
 
@@ -521,9 +693,17 @@ class App {
         this.preencherLayoutDoLocalStorage(saveData);
     }
 
-    preencherLayoutDoLocalStorage(saveData) {
+    async preencherLayoutDoLocalStorage(saveData) {
         if (saveData && saveData.instrument) {
             this.cifraPlayer.instrumento = saveData.instrument;
+
+            if (saveData.instrument === 'epiano' && !this.bateriaUI._initialized) {
+                await this.drumMachine.init();
+                await this.cifraPlayer.loadEpianoSounds();
+                await this.bateriaUI.init();
+                this.bateriaUI._initialized = true;
+            }
+
             this.exibirInstrument(saveData.instrument);
             this.elements.bpmInput.value = saveData.bpm;
             this.setBPM(saveData.bpm);
@@ -541,26 +721,58 @@ class App {
         }
     }
 
-    showLetraCifra(saveData) {
-        // Correção caso saveData seja apenas uma string (cifra simples) que veio da pesquisa
-        const texto = saveData.chords ?? saveData;
-        var textoMusica = this.cifraPlayer.destacarCifras(texto, null);
-        this.verifyLetraOuCifra(textoMusica, saveData.chords ? saveData : null);
+    async showLetraCifra(saveData) {
+        // 1. Identifica o nome da música (chave usada no localStorage)
+        const songName = this.elements.savesSelect.value;
 
-        this.uiController.exibirBotoesTom();
+        // 2. Identifica o tipo (Fallback para dados antigos caso 'type' não exista)
+        const type = saveData.type || (saveData.chords?.includes('@') ? 'partitura' : 'cifra');
+
         this.uiController.exibirIframeCifra();
+        this.uiController.exibirBotoesTom();
         this.cifraPlayer.indiceAcorde = 0;
+
+        // 3. Lógica de renderização por tipo
+        if (type === 'partitura') {
+            const dataArray = saveData.chords.split('\n').filter(l => l.trim() !== '');
+
+            this.elements.partituraFrame.classList.remove('d-none');
+            this.elements.iframeCifra.classList.add('d-none');
+
+            this.partituraOriginalKey = saveData.key || 'C';
+            this.cifraPlayer.tomOriginal = this.partituraOriginalKey;
+            this.elements.tomSelect.value = this.partituraOriginalKey;
+
+            if (!this.partituraPlayer._initialized) await this.partituraPlayer.init();
+
+            this.partituraEditor.renderizarVisualizacao(dataArray);
+            this.uiController.exibirBotoesCifras();
+        } else if (type === 'cifra') {
+            this.elements.iframeCifra.removeAttribute('src'); // Limpa o modo partitura
+            const texto = saveData.chords ?? saveData;
+            const textoMusica = this.cifraPlayer.destacarCifras(texto, saveData.key || null);
+
+            this.verifyLetraOuCifra(textoMusica, saveData.chords ? saveData : null);
+            this.uiController.esconderPartitura();
+            this.uiController.exibirBotoesCifras();
+        }
+
+        // 4. Aplica as configurações de BPM, Instrumento e Estilo
+        await this.preencherLayoutDoLocalStorage(saveData);
     }
 
-    salvarMetaDataNoLocalStorage(name, item) {
+    // salvarMetaDataNoLocalStorage recebe chords como parâmetro opcional
+    salvarMetaDataNoLocalStorage(name, item, chords = null) {
         const metaData = {
-            chords: this.elements.editTextarea.value,
+            chords: chords ?? this.elements.editTextarea.value,
             key: this.elements.tomSelect.value,
             instrument: this.cifraPlayer.instrumento,
-            style: this.cifraPlayer.instrumento === 'epiano' ? this.elements.drumStyleSelect.value : this.elements.melodyStyleSelect.value,
-            bpm: this.elements.bpmInput.value
+            style: this.cifraPlayer.instrumento === 'epiano'
+                ? this.elements.drumStyleSelect.value
+                : this.elements.melodyStyleSelect.value,
+            bpm: this.elements.bpmInput.value,
+            type: this.currentEditorType || 'cifra'
         };
-
         this.localStorageManager.saveJson(name, item, metaData);
     }
 
@@ -576,20 +788,24 @@ class App {
     }
 
     async selectEscolhido(selectItem) {
-        // Desativado para melhorar a experiência do usuário (temporariamente)
-        //if (this.selectItemAntes && this.selectItemAntes !== 'acordes__' && this.selectItemAntes !== '')
-        //    await this.verificarTrocouTom();
-
         this.selectItemAntes = selectItem;
+
+        // 1. SEMPRE garante que os editores (texto e gráfico) sejam escondidos ao trocar de música
+        this.uiController.resetInterface();
+        this.elements.partituraEditFrame.classList.add('d-none');
+        this.editing = false; // Desliga a flag de edição
 
         if (selectItem && selectItem !== 'acordes__') {
             const saveData = this.localStorageManager.getSaveJson(this.LOCAL_STORAGE_SAVES_KEY, selectItem);
+
+            // 2. O showLetraCifra vai cuidar de carregar o partitura.html ou o HTML da cifra
             this.showLetraCifra(saveData);
+
             this.escolherStyle(saveData.style);
             this.uiController.rolarIframeParaTopo(this.elements.iframeCifra);
         }
         else {
-            this.uiController.resetInterface();
+            // Lógica para quando seleciona "Acordes" (vazio)
             this.uiController.exibirBotoesAcordes();
             var saveData = this.localStorageManager.getSaveJson(this.LOCAL_STORAGE_ACORDES_KEY, 'acordes');
             let tom = 'C';
@@ -597,7 +813,7 @@ class App {
             if (saveData) {
                 if (saveData.key) {
                     tom = saveData.key;
-                    this.preencherLayoutDoLocalStorage(saveData);
+                    await this.preencherLayoutDoLocalStorage(saveData);
                 }
                 else if (saveData !== '')
                     tom = saveData;
@@ -609,6 +825,8 @@ class App {
 
             if (selectItem === 'acordes__') {
                 this.cifraPlayer.preencherIframeCifra('');
+                // Garante que o iframe de partitura de visualização também suma
+                this.elements.partituraFrame.classList.add('d-none');
             }
         }
     }
@@ -619,7 +837,6 @@ class App {
         }
         else {
             this.elements.drumStyleSelect.value = style;
-
         }
     }
 
@@ -798,6 +1015,11 @@ class App {
             if (action === 'acorde') {
                 this.cifraPlayer.parado = false;
                 this.cifraPlayer.tocarAcorde(button.value);
+
+                // --- NOVO: Adiciona a cifra na partitura se estiver no modo de edição ---
+                if (this.currentEditorType === 'partitura' && !this.elements.partituraEditFrame.classList.contains('d-none')) {
+                    this.partituraEditor.setChordToCurrentNote(button.value);
+                }
             }
 
             document.querySelectorAll('button[data-action="acorde"]').forEach(btn => {
@@ -821,7 +1043,7 @@ class App {
     }
 
     tocarBateriaMelody() {
-        if (this.cifraPlayer.instrumento === 'orgao') {
+        if (this.cifraPlayer.instrumento === 'orgao' && this.elements.melodyStyleSelect.value) {
             this.melodyUI.play();
             this.melodyMachine.currentStep = 1;
         }
@@ -901,12 +1123,17 @@ class App {
                     let newSaves = {};
 
                     const padronizarItem = (conteudo) => {
+                        // Detecta tipo: usa o campo salvo, ou tenta inferir pelo conteúdo
+                        const type = conteudo.type
+                            || (conteudo.chords?.includes('@') ? 'partitura' : 'cifra');
+
                         return {
                             chords: conteudo.chords ?? '',
-                            tom: conteudo.chords ?? 'C',
+                            key: conteudo.key ?? 'C',
                             instrument: conteudo.instrument ?? 'orgao',
                             style: conteudo.style ?? '',
-                            bpm: conteudo.bpm ?? 90
+                            bpm: conteudo.bpm ?? 90,
+                            type: type,  // <- adicionar
                         };
                     };
 
@@ -986,8 +1213,10 @@ class App {
                 titulo: titulo,
                 bpm: conteudoCifra.bpm,
                 chords: conteudoCifra.chords,
+                key: conteudoCifra.key,        // <- já existia mas faltava
                 instrument: conteudoCifra.instrument,
                 style: conteudoCifra.style,
+                type: conteudoCifra.type || 'cifra',  // <- adicionar
             };
         });
 
@@ -1097,6 +1326,7 @@ class App {
     }
 
     async salvarSave(newSaveName, oldSaveName) {
+        // 1. Define um nome padrão caso o usuário não tenha digitado nenhum
         if (!newSaveName) {
             const musicasDefault = this.elements.savesSelect.querySelectorAll('option[value^="Música "]');
             const count = musicasDefault.length + 1;
@@ -1104,44 +1334,82 @@ class App {
         }
 
         const saves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
-
         newSaveName = newSaveName.trim();
-        const temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
 
-        if (temSaveName && newSaveName.toLowerCase() !== this.elements.savesSelect.value.toLowerCase()) {
-            await this.uiController.customAlert(`Já existe "${newSaveName}". Escolha outro nome`, 'Salvar Música');
+        // 2. Verifica se o nome já existe (para evitar sobrescrever outra música por erro)
+        // Se o nome existe e não é a música que já estávamos editando, avisa o usuário.
+        const temSaveName = Object.keys(saves).some(saveName => saveName.toLowerCase() === newSaveName.toLowerCase());
+        const alterouNome = oldSaveName && oldSaveName.toLowerCase() !== newSaveName.toLowerCase();
+
+        if (temSaveName && (alterouNome || !oldSaveName)) {
+            await this.uiController.customAlert(`Já existe uma música chamada "${newSaveName}". Escolha outro nome.`, 'Salvar Música');
             return;
         }
 
-        let content = this.elements.editTextarea.value;
-        const musicaCifrada = this.cifraPlayer.destacarCifras(content, null);
+        // --- 3. COLETA O CONTEÚDO (O CORPO DA MÚSICA) ---
+        let content = "";
+        if (this.currentEditorType === 'partitura') {
+            content = this.partituraEditor.obterDadosParaSalvar(); // COLECIONA OS DADOS
+        } else {
+            content = this.elements.editTextarea.value;
+        }
 
+        // Importante: Atualizamos o valor do editTextarea com o conteúdo coletado, 
+        // pois o método 'salvarMetaDataNoLocalStorage' lê os dados de lá caso não sejam passados.
+        this.elements.editTextarea.value = content;
+
+        // 4. Lógica para identificar o Tom (Key)
+        const musicaCifrada = this.cifraPlayer.destacarCifras(content, null);
+        // 4. Lógica para identificar o Tom (Key)
         let tom;
 
-        if (this.cifraPlayer.tomOriginal && this.cifraPlayer.tomOriginal !== this.elements.tomSelect.value) {
-            tom = this.elements.tomSelect.value;
+        if (this.currentEditorType === 'partitura') {
+            // Para partitura usa direto o tomSelect — já foi transposto pelo usuário
+            tom = this.elements.tomSelect.value || 'C';
         } else {
-            tom = this.cifraPlayer.descobrirTom(musicaCifrada) || this.elements.tomSelect.value || 'C';
+            const musicaCifrada = this.cifraPlayer.destacarCifras(content, null);
+            if (this.cifraPlayer.tomOriginal && this.cifraPlayer.tomOriginal !== this.elements.tomSelect.value) {
+                tom = this.elements.tomSelect.value;
+            } else {
+                tom = this.cifraPlayer.descobrirTom(musicaCifrada) || this.elements.tomSelect.value || 'C';
+            }
         }
 
         this.elements.tomSelect.value = tom;
 
+        // 5. Se foi uma edição com troca de nome, remove o registro antigo
         if (oldSaveName && oldSaveName !== newSaveName) {
-            this.localStorageManager.editarNome(this.LOCAL_STORAGE_SAVES_KEY, oldSaveName, newSaveName);
+            this.localStorageManager.deleteJson(this.LOCAL_STORAGE_SAVES_KEY, oldSaveName);
         }
 
-        this.salvarMetaDataNoLocalStorage(this.LOCAL_STORAGE_SAVES_KEY, newSaveName);
+        // 6. Grava os dados finais no LocalStorage
+        // Isso chama a função que monta o objeto com type, chords, bpm, instrument, style, etc.
+        this.salvarMetaDataNoLocalStorage(this.LOCAL_STORAGE_SAVES_KEY, newSaveName, content);
+
+        // 7. Atualiza o Select principal para focar na música salva
         this.elements.savesSelect.value = newSaveName;
 
+        // 8. Limpa a interface de edição
         this.uiController.resetInterface();
-        this.uiController.exibirIframeCifra();
-        this.uiController.exibirListaSaves(newSaveName);
+        this.elements.partituraEditFrame.classList.add('d-none'); // Esconde o editor gráfico
+        this.uiController.exibirIframeCifra(); // Volta para o iframe de visualização
+        this.uiController.exibirListaSaves(newSaveName); // Recarrega a lista do select2
 
+        // 9. Renderiza a música salva imediatamente na tela
         this.selectEscolhido(newSaveName);
     }
 
     setupServiceWorker() {
+        // Registrar Service Worker apenas em origens seguras (https) ou localhost.
         if ('serviceWorker' in navigator) {
+            const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+            const isSecureProtocol = location.protocol === 'https:';
+
+            if (!isSecureProtocol && !isLocalhost) {
+                console.log('Service Worker registration skipped: insecure or unsupported origin', location.protocol, location.hostname, location.origin);
+                return;
+            }
+
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(registration => {
@@ -1174,9 +1442,13 @@ class App {
     }
 
     warmupApi() {
-        fetch(this.API_BASE_URL + '/')
-            .then(response => response.json())
-            .catch(() => console.log("API Warmup failed/ignored."));
+        try {
+            fetch(this.API_BASE_URL + '/')
+                .then(response => response.json())
+                .catch(() => console.log("API Warmup failed/ignored."));
+        } catch (err) {
+            console.log("API Warmup failed/ignored.", err.message);
+        }
     }
 
     setupDarkMode() {
@@ -1212,7 +1484,7 @@ document.addEventListener('DOMContentLoaded', () => {
         spinner: document.querySelector('.spinner-border'),
         searchIcon: document.getElementById('searchIcon'),
         searchResultsList: document.getElementById('searchResults'),
-        savesList: document.getElementById(this.LOCAL_STORAGE_SAVES_KEY),
+        savesList: document.getElementById('saves'),
         pulseRange: document.getElementById('pulseRange'),
         bpmValue: document.getElementById('bpmValue'),
         iframeCifra: document.getElementById('iframeCifra'),
@@ -1229,7 +1501,6 @@ document.addEventListener('DOMContentLoaded', () => {
         decreaseTom: document.getElementById('decreaseTom'),
         increaseTom: document.getElementById('increaseTom'),
         tomContainer: document.getElementById('tomContainer'),
-        pulseRange: document.getElementById('pulseRange'),
         itemNameInput: document.getElementById('itemNameInput'),
         oracoesEucaristicasLink: document.getElementById('oracoesEucaristicasLink'),
         missaOrdinarioLink: document.getElementById('missaOrdinarioLink'),
@@ -1241,6 +1512,8 @@ document.addEventListener('DOMContentLoaded', () => {
         restoreLink: document.getElementById('restoreLink'),
         downloadStylesLink: document.getElementById('downloadStylesLink'),
         liturgiaDiariaFrame: document.getElementById('liturgiaDiariaFrame'),
+        partituraFrame: document.getElementById('partituraFrame'),
+        partituraEditFrame: document.getElementById('partituraEditFrame'),
         acorde1: document.getElementById('acorde1'),
         acorde2: document.getElementById('acorde2'),
         acorde3: document.getElementById('acorde3'),

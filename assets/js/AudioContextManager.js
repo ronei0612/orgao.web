@@ -1,142 +1,144 @@
-/**
+Ôªø/**
  * Classe AudioContextManager
- * Respons·vel por gerenciar o Web Audio API, carregar instrumentos e tocar acordes
+ * Respons√°vel por gerenciar o Web Audio API, carregar instrumentos e tocar acordes
  * com efeitos de loop, attack e release.
  */
 class AudioContextManager {
 	constructor() {
-		// Cria uma nova inst‚ncia do AudioContext
 		this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-		this.buffers = {}; // Armazena os buffers de ·udio carregados (instrumentos)
-		this.instrumentSettings = {};
-		this.sources = []; // Armazena os nÛs de fonte de ·udio atualmente tocando
-		this.gainNodes = []; // Armazena os nÛs de ganho (volume) para controle de Attack/Release
-		this.currentNotes = []; // Notas a serem tocadas (setadas pelo setNotes)
-		// O this.notesMap foi removido do construtor e ser· passado para loadInstruments()
-	}
 
-	/**
-	 * Carrega todos os instrumentos (arquivos de ·udio) na memÛria (buffers).
-	 * @param {Object<string, {url: string, volume: number}>} urlsMap Um objeto mapeando o nome da nota para um objeto com a URL e o volume desejado (0.0 a 1.0).
-	 * @returns {Promise<void>} Uma Promise que resolve quando todos os arquivos s„o carregados.
-	 */
-	async loadInstruments(urlsMap) {
-		const noteKeys = Object.keys(urlsMap);
+		// CORRE√á√ÉO ITEM 1: Criando a cadeia de processamento
+		this.masterGain = this.audioContext.createGain();
+		this.compressor = this.audioContext.createDynamicsCompressor();
 
-		// Limpa buffers e configuraÁıes anteriores
+		// Configura√ß√£o recomendada para o compressor (evita distor√ß√£o quando muitos sons tocam)
+		this.compressor.threshold.setValueAtTime(-24, this.audioContext.currentTime);
+		this.compressor.knee.setValueAtTime(30, this.audioContext.currentTime);
+		this.compressor.ratio.setValueAtTime(12, this.audioContext.currentTime);
+		this.compressor.attack.setValueAtTime(0.003, this.audioContext.currentTime);
+		this.compressor.release.setValueAtTime(0.25, this.audioContext.currentTime);
+
+		// Roteamento: Master -> Compressor -> Sa√≠da Final (Destination)
+		this.masterGain.connect(this.compressor);
+		this.compressor.connect(this.audioContext.destination);
+
 		this.buffers = {};
 		this.instrumentSettings = {};
-
-		const loadingPromises = noteKeys.map(key => {
-			const { url, volume = 1 } = urlsMap[key];
-			this.instrumentSettings[key] = { volume };
-
-			return fetch(url)
-				.then(response => {
-					if (!response.ok) {
-						throw new Error(`HTTP error! status: ${response.status} for ${url}`);
-					}
-					return response.arrayBuffer();
-				})
-				.then(arrayBuffer => this.audioContext.decodeAudioData(arrayBuffer))
-				.then(audioBuffer => {
-					this.buffers[key] = audioBuffer;
-				})
-				.catch(error => {
-					console.error(`Erro ao carregar ${key} (URL: ${url}): ${error}`);
-				});
-		});
-
-		await Promise.all(loadingPromises);
 	}
 
 	/**
-	 * Define as notas que ser„o tocadas no prÛximo mÈtodo play().
-	 * @param {string[]} notes Um array de strings com as notas, ex: ['c', 'e', 'g'].
+	 * F√°brica centralizada de sons. Cria o n√≥, conecta ao Compressor, previne "tics" e gerencia a mem√≥ria.
+	 * 
+	 * @param {AudioBuffer} buffer O buffer de √°udio a ser tocado.
+	 * @param {number} time O momento (AudioContext.currentTime) em que o som deve iniciar.
+	 * @param {number} volume O volume do som (0.0 a 1.0).
+	 * @param {number} attack O tempo de ataque em segundos.
+	 * @param {boolean} isLoop Se o som deve entrar em loop.
+	 * @returns {Object|null} Retorna um objeto { source, gainNode } ou null se n√£o houver buffer.
+     * @param {Set} trackingSet (Opcional) Um Set onde a nota ser√° adicionada e removida automaticamente.
 	 */
-	setNotes(notes) {
-		this.currentNotes = notes;
-	}
+	playNode(buffer, time, volume = 1, attack = 0.003, isLoop = false, trackingSet = null) {
+		if (!buffer) return null;
+		if (this.audioContext.state === 'suspended') this.audioContext.resume();
 
-	/**
-	 * Adiciona notas ao conjunto currentNotes.
-	 * @param {string[]} notes Um array de strings com as notas a serem adicionadas.
-	 */
-	addNotes(notes) {
-		this.currentNotes = Array.from(new Set([...this.currentNotes, ...notes]));
-	}
+		const startTime = (time != null && time > 0) ? time : this.audioContext.currentTime;
+		const source = this.audioContext.createBufferSource();
+		const gainNode = this.audioContext.createGain();
 
-	/**
-	 * Toca as notas definidas em currentNotes.
-	 * LÛgica alterada para diferenciar Loop de Strings e ”rg„o.
-	 */
-	play(attackTime = 0.2) {
-		// Garante que o AudioContext esteja resumido
-		if (this.audioContext.state === 'suspended') {
-			this.audioContext.resume();
+		const safeAttack = Math.max(attack, 0.003);
+		gainNode.gain.setValueAtTime(0, startTime);
+		gainNode.gain.linearRampToValueAtTime(volume, startTime + safeAttack);
+
+		source.buffer = buffer;
+		source.loop = isLoop;
+		source.connect(gainNode);
+		gainNode.connect(this.masterGain);
+
+		const nodeEntry = { source, gainNode };
+
+		// Se um Set de rastreamento foi passado, adiciona a nota agora
+		if (trackingSet) {
+			trackingSet.add(nodeEntry);
 		}
 
-		// Para o som anterior
-		this.stop(0.2);
+		source.start(startTime);
 
-		const now = this.audioContext.currentTime;
+		source.onended = () => {
+			// L√≥gica de limpeza centralizada:
+			// 1. Remove do Set de rastreamento (se existir)
+			if (trackingSet) {
+				trackingSet.delete(nodeEntry);
+			}
 
-		this.currentNotes.forEach(note => {
-			if (!this.buffers[note]) return;
+			// 2. Limpeza f√≠sica do Web Audio
+			source.disconnect();
+			gainNode.disconnect();
+		};
 
-			const source = this.audioContext.createBufferSource();
-			const gainNode = this.audioContext.createGain();
-			const settings = this.instrumentSettings[note] || { volume: 1 };
-
-			source.buffer = this.buffers[note];
-
-			source.loop = !note.startsWith('epiano');
-
-			source.connect(gainNode);
-			gainNode.connect(this.audioContext.destination);
-
-			// Efeito Attack
-			gainNode.gain.setValueAtTime(0, now);
-			gainNode.gain.linearRampToValueAtTime(settings.volume, now + attackTime);
-
-			source.start(now);
-
-			// Adiciona propriedade customizada para facilitar limpeza
-			source.gainNodeRef = gainNode;
-
-			this.sources.push(source);
-		});
+		return nodeEntry;
 	}
 
 	/**
-	 * Para as notas que est„o tocando com efeito Release.
-	 * @param {number} [releaseTime=0.2] DuraÁ„o do efeito Release em segundos (saÌda suave).
+	 * Para um n√≥ de √°udio suavemente (Fade-out exponencial natural)
+	 * 
+	 * @param {Object} nodeEntry O objeto { source, gainNode } retornado por playNode.
+	 * @param {number} time O momento (AudioContext.currentTime) em que o som deve come√ßar a parar.
+	 * @param {number} release O tempo de cauda (fade-out) em segundos.
 	 */
-	stop(releaseTime = 0.2) {
-		if (this.sources.length === 0) return;
-		const now = this.audioContext.currentTime;
-		const stopTime = now + releaseTime;
+	stopNode(nodeEntry, time, release = 0.05) {
+		if (!nodeEntry || !nodeEntry.gainNode || !nodeEntry.source) return;
+		const stopTime = time || this.audioContext.currentTime;
 
-		// Movemos os sources atuais para uma vari·vel local para limpar o array da classe
-		const oldSources = [...this.sources];
-		this.sources = [];
+		try {
+			nodeEntry.gainNode.gain.cancelScheduledValues(stopTime);
+			// setTargetAtTime: Decaimento natural (Bug #3)
+			nodeEntry.gainNode.gain.setTargetAtTime(0, stopTime, release);
 
-		oldSources.forEach(source => {
-			const gainNode = source.gainNodeRef;
+			// Para o n√≥ ap√≥s o decaimento (release * 5 √© o tempo seguro para setTarget chegar a ~0)
+			nodeEntry.source.stop(stopTime + (release * 5));
+		} catch (e) {
+			// N√≥ j√° estava parado
+		}
+	}
 
-			// Release suave
-			gainNode.gain.cancelScheduledValues(now);
-			gainNode.gain.setValueAtTime(gainNode.gain.value, now);
-			gainNode.gain.linearRampToValueAtTime(0, stopTime);
+	/**
+	 * Para um conjunto de notas (Set) de uma vez s√≥.
+	 * 
+	 * @param {Set} nodesSet O Set contendo objetos { source, gainNode }.
+	 * @param {number} release O tempo de fade-out em segundos.
+	 */
+	stopAll(nodesSet, release = 0.05, time = null) { // Adiciona par√¢metro time
+		if (!nodesSet || nodesSet.size === 0) return;
 
-			source.stop(stopTime);
+		// Se um tempo for fornecido, usa ele. Sen√£o, usa o currentTime.
+		const stopTime = time || this.audioContext.currentTime;
+		const toStop = [...nodesSet];
 
-			// GARANTIA DE LIMPEZA DE MEM”RIA:
-			// Agenda a desconex„o para quando o som terminar
-			setTimeout(() => {
-				source.disconnect();
-				gainNode.disconnect();
-			}, releaseTime * 1000 + 100);
+		toStop.forEach(node => {
+			this.stopNode(node, stopTime, release); // Passa o stopTime adiante
 		});
+	}
+
+    /**
+	 * Carrega m√∫ltiplos buffers de √°udio a partir de um mapa de URLs paralelamente.
+	 * @param {Object<string, string|{url: string, volume: number}>} urlsMap Um objeto mapeando chaves para URLs ou objetos com URL e volume.
+	 * @return {Promise<Map<string, AudioBuffer>>} Uma Promise que resolve para um Map de chaves e seus respectivos AudioBuffers.
+	 * @see loadInstruments para um m√©todo mais espec√≠fico de carregamento de instrumentos com configura√ß√µes de volume.
+	 * @throws {Error} Se ocorrer um erro durante o carregamento ou decodifica√ß√£o de um buffer, ele ser√° registrado no console, mas n√£o interromper√° o processo de carregamento dos outros buffers.
+	 * @returns {Promise<Map<string, AudioBuffer>>} Um Map contendo as chaves e seus respectivos AudioBuffers carregados com sucesso.
+	 * */
+	async loadBuffers(urlsMap) {
+		// urlsMap: { chave: url } ou { chave: { url, volume } }
+		const result = new Map();
+		const promises = Object.entries(urlsMap).map(([key, value]) => {
+			const url = typeof value === 'string' ? value : value.url;
+			return fetch(url)
+				.then(r => r.ok ? r.arrayBuffer() : null)
+				.then(ab => ab ? this.audioContext.decodeAudioData(ab) : null)
+				.then(buf => { if (buf) result.set(key, buf); })
+				.catch(() => console.warn(`Buffer n√£o carregado: ${key}`));
+		});
+		await Promise.all(promises);
+		return result;
 	}
 }

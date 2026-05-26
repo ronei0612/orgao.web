@@ -1,9 +1,10 @@
 class DrumMachine {
-    constructor(baseUrl, cifraPlayer, musicTheory) {
+    constructor(baseUrl, cifraPlayer, musicTheory, audioManager) {
         this.baseUrl = baseUrl;
         this.cifraPlayer = cifraPlayer;
         this.musicTheory = musicTheory;
-        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        this.audioContext = audioManager.audioContext;
+        this.audioManager = audioManager;
         this.buffers = new Map();
         this.audioPath = this.baseUrl + '/assets/audio/studio/Drums/';
 
@@ -37,8 +38,8 @@ class DrumMachine {
 
         // Cache para evitar ler o DOM a cada milissegundo (Performance Crítica)
         this.tracksCache = null;
-
-        this.init();
+        // Rastreio para evitar vazamento de memória e cortar sons ---
+        this.activeSources = new Set();
     }
 
     async init() {
@@ -61,104 +62,57 @@ class DrumMachine {
     }
 
     async loadSounds() {
-        const loadPromises = [];
+        const urls = {};
 
-        this.instruments.forEach(instrument => {
-            if (!instrument.file) return;
-            loadPromises.push((async () => {
-                const response = await fetch(instrument.file);
-                const arrayBuffer = await response.arrayBuffer();
-                const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                this.buffers.set(instrument.name, audioBuffer);
-
-                if (instrument.somAlternativo) {
-                    const responseAlt = await fetch(instrument.somAlternativo);
-                    const arrayBufferAlt = await responseAlt.arrayBuffer();
-                    const audioBufferAlt = await this.audioContext.decodeAudioData(arrayBufferAlt);
-                    this.buffers.set(instrument.name + '-alt', audioBufferAlt);
-                }
-            })());
+        // Instrumentos principais e alternativos
+        this.instruments.forEach(inst => {
+            if (inst.file) urls[inst.name] = inst.file;
+            if (inst.somAlternativo?.endsWith('.ogg')) {
+                urls[inst.name + '-alt'] = inst.somAlternativo;
+            }
         });
 
-        const notas = this.musicTheory.notas;
-        notas.forEach(nota => {
-            var instrument = 'baixo';
-            const baixoFileName = `${this.audioPath}/${instrument}_${nota}.ogg`;
-            loadPromises.push((async () => {
-                const resp = await fetch(baixoFileName);
-                const arrayBuffer = await resp.arrayBuffer();
-                const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                this.buffers.set(`baixo_${nota}`, buffer);
-            })());
-
-            instrument = 'violao';
-            const violaoFileName = `${this.audioPath}/${instrument}_${nota}.ogg`;
-            loadPromises.push((async () => {
-                const resp = await fetch(violaoFileName);
-                const arrayBuffer = await resp.arrayBuffer();
-                const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                this.buffers.set(`${instrument}-baixo_${nota}`, buffer);
-            })());
-
-            const violao1FileName = `${this.audioPath}/${instrument}_${nota}1.ogg`;
-            loadPromises.push((async () => {
-                const resp = await fetch(violao1FileName);
-                const arrayBuffer = await resp.arrayBuffer();
-                const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                this.buffers.set(`${instrument}-cima_${nota}`, buffer);
-            })());
-
-            const violaoFileNameMenor = `${this.audioPath}/${instrument}_${nota}m.ogg`;
-            loadPromises.push((async () => {
-                const resp = await fetch(violaoFileNameMenor);
-                const arrayBuffer = await resp.arrayBuffer();
-                const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                this.buffers.set(`${instrument}-baixo_${nota}m`, buffer);
-            })());
-
-            const violao1FileNameMenor = `${this.audioPath}/${instrument}_${nota}m1.ogg`;
-            loadPromises.push((async () => {
-                const resp = await fetch(violao1FileNameMenor);
-                const arrayBuffer = await resp.arrayBuffer();
-                const buffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                this.buffers.set(`${instrument}-cima_${nota}m`, buffer);
-            })());
+        // Baixo, violão e variações
+        this.musicTheory.notas.forEach(nota => {
+            urls[`baixo_${nota}`] = `${this.audioPath}/baixo_${nota}.ogg`;
+            urls[`violao-baixo_${nota}`] = `${this.audioPath}/violao_${nota}.ogg`;
+            urls[`violao-cima_${nota}`] = `${this.audioPath}/violao_${nota}1.ogg`;
+            urls[`violao-baixo_${nota}m`] = `${this.audioPath}/violao_${nota}m.ogg`;
+            urls[`violao-cima_${nota}m`] = `${this.audioPath}/violao_${nota}m1.ogg`;
         });
 
-        const violaoAlt = `${this.audioPath}/violao_.ogg`;
-        const responseViolaoAlt = await fetch(violaoAlt);
-        const arrayBufferViolaoAlt = await responseViolaoAlt.arrayBuffer();
-        const audioBufferViolaoAlt = await this.audioContext.decodeAudioData(arrayBufferViolaoAlt);
-        this.buffers.set('violao-baixo-alt', audioBufferViolaoAlt);
-        this.buffers.set('violao-cima-alt', audioBufferViolaoAlt);
+        // Violão alternativo
+        urls['violao-baixo-alt'] = `${this.audioPath}/violao_.ogg`;
+        urls['violao-cima-alt'] = `${this.audioPath}/violao_.ogg`;
 
-        await Promise.all(loadPromises);
+        this.buffers = await this.audioManager.loadBuffers(urls);
     }
 
     playSound(buffer, time, volume = 1, isChimbalAberto = false) {
         if (!buffer) return;
 
-        const source = this.audioContext.createBufferSource();
-        const gainNode = this.audioContext.createGain();
+        const node = this.audioManager.playNode(buffer, time, volume, 0.003, false, this.activeSources);
 
-        source.buffer = buffer;
-        gainNode.gain.value = volume;
-
-        source.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-
-        source.start(time);
-
-        if (isChimbalAberto) {
-            this.lastChimbalAbertoSource = source;
+        // Se for chimbal aberto, guardamos o objeto {source, gainNode} retornado
+        if (isChimbalAberto && node) {
+            this.lastChimbalAbertoNode = node;
         }
+    }
 
-        // PERFORMANCE: Desconectar nós após o uso para liberar memória do navegador
-        // Isso evita "estalos" quando há muitos sons (polifonia alta)
-        source.onended = () => {
-            source.disconnect();
-            gainNode.disconnect();
-        };
+    stop() {
+        this.isPlaying = false;
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+        this.audioManager.stopAll(this.activeSources, 0.02);
+        this.activeSources.clear();
+        this.reset();
+    }
+
+    reset() {
+        this.currentStep = 1;
+        this.nextNoteTime = 0;
     }
 
     scheduleNote(instrument, step, time, volume) {
@@ -167,12 +121,12 @@ class DrumMachine {
             if (buffer) {
                 this.playSound(buffer, time, 1, instrument === 'chimbal');
             }
-        }
-        else {
+        } else {
             if (!this.playBass(instrument, time, volume) && !this.playViolao(instrument, time, volume)) {
                 const buffer = this.buffers.get(instrument);
                 if (buffer && volume > 0) {
-                    this.playSound(buffer, time, volume === 2 ? 0.3 : 1);
+                    const vol = (volume === 2) ? 0.3 : 1;
+                    this.playSound(buffer, time, vol, instrument === 'chimbal');
                 }
             }
         }
@@ -186,8 +140,7 @@ class DrumMachine {
 
         if (this.currentStep > this.numSteps) {
             this.currentStep = 1;
-            if (this.onStepsEnd) {
-                this.fecharChimbal();
+            if (this.onStepsEnd) { 
                 this.onStepsEnd();
             }
         }
@@ -200,17 +153,12 @@ class DrumMachine {
         }
     }
 
-    fecharChimbal(instrument, volume) {
-        if (instrument !== 'chimbal') return;
-
-        if (volume === 1 || volume === 2) {
-            if (this.lastChimbalAbertoSource) {
-                try {
-                    this.lastChimbalAbertoSource.stop(0);
-                } catch (e) {
-                    // Ignore se ja parou
-                }
-                this.lastChimbalAbertoSource = null;
+    fecharChimbal(instrument, volume, time) { // Adicione o 'time'
+        if (volume === undefined || volume === 1 || volume === 2 || volume === 3) {
+            if (this.lastChimbalAbertoNode) {
+                // Usa o time agendado, ou o momento atual como fallback
+                this.audioManager.stopNode(this.lastChimbalAbertoNode, time || this.audioContext.currentTime, 0.02);
+                this.lastChimbalAbertoNode = null;
             }
         }
     }
@@ -249,7 +197,9 @@ class DrumMachine {
                 const volume = parseInt(stepEl.dataset.volume || '0', 10);
                 if (volume <= 0) continue;
 
-                this.fecharChimbal(trackData.instrument, volume);
+                if (trackData.instrument === 'chimbal') {
+                    this.fecharChimbal(trackData.instrument, volume, this.nextNoteTime); // Envia o tempo futuro
+                }
                 this.scheduleNote(trackData.instrument, this.currentStep, this.nextNoteTime, volume);
 
                 // Feedback visual (apenas se necessário)
@@ -269,7 +219,7 @@ class DrumMachine {
         if (!selectedButton) return;
 
         selectedButton.classList.remove('flash-accent', 'flash-weak');
-        void selectedButton.offsetWidth;
+        void selectedButton.offsetWidth; // PROBLEMA: Força Recálculo de Layout, USE O requestAnimationFrame
 
         if (beat === 1) {
             selectedButton.classList.add('flash-accent');
@@ -316,20 +266,6 @@ class DrumMachine {
         this.timerInterval = setInterval(() => this.scheduler(), this.lookahead);
     }
 
-    stop() {
-        this.isPlaying = false;
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
-        }
-        this.reset();
-    }
-
-    reset() {
-        this.currentStep = 1;
-        this.nextNoteTime = 0;
-    }
-
     setNumSteps(steps) {
         this.numSteps = steps;
         // Invalida o cache para ser recriado no próximo ciclo, já que o UI mudou o DOM
@@ -341,7 +277,7 @@ class DrumMachine {
             const bass = instrument + '_' + this.cifraPlayer.baixo;
             const buffer = this.buffers.get(bass);
             if (buffer && volume > 0) {
-                this.playSound(buffer, time, volume === 2 ? 0.4 : 1);
+                this.audioManager.playNode(buffer, time, volume === 2 ? 0.4 : 1, 0.003, false, this.activeSources);
                 return true;
             }
         }
@@ -353,7 +289,7 @@ class DrumMachine {
             const violao = instrument + '_' + this.cifraPlayer.acordeTocando;
             const buffer = this.buffers.get(violao);
             if (buffer && volume > 0) {
-                this.playSound(buffer, time, volume === 2 ? 0.4 : 1);
+                this.audioManager.playNode(buffer, time, volume === 2 ? 0.4 : 1, 0.003, false, this.activeSources);
                 return true;
             }
         }

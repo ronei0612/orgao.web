@@ -1,4 +1,4 @@
-class DraggableController {
+Ôªøclass DraggableController {
     constructor(element) {
         this.draggableControls = element;
         this.isDragging = false;
@@ -6,7 +6,7 @@ class DraggableController {
         this.currentX = 0;
         this.currentY = 0;
         this.DRAG_THRESHOLD = 5;
-        this.animationFrameId = null; // Controle da animaÁ„o
+        this.animationFrameId = null; // Controle da anima√ß√£o
 
         this.onDragStart = this.onDragStart.bind(this);
         this.onDragMove = this.onDragMove.bind(this);
@@ -43,7 +43,7 @@ class DraggableController {
         const clientX = event.touches ? event.touches[0].clientX : event.clientX;
         const clientY = event.touches ? event.touches[0].clientY : event.clientY;
 
-        // Cache inicial das posiÁıes
+        // Cache inicial das posi√ß√µes
         const currentLeft = parseFloat(this.draggableControls.style.left) || 0;
         const currentTop = parseFloat(this.draggableControls.style.top) || 0;
 
@@ -78,7 +78,7 @@ class DraggableController {
         this.currentX = clientX - this.offset.x;
         this.currentY = clientY - this.offset.y;
 
-        // Solicita o frame de animaÁ„o se n„o houver um pendente
+        // Solicita o frame de anima√ß√£o se n√£o houver um pendente
         if (!this.animationFrameId) {
             this.animationFrameId = requestAnimationFrame(this.updatePosition);
         }
@@ -96,9 +96,11 @@ class DraggableController {
         this.draggableControls.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
         // Nota: Mudei para transform/translate3d para melhor performance de GPU
         // Se precisar manter left/top por compatibilidade com o resto do app:
-        this.draggableControls.style.left = `${newX}px`;
-        this.draggableControls.style.top = `${newY}px`;
-        this.draggableControls.style.transform = 'none';
+
+        // VERIFICAR SE PRECISA CORRIGIR
+        this.draggableControls.style.left = `${newX}px`; // Causa reflow/repaint (pesado)
+        this.draggableControls.style.top = `${newY}px`; // Causa reflow/repaint (pesado)
+        this.draggableControls.style.transform = 'none'; // DESFAZ a acelera√ß√£o da GPU
 
         this.animationFrameId = null;
     }
