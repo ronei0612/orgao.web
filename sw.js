@@ -1,4 +1,4 @@
-const version = '6.0.4';
+const version = '6.0.5';
 const CACHE_NAME = 'cifra-app-cache-' + version;
 
 const urlsToCache = [
@@ -27,6 +27,9 @@ const urlsToCache = [
     './assets/js/CifrasEditor.js',
     './assets/lib/js/Jquery/3.5.1/jquery.min.js',
     './assets/lib/js/Bootstrap/4.6.2/bootstrap.min.js',
+    './assets/lib/js/Popper/1.14.7/popper.min.js',
+    './assets/lib/js/Select2/4.1.0-rc.0/select2.min.js',
+    './assets/lib/js/Vexflow/4.2.5/vexflow.js',
 
     './santamissa.html',
     './oracoes.html',
@@ -34,6 +37,7 @@ const urlsToCache = [
     './assets/icons/v2/avancar.svg',
     './assets/icons/menu.svg',
     './assets/icons/dash-lg.svg',
+    './assets/icons/dash.svg',
     './assets/icons/plus-lg.svg',
     './assets/icons/plus.svg',
     './assets/icons/check.svg',
@@ -51,7 +55,6 @@ const urlsToCache = [
     './assets/icons/music-note-beamed.svg',
     './assets/icons/x-circle.svg',
     './assets/icons/search.svg',
-    './assets/icons/check.svg',
 
     './assets/audio/Orgao/orgao_a.ogg',
     './assets/audio/Orgao/orgao_a_.ogg',
@@ -90,24 +93,79 @@ const urlsToCache = [
     './assets/audio/Orgao/orgao_g__baixo.ogg',
     './assets/audio/Orgao/orgao_g__grave.ogg',
 
+    './assets/audio/Strings/strings_a.ogg',
+    './assets/audio/Strings/strings_a_.ogg',
+    './assets/audio/Strings/strings_a_baixo.ogg',
+    './assets/audio/Strings/strings_a_grave.ogg',
+    './assets/audio/Strings/strings_a__baixo.ogg',
+    './assets/audio/Strings/strings_a__grave.ogg',
+    './assets/audio/Strings/strings_b.ogg',
+    './assets/audio/Strings/strings_b_baixo.ogg',
+    './assets/audio/Strings/strings_b_grave.ogg',
+    './assets/audio/Strings/strings_c.ogg',
+    './assets/audio/Strings/strings_c_.ogg',
+    './assets/audio/Strings/strings_c_baixo.ogg',
+    './assets/audio/Strings/strings_c_grave.ogg',
+    './assets/audio/Strings/strings_c__baixo.ogg',
+    './assets/audio/Strings/strings_c__grave.ogg',
+    './assets/audio/Strings/strings_d.ogg',
+    './assets/audio/Strings/strings_d_.ogg',
+    './assets/audio/Strings/strings_d_baixo.ogg',
+    './assets/audio/Strings/strings_d_grave.ogg',
+    './assets/audio/Strings/strings_d__baixo.ogg',
+    './assets/audio/Strings/strings_d__grave.ogg',
+    './assets/audio/Strings/strings_e.ogg',
+    './assets/audio/Strings/strings_e_baixo.ogg',
+    './assets/audio/Strings/strings_e_grave.ogg',
+    './assets/audio/Strings/strings_f.ogg',
+    './assets/audio/Strings/strings_f_.ogg',
+    './assets/audio/Strings/strings_f_baixo.ogg',
+    './assets/audio/Strings/strings_f_grave.ogg',
+    './assets/audio/Strings/strings_f__baixo.ogg',
+    './assets/audio/Strings/strings_f__grave.ogg',
+    './assets/audio/Strings/strings_g.ogg',
+    './assets/audio/Strings/strings_g_.ogg',
+    './assets/audio/Strings/strings_g_baixo.ogg',
+    './assets/audio/Strings/strings_g_grave.ogg',
+    './assets/audio/Strings/strings_g__baixo.ogg',
+    './assets/audio/Strings/strings_g__grave.ogg',
+
+    './assets/audio/studio/Orgao/orgao_a.ogg',
     './assets/audio/studio/Orgao/orgao_a_baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_a_grave.ogg',
+    './assets/audio/studio/Orgao/orgao_a_.ogg',
     './assets/audio/studio/Orgao/orgao_a__baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_a__grave.ogg',
+    './assets/audio/studio/Orgao/orgao_b.ogg',
     './assets/audio/studio/Orgao/orgao_b_baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_b_grave.ogg',
     './assets/audio/studio/Orgao/orgao_c.ogg',
-    './assets/audio/studio/Orgao/orgao_c_.ogg',
     './assets/audio/studio/Orgao/orgao_c_baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_c_grave.ogg',
+    './assets/audio/studio/Orgao/orgao_c_.ogg',
     './assets/audio/studio/Orgao/orgao_c__baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_c__grave.ogg',
     './assets/audio/studio/Orgao/orgao_d.ogg',
-    './assets/audio/studio/Orgao/orgao_d_.ogg',
     './assets/audio/studio/Orgao/orgao_d_baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_d_grave.ogg',
+    './assets/audio/studio/Orgao/orgao_d_.ogg',
     './assets/audio/studio/Orgao/orgao_d__baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_d__grave.ogg',
     './assets/audio/studio/Orgao/orgao_e.ogg',
     './assets/audio/studio/Orgao/orgao_e_baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_e_grave.ogg',
     './assets/audio/studio/Orgao/orgao_f.ogg',
     './assets/audio/studio/Orgao/orgao_f_baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_f_grave.ogg',
+    './assets/audio/studio/Orgao/orgao_f_.ogg',
     './assets/audio/studio/Orgao/orgao_f__baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_f__grave.ogg',
+    './assets/audio/studio/Orgao/orgao_g.ogg',
     './assets/audio/studio/Orgao/orgao_g_baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_g_grave.ogg',
+    './assets/audio/studio/Orgao/orgao_g_.ogg',
     './assets/audio/studio/Orgao/orgao_g__baixo.ogg',
+    './assets/audio/studio/Orgao/orgao_g__grave.ogg',
 
     // Dependências externas (CDNs) - CRÍTICO para o modo offline!
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'
@@ -121,23 +179,21 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME).then(async cache => {
             console.log('[SW] Iniciando cache de arquivos...');
 
-            // Adiciona um por um para sabermos qual falha
             for (const url of urlsToCache) {
                 try {
                     const response = await fetch(url);
-                    if (!response.ok) {
-                        throw new Error(`Status ${response.status}`);
+                    if (response.ok) {
+                        await cache.put(url, response);
+                    } else {
+                        console.warn(`[SW AVISO] Arquivo não encontrado (Ignorado): ${url}`);
                     }
-                    await cache.put(url, response);
                 } catch (error) {
-                    console.error(`[SW FALHA] Não foi possível cachear: ${url} - Erro: ${error.message}`);
-                    // Opcional: Se quiser que o app funcione mesmo faltando arquivos, 
-                    // remova o 'return Promise.reject' abaixo. 
-                    // Mas o ideal é manter para saber que algo está errado.
-                    return Promise.reject(error);
+                    // CORREÇÃO: Removemos o Promise.reject()
+                    // Se um falhar, apenas avisa e CONTINUA a instalar os outros!
+                    console.error(`[SW FALHA DE REDE] Erro ao buscar: ${url}`, error);
                 }
             }
-            console.log('[SW] Todos os arquivos foram cacheados com sucesso!');
+            console.log('[SW] Processo de cache inicial concluído!');
         })
     );
 });
@@ -156,29 +212,36 @@ self.addEventListener('activate', event => {
             );
         })
     );
-    return self.clients.claim(); // Sugestão: Assegura que o SW ativado controle os clientes imediatamente
+    return self.clients.claim();
 });
 
 // Evento de Fetch: Intercepta todas as requisições da página.
 self.addEventListener('fetch', event => {
-    // Apenas intercepta requisições GET
     if (event.request.method !== 'GET') return;
 
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                // Se encontrou no cache, retorna.
-                if (response) {
-                    return response;
+        caches.match(event.request).then(cachedResponse => {
+            // 1. Tem no cache? Retorna imediatamente (Funciona offline)
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+
+            // 2. Não tem? Busca na rede
+            return fetch(event.request).then(networkResponse => {
+                // CORREÇÃO: Se a busca deu certo, armazena no cache para a próxima vez!
+                // Isso garante que Flauta, Bateria e Epiano fiquem offline após o 1º uso
+                if (networkResponse && networkResponse.status === 200) {
+                    const responseToCache = networkResponse.clone();
+                    caches.open(CACHE_NAME).then(cache => {
+                        cache.put(event.request, responseToCache);
+                    });
                 }
 
-                // Se não encontrou, vai para a internet buscar.
-                return fetch(event.request).catch(error => {
-                    // Sugestão: Trata a falha de rede (usuário offline tentando um recurso não cacheado)
-                    console.warn('[SW] Falha ao buscar recurso na rede:', event.request.url, error);
-                    // Opcional: Aqui você pode retornar uma página de fallback, se necessário.
-                    // Ex: return caches.match('/offline.html');
-                });
-            })
+                return networkResponse;
+            }).catch(error => {
+                console.warn('[SW] Offline/Falha de rede para o recurso:', event.request.url);
+                // Como não tem alert() aqui, o app apenas não toca o som se não tiver internet e não estiver no cache
+            });
+        })
     );
 });

@@ -1,5 +1,5 @@
-class MelodyMachine {
-    constructor(baseUrl, musicTheory, cifraPlayer) {
+﻿class MelodyMachine {
+    constructor(baseUrl, musicTheory, cifraPlayer, audioManager) {
         this.baseUrl = baseUrl;
         this.musicTheory = musicTheory;
         this.cifraPlayer = cifraPlayer;
@@ -7,7 +7,8 @@ class MelodyMachine {
         this.releaseTime = 0.1;
         this.defaultVol = 0.7;
         this.buffers = new Map();
-        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        this.audioContext = audioManager.audioContext;
+        this.audioManager = audioManager;
         this.audioPath = this.baseUrl + '/assets/audio/studio/Orgao';
         this.instrument = 'orgao';
         this.instruments = [
@@ -104,28 +105,18 @@ class MelodyMachine {
         this.styles = null;
         this.stepsPorTempo = null;
         this.tracksCache = null;
-        this.activeSources = [];
-
-        this.init();
+        this.activeSources = new Set();
     }
 
     async loadSounds() {
-        const notasUnicas = new Set(Object.values(this.acordes).flat());
-        const loadPromises = [];
-
-        for (const nota of notasUnicas) {
-            const name = `${this.instrument}_${nota}`;
-            const url = `${this.audioPath}/${name}.ogg`;
-
-            loadPromises.push((async () => {
-                const response = await fetch(url);
-                const arrayBuffer = await response.arrayBuffer();
-                const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
-                this.buffers.set(name, audioBuffer);
-            })());
-        }
-
-        await Promise.all(loadPromises);
+        const notas = [...new Set(Object.values(this.acordes).flat())];
+        const urls = Object.fromEntries(
+            notas.map(n => [
+                `${this.instrument}_${n}`,
+                `${this.audioPath}/${this.instrument}_${n}.ogg`
+            ])
+        );
+        this.buffers = await this.audioManager.loadBuffers(urls);
     }
 
     async init() {
@@ -147,55 +138,6 @@ class MelodyMachine {
         }
     }
 
-    playSound(buffer, time, volume = 1) {
-        if (!buffer) return null;
-
-        const source = this.audioContext.createBufferSource();
-        const gainNode = this.audioContext.createGain();
-
-        source.buffer = buffer;
-        source.loop = false;
-
-        const atackSemTic = 0; // era 0.001
-        gainNode.gain.setValueAtTime(atackSemTic, time);
-        gainNode.gain.linearRampToValueAtTime(volume, time + this.attackTime);
-
-        source.connect(gainNode);
-        gainNode.connect(this.audioContext.destination);
-
-        source.start(time);
-
-        const noteEntry = { source, gainNode };
-        this.activeSources.push(noteEntry);
-
-        source.onended = () => {
-            this.activeSources = this.activeSources.filter(item => item !== noteEntry);
-            source.disconnect();
-            gainNode.disconnect();
-        };
-
-        return noteEntry;
-    }
-
-    stopNotes(time) {
-        this.activeSources.forEach(item => {
-            try {
-                const { source, gainNode } = item;
-
-                // Cancela agendamentos futuros para n�o haver conflito
-                gainNode.gain.cancelScheduledValues(time);
-
-                // setTargetAtTime � muito mais suave para evitar estalos
-                // 0.02 � a constante de tempo (quanto menor, mais r�pido o fade-out)
-                gainNode.gain.setTargetAtTime(0, time, 0.02);
-
-                // Para o som um pouco depois do fade-out para garantir sil�ncio
-                source.stop(time + 0.1);
-            } catch (e) { }
-        });
-        this.activeSources = [];
-    }
-
     nextNote() {
         const secondsPerQuarterNote = 60.0 / this.musicTheory.bpm;
         const secondsPerStep = secondsPerQuarterNote / 2;
@@ -204,10 +146,10 @@ class MelodyMachine {
         this.currentStep++;
 
         if (this.currentStep > this.numSteps) {
-            this.stop();
             if (typeof this.onStepsEnd === 'function') {
                 this.onStepsEnd();
             }
+            this.stop();
         }
     }
 
@@ -231,44 +173,67 @@ class MelodyMachine {
 
     scheduleCurrentStep() {
         if (!this.tracksCache) this.refreshTrackCache();
-
         this.piscarStopButton();
 
         const stepIndex = this.currentStep - 1;
         const iniciouNovoAcorde = this.currentStep === 1;
+        const acordePrincipal = this.cifraPlayer.acordeTocando;
 
-        if (iniciouNovoAcorde) {
-            this.stopNotes(this.nextNoteTime);
+        // 1. Resolvemos as notas do acorde
+        let notasAtuais = null;
+        if (acordePrincipal) {
+            const chaveAcorde = acordePrincipal + (this.cifraPlayer.acordeFull ? '1' : '');
+            notasAtuais = this.getAcordeNotas(chaveAcorde);
         }
 
-        let foundTrack = null;
-        if (this.tracksCache) {
-            for (let i = 0; i < this.tracksCache.length; i++) {
-                const trackData = this.tracksCache[i];
-                if (!trackData.button.classList.contains('selected')) continue;
+        // 2. Lógica de início de compasso (Tempo 1)
+        if (iniciouNovoAcorde) {
+            // Para as notas do compasso anterior com release
+            this.audioManager.stopAll(this.activeSources, 0.1, this.nextNoteTime);
 
-                const stepEl = trackData.steps[stepIndex];
-                if (!stepEl) continue;
+            // Toca a nota grave (pedaleira) respeitando a inversão/baixo do acorde (ex: C/E -> toca E grave)
+            let notaGraveNome = null;
 
-                const volume = parseInt(stepEl.dataset.volume || '0', 10);
-                if (volume > 0) {
-                    foundTrack = { ...trackData, volume, element: stepEl };
+            if (this.cifraPlayer.baixo) {
+                // Formata o baixo pegando da Cifra (ex: 'F_' vira 'f__grave')
+                notaGraveNome = `${this.cifraPlayer.baixo.toLowerCase()}_grave`;
+            } else if (notasAtuais && notasAtuais[0]) {
+                // Fallback para a tônica principal dicionário caso não identifique baixo
+                notaGraveNome = notasAtuais[0];
+            }
 
-                    if (this.cifraPlayer.acordeTocando) {
-                        let acordeSimplificado = this.cifraPlayer.acordeTocando;
-                        if (this.cifraPlayer.acordeFull)
-                            acordeSimplificado += '1';
-                        const notas = this.getAcordeNotas(acordeSimplificado);
-                        const nota = notas[foundTrack.noteIndex];
-                        const bufferKey = `${foundTrack.name}_${nota}`;
-                        const buffer = this.buffers.get(bufferKey);
-
-                        this.playSound(buffer, this.nextNoteTime, foundTrack.volume === 2 ? (this.defaultVol / 2) : this.defaultVol);
-
-                        foundTrack.element.classList.add('playing');
-                        setTimeout(() => foundTrack.element.classList.remove('playing'), 100);
-                    }
+            if (notaGraveNome) {
+                const bufferGrave = this.buffers.get(`${this.instrument}_${notaGraveNome}`);
+                if (bufferGrave) {
+                    // Captura o nó retornado e adiciona ao Set
+                    this.audioManager.playNode(bufferGrave, this.nextNoteTime, this.defaultVol, 0.003, false, this.activeSources);
                 }
+            }
+        }
+
+        if (!notasAtuais || !this.tracksCache) return;
+
+        // 4. Loop das trilhas (Vozes do Órgão)
+        for (let i = 0; i < this.tracksCache.length; i++) {
+            const trackData = this.tracksCache[i];
+            if (!trackData.button.classList.contains('selected')) continue;
+
+            const stepElement = trackData.steps[stepIndex];
+            const stepElementVol = parseInt(stepElement?.dataset.volume || '0', 10);
+            if (stepElementVol <= 0) continue;
+
+            const nomeNota = notasAtuais[trackData.noteIndex];
+            if (!nomeNota) continue;
+
+            const bufferNota = this.buffers.get(`${trackData.name}_${nomeNota}`);
+            if (bufferNota) {
+                const volumeFinal = stepElementVol === 2 ? (this.defaultVol / 1.5) : this.defaultVol;
+
+                // CORREÇÃO: Captura o nó e adiciona ao Set para controle de release
+                this.audioManager.playNode(bufferNota, this.nextNoteTime, volumeFinal, 0.003, false, this.activeSources);
+
+                stepElement.classList.add('playing');
+                setTimeout(() => stepElement.classList.remove('playing'), 100);
             }
         }
     }
@@ -303,7 +268,7 @@ class MelodyMachine {
         this.currentStep = 1;
         this.nextNoteTime = this.audioContext.currentTime;
 
-        this.stopNotes(this.nextNoteTime);
+        this.audioManager.stopAll(this.activeSources, 0.1, this.nextNoteTime);
 
         this.refreshTrackCache();
         if (this.timerInterval) clearInterval(this.timerInterval);
@@ -318,7 +283,7 @@ class MelodyMachine {
         }
 
         if (stopAll)
-            this.stopNotes(this.audioContext.currentTime);
+            this.audioManager.stopAll(this.activeSources, 0.1, this.audioContext.currentTime);
 
         this.reset();
     }

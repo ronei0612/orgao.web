@@ -12,6 +12,11 @@ class UIController {
         this.elements.notesButton.classList.add('ml-3');
         this.elements.playButton.classList.add('mx-5');
         this.esconderBotoesAcordes();
+        this.exibirBotoesAvancarVoltarCifra();
+    }
+
+    esconderPartitura() {
+        this.elements.partituraFrame.classList.add('d-none');
     }
 
     esconderBotoesAvancarVoltarCifra() {
@@ -48,9 +53,18 @@ class UIController {
         this.elements.acorde11.classList.add('d-none');
     }
 
-    editarMusica() {
+    editarMusica(tipo = 'cifra') {
         this.elements.iframeCifra.classList.add('d-none');
-        this.elements.editTextarea.classList.remove('d-none');
+        this.elements.partituraFrame.classList.add('d-none');
+
+        if (tipo === 'cifra') {
+            this.elements.editTextarea.classList.remove('d-none');
+            this.elements.partituraEditFrame.classList.add('d-none');
+        } else {
+            this.elements.editTextarea.classList.add('d-none');
+            this.elements.partituraEditFrame.classList.remove('d-none');
+        }
+
         this.elements.selectContainer.classList.add('d-none');
         this.elements.itemNameInput.classList.remove('d-none');
         this.elements.saveButton.classList.remove('d-none');
@@ -62,6 +76,7 @@ class UIController {
 
     exibirBotoesAcordes() {
         this.exibirBotoesTom();
+        this.esconderBotoesAvancarVoltarCifra();
         this.elements.notesButton.classList.remove('d-none');
         this.elements.notesButton.classList.remove('ml-5');
         this.elements.playButton.classList.remove('mx-5');
@@ -164,7 +179,7 @@ class UIController {
         if (saves && saves !== '{}') {
             saves = JSON.parse(saves);
 
-            let saveNames = Object.keys(saves).sort();
+            let saveNames = Object.keys(saves).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
             saveNames.forEach(saveName => {
                 const listItem = this.criarItemSelect(saveName, saves[saveName]);
@@ -300,6 +315,8 @@ class UIController {
         this.elements.oracoesFrame.classList.add('d-none');
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
+        this.elements.partituraFrame.classList.add('d-none'); // <--- ADICIONADO
+        this.elements.partituraEditFrame.classList.add('d-none'); // <--- ADICIONADO
         this.elements.melodyStyleSelect.classList.remove('d-none');
         this.elements.drumStyleSelect.classList.add('d-none');
         this.elements.orgaoInstrumentButton.classList.remove('d-none');
@@ -359,6 +376,8 @@ class UIController {
         this.elements.santamissaFrame.classList.add('d-none');
         this.elements.iframeCifra.classList.add('d-none');
         this.elements.liturgiaDiariaFrame.classList.add('d-none');
+        this.elements.partituraFrame.classList.add('d-none'); // <--- ADICIONADO
+        this.elements.partituraEditFrame.classList.add('d-none'); // <--- ADICIONADO
 
         if (frameId) {
             const frame = this.elements[frameId];
@@ -488,6 +507,55 @@ class UIController {
         if (scrollTop && !location.origin.includes('file:')) {
             this.elements.santamissaFrame.contentWindow.scrollTo(0, parseInt(scrollTop));
         }
+    }
+
+    async chooseEditorType() {
+        return new Promise((resolve) => {
+            const modalElement = document.getElementById('customAlertModal');
+            const modal = new bootstrap.Modal(modalElement);
+            const modalTitle = document.getElementById('customAlertModalLabel');
+            const modalBody = document.getElementById('customAlertModalBody');
+            const btnOk = document.getElementById('btnAlertDialogOK');
+
+            modalTitle.textContent = "Tipo de Editor";
+            btnOk.classList.add('d-none'); // Esconde o OK padrão
+
+            modalBody.innerHTML = `
+            <div class="row">
+                <div class="col-6">
+                    <button id="choiceCifra" class="btn btn-outline-primary btn-block py-3">
+                        <div style="font-size: 2rem;">🔠</div>
+                        <div class="font-weight-bold">Cifra</div>
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button id="choicePartitura" class="btn btn-outline-info btn-block py-3">
+                        <div style="font-size: 2rem;">🎼</div>
+                        <div class="font-weight-bold">Partitura</div>
+                    </button>
+                </div>
+            </div>
+        `;
+
+            // Eventos de clique
+            modalBody.querySelector('#choiceCifra').onclick = () => {
+                modal.hide();
+                resolve('cifra');
+            };
+            modalBody.querySelector('#choicePartitura').onclick = () => {
+                modal.hide();
+                resolve('partitura');
+            };
+
+            // Ao fechar o modal, restaurar o botão OK para os próximos alertas normais
+            const handleModalHidden = () => {
+                btnOk.classList.remove('d-none');
+                modalElement.removeEventListener('hidden.bs.modal', handleModalHidden);
+            };
+            modalElement.addEventListener('hidden.bs.modal', handleModalHidden);
+
+            modal.show();
+        });
     }
 
     injetarEstilosNoIframeCifra() {

@@ -67,7 +67,7 @@
                             <img class="icon-svg dark-invert" src="./assets/icons/dash.svg">
                         </button>
                     </div>
-                    <input type="text" id="bpm-input" value="90" class="form-control text-center px-1" aria-label="BPM">
+                    <input type="number" id="bpm-input" value="90" class="form-control text-center px-1" aria-label="BPM">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button" id="increment-bpm-5">+5</button>
                     </div>
@@ -82,7 +82,7 @@
                         <select class="form-control" id="savesSelect">
                         </select>
                     </div>
-                    <input type="text" class="form-control d-none" id="itemNameInput" placeholder="Nome da Música...">
+                    <input type="search" autocomplete="off" class="form-control d-none" id="itemNameInput" placeholder="Nome da Música...">
 
                     <button class="btn btn-primary btn-control-custom rounded-right d-none" id="saveButton">
                         <img class="icon-svg" src="./assets/icons/check.svg">
@@ -108,6 +108,8 @@
             <iframe class="w-100 border border-secondary rounded d-none" id="liturgiaDiariaFrame" src="https://liturgiadiaria.edicoescnbb.com.br/"></iframe>
             <iframe class="w-100 border border-secondary rounded d-none" id="santamissaFrame" src="./santamissa.html"></iframe>
             <iframe class="w-100 border border-secondary rounded d-none" id="oracoesFrame" src="./oracoes.html"></iframe>
+            <iframe class="w-100 border border-secondary rounded d-none" id="partituraFrame"></iframe>
+            <iframe class="w-100 border border-secondary rounded d-none" id="partituraEditFrame"></iframe>
             <iframe class="w-100 border border-secondary rounded" id="iframeCifra"></iframe>
 
             <textarea class="modal-textarea d-none" id="editTextarea" placeholder="Editar Cifra..."></textarea>
@@ -175,7 +177,7 @@
                         <button class="btn btn-outline-secondary" type="button" id="deleteMelodyStyle" title="Excluir"><i class="bi bi-trash"></i></button>
                     </div>
 
-                    <button class="btn btn-outline-secondary mx-1 font-weight-bold" id="orgaoInstrumentButton" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
+                    <button class="btn btn-outline-secondary mx-1 font-weight-bold" id="orgaoInstrumentButton" disabled aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
                         Órgão
                     </button>
                 </div>
@@ -289,7 +291,7 @@
                     <p class="d-none"><a href="#" id="downloadStylesLink">Baixar Styles</a></p>
                     <p><a href="#" id="restoreLink">Restaurar</a></p>
                     <p><a href="#" id="about">Sobre este site</a></p>
-                    <p><input type="text" id="volumeOrgao" value="0.7" class="form-control text-center px-1"></p>
+                    <p><input type="number" id="volumeOrgao" value="0.7" class="form-control text-center px-1"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">× Fechar</button>
@@ -310,8 +312,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="input-group">
-                        <input class="form-control" placeholder="Pesquisar no CifraClub..." aria-label="Pesquisar" aria-describedby="basic-addon1" id="searchInput">
-                        <button class="btn btn-danger btn-sm rounded-0" type="button" tabindex="-1" id="clearButton">
+                        <input type="search" autocomplete="off" class="form-control" placeholder="Pesquisar no CifraClub..." aria-label="Pesquisar" aria-describedby="basic-addon1" id="searchInput">
+                        <button class="btn btn-danger btn-sm rounded-0 d-none" type="button" tabindex="-1" id="clearButton">
                             <img class="icon-svg" src="./assets/icons/x-circle.svg">
                         </button>
                         <button class="btn btn-primary rounded-right-custom" type="button" id="searchButton">
@@ -377,17 +379,21 @@
     </div>
 
     <script src="./assets/lib/js/Jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="./assets/lib/js/Popper/1.14.7/popper.min.js"></script>
     <script src="./assets/lib/js/Bootstrap/4.6.2/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="./assets/lib/js/Select2/4.1.0-rc.0/select2.min.js"></script>
+    <script src="./assets/lib/js/Vexflow/4.2.5/vexflow.js"></script>
 
     <script src="./assets/js/logIntercepted.js"></script>
     <script src="./assets/js/AudioContextManager.js"></script>
     <script src="./assets/js/DraggableController.js"></script>
     <script src="./assets/js/CifraPlayer.js"></script>
+    <script src="./assets/js/PartituraPlayer.js"></script>
     <script src="./assets/js/MusicTheory.js"></script>
     <script src="./assets/js/UIController.js"></script>
     <script src="./assets/js/LocalStorageManager.js"></script>
+    <script src="./assets/js/StyleManager.js"></script>
+    <script src="./assets/js/PartituraEditor.js"></script>
     <script src="./assets/js/App.js"></script>
     <script src="./assets/js/DrumMachine.js"></script>
     <script src="./assets/js/BateriaUI.js"></script>
