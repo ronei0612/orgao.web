@@ -36,11 +36,7 @@ class App {
             htmlMessage: `
                 <p>Melhorias</p>
 
-                <p>• Melodia e som do órgão.</p>
-                👉 <button class="btn btn-outline-secondary mx-1 font-weight-bold" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
-                        Órgão
-                    </button>
-                </button>
+                <p>• Implementa partitura.</p>
             `
         };
         this.holdTime = 1000;
