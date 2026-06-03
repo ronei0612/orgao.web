@@ -32,11 +32,11 @@ class App {
         };
 
         this.versionConfig = {
-            version: '6.0.5',
+            version: '6.0.6',
             htmlMessage: `
                 <p>Melhorias</p>
 
-                <p>• Novo módulo de partitura.</p>
+                <p>• Implementa partitura.</p>
             `
         };
         this.holdTime = 1000;
@@ -467,33 +467,32 @@ class App {
         this.elements.addButton.classList.add('pressed');
         setTimeout(() => this.elements.addButton.classList.remove('pressed'), 100);
 
-        // Verifica se o menu de edição (lápis/lixeira) está ativo
+        // Se o menu lateral (lápis/lixeira) estiver aberto
         if (!this.elements.deleteSavesSelect.classList.contains('d-none')) {
-
-            // 1. Pergunta o tipo (Cifra ou Partitura)
             const tipo = await this.uiController.chooseEditorType();
             this.currentEditorType = tipo;
 
-            // 2. Limpa o nome da música e o select
             this.elements.itemNameInput.value = '';
             $('#savesSelect').val('').trigger('change');
 
-            // 3. Prepara a visualização (Mostra o Iframe de edição ou o Textarea)
+            // 1. Entra no modo de edição (isso esconde os botões de editar/excluir)
             this.uiController.editarMusica(tipo);
 
             if (tipo === 'partitura') {
                 if (!this.partituraPlayer._initialized) await this.partituraPlayer.init();
                 this.partituraEditor.abrirEditor([]);
             } else {
-                // Limpa o editor de texto normal
                 this.elements.editTextarea.value = '';
             }
 
-            // 5. Configurações padrão de UI
             this.uiController.exibirBotoesTom();
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelectCifras('C');
             this.elements.itemNameInput.focus();
+
+            // CORREÇÃO: Não chamamos toggleEditDeleteButtons aqui se entramos no editor, 
+            // pois o editarMusica já limpou a interface corretamente.
+            return;
         }
 
         this.uiController.toggleEditDeleteButtons();
@@ -783,20 +782,20 @@ class App {
         }
     }
 
+    // App.js - Método selectEscolhido
     async selectEscolhido(selectItem) {
         this.selectItemAntes = selectItem;
-
-        // 1. SEMPRE garante que os editores (texto e gráfico) sejam escondidos ao trocar de música
         this.uiController.resetInterface();
         this.elements.partituraEditFrame.classList.add('d-none');
-        this.editing = false; // Desliga a flag de edição
+        this.editing = false;
 
         if (selectItem && selectItem !== 'acordes__') {
             const saveData = this.localStorageManager.getSaveJson(this.LOCAL_STORAGE_SAVES_KEY, selectItem);
 
-            // 2. O showLetraCifra vai cuidar de carregar o partitura.html ou o HTML da cifra
-            this.showLetraCifra(saveData);
+            // CORREÇÃO: Atualiza o tipo atual para evitar que o Play toque partitura em uma cifra
+            this.currentEditorType = saveData.type || (saveData.chords?.includes('@') ? 'partitura' : 'cifra');
 
+            this.showLetraCifra(saveData);
             this.escolherStyle(saveData.style);
             this.uiController.rolarIframeParaTopo(this.elements.iframeCifra);
         }
@@ -1089,6 +1088,9 @@ class App {
         }
     }
 
+    // --------------------------------------------------------
+    // INÍCIO - LÓGICA DE IMPORTAÇÃO COM SELEÇÃO
+    // --------------------------------------------------------
     uploadSaves() {
         let input = document.getElementById('uploadSavesInput');
         if (!input) {
@@ -1119,17 +1121,14 @@ class App {
                     let newSaves = {};
 
                     const padronizarItem = (conteudo) => {
-                        // Detecta tipo: usa o campo salvo, ou tenta inferir pelo conteúdo
-                        const type = conteudo.type
-                            || (conteudo.chords?.includes('@') ? 'partitura' : 'cifra');
-
+                        const type = conteudo.type || (conteudo.chords?.includes('@') ? 'partitura' : 'cifra');
                         return {
                             chords: conteudo.chords ?? '',
                             key: conteudo.key ?? 'C',
                             instrument: conteudo.instrument ?? 'orgao',
                             style: conteudo.style ?? '',
                             bpm: conteudo.bpm ?? 90,
-                            type: type,  // <- adicionar
+                            type: type,
                         };
                     };
 
@@ -1138,20 +1137,13 @@ class App {
                             if (item.titulo && item.chords) {
                                 const chave = item.artista ? `${item.titulo} - ${item.artista}` : item.titulo;
                                 const dadosPadronizados = padronizarItem(item);
-
-                                if (dadosPadronizados) {
-                                    newSaves[chave] = dadosPadronizados;
-                                }
+                                if (dadosPadronizados) newSaves[chave] = dadosPadronizados;
                             }
                         });
-                    }
-                    // CENÁRIO B: Importando Objeto direto (dump do localStorage)
-                    else {
+                    } else {
                         Object.keys(importedData).forEach(key => {
                             const dadosPadronizados = padronizarItem(importedData[key]);
-                            if (dadosPadronizados) {
-                                newSaves[key] = dadosPadronizados;
-                            }
+                            if (dadosPadronizados) newSaves[key] = dadosPadronizados;
                         });
                     }
 
@@ -1160,14 +1152,9 @@ class App {
                         return;
                     }
 
-                    const currentSaves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
-                    const mergedSaves = { ...currentSaves, ...newSaves };
-                    localStorage.setItem(this.LOCAL_STORAGE_SAVES_KEY, JSON.stringify(mergedSaves));
+                    // Ao invés de salvar direto, abre o modal de seleção
+                    this._showImportModal(newSaves);
 
-                    this.uiController.exibirListaSaves();
-
-                    $('#optionsModal').modal('hide');
-                    await this.uiController.customAlert('Importado com sucesso', 'Sucesso!');
                 } catch (err) {
                     console.error(err);
                     await this.uiController.customAlert(`Erro ao processar o arquivo: ${err.message}`, 'Erro!');
@@ -1179,16 +1166,125 @@ class App {
         input.click();
     }
 
-    downloadSaves() {
-        const saves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
-        const nomeDoArquivo = 'repertorio-orgao-web.json';
+    _showImportModal(newSaves) {
+        $('#optionsModal').modal('hide');
+        const currentSaves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
+        const importKeys = Object.keys(newSaves).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 
-        if (Object.keys(saves).length === 0) {
+        const importList = document.getElementById('importList');
+        importList.innerHTML = '';
+
+        importKeys.forEach((key, index) => {
+            const jaExiste = currentSaves.hasOwnProperty(key);
+            // Cria um badge indicando se a música é nova ou se já existe (avisando que vai sobrescrever)
+            const badge = jaExiste
+                ? `<span class="badge badge-warning ml-2" style="font-size:10px;">Substituirá atual</span>`
+                : `<span class="badge badge-success ml-2" style="font-size:10px;">Nova</span>`;
+
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center py-2';
+            li.innerHTML = `
+                <div class="custom-control custom-checkbox text-left w-100">
+                    <input type="checkbox" class="custom-control-input import-checkbox" id="importChk_${index}" value="${key}" checked>
+                    <label class="custom-control-label" for="importChk_${index}">${key} ${badge}</label>
+                </div>
+            `;
+            importList.appendChild(li);
+        });
+
+        const selectAll = document.getElementById('selectAllImport');
+        selectAll.checked = true;
+        selectAll.onchange = (e) => {
+            const checkboxes = document.querySelectorAll('.import-checkbox');
+            checkboxes.forEach(chk => chk.checked = e.target.checked);
+        };
+
+        const btnConfirm = document.getElementById('btnConfirmImport');
+        btnConfirm.onclick = async () => {
+            const selectedCheckboxes = document.querySelectorAll('.import-checkbox:checked');
+            if (selectedCheckboxes.length === 0) {
+                this.uiController.customAlert('Selecione pelo menos uma música para importar.', 'Aviso');
+                return;
+            }
+
+            let finalSavesToImport = {};
+            selectedCheckboxes.forEach(chk => {
+                const key = chk.value;
+                finalSavesToImport[key] = newSaves[key];
+            });
+
+            // Mescla as músicas selecionadas com o banco atual
+            const mergedSaves = { ...currentSaves, ...finalSavesToImport };
+            localStorage.setItem(this.LOCAL_STORAGE_SAVES_KEY, JSON.stringify(mergedSaves));
+
+            this.uiController.exibirListaSaves();
+
+            $('#importModal').modal('hide');
+            await this.uiController.customAlert(`${Object.keys(finalSavesToImport).length} música(s) importada(s) com sucesso!`, 'Sucesso!');
+        };
+
+        $('#importModal').modal('show');
+    }
+
+    // --------------------------------------------------------
+    // INÍCIO - LÓGICA DE EXPORTAÇÃO COM SELEÇÃO
+    // --------------------------------------------------------
+    downloadSaves() {
+        $('#optionsModal').modal('hide');
+        const saves = this.localStorageManager.getSavesJson(this.LOCAL_STORAGE_SAVES_KEY);
+        const saveKeys = Object.keys(saves).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+        if (saveKeys.length === 0) {
+            this.uiController.customAlert('Nenhuma música salva para exportar.', 'Aviso');
             return;
         }
 
+        const exportList = document.getElementById('exportList');
+        exportList.innerHTML = '';
+
+        saveKeys.forEach((key, index) => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center py-2';
+            li.innerHTML = `
+                <div class="custom-control custom-checkbox w-100">
+                    <input type="checkbox" class="custom-control-input export-checkbox" id="exportChk_${index}" value="${key}">
+                    <label class="custom-control-label" for="exportChk_${index}">${key}</label>
+                </div>
+            `;
+            exportList.appendChild(li);
+        });
+
+        // Lógica do botão Selecionar Todos
+        const selectAll = document.getElementById('selectAllExport');
+        selectAll.checked = false; // Inicia desmarcado
+        selectAll.onchange = (e) => {
+            const checkboxes = document.querySelectorAll('.export-checkbox');
+            checkboxes.forEach(chk => chk.checked = e.target.checked);
+        };
+
+        // Lógica do botão de Confirmar
+        const btnConfirm = document.getElementById('btnConfirmExport');
+        btnConfirm.onclick = () => {
+            const selectedCheckboxes = document.querySelectorAll('.export-checkbox:checked');
+            if (selectedCheckboxes.length === 0) {
+                this.uiController.customAlert('Selecione pelo menos uma música.', 'Aviso');
+                return;
+            }
+
+            const selectedKeys = Array.from(selectedCheckboxes).map(chk => chk.value);
+            this._processDownload(saves, selectedKeys);
+
+            $('#exportModal').modal('hide');
+        };
+
+        $('#exportModal').modal('show');
+    }
+
+    _processDownload(saves, selectedKeys) {
+        const nomeDoArquivo = 'repertorio-orgao-web.json';
         let maxId = 0;
-        const arrayDeCifras = Object.keys(saves).map((nomeCompleto, index) => {
+
+        const arrayDeCifras = selectedKeys.map((nomeCompleto) => {
             maxId++;
             const conteudoCifra = saves[nomeCompleto];
 
@@ -1197,8 +1293,8 @@ class App {
 
             const partes = nomeCompleto.split(' - ');
             if (partes.length > 1) {
-                artista = partes.pop().trim(); // A última parte é o artista
-                titulo = partes.join(' - ').trim(); // O restante é o título
+                artista = partes.pop().trim();
+                titulo = partes.join(' - ').trim();
             } else if (nomeCompleto.includes('-')) {
                 titulo = nomeCompleto;
             }
@@ -1209,10 +1305,10 @@ class App {
                 titulo: titulo,
                 bpm: conteudoCifra.bpm,
                 chords: conteudoCifra.chords,
-                key: conteudoCifra.key,        // <- já existia mas faltava
+                key: conteudoCifra.key,
                 instrument: conteudoCifra.instrument,
                 style: conteudoCifra.style,
-                type: conteudoCifra.type || 'cifra',  // <- adicionar
+                type: conteudoCifra.type || 'cifra',
             };
         });
 
@@ -1396,13 +1492,12 @@ class App {
     }
 
     setupServiceWorker() {
-        // Registrar Service Worker apenas em origens seguras (https) ou localhost.
         if ('serviceWorker' in navigator) {
             const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
             const isSecureProtocol = location.protocol === 'https:';
 
             if (!isSecureProtocol && !isLocalhost) {
-                console.log('Service Worker registration skipped: insecure or unsupported origin', location.protocol, location.hostname, location.origin);
+                console.log('Service Worker registration skipped: insecure or unsupported origin');
                 return;
             }
 
@@ -1410,10 +1505,35 @@ class App {
                 navigator.serviceWorker.register('./sw.js')
                     .then(registration => {
                         console.log('Service Worker registrado com sucesso:', registration.scope);
+
+                        // 1. Força a verificação de atualizações no servidor TODA VEZ que abrir o app
+                        registration.update();
+
+                        // 2. Escuta quando um sw.js novo (diferente) for encontrado no servidor
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                // Se a nova versão terminou de baixar os novos caches e está "esperando"
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+
+                                    console.log('Nova versão encontrada! Atualizando automaticamente...');
+                                    newWorker.postMessage({ action: 'skipWaiting' });
+                                }
+                            });
+                        });
                     })
                     .catch(registrationError => {
                         console.log('Falha ao registrar o Service Worker:', registrationError);
                     });
+            });
+
+            // 4. Recarrega a página automaticamente assim que o novo Service Worker assumir o controle
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload();
+                }
             });
         }
     }
