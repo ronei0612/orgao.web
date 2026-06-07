@@ -32,7 +32,7 @@ class App {
         };
 
         this.versionConfig = {
-            version: '6.0.7',
+            version: '6.0.8',
             htmlMessage: `
                 <p>Melhorias</p>
 
@@ -401,39 +401,66 @@ class App {
 
     handleTomSelectChange(event) {
         const selectedTom = this.elements.tomSelect.value;
-        if (selectedTom) {
-            const acordesMode = !this.elements.acorde1.classList.contains('d-none');
 
-            if (acordesMode) {
-                const localStorageSalvar = this.getIframeStorageName();
-                this.salvarMetaDataNoLocalStorage(this.LOCAL_STORAGE_ACORDES_KEY, localStorageSalvar);
-                this.cifraPlayer.preencherAcordes(selectedTom);
-            }
-            else {
-                // Modo partitura visualização
-                if (!this.elements.partituraFrame.classList.contains('d-none')) {
-                    const tomOrigem = this.tomAnterior || selectedTom;
-                    const semitones = this.musicTheory.getTransposeSteps(tomOrigem, selectedTom);
-                    this.tomAnterior = selectedTom; // atualiza para a próxima mudança
-                    this.partituraEditor.transporVisualizacao(semitones);
-                    return;
-                }
-                else {
-                    this.cifraPlayer.transposeCifra();
-
-                    if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
-                        const button = event.currentTarget;
-                        this.cifraPlayer.parado = false;
-                        this.cifraPlayer.tocarAcorde(button.value);
-                        button.classList.add('pressed');
-                    }
-                }
-            }
-        }
-        else { // Selecionou Letra
+        // Se o tom selecionado for nulo/vazio (Selecionou "Letra")
+        if (!selectedTom) {
             this.cifraPlayer.removeCifras(this.elements.iframeCifra.contentDocument.body.innerHTML);
             this.uiController.exibirBotoesAcordes();
             this.cifraPlayer.preencherSelectAcordes('C');
+            return;
+        }
+
+        // -------------------------------------------------------------
+        // CENÁRIO 1: MODO PARTITURA (EDIÇÃO OU VISUALIZAÇÃO)
+        // -------------------------------------------------------------
+
+        // 1.1: Editando Partitura
+        if (!this.elements.partituraEditFrame.classList.contains('d-none')) {
+            this.cifraPlayer.preencherAcordes(selectedTom); // Atualiza os botões de atalho
+            this.partituraEditor.draw(this.elements.partituraEditFrame, true); // Redesenha pauta
+            return;
+        }
+
+        // 1.2: Visualizando Partitura
+        if (!this.elements.partituraFrame.classList.contains('d-none')) {
+            const tomOrigem = this.tomAnterior || selectedTom;
+            const semitones = this.musicTheory.getTransposeSteps(tomOrigem, selectedTom);
+            this.tomAnterior = selectedTom;
+            this.partituraEditor.transporVisualizacao(semitones);
+            return;
+        }
+
+        // -------------------------------------------------------------
+        // CENÁRIO 2: MODO SOLO DE ACORDES / AUXILIARES DE MISSA
+        // (Selecionou "Acordes", ou está lendo Liturgia/Missa/Orações)
+        // -------------------------------------------------------------
+        const noSoloDeAcordes = !this.elements.savesSelect.value || this.elements.savesSelect.value === 'acordes__';
+        const lendoTextosMissa = !this.elements.liturgiaDiariaFrame.classList.contains('d-none') ||
+            !this.elements.santamissaFrame.classList.contains('d-none') ||
+            !this.elements.oracoesFrame.classList.contains('d-none');
+
+        if (noSoloDeAcordes || lendoTextosMissa) {
+            // Salva as configurações de metadados para lembrar o tom daquela tela específica
+            const localStorageSalvar = this.getIframeStorageName();
+            this.salvarMetaDataNoLocalStorage(this.LOCAL_STORAGE_ACORDES_KEY, localStorageSalvar);
+
+            // Atualiza os botões de acordes na tela
+            this.cifraPlayer.preencherAcordes(selectedTom);
+            return;
+        }
+
+        // -------------------------------------------------------------
+        // CENÁRIO 3: MODO CIFRA (Música cifrada carregada no iframe)
+        // -------------------------------------------------------------
+        if (!this.elements.iframeCifra.classList.contains('d-none')) {
+            this.cifraPlayer.transposeCifra();
+
+            if (!this.cifraPlayer.parado && this.cifraPlayer.acordeTocando) {
+                const button = event.currentTarget;
+                this.cifraPlayer.parado = false;
+                this.cifraPlayer.tocarAcorde(button.value);
+                button.classList.add('pressed');
+            }
         }
     }
 
@@ -665,6 +692,12 @@ class App {
 
     verifyLetraOuCifra(texto, saveData) {
         if (texto.includes('<pre class="cifra">')) {
+            // Garante que os elementos fiquem visíveis caso viéssemos de uma Letra
+            this.elements.bpmContainer.classList.remove('d-none');
+            this.elements.draggableControls.classList.remove('d-none');
+            this.elements.instrumentsWrapper.classList.remove('d-none');
+            this.elements.bottomSpacer.classList.add('d-none');
+
             let tom = 'C';
             if (saveData && saveData.key && saveData.key !== '') {
                 tom = saveData.key;
@@ -680,11 +713,17 @@ class App {
             this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
         }
         else {
-            this.uiController.exibirBotoesAcordes();
-            this.cifraPlayer.preencherSelectAcordes('C');
-            this.cifraPlayer.preencherIframeCifra(texto);
-        }
+            // MODO LETRA APENAS (Interface de Leitura Limpa):
+            this.uiController.esconderBotoesTom(); // Reduz o tomSelect para "Letra" e oculta o tomContainer
+            this.uiController.esconderBotoesAcordes(); // Oculta os botões de acorde do rodapé
 
+            this.elements.bpmContainer.classList.add('d-none'); // Oculta os controles de BPM
+            this.elements.draggableControls.classList.add('d-none'); // Oculta o painel flutuante de play/stop/notes
+            this.elements.instrumentsWrapper.classList.add('d-none');
+            this.elements.bottomSpacer.classList.remove('d-none');
+
+            this.cifraPlayer.preencherIframeCifra(texto); // Insere apenas o texto da letra no iframe
+        }
         this.preencherLayoutDoLocalStorage(saveData);
     }
 
@@ -726,6 +765,12 @@ class App {
         this.uiController.exibirIframeCifra();
         this.uiController.exibirBotoesTom();
         this.cifraPlayer.indiceAcorde = 0;
+
+        // Garante a restauração visual caso viéssemos de uma Letra anterior
+        this.elements.bpmContainer.classList.remove('d-none');
+        this.elements.draggableControls.classList.remove('d-none');
+        this.elements.instrumentsWrapper.classList.remove('d-none');
+        this.elements.bottomSpacer.classList.add('d-none');
 
         // 3. Lógica de renderização por tipo
         if (type === 'partitura') {
@@ -1660,9 +1705,12 @@ document.addEventListener('DOMContentLoaded', () => {
         pasteRhythmButton: document.getElementById('paste-rhythm'),
         bateriaWrapper: document.getElementById('bateriaWrapper'),
         melodyWrapper: document.getElementById('melodyWrapper'),
+        instrumentsWrapper: document.getElementById('instrumentsWrapper'),
+        bottomSpacer: document.getElementById('bottomSpacer'),
         rhythmButtonsControl: document.getElementById('rhythm-buttons'),
         musicNoteIcon: document.getElementById('music-note'),
-        musicNoteBeamedIcon: document.getElementById('music-note-beamed')
+        musicNoteBeamedIcon: document.getElementById('music-note-beamed'),
+        bpmContainer: document.getElementById('bpm-container')
     };
 
     const app = new App(elements);
