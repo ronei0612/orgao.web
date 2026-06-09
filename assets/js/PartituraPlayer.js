@@ -62,16 +62,18 @@ class PartituraPlayer {
     }
 
     async loadSounds() {
-        const notas = [...new Set(
-            Object.values(this.partituraEditor.basePitches).flat()
-        )];
-        const urls = Object.fromEntries(
-            notas.map(nota => {
-                const name = `${this.instrumento}_${nota.replace('/', '').replace('#', '_')}`;
-                return [name, `${this.audioPath}/${name}.ogg`];
-            })
-        );
-        this.buffers = await this.audioManager.loadBuffers(urls);
+        try {
+            const notas = [...new Set(
+                Object.values(this.partituraEditor.basePitches).flat()
+            )];
+            const urls = Object.fromEntries(
+                notas.map(nota => {
+                    const name = `${this.instrumento}_${nota.replace('/', '').replace('#', '_')}`;
+                    return [name, `${this.audioPath}/${name}.ogg`];
+                })
+            );
+            this.buffers = await this.audioManager.loadBuffers(urls);
+        } catch { }
     }
 
     tocarNotaAtualPartitura(volume = 1) {
@@ -87,7 +89,14 @@ class PartituraPlayer {
         if (!data.rest) {
             data.notes.forEach(n => {
                 const [nota, oitava] = n.split('/');
-                const notaLimpa = nota.toLowerCase().replace('#', '_');
+                let notaConvertida = nota.toLowerCase();
+
+                const mapBemolParaSustenido = { 'db': 'c#', 'eb': 'd#', 'gb': 'f#', 'ab': 'g#', 'bb': 'a#' };
+                if (mapBemolParaSustenido[notaConvertida]) {
+                    notaConvertida = mapBemolParaSustenido[notaConvertida];
+                }
+
+                const notaLimpa = notaConvertida.replace('#', '_');
                 const bufferName = `${this.instrumento}_${notaLimpa}${oitava}`;
                 const buffer = this.buffers.get(bufferName);
                 if (buffer) {
