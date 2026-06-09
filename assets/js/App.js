@@ -32,11 +32,12 @@ class App {
         };
 
         this.versionConfig = {
-            version: '6.0.8',
+            version: '6.0.9',
             htmlMessage: `
                 <p>Melhorias</p>
 
-                <p>• Implementa partitura.</p>
+                <p>• Correções de bugs na partitura.</p>
+                <p>• Correção do áudio alto e estourando.</p>
             `
         };
         this.holdTime = 1000;
