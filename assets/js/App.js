@@ -1,6 +1,7 @@
 class App {
     constructor(elements) {
         this.elements = elements;
+        this.currentInstrumentMode = 'orgao';
         this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web.beta' : '.';
 
         this.musicTheory = new MusicTheory();
@@ -13,8 +14,12 @@ class App {
         // 2. Passar o audioManager para todos os players
         this.partituraEditor = new PartituraEditor(this.elements.partituraEditFrame, this.elements.partituraFrame, this.musicTheory);
 
-        // CifraPlayer agora recebe o audioManager pronto
         this.cifraPlayer = new CifraPlayer(this.elements, this.uiController, this.musicTheory, this.BASE_URL, this.audioManager);
+
+        // Após inicializar o this.audioManager, defina o volume mestre pegando do HTML:
+        const volumeInput = document.getElementById('volumeMaster');
+        const initialVol = volumeInput ? parseFloat(volumeInput.value) : 1.0;
+        this.audioManager.masterGain.gain.value = initialVol;
 
         this.cifraPlayer.onInstrumentosCarregados = () => {
             this.elements.orgaoInstrumentButton.removeAttribute('disabled');
@@ -32,7 +37,7 @@ class App {
         };
 
         this.versionConfig = {
-            version: '6.1.0',
+            version: '6.1.2',
             htmlMessage: `
                 <p>Melhorias</p>
 
@@ -70,6 +75,9 @@ class App {
         this.getUrlParam();
         this.updateFillBlink(this.musicTheory.bpm);
 
+        // --- ADICIONE ESTA LINHA AQUI ---
+        this.partituraPlayer.init();
+
         this.drumMachine = new DrumMachine(this.BASE_URL, this.cifraPlayer, this.musicTheory, this.audioManager);
         this.bateriaUI = new BateriaUI(this.elements, this.drumMachine, this.uiController, this.cifraPlayer);
 
@@ -80,20 +88,17 @@ class App {
         await this.melodyUI.init();
 
         this.cifraPlayer.onChordChange = () => {
-            if (this.cifraPlayer.instrumento === 'orgao' && this.elements.melodyStyleSelect.value !== '') {
+            if ((this.currentInstrumentMode === 'orgao' || this.currentInstrumentMode === 'piano') && this.elements.melodyStyleSelect.value !== '') {
                 this.melodyUI.play();
             }
         };
 
-        //if (this.BASE_URL.includes('http')) {
-        //    document.getElementById('downloadStylesLink').parentElement.classList.remove('d-none');
-        //    document.getElementById('styleButtons').classList.remove('d-none');
-        //    document.getElementById('drumEditor').classList.remove('d-none');
-        //    document.getElementById('melodyTracks').classList.remove('d-none');
-        //    document.getElementById('stepsMelody').classList.remove('d-none');
-        //    document.getElementById('melodySaveControl').classList.remove('d-none');
-        //    document.getElementById('save-melody').classList.remove('d-none');
-        //}
+        // ADICIONE ESTAS LINHAS NO FINAL DE init()
+        const edicaoSalva = localStorage.getItem('habilitarEdicaoRitmo') === 'true';
+        if (this.elements.toggleRhythmEditor) {
+            this.elements.toggleRhythmEditor.checked = edicaoSalva;
+            this.toggleRhythmElements(edicaoSalva);
+        }
     }
 
     bindEvents() {
@@ -104,9 +109,6 @@ class App {
         this.elements.darkModeToggle.addEventListener('change', this.uiController.toggleDarkMode.bind(this.uiController));
         this.elements.tocarButton.addEventListener('click', this.handleTocarClick.bind(this));
         this.elements.tomSelect.addEventListener('change', this.handleTomSelectChange.bind(this));
-        //this.elements.tomSelect.addEventListener('mousedown', () => { this.tomAnterior = this.elements.tomSelect.value; });
-        //this.elements.decreaseTom.addEventListener('mousedown', () => { this.tomAnterior = this.elements.tomSelect.value;});
-        //this.elements.increaseTom.addEventListener('mousedown', () => { this.tomAnterior = this.elements.tomSelect.value; });
         this.elements.decreaseTom.addEventListener('click', this.handleDecreaseTomClick.bind(this));
         this.elements.increaseTom.addEventListener('click', this.handleIncreaseTomClick.bind(this));
         this.elements.addButton.addEventListener('click', this.handleAddClick.bind(this));
@@ -128,8 +130,8 @@ class App {
         this.elements.playButton.addEventListener('mousedown', this.handlePlayMousedown.bind(this));
         this.elements.avancarButton.addEventListener('mousedown', () => this.avancar());
         this.elements.retrocederButton.addEventListener('mousedown', () => this.retroceder());
-        this.elements.orgaoInstrumentButton.addEventListener('click', () => this.handleOrgaoInstrumentClick());
-        this.elements.bateriaInstrumentButton.addEventListener('click', () => this.handleOrgaoInstrumentClick());
+        this.elements.orgaoInstrumentButton.addEventListener('click', () => this.openInstrumentModal());
+        this.elements.bateriaInstrumentButton.addEventListener('click', () => this.openInstrumentModal());
         document.addEventListener('mousedown', this.fullScreen.bind(this));
         document.addEventListener('click', this.handleDocumentClick.bind(this));
         $('#searchModal').on('shown.bs.modal', this.handleSearchModalShown.bind(this));
@@ -151,10 +153,6 @@ class App {
             });
         });
 
-        //document.getElementById('increment-bpm').addEventListener('click', () => {
-        //    this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) + 1;
-        //    this.setBPM(parseInt(this.elements.bpmInput.value, 10));
-        //}); //Não remover
         document.getElementById('decrement-bpm').addEventListener('click', () => {
             this.elements.bpmInput.value = (parseInt(this.elements.bpmInput.value, 10) || 0) - 1;
             this.setBPM(parseInt(this.elements.bpmInput.value, 10));
@@ -171,9 +169,15 @@ class App {
             this.setBPM(bpm);
         });
 
-        document.getElementById('volumeOrgao').addEventListener('change', () => {
-            this.melodyMachine.defaultVol = parseFloat(document.getElementById('volumeOrgao').value);
+        document.getElementById('volumeMaster').addEventListener('input', (e) => {
+            const vol = parseFloat(e.target.value);
+
+            // Altera o volume global na mesma hora de forma suave (sem estalos)
+            this.audioManager.masterGain.gain.setTargetAtTime(vol, this.audioManager.audioContext.currentTime, 0.05);
         });
+
+        // ADICIONE ESTA LINHA:
+        this.elements.toggleRhythmEditor.addEventListener('change', (e) => this.toggleRhythmElements(e.target.checked));
 
         ['mousedown'].forEach(event => {
             const controlButtons = [
@@ -186,6 +190,144 @@ class App {
                 button.addEventListener(event, this.togglePressedState.bind(this));
             });
         });
+
+        // ==========================================
+        // EVENTOS DO TECLADO DE PIANO (Com "Arrastar", "Sustain" e "Filtro de Toque Rápido")
+        // ==========================================
+        const pianoWrapper = this.elements.pianoWrapper;
+        let isDraggingPiano = false;
+
+        const handlePianoInput = (e) => {
+            let x, y;
+            if (e.touches && e.touches.length > 0) {
+                x = e.touches[0].clientX;
+                y = e.touches[0].clientY;
+            } else {
+                x = e.clientX;
+                y = e.clientY;
+            }
+
+            const elem = document.elementFromPoint(x, y);
+            const isKey = elem && elem.classList.contains('piano-key');
+
+            if (isKey) {
+                const pitch = elem.dataset.pitch;
+                if (pitch && elem !== this._lastPlayedPianoKey) {
+
+                    // CORREÇÃO: Se escorregou muito rápido antes de dar o tempo, cancela a nota!
+                    if (this._pianoKeyTimeout) {
+                        clearTimeout(this._pianoKeyTimeout);
+                        this._pianoKeyTimeout = null;
+                    }
+
+                    // Se mudou para uma tecla nova (após tempo da anterior), solta a que já estava tocando
+                    if (this._lastPlayedPianoKey) {
+                        this.releasePianoKey(this._lastPlayedPianoKey);
+                    }
+
+                    this._lastPlayedPianoKey = elem;
+
+                    // CORREÇÃO: Aguarda 70ms antes de confirmar o toque. 
+                    // Se você soltar ou arrastar antes disso, o som é ignorado.
+                    this._pianoKeyTimeout = setTimeout(() => {
+                        this.pressPianoKey(pitch, elem);
+                        this._pianoKeyTimeout = null;
+                    }, 70);
+                }
+            } else {
+                // Se arrastou o dedo para FORA do teclado...
+                // 1. Cancela se estava prestes a tocar (esbarrão)
+                if (this._pianoKeyTimeout) {
+                    clearTimeout(this._pianoKeyTimeout);
+                    this._pianoKeyTimeout = null;
+                }
+                // 2. Solta a nota se já estivesse tocando
+                if (this._lastPlayedPianoKey) {
+                    this.releasePianoKey(this._lastPlayedPianoKey);
+                    this._lastPlayedPianoKey = null;
+                }
+            }
+        };
+
+        // Mouse Events
+        pianoWrapper.addEventListener('mousedown', (e) => {
+            isDraggingPiano = true;
+            this._lastPlayedPianoKey = null;
+            handlePianoInput(e);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isDraggingPiano) handlePianoInput(e);
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDraggingPiano = false;
+            // Cancela se soltou rápido demais
+            if (this._pianoKeyTimeout) {
+                clearTimeout(this._pianoKeyTimeout);
+                this._pianoKeyTimeout = null;
+            }
+            if (this._lastPlayedPianoKey) {
+                this.releasePianoKey(this._lastPlayedPianoKey);
+                this._lastPlayedPianoKey = null;
+            }
+        });
+
+        // Touch Events (Celular/Tablet)
+        pianoWrapper.addEventListener('touchstart', (e) => {
+            isDraggingPiano = true;
+            this._lastPlayedPianoKey = null;
+            handlePianoInput(e);
+        }, { passive: true });
+
+        pianoWrapper.addEventListener('touchmove', (e) => {
+            if (isDraggingPiano) {
+                handlePianoInput(e);
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', () => {
+            isDraggingPiano = false;
+            // Cancela se soltou rápido demais
+            if (this._pianoKeyTimeout) {
+                clearTimeout(this._pianoKeyTimeout);
+                this._pianoKeyTimeout = null;
+            }
+            if (this._lastPlayedPianoKey) {
+                this.releasePianoKey(this._lastPlayedPianoKey);
+                this._lastPlayedPianoKey = null;
+            }
+        });
+    }
+
+    pressPianoKey(pitch, keyElement) {
+        if (!pitch) return;
+
+        // Limpa visualmente outras teclas
+        document.querySelectorAll('.piano-key').forEach(key => {
+            key.classList.remove('active-key');
+        });
+
+        // Efeito visual de tecla abaixada (FICA ABAIXADA ATÉ SOLTAR)
+        keyElement.classList.add('active-key');
+
+        // CORREÇÃO: Dispara o som dos samples OGG da flauta
+        this.partituraPlayer.startPianoNote(pitch);
+
+        // Aplica na partitura (se estiver editando)
+        if (this.currentEditorType === 'partitura' && !this.elements.partituraEditFrame.classList.contains('d-none')) {
+            this.partituraEditor.applyPianoNote(pitch);
+        }
+    }
+
+    releasePianoKey(keyElement) {
+        // Levanta a tecla visualmente
+        if (keyElement) {
+            keyElement.classList.remove('active-key');
+        }
+
+        // CORREÇÃO: Manda o som da flauta OGG morrer suavemente
+        this.partituraPlayer.stopPianoNote();
     }
 
     setupSelect2() {
@@ -299,7 +441,15 @@ class App {
     _moverPartitura(direcao) {
         const total = this.partituraEditor.currentData.length - 1;
         const atual = this.partituraEditor.highlightIndex === -1 ? 0 : this.partituraEditor.highlightIndex;
-        const novoIndex = Math.max(0, Math.min(atual + direcao, total));
+
+        let novoIndex = atual + direcao;
+
+        // CORREÇÃO: Fazer o loop (se passar do limite, volta pro início, se voltar do zero, vai pro final)
+        if (novoIndex > total) {
+            novoIndex = 0;
+        } else if (novoIndex < 0) {
+            novoIndex = total;
+        }
 
         this.partituraEditor.highlightIndex = novoIndex;
 
@@ -561,7 +711,7 @@ class App {
         this.uiController.exibirBotoesTom();
         this.uiController.exibirBotoesAcordes();
         this.cifraPlayer.preencherSelectCifras(this.elements.tomSelect.value ?? 'C');
-        this.exibirInstrument(this.cifraPlayer.instrumento);
+        this.uiController.exibirInstrumento(this.currentInstrumentMode);
     }
 
     async handleDeleteSaveClick() {
@@ -654,55 +804,99 @@ class App {
         }
     }
 
-    exibirInstrument(instrument) {
-        if (instrument === 'orgao') {
-            this.cifraPlayer.attack = 0.2;
-            this.uiController.esconderElementosBateria();
-            this.cifraPlayer.atualizarVolumeStringsParaOrgao();
-        }
-        else {
-            this.cifraPlayer.attack = 0;
-            this.uiController.exibirElementosBateria();
-            this.cifraPlayer.atualizarVolumeStringsParaEpiano();
+    async changeInstrumentMode(mode) {
+        this.uiController.bloquearInstrumentos();
+
+        try {
+            this.currentInstrumentMode = mode;
+
+            if (mode === 'orgao') {
+                this.cifraPlayer.instrumento = 'orgao';
+                this.cifraPlayer.attack = 0.2;
+                this.cifraPlayer.atualizarVolumeStringsParaOrgao();
+                await this.melodyMachine.setInstrument('orgao');
+
+                if (this.melodyUI) this.melodyUI.updateInstrument(); // <-- ADICIONADO
+
+                this.uiController.exibirInstrumento(mode);
+            }
+            else if (mode === 'piano') {
+                // AQUI: Agora usamos o piano acústico real
+                this.cifraPlayer.instrumento = 'piano';
+                await this.cifraPlayer.loadPianoSounds();
+                this.cifraPlayer.attack = 0.05;
+                this.cifraPlayer.atualizarVolumeStringsParaOrgao();
+
+                await this.melodyMachine.setInstrument('piano');
+
+                if (this.melodyUI) this.melodyUI.updateInstrument(); // <-- ADICIONADO
+
+                this.uiController.exibirInstrumento(mode);
+            }
+            else if (mode === 'bateria') {
+                this.cifraPlayer.instrumento = 'epiano';
+                await this.cifraPlayer.loadEpianoSounds();
+                this.cifraPlayer.attack = 0;
+                this.cifraPlayer.atualizarVolumeStringsParaEpiano();
+                if (!this.bateriaUI._initialized) {
+                    await this.drumMachine.init();
+                    await this.bateriaUI.init();
+                    this.bateriaUI._initialized = true;
+                }
+                this.uiController.exibirInstrumento(mode);
+            }
+
+            if (!this.elements.savesSelect.value || this.elements.savesSelect.value === 'acordes__') {
+                const localStorageSalvar = this.getIframeStorageName();
+                this.salvarMetaDataNoLocalStorage(this.LOCAL_STORAGE_ACORDES_KEY, localStorageSalvar);
+            }
+        } catch (error) {
+            console.error("Erro ao trocar de instrumento:", error);
+        } finally {
+            this.uiController.desbloquearInstrumentos();
         }
     }
 
-    async handleOrgaoInstrumentClick() {
-        if (this.cifraPlayer.instrumento === 'orgao') {
-            this.cifraPlayer.instrumento = 'epiano';
+    openInstrumentModal() {
+        const modalBody = document.getElementById('instrumentSelectionBody');
+        if (!modalBody) return;
+        modalBody.innerHTML = '';
 
-            await this.cifraPlayer.loadEpianoSounds();
+        const instruments = [
+            { id: 'orgao', label: '🎶 Órgão' },
+            { id: 'piano', label: '🎹 Piano' },
+            { id: 'bateria', label: '🥁 Bateria' }
+        ];
 
-            if (!this.bateriaUI._initialized) {
-                await this.drumMachine.init(); // carrega styles.json + sons
-                await this.bateriaUI.init();   // constrói UI + bindEvents
-                this.bateriaUI._initialized = true;
+        // Injeta apenas os botões que não estão ativos
+        instruments.forEach(inst => {
+            if (inst.id !== this.currentInstrumentMode) {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline-primary btn-block py-3 mb-2 font-weight-bold';
+                btn.innerHTML = inst.label;
+                btn.onclick = () => {
+                    $('#instrumentSelectionModal').modal('hide');
+                    this.changeInstrumentMode(inst.id);
+                };
+                modalBody.appendChild(btn);
             }
-        } else {
-            this.cifraPlayer.instrumento = 'orgao';
-        }
+        });
 
-        this.exibirInstrument(this.cifraPlayer.instrumento);
-
-        if (!this.elements.savesSelect.value || this.elements.savesSelect.value === 'acordes__') {
-            const localStorageSalvar = this.getIframeStorageName();
-            this.salvarMetaDataNoLocalStorage(this.LOCAL_STORAGE_ACORDES_KEY, localStorageSalvar);
-        }
+        $('#instrumentSelectionModal').modal('show');
     }
 
     verifyLetraOuCifra(texto, saveData) {
         if (texto.includes('<pre class="cifra">')) {
-            // Garante que os elementos fiquem visíveis caso viéssemos de uma Letra
             this.elements.bpmContainer.classList.remove('d-none');
             this.elements.draggableControls.classList.remove('d-none');
             this.elements.instrumentsWrapper.classList.remove('d-none');
+            this.elements.pianoWrapper.classList.remove('d-none');
             this.elements.bottomSpacer.classList.add('d-none');
 
             let tom = 'C';
             if (saveData && saveData.key && saveData.key !== '') {
                 tom = saveData.key;
-            }
-            else {
+            } else {
                 tom = this.cifraPlayer.descobrirTom(texto);
             }
             const musicaCifrada = this.cifraPlayer.destacarCifras(texto, tom);
@@ -711,46 +905,43 @@ class App {
             this.elements.tomSelect.dispatchEvent(new Event('change'));
             this.cifraPlayer.preencherIframeCifra(musicaCifrada);
             this.cifraPlayer.addEventCifrasIframe(this.elements.iframeCifra);
-        }
-        else {
-            // MODO LETRA APENAS (Interface de Leitura Limpa):
-            this.uiController.esconderBotoesTom(); // Reduz o tomSelect para "Letra" e oculta o tomContainer
-            this.uiController.esconderBotoesAcordes(); // Oculta os botões de acorde do rodapé
 
-            this.elements.bpmContainer.classList.add('d-none'); // Oculta os controles de BPM
-            this.elements.draggableControls.classList.add('d-none'); // Oculta o painel flutuante de play/stop/notes
+            // CORREÇÃO: Destacar a primeira cifra logo ao carregar
+            setTimeout(() => {
+                this.cifraPlayer.selecionarPrimeiraCifra();
+            }, 100);
+        } else {
+            this.uiController.esconderBotoesTom();
+            this.uiController.esconderBotoesAcordes();
+            this.elements.bpmContainer.classList.add('d-none');
+            this.elements.draggableControls.classList.add('d-none');
             this.elements.instrumentsWrapper.classList.add('d-none');
+            this.elements.pianoWrapper.classList.add('d-none');
             this.elements.bottomSpacer.classList.remove('d-none');
 
-            this.cifraPlayer.preencherIframeCifra(texto); // Insere apenas o texto da letra no iframe
+            this.cifraPlayer.preencherIframeCifra(texto);
         }
         this.preencherLayoutDoLocalStorage(saveData);
     }
 
     async preencherLayoutDoLocalStorage(saveData) {
         if (saveData && saveData.instrument) {
-            this.cifraPlayer.instrumento = saveData.instrument;
-
-            if (saveData.instrument === 'epiano' && !this.bateriaUI._initialized) {
-                await this.drumMachine.init();
-                await this.cifraPlayer.loadEpianoSounds();
-                await this.bateriaUI.init();
-                this.bateriaUI._initialized = true;
+            // Retrocompatibilidade para músicas salvas antes do update
+            let mode = saveData.instrumentMode;
+            if (!mode) {
+                mode = saveData.instrument === 'orgao' ? 'orgao' : 'bateria';
             }
+            await this.changeInstrumentMode(mode);
 
-            this.exibirInstrument(saveData.instrument);
             this.elements.bpmInput.value = saveData.bpm;
             this.setBPM(saveData.bpm);
 
-            if (saveData.instrument === 'orgao') {
+            if (mode === 'orgao' || mode === 'piano') {
                 this.elements.melodyStyleSelect.value = saveData.style;
                 this.elements.melodyStyleSelect.dispatchEvent(new Event('change'));
-                this.uiController.esconderElementosBateria();
-            }
-            else {
+            } else if (mode === 'bateria') {
                 this.elements.drumStyleSelect.value = saveData.style;
                 this.elements.drumStyleSelect.dispatchEvent(new Event('change'));
-                this.uiController.exibirElementosBateria();
             }
         }
     }
@@ -770,6 +961,7 @@ class App {
         this.elements.bpmContainer.classList.remove('d-none');
         this.elements.draggableControls.classList.remove('d-none');
         this.elements.instrumentsWrapper.classList.remove('d-none');
+        this.elements.pianoWrapper.classList.remove('d-none');
         this.elements.bottomSpacer.classList.add('d-none');
 
         // 3. Lógica de renderização por tipo
@@ -801,13 +993,13 @@ class App {
         await this.preencherLayoutDoLocalStorage(saveData);
     }
 
-    // salvarMetaDataNoLocalStorage recebe chords como parâmetro opcional
     salvarMetaDataNoLocalStorage(name, item, chords = null) {
         const metaData = {
             chords: chords ?? this.elements.editTextarea.value,
             key: this.elements.tomSelect.value,
             instrument: this.cifraPlayer.instrumento,
-            style: this.cifraPlayer.instrumento === 'epiano'
+            instrumentMode: this.currentInstrumentMode, // NOVO CAMPO PARA SABER SE É PIANO
+            style: (this.currentInstrumentMode === 'bateria')
                 ? this.elements.drumStyleSelect.value
                 : this.elements.melodyStyleSelect.value,
             bpm: this.elements.bpmInput.value,
@@ -872,10 +1064,9 @@ class App {
     }
 
     escolherStyle(style) {
-        if (this.cifraPlayer.instrumento === 'orgao') {
+        if (this.currentInstrumentMode === 'orgao' || this.currentInstrumentMode === 'piano') {
             this.elements.melodyStyleSelect.value = style;
-        }
-        else {
+        } else {
             this.elements.drumStyleSelect.value = style;
         }
     }
@@ -1083,13 +1274,11 @@ class App {
     }
 
     tocarBateriaMelody() {
-        if (this.cifraPlayer.instrumento === 'orgao' && this.elements.melodyStyleSelect.value) {
+        if ((this.currentInstrumentMode === 'orgao' || this.currentInstrumentMode === 'piano') && this.elements.melodyStyleSelect.value) {
             this.melodyUI.play();
             this.melodyMachine.currentStep = 1;
-        }
-        else {
-            if (this.bateriaUI)
-                this.bateriaUI.play();
+        } else {
+            if (this.bateriaUI) this.bateriaUI.play();
         }
     }
 
@@ -1370,12 +1559,54 @@ class App {
         URL.revokeObjectURL(link.href);
     }
 
+    // NOVA FUNÇÃO: Controla exibição dos elementos de ritmo e salva a preferência do usuário
+    toggleRhythmElements(show) {
+        const elementsToToggle = [
+            document.getElementById('styleButtons'),
+            document.getElementById('drumEditor'),
+            document.getElementById('melodyTracks'),
+            document.getElementById('stepsMelody'),
+            document.getElementById('melodySaveControl'),
+            document.getElementById('save-melody'),
+            document.getElementById('baixarStyles')
+        ];
+
+        elementsToToggle.forEach(el => {
+            if (el) {
+                if (show) {
+                    el.classList.remove('d-none');
+                } else {
+                    el.classList.add('d-none');
+                }
+            }
+        });
+
+        // Persiste a escolha do usuário
+        localStorage.setItem('habilitarEdicaoRitmo', show);
+    }
+
+    // FUNÇÃO AJUSTADA: Converte o formato do localStorage para o formato estruturado do styles-melody.json
     downloadStyles() {
-        const key = this.STYLES_LOCAL_KEY;
+        let key = this.STYLES_LOCAL_KEY; // 'drumStylesData' por padrão
+        let filename = 'drum-styles.json';
+        let displayName = 'Bateria';
+
+        const isMelody = (this.currentInstrumentMode === 'orgao' || this.currentInstrumentMode === 'piano');
+
+        if (this.currentInstrumentMode === 'orgao') {
+            key = 'melodyStylesData_orgao';
+            filename = 'melody-styles-orgao.json';
+            displayName = 'Órgão';
+        } else if (this.currentInstrumentMode === 'piano') {
+            key = 'melodyStylesData_piano';
+            filename = 'melody-styles-piano.json';
+            displayName = 'Piano';
+        }
+
         try {
             const raw = localStorage.getItem(key);
             if (!raw) {
-                this.uiController.customAlert('Não há drumStylesData salvo no localStorage.', 'Aviso');
+                this.uiController.customAlert(`Não há ritmos de ${displayName} salvos no localStorage para baixar.`, 'Aviso');
                 return;
             }
 
@@ -1383,22 +1614,62 @@ class App {
             try {
                 data = JSON.parse(raw);
             } catch (parseErr) {
-                this.uiController.customAlert('Conteúdo de drumStylesData inválido (JSON).', 'Erro');
+                this.uiController.customAlert(`Conteúdo de ritmos de ${displayName} inválido (JSON).`, 'Erro');
                 return;
             }
 
-            const filename = (document.getElementById('downloadStylesLink')?.dataset?.filename) || 'drum-styles.json';
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            let finalDataToDownload = data;
+
+            // Se for melodia (Órgão ou Piano), agrupa no formato estruturado para styles-melody.json
+            if (isMelody) {
+                const instName = this.currentInstrumentMode; // 'orgao' ou 'piano'
+                const structuredData = {};
+                structuredData[instName] = {};
+
+                Object.keys(data).forEach(rhythmName => {
+                    const rhythmData = data[rhythmName];
+                    if (rhythmData && typeof rhythmData === 'object') {
+                        const numSteps = rhythmData.numSteps || 8;
+
+                        // Mapeia as 5 vozes na ordem correta [Voz 5 (note 4), Voz 4 (note 3), Voz 3 (note 2), Voz 2 (note 1), Voz 1 (note 0)]
+                        const vozes = [4, 3, 2, 1, 0].map(note => {
+                            const keyVoice = `${instName}_${note}`;
+                            const voiceData = rhythmData[keyVoice];
+
+                            if (voiceData && Array.isArray(voiceData.steps)) {
+                                return voiceData.steps;
+                            } else if (Array.isArray(voiceData)) {
+                                return voiceData;
+                            }
+                            // Retorna silêncio padrão se a voz não foi configurada
+                            return Array(numSteps).fill(0);
+                        });
+
+                        structuredData[instName][rhythmName] = {
+                            numSteps: numSteps,
+                            vozes: vozes
+                        };
+                    }
+                });
+
+                finalDataToDownload = structuredData;
+            }
+
+            // Cria o blob e força o download de forma limpa em qualquer navegador
+            const blob = new Blob([JSON.stringify(finalDataToDownload, null, 2)], { type: 'application/json;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = filename;
+
             document.body.appendChild(a);
             a.click();
-            a.remove();
+
+            // Limpeza de memória
+            document.body.removeChild(a);
             URL.revokeObjectURL(url);
         } catch (err) {
-            this.uiController.customAlert('Erro ao gerar o arquivo de download dos styles.', 'Erro');
+            this.uiController.customAlert('Erro ao gerar o arquivo de download dos ritmos.', 'Erro');
         }
     }
 
@@ -1707,10 +1978,12 @@ document.addEventListener('DOMContentLoaded', () => {
         melodyWrapper: document.getElementById('melodyWrapper'),
         instrumentsWrapper: document.getElementById('instrumentsWrapper'),
         bottomSpacer: document.getElementById('bottomSpacer'),
+        pianoWrapper: document.getElementById('pianoWrapper'),
         rhythmButtonsControl: document.getElementById('rhythm-buttons'),
         musicNoteIcon: document.getElementById('music-note'),
         musicNoteBeamedIcon: document.getElementById('music-note-beamed'),
-        bpmContainer: document.getElementById('bpm-container')
+        bpmContainer: document.getElementById('bpm-container'),
+        toggleRhythmEditor: document.getElementById('toggleRhythmEditor')
     };
 
     const app = new App(elements);
