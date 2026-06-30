@@ -8,13 +8,18 @@ class PartituraPlayer {
         this.partituraPlaybackIndex = -1;
         this.buffers = new Map();
         this.audioManager = audioManager;
-        this.audioContext = audioManager.audioContext; 
-        this.activeSources = new Set();
+        this.audioContext = audioManager.audioContext;
+        this.activeSources = new Set(); // Fontes de áudio da partitura
+        this.pianoActiveSources = new Set(); // NOVO: Fontes de áudio EXCLUSIVAS do teclado
         this._initialized = false;
     }
 
     async init() {
         if (this._initialized) return;
+
+        // CORREÇÃO: Marca como inicializado para não baixar os sons duas vezes
+        this._initialized = true;
+
         await this.loadSounds();
 
         // Registra callback para bindar cliques sempre que a visualização for redesenhada
@@ -97,8 +102,11 @@ class PartituraPlayer {
                 }
 
                 const notaLimpa = notaConvertida.replace('#', '_');
-                const bufferName = `${this.instrumento}_${notaLimpa}${oitava}`;
+
+                // SEMPRE FLAUTA na partitura
+                const bufferName = `flauta_${notaLimpa}${oitava}`;
                 const buffer = this.buffers.get(bufferName);
+
                 if (buffer) {
                     this.audioManager.playNode(buffer, this.audioContext.currentTime, volume, 0.02, false, this.activeSources);
                 }
@@ -112,6 +120,56 @@ class PartituraPlayer {
 
         this.partituraEditor.highlightIndex = this.partituraPlaybackIndex;
         this.partituraEditor.draw(frameParaDesenhar, frameParaDesenhar === this.elements.partituraEditFrame);
+    }
+
+    startPianoNote(pitch) {
+        this.audioManager.stopAll(this.pianoActiveSources, 0.02);
+        this.activePianoNode = null;
+        this.activePianoNodeStartTime = null;
+
+        if (!pitch) return;
+
+        const [nota, oitava] = pitch.split('/');
+        let notaConvertida = nota.toLowerCase();
+
+        const mapBemolParaSustenido = { 'db': 'c#', 'eb': 'd#', 'gb': 'f#', 'ab': 'g#', 'bb': 'a#' };
+        if (mapBemolParaSustenido[notaConvertida]) {
+            notaConvertida = mapBemolParaSustenido[notaConvertida];
+        }
+
+        const notaLimpa = notaConvertida.replace('#', '_');
+
+        // SEMPRE FLAUTA no teclado virtual
+        const bufferName = `flauta_${notaLimpa}${oitava}`;
+        const buffer = this.buffers.get(bufferName);
+
+        if (buffer) {
+            this.activePianoNode = this.audioManager.playNode(buffer, this.audioContext.currentTime, 1, 0.02, false, this.pianoActiveSources);
+            this.activePianoNodeStartTime = this.audioContext.currentTime;
+        }
+    }
+
+    stopPianoNote() {
+        if (this.activePianoNode) {
+            const now = this.audioContext.currentTime;
+            let stopTime = now;
+
+            if (this.activePianoNodeStartTime) {
+                const tempoDecorrido = now - this.activePianoNodeStartTime;
+                const sustainMinimo = 0.5; // 500ms de duração mínima
+
+                // Aplica o sustain mínimo APENAS se você levantou o dedo
+                // (se você tocou outra nota, o startPianoNote mata a anterior antes de chegar aqui)
+                if (tempoDecorrido < sustainMinimo) {
+                    stopTime = this.activePianoNodeStartTime + sustainMinimo;
+                }
+            }
+
+            this.audioManager.stopNode(this.activePianoNode, stopTime, 0.15);
+
+            this.activePianoNode = null;
+            this.activePianoNodeStartTime = null;
+        }
     }
 
     avancarNotaAtualPartitura() {

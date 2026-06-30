@@ -28,11 +28,11 @@
 
 <body>
     <div class="container d-flex flex-column vh-100" id="container">
-        <div class="d-sm-flex mt-1 mb-1">
+        <div class="d-sm-flex mt-1">
             <div class="d-flex w-100 align-items-center">
                 <img class="button-control mr-2 dark-invert" src="./assets/icons/menu.svg" id="menuButton" data-toggle="modal" data-target="#optionsModal">
 
-                <div class="input-group" id="tomContainer">
+                <div class="input-group mb-1" id="tomContainer">
                     <div class="input-group-prepend">
                         <button class="btn btn-dark-cyan" id="decreaseTom">
                             <img class="icon-svg" src="./assets/icons/dash-lg.svg">
@@ -60,7 +60,7 @@
                 </div>
 
 
-                <div class="input-group drum-unified-group ml-2" id="bpm-container">
+                <div class="input-group drum-unified-group ml-2 mb-1" id="bpm-container">
                     <div class="input-group-prepend">
                         <button class="btn btn-outline-secondary" type="button" id="decrement-bpm-5">-5</button>
                         <button class="btn btn-outline-secondary" type="button" id="decrement-bpm">
@@ -74,7 +74,7 @@
                 </div>
             </div>
 
-            <div class="d-flex flex-grow-1 mt-1">
+            <div class="d-flex flex-grow-1 mb-1">
                 <div class="d-flex align-items-center justify-content-between w-100">
                     <button id="selectedButton" class="btn btn-light d-none">
                     </button>
@@ -104,7 +104,7 @@
             </div>
         </div>
 
-        <div class="mb-2 flex-grow-1">
+        <div class="mb-1 flex-grow-1">
             <iframe class="w-100 border border-secondary rounded d-none" id="liturgiaDiariaFrame" src="https://liturgiadiaria.edicoescnbb.com.br/"></iframe>
             <iframe class="w-100 border border-secondary rounded d-none" id="santamissaFrame" src="./santamissa.html"></iframe>
             <iframe class="w-100 border border-secondary rounded d-none" id="oracoesFrame" src="./oracoes.html"></iframe>
@@ -130,7 +130,7 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-outline-secondary mx-1 font-weight-bold" id="bateriaInstrumentButton" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
+                    <button class="btn btn-outline-secondary ml-1 font-weight-bold" id="bateriaInstrumentButton" aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
                         Bateria
                     </button>
                 </div>
@@ -169,7 +169,7 @@
             <!-- Melody Wrapper -->
             <div id="melodyWrapper">
                 <div class="d-flex align-items-center mb-1">
-                    <div class="input-group flex-grow-1 mr-1">
+                    <div class="input-group flex-grow-1">
                         <select class="form-control" id="melodyStyleSelect">
                         </select>
                         <div class="input-group-append d-none" id="melodySaveControl">
@@ -178,7 +178,7 @@
                             <button class="btn btn-outline-secondary" type="button" id="deleteMelodyStyle" title="Excluir"><i class="bi bi-trash"></i></button>
                         </div>
 
-                        <button class="btn btn-outline-secondary mx-1 font-weight-bold" id="orgaoInstrumentButton" disabled aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
+                        <button class="btn btn-outline-secondary ml-1 font-weight-bold" id="orgaoInstrumentButton" disabled aria-pressed="false" type="button" style="min-width: 90px; height: 38px;">
                             Órgão
                         </button>
                     </div>
@@ -263,6 +263,26 @@
             <button class="btn-custom mx-1" data-action="acorde" id="acorde6" value="Em">Em</button>
         </div>
 
+        <!-- TECLADO DE PIANO VIRTUAL -->
+        <div id="pianoWrapper" class="">
+            <div class="piano-keyboard">
+                <!-- Oitava 4 -->
+                <div class="piano-key white-key" data-pitch="c/4"><span>C4</span><div class="piano-key black-key" data-pitch="c#/4"><span>C#4</span></div></div>
+                <div class="piano-key white-key" data-pitch="d/4"><span>D4</span><div class="piano-key black-key" data-pitch="d#/4"><span>D#4</span></div></div>
+                <div class="piano-key white-key" data-pitch="e/4"><span>E4</span></div>
+                <div class="piano-key white-key" data-pitch="f/4"><span>F4</span><div class="piano-key black-key" data-pitch="f#/4"><span>F#4</span></div></div>
+                <div class="piano-key white-key" data-pitch="g/4"><span>G4</span><div class="piano-key black-key" data-pitch="g#/4"><span>G#4</span></div></div>
+                <div class="piano-key white-key" data-pitch="a/4"><span>A4</span><div class="piano-key black-key" data-pitch="a#/4"><span>A#4</span></div></div>
+                <div class="piano-key white-key" data-pitch="b/4"><span>B4</span></div>
+                <!-- Oitava 5 -->
+                <div class="piano-key white-key" data-pitch="c/5"><span>C5</span><div class="piano-key black-key" data-pitch="c#/5"><span>C#5</span></div></div>
+                <div class="piano-key white-key" data-pitch="d/5"><span>D5</span><div class="piano-key black-key" data-pitch="d#/5"><span>D#5</span></div></div>
+                <div class="piano-key white-key" data-pitch="e/5"><span>E5</span></div>
+                <div class="piano-key white-key" data-pitch="f/5"><span>F5</span><div class="piano-key black-key" data-pitch="f#/5"><span>F#5</span></div></div>
+                <div class="piano-key white-key" data-pitch="g/5"><span>G5</span></div>
+            </div>
+        </div>
+
         <div id="bottomSpacer" class="d-none" style="height: 40px;"></div>
 
         <div class="mb-2"></div>
@@ -292,10 +312,18 @@
 
                     <p><a href="#" id="downloadSavesLink">Baixar meu Repertório</a></p>
                     <p><a href="#" id="uploadSavesLink">Importar um Repertório</a></p>
-                    <p class="d-none"><a href="#" id="downloadStylesLink">Baixar Styles</a></p>
+                    <p class="d-none" id="baixarStyles"><a href="#" id="downloadStylesLink">Baixar Styles</a></p>
                     <p><a href="#" id="restoreLink">Restaurar</a></p>
                     <p><a href="#" id="about">Sobre este site</a></p>
-                    <p><input type="number" id="volumeOrgao" value="1.0" class="form-control text-center px-1"></p>
+                    <p>
+                        <label for="volumeMaster" class="mb-0">Volume Master</label>
+                        <input type="range" id="volumeMaster" min="0" max="1" step="0.1" value="1.0" class="form-control-range">
+                    </p>
+                    <!-- CHAVE ADICIONADA: Habilitar Edição de Ritmo -->
+                    <div class="custom-control custom-switch mt-2">
+                        <input type="checkbox" id="toggleRhythmEditor" class="custom-control-input">
+                        <label class="custom-control-label" for="toggleRhythmEditor">Habilitar Edição de Ritmo</label>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">× Fechar</button>
@@ -432,6 +460,23 @@
         </div>
     </div>
 
+    <!-- Modal Seleção de Instrumento -->
+    <div class="modal fade" id="instrumentSelectionModal" tabindex="-1" role="dialog" aria-labelledby="instrumentSelectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="instrumentSelectionModalLabel">Escolha o Instrumento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center" id="instrumentSelectionBody">
+                    <!-- Os botões serão injetados dinamicamente via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="./assets/lib/js/Jquery/3.5.1/jquery.min.js"></script>
     <script src="./assets/lib/js/Popper/1.14.7/popper.min.js"></script>
     <script src="./assets/lib/js/Bootstrap/4.6.2/bootstrap.min.js"></script>
@@ -447,6 +492,7 @@
     <script src="./assets/js/UIController.js"></script>
     <script src="./assets/js/LocalStorageManager.js"></script>
     <script src="./assets/js/StyleManager.js"></script>
+    <script src="./assets/js/ABCParser.js"></script>
     <script src="./assets/js/PartituraEditor.js"></script>
     <script src="./assets/js/App.js"></script>
     <script src="./assets/js/DrumMachine.js"></script>
