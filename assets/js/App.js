@@ -37,11 +37,11 @@ class App {
         };
 
         this.versionConfig = {
-            version: '6.1.2',
+            version: '6.1.1',
             htmlMessage: `
-                <p>Melhorias</p>
+                <p>Novo Ritmo Piano</p>
 
-                <p>• Correção do áudio alto e estourando.</p>
+                <p>• 🎹 Novo instrumento e ritmos Piano.</p>
             `
         };
         this.holdTime = 1000;
