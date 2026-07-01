@@ -2,7 +2,7 @@ class App {
     constructor(elements) {
         this.elements = elements;
         this.currentInstrumentMode = 'orgao';
-        this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web.beta' : '.';
+        this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web' : '.';
 
         this.musicTheory = new MusicTheory();
         this.uiController = new UIController(this.elements);
