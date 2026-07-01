@@ -2,7 +2,7 @@ class App {
     constructor(elements) {
         this.elements = elements;
         this.currentInstrumentMode = 'orgao';
-        this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web.beta' : '.';
+        this.BASE_URL = location.origin.includes('file:') ? 'https://roneicostasoares.com.br/orgao.web' : '.';
 
         this.musicTheory = new MusicTheory();
         this.uiController = new UIController(this.elements);
@@ -37,11 +37,11 @@ class App {
         };
 
         this.versionConfig = {
-            version: '6.1.2',
+            version: '6.1.1',
             htmlMessage: `
-                <p>Melhorias</p>
+                <p>Novo Ritmo Piano</p>
 
-                <p>• Correção do áudio alto e estourando.</p>
+                <p>• 🎹 Novo instrumento e ritmos Piano.</p>
             `
         };
         this.holdTime = 1000;
