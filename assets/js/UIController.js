@@ -216,6 +216,7 @@ class UIController {
             this.elements.bateriaWrapper.classList.remove('d-none');
             this.elements.rhythmButtonsControl.classList.remove('d-none');
             this.elements.drumStyleSelect.classList.remove('d-none');
+            this.elements.bateriaInstrumentButton.classList.remove('d-none');
         }
         this.piscarPlayButton();
     }
@@ -321,8 +322,6 @@ class UIController {
         this.elements.instrumentsWrapper.classList.remove('d-none');
         this.elements.pianoWrapper.classList.remove('d-none');
         this.exibirInstrumento(this.currentInstrumentMode);
-
-        this.elements.bateriaInstrumentButton.classList.add('d-none');
 
         // RESTAURA OS ELEMENTOS OCULTADOS PELO MODO LETRA:
         this.elements.bpmContainer.classList.remove('d-none');
